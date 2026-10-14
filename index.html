@@ -17,7 +17,8 @@
 const CONFIG = {
   LIFF_ID: '2012013981-CUuRUfnG',   // ได้จากขั้นสร้าง LIFF เช่น 2012013981-AbCdEfGh
   API_URL: 'https://script.google.com/macros/s/AKfycbyLw2XbIIA-6JJpssSqhtwP8MvAYW5GvJ5zIyB0mXHNVly7tlHtiFOwfhS3c3ljEW3X/exec',   // Deploy เวอร์ชัน 1 · 14 ต.ค. 2569
-  APP_URLS: { teacher: '', budget: '', student: '', parent: '' }  // ลิงก์แอปอื่น ใส่ภายหลัง
+  APP_URLS: { teacher: 'teacher/', budget: '', student: '', parent: '' },  // ลิงก์แอปอื่น
+  TEACHER_API: 'https://script.google.com/macros/s/AKfycbzF6I2oQGbhtf42zxyaWDvX3labWdWJW1zBMSkWiS2dLKeqyJ5eoDwQhaBm5mivPsfQGg/exec'  // Q-Teacher (ดึงงานมารวม)
 };
 </script>
 <style>
@@ -378,10 +379,24 @@ function renderLink(msg){
 async function loadHome(){
   const r=await api('home');
   applyHome(r);
+  loadExt();
+}
+/** ดึงงานจาก Q-Teacher มารวมใน "งานของฉัน" (ถ้าโหลดไม่ได้ ก็ข้ามไป ไม่กระทบหน้ากลาง) */
+async function loadExt(){
+  if(!S.home||!appReady('teacher')||!CONFIG.TEACHER_API||S.extLoading) return;
+  if(S.ext&&Date.now()-(S.extAt||0)<60000) return;
+  S.extLoading=true;
+  try{
+    const r=await fetch(CONFIG.TEACHER_API,{method:'POST',body:JSON.stringify({action:'tasks',idToken:liff.getIDToken()})});
+    const j=await r.json();
+    if(j.ok){ S.ext=j.tasks; S.extAt=Date.now(); S.teacherToday=j.today; S.home.tasks=S.home.tasks.filter(t=>t.app!=='teacher').concat(j.tasks); cacheSet(S.home); render(); }
+  }catch(e){}
+  S.extLoading=false;
 }
 /** ใช้ข้อมูลชุดเดียวกับทุกหน้า: หน้าแรก ประกาศ ปฏิทิน */
 function applyHome(r,noRender){
   if(!r) return;
+  if(S.ext) r.tasks=r.tasks.filter(t=>t.app!=='teacher').concat(S.ext);
   S.home=r; S.me=r.me; S.annOn=r.annOn; S.stale=false; S.fetchedAt=Date.now();
   if(r.allAnns) S.anns=r.allAnns;
   if(r.calendarAll) S.cal=r.calendarAll;
@@ -454,9 +469,9 @@ function ring(pct,big,small){
     <div class="v"><b>${big}</b><small>${small}</small></div></div>`;
 }
 function taskRow(t){
-  const map={ack:['mega','c-h','pri'],approve:['check','c-w','warn'],link:['key','c-g',''],pending:['clock','c-w','warn']};
+  const map={ack:['mega','c-h','pri'],approve:['check','c-w','warn'],link:['key','c-g',''],pending:['clock','c-w','warn'],checkin:['clock','c-t','pri'],'leave.hr':['check','c-w','warn'],'leave.dir':['check','c-w','warn'],'out.dir':['check','c-w','warn'],'out.sub':['refresh','c-p','warn'],mysub:['refresh','c-p',''],sub:['refresh','c-p','warn'],jan:['list','c-b','warn'],rate:['star','c-w',''],emg:['flag','c-r','bad'],work:['list','c-t',''],sup:['user','c-s',''],'leave.wait':['clock','c-g','']};
   const [icn,col,pc]=map[t.type]||['list','c-g',''];
-  return `<button class="task" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}"><span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(t.title)}</span><span class="t2">${esc(t.sub||'')}</span></span><span class="pill ${pc}">${esc(APP_NAMES[t.app]||'')}</span></button>`;
+  return `<button class="task" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}" data-tapp="${esc(t.app||'')}"><span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(t.title)}</span><span class="t2">${esc(t.sub||'')}</span></span><span class="pill ${pc}">${esc(APP_NAMES[t.app]||'')}</span></button>`;
 }
 function annCard(a){
   const pills=[];
@@ -545,7 +560,7 @@ function pageHome(){
 
   const tasks=`<section><div class="sec"><h3>สิ่งที่ต้องดำเนินการ</h3>${h.tasks.length?'<button data-go="tasks">ดูทั้งหมด</button>':''}</div>
     <div class="list">${h.tasks.length?h.tasks.slice(0,3).map(taskRow).join(''):`<div class="task"><span class="ic c-o">${ic('checkc')}</span><span class="tx"><span class="t1">ไม่มีงานค้าง</span><span class="t2">เยี่ยมมาก ทุกอย่างเรียบร้อย</span></span></div>`}</div></section>`;
-  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="card"><div class="apps">${APPS.map(a=>`<button class="app${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic c-${a.c}">${ic(a.icon)}</span>${a.name}<small>${appReady(a.key)?esc(a.sub):'ยังไม่เปิด'}</small></button>`).join('')}</div></div></section>`;
+  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="card"><div class="apps">${APPS.map(a=>`<button class="app${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic c-${a.c}">${ic(a.icon)}</span>${a.name}<small>${appReady(a.key)?esc(a.key==='teacher'&&S.teacherToday?(S.teacherToday.in?'มา '+S.teacherToday.in:'ยังไม่ลงเวลา'):a.sub):'ยังไม่เปิด'}</small></button>`).join('')}</div></div></section>`;
   const anns=(S.annOn||m.isAdmin)?`<section><div class="sec"><h3>ประกาศล่าสุด</h3><button data-go="ann">ดูทั้งหมด</button></div><div class="list">${annOffNote()}
     ${h.announcements.length?h.announcements.map(annCard).join(''):'<p class="note">ยังไม่มีประกาศ</p>'}</div></section>`:'';
   const cal=`<section><div class="sec"><h3>เร็ว ๆ นี้</h3><button data-go="cal">ปฏิทิน</button></div><div class="list">${h.calendar.length?h.calendar.slice(0,4).map(evRow).join(''):'<p class="note">ไม่มีกิจกรรมใน 45 วันข้างหน้า</p>'}</div></section>`;
@@ -561,7 +576,7 @@ function pageHome(){
 function pageTasks(){
   const t=S.home.tasks;
   return head('งานของฉัน','รวมสิ่งที่ต้องทำจากทุกแอป','', 'home')+`<div class="stack"><div class="list">${t.length?t.map(taskRow).join(''):`<div class="task"><span class="ic c-o">${ic('checkc')}</span><span class="tx"><span class="t1">ไม่มีงานค้าง</span><span class="t2">เยี่ยมมาก ทุกอย่างเรียบร้อย</span></span></div>`}</div>
-  <p class="note">ตอนนี้มีงานจากหน้ากลาง เมื่อเปิดใช้ Q-Teacher และ Q-Budget งานจากแอปเหล่านั้นจะมารวมที่นี่</p></div>`;
+  <p class="note">รวมงานจากหน้ากลาง${appReady('teacher')?' และ Q-Teacher (ลงเวลา ใบลา)':''} · เมื่อเปิดใช้ Q-Budget งานจะมารวมที่นี่ด้วย</p></div>`;
 }
 
 /* ---------- ประกาศ ---------- */
@@ -693,7 +708,7 @@ function pageMenu(){
     <a class="mrow" href="privacy.html"><span class="ic c-g">${ic('shield',18)}</span><span class="tx">นโยบายความเป็นส่วนตัว</span><span class="chev">${ic('chev',16)}</span></a>
   </div>
   ${liff.isInClient()?'':`<button class="btn block" data-act="logout" style="color:var(--bad)">${ic('out',18)} ออกจากระบบ</button>`}
-  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.5 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.6 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
 
 /* ---------- ผูกบัญชีบุคลากร (ผอ.) ---------- */
@@ -738,6 +753,7 @@ function go(p){
   // เปิดหน้าทันทีจากข้อมูลที่มี แล้วค่อยอัปเดตเงียบๆ ถ้าข้อมูลเก่ากว่า 1 นาที
   if(['home','ann','cal','tasks'].includes(p) && Date.now()-(S.fetchedAt||0)>60000 && !S.loading){
     S.loading=true; loadHome().catch(()=>{}).finally(()=>{S.loading=false;});
+  } else if(p==='home'||p==='tasks'){ loadExt();
   }
 }
 
@@ -752,6 +768,7 @@ document.addEventListener('click',async ev=>{
   if(t.dataset.app){ const k=t.dataset.app; if(appReady(k)) location.href=CONFIG.APP_URLS[k]; else toast(APP_NAMES[k]+' ยังไม่เปิดใช้'); return; }
   if(t.dataset.task){
     const ty=t.dataset.task, id=t.dataset.id;
+    if(t.dataset.tapp==='teacher'){ const TAB={'leave.hr':'endorse','leave.dir':'req','out.dir':'req','out.sub':'mysub',mysub:'mysub',sub:'sub',jan:'jan',rate:'fixreq',emg:'count',work:'mytasks',sup:'mydev','leave.wait':'myreq'}; location.href=CONFIG.APP_URLS.teacher+(TAB[ty]?'#tab='+TAB[ty]:''); return; }
     if(ty==='link'){ go('link'); return; }
     if(ty==='approve'){ S.annFilter='pending'; }
     S.page='ann'; S.detail=id||null; if(!S.anns) await loadAnns(); render(); window.scrollTo(0,0); return;
