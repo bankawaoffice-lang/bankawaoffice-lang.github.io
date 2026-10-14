@@ -169,6 +169,8 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 .wd[aria-pressed="true"] small{color:var(--on-pri);opacity:.85}
 .wd[aria-pressed="true"] i.on{background:var(--on-pri)}
 .ev{display:flex;gap:14px;align-items:stretch}
+button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:inherit;font:inherit}
+.ev .c .edit{float:right;color:var(--muted);margin-left:8px}
 .ev .d{width:52px;flex:none;text-align:center;padding-top:10px;line-height:1.15}
 .ev .d b{display:block;font-size:20px;font-weight:600}
 .ev .d span{font-size:12px;color:var(--muted)}
@@ -470,9 +472,43 @@ function annCard(a){
 function evRow(c){
   const d=d8(c.date);
   const cls=c.kind==='holiday'?' hol':c.kind==='term'?' term':'';
-  const kind=c.kind==='holiday'?'วันหยุด':c.kind==='term'?'ภาคเรียน':'กิจกรรม';
-  return `<div class="ev"><div class="d"><b>${d.getDate()}</b><span>${d.toLocaleDateString('th-TH',{month:'short'})}</span></div>
-    <div class="c${cls}"><div style="font-weight:500">${esc(c.title)}</div><div class="t2">${esc(thDate(c.date,{weekday:'long'}))} · ${kind}</div></div></div>`;
+  const kind=c.kind==='holiday'?'วันหยุด':c.kind==='term'?'ภาคเรียน':(c.src?'กิจกรรม · จากประกาศ':'กิจกรรม');
+  const canEd=c.kind==='event'&&!c.src&&S.me&&S.me.canEditCal;
+  const attrs=c.kind!=='event'?'':c.src?`data-ann="${esc(c.src)}"`:canEd?`data-ev="${esc(c.id)}" data-evdate="${esc(c.date)}" data-evtitle="${esc(c.title)}" data-evkey="${esc(c.key||'')}"`:'';
+  const tag=attrs?'button':'div';
+  return `<${tag} class="ev" ${attrs}><div class="d"><b>${d.getDate()}</b><span>${d.toLocaleDateString('th-TH',{month:'short'})}</span></div>
+    <div class="c${cls}">${canEd?`<span class="edit">${ic('pen',16)}</span>`:''}<div style="font-weight:500">${esc(c.title)}</div><div class="t2">${esc(thDate(c.date,{weekday:'long'}))} · ${kind}</div></div></${tag}>`;
+}
+function eventForm(ev){
+  const today=S.home.today.date;
+  const date=ev?ev.date:(S.calDay||today);
+  modal(`<form class="form" id="evForm">
+    <div style="display:flex;align-items:center;gap:8px"><h2 style="flex:1">${ev?'แก้ไขกิจกรรม':'เพิ่มกิจกรรม'}</h2><button type="button" class="btn sm" data-act="close">ปิด</button></div>
+    <label>วันที่<input type="date" name="date" required value="${esc(date)}"></label>
+    <label>ชื่อกิจกรรม<input name="title" maxlength="120" required value="${ev?esc(ev.title):''}" placeholder="เช่น ประชุมครูประจำเดือน"></label>
+    <p class="note">กิจกรรมจะแสดงในปฏิทินของบุคลากรทุกคน · ถ้าต้องการให้ครูกด "รับทราบ" ด้วย ให้เขียนเป็นประกาศและใส่วันที่กิจกรรมแทน</p>
+    <p class="err" id="evErr" hidden></p>
+    <button class="btn pri block" type="submit">${ev?'บันทึกการแก้ไข':'เพิ่มลงปฏิทิน'}</button>
+    ${ev?'<button type="button" class="btn bad block" id="evDel">ลบกิจกรรมนี้</button>':''}
+  </form>`);
+  const f=document.getElementById('evForm');
+  const fail=(e,b,label)=>{ const er=document.getElementById('evErr'); er.hidden=false; er.textContent=e.message; if(b){b.disabled=false; b.textContent=label;} };
+  f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const data={date:f.date.value,title:f.title.value};
+    const b=f.querySelector('button[type=submit]'); const label=b.textContent; b.disabled=true; b.textContent='กำลังบันทึก…';
+    try{
+      const r=ev?await api('cal.update',{id:ev.id,orig:ev,data}):await api('cal.add',{data});
+      closeModal(); toast(ev?'แก้ไขกิจกรรมแล้ว':'เพิ่มกิจกรรมแล้ว'); S.calDay=null; applyHome(r.home);
+    }catch(err){ fail(err,b,label); }
+  });
+  const del=document.getElementById('evDel');
+  if(del) del.addEventListener('click',async()=>{
+    if(!confirm('ลบกิจกรรม "'+ev.title+'" ?\nจะหายจากปฏิทินของทุกคน')) return;
+    del.disabled=true; del.textContent='กำลังลบ…';
+    try{ const r=await api('cal.delete',{id:ev.id,orig:ev}); closeModal(); toast('ลบกิจกรรมแล้ว'); applyHome(r.home); }
+    catch(err){ fail(err,del,'ลบกิจกรรมนี้'); }
+  });
 }
 function annOffNote(){ return (!S.annOn&&S.me.isAdmin)?`<p class="note warn">ระบบประกาศยังปิดอยู่ บุคลากรอื่นยังไม่เห็น เปิดได้ที่ "สวิตช์ฟีเจอร์"</p>`:''; }
 
@@ -629,10 +665,12 @@ function pageCal(){
   const list=S.calDay?S.cal.filter(c=>c.date===S.calDay):S.cal;
   const label=S.calDay?thDate(S.calDay,{weekday:'long',day:'numeric',month:'long'}):'90 วันข้างหน้า';
   const monthTxt=today.toLocaleDateString('th-TH',{month:'long',year:'numeric'});
-  return head('ปฏิทิน',monthTxt)+`<div class="stack" style="gap:18px">${week}
+  const addBtn=S.me.canEditCal?`<button class="btn pri sm" data-act="addEv">${ic('plus',16)} เพิ่มกิจกรรม</button>`:'';
+  return head('ปฏิทิน',monthTxt,addBtn)+`<div class="stack" style="gap:18px">${week}
     <section><div class="sec"><h3>${esc(label)}</h3>${S.calDay?'<button data-day="">ดูทั้งหมด</button>':''}</div>
     <div class="list">${list.length?list.map(evRow).join(''):'<p class="note">ไม่มีรายการ</p>'}</div></section>
-    <p class="note" style="display:flex;gap:14px;flex-wrap:wrap"><span><b style="color:var(--pri)">●</b> กิจกรรม</span><span><b style="color:var(--bad)">●</b> วันหยุด</span><span><b style="color:var(--s-c)">●</b> เปิด-ปิดภาคเรียน</span></p></div>`;
+    <p class="note" style="display:flex;gap:14px;flex-wrap:wrap"><span><b style="color:var(--pri)">●</b> กิจกรรม</span><span><b style="color:var(--bad)">●</b> วันหยุด</span><span><b style="color:var(--s-c)">●</b> เปิด-ปิดภาคเรียน</span></p>
+    ${S.me.canEditCal?'<p class="note">แตะกิจกรรมที่มีรูปดินสอเพื่อแก้ไขหรือลบ · กิจกรรมจากประกาศให้แก้ที่ประกาศ · วันหยุดและวันเปิด-ปิดภาคเรียนแก้ในทะเบียนกลาง (QK-Core)</p>':''}</div>`;
 }
 
 /* ---------- โปรไฟล์ / เมนู ---------- */
@@ -655,7 +693,7 @@ function pageMenu(){
     <a class="mrow" href="privacy.html"><span class="ic c-g">${ic('shield',18)}</span><span class="tx">นโยบายความเป็นส่วนตัว</span><span class="chev">${ic('chev',16)}</span></a>
   </div>
   ${liff.isInClient()?'':`<button class="btn block" data-act="logout" style="color:var(--bad)">${ic('out',18)} ออกจากระบบ</button>`}
-  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.4 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.5 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
 
 /* ---------- ผูกบัญชีบุคลากร (ผอ.) ---------- */
@@ -704,9 +742,10 @@ function go(p){
 }
 
 document.addEventListener('click',async ev=>{
-  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-day]');
+  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-day],[data-ev]');
   if(!t) return;
   if(t.dataset.go){ go(t.dataset.go); return; }
+  if(t.dataset.ev){ eventForm({id:t.dataset.ev,date:t.dataset.evdate,title:t.dataset.evtitle,key:t.dataset.evkey}); return; }
   if(t.dataset.day!==undefined){ S.calDay=(t.dataset.day&&S.calDay!==t.dataset.day)?t.dataset.day:null; render(); return; }
   if(t.dataset.filter){ S.annFilter=t.dataset.filter; render(); return; }
   if(t.dataset.ann){ S.page='ann'; S.detail=t.dataset.ann; if(!S.anns) await loadAnns(); render(); window.scrollTo(0,0); return; }
@@ -733,6 +772,7 @@ document.addEventListener('click',async ev=>{
   if(act==='back'){ S.detail=null; render(); return; }
   if(act==='compose'){ if(canWrite()) composeForm(); else toast('ระบบประกาศยังไม่เปิดใช้'); return; }
   if(act==='readers'){ showReaders(id); return; }
+  if(act==='addEv'){ eventForm(null); return; }
   if(act==='edit'){ const a=(S.anns||[]).find(x=>x.id===id); if(a) composeForm(a); return; }
   if(act==='cancelAnn'){
     const a=(S.anns||[]).find(x=>x.id===id);
