@@ -260,7 +260,8 @@ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 
 refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/>',
 shield:'<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>',
 star:'<path d="M12 4l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z"/>',
-flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>'
+flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>'
 };
 const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"${s?` style="width:${s}px;height:${s}px"`:''}>${ICON[n]||''}</svg>`;
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -313,7 +314,7 @@ async function boot(){
   if(!liff.isLoggedIn()){ liff.login({redirectUri:location.href}); return; }
   // แสดงข้อมูลครั้งล่าสุดที่เก็บไว้ในเครื่องทันที แล้วค่อยโหลดข้อมูลใหม่ตามมา
   const cached=cacheGet();
-  if(cached){ S.home=cached; S.me=cached.me; S.annOn=cached.annOn; S.stale=true; render(); }
+  if(cached){ S.home=cached; S.me=cached.me; S.annOn=cached.annOn; S.anns=cached.allAnns||null; S.cal=cached.calendarAll||null; S.stale=true; render(); }
   try{
     await loadHome();   // เรียกหลังบ้านครั้งเดียว (เดิม 2 ครั้ง)
     try{ sessionStorage.removeItem('qk_relogin'); }catch(e){}
@@ -367,16 +368,23 @@ function renderLink(msg){
     try{
       const r=await api('link',{code});
       S.me=r.me; toast('ผูกบัญชีสำเร็จ ยินดีต้อนรับ '+r.me.call);
-      await loadHome();
+      if(r.home) applyHome(r.home); else await loadHome();
     }catch(e){ renderLink(e.message); }
   });
 }
 
 async function loadHome(){
   const r=await api('home');
-  S.home=r; S.me=r.me; S.annOn=r.annOn; S.stale=false;
+  applyHome(r);
+}
+/** ใช้ข้อมูลชุดเดียวกับทุกหน้า: หน้าแรก ประกาศ ปฏิทิน */
+function applyHome(r,noRender){
+  if(!r) return;
+  S.home=r; S.me=r.me; S.annOn=r.annOn; S.stale=false; S.fetchedAt=Date.now();
+  if(r.allAnns) S.anns=r.allAnns;
+  if(r.calendarAll) S.cal=r.calendarAll;
   cacheSet(r);
-  render();
+  if(!noRender) render();
 }
 
 /* ---------- โครงหน้า ---------- */
@@ -453,6 +461,7 @@ function annCard(a){
   if(a.pinned) pills.push(`<span class="pill pri">${ic('tack',12)} ปักหมุด</span>`);
   if(a.status==='รออนุมัติ') pills.push('<span class="pill warn">รออนุมัติ</span>');
   if(a.status==='ไม่อนุมัติ') pills.push('<span class="pill bad">ไม่อนุมัติ</span>');
+  if(a.status==='ยกเลิก') pills.push('<span class="pill bad">ยกเลิกแล้ว</span>');
   if(a.expired) pills.push('<span class="pill">หมดอายุ</span>');
   if(a.canAck) pills.push(a.acked?'<span class="pill ok">รับทราบแล้ว</span>':'<span class="pill bad">ยังไม่รับทราบ</span>');
   return `<button class="ann" data-ann="${esc(a.id)}"><h3>${esc(a.title)}</h3><p class="pv">${esc(a.body_th)}</p>
@@ -542,6 +551,8 @@ function pageAnnDetail(){
   if(a.canAck&&!a.acked) acts.push(`<button class="btn pri block" data-act="ack" data-id="${esc(a.id)}">${ic('check',18)} รับทราบ</button>`);
   if(a.canAck&&a.acked) acts.push(`<p class="note" style="color:var(--ok);background:var(--ok-bg)">${ic('check',16)} คุณรับทราบแล้ว</p>`);
   if(S.me.isAdmin&&a.status==='รออนุมัติ') acts.push(`<div style="display:flex;gap:8px"><button class="btn pri" style="flex:1" data-act="approve" data-id="${esc(a.id)}">อนุมัติและเผยแพร่</button><button class="btn bad" data-act="reject" data-id="${esc(a.id)}">ไม่อนุมัติ</button></div>`);
+  if(a.canEdit) acts.push(`<div style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="edit" data-id="${esc(a.id)}">${ic('pen',16)} แก้ไข</button><button class="btn bad" style="flex:1" data-act="cancelAnn" data-id="${esc(a.id)}">ยกเลิกประกาศ</button></div>`);
+  if(a.status==='ยกเลิก') acts.push('<p class="note">ประกาศนี้ถูกยกเลิกแล้ว ครูจะไม่เห็น และไม่แสดงในปฏิทิน</p>');
   if(a.canSeeReaders) acts.push(`<button class="btn" data-act="readers" data-id="${esc(a.id)}">${ic('user',16)} รับทราบแล้ว ${a.ackCount}/${a.staffTotal} คน · ดูรายชื่อ</button>`);
   return `<div class="${wide.matches?'d-head':'m-top'}"><button class="back" data-act="back" aria-label="ประกาศทั้งหมด">${ic('left')}</button><h2 style="flex:1">ประกาศ</h2></div>
   <article class="card stack" style="gap:16px;padding:20px">
@@ -554,39 +565,46 @@ function pageAnnDetail(){
     ${acts.join('')}
   </article>`;
 }
-function composeForm(){
-  const m=S.me;
+function composeForm(edit){
+  const m=S.me; const E=edit||null;
   const rooms=S.home.rooms||[];
   const opts=[['staff','บุคลากร'],['all','ทุกคน (บุคลากร + ผู้ปกครอง)'],['parents','ผู้ปกครองทั้งโรงเรียน']].concat(rooms.map(r=>[r.room_id,'ผู้ปกครอง '+r.grade]));
   const today=S.home.today.date;
+  const v=k=>E?esc(E[k]||''):'';
   modal(`<form class="form" id="annForm">
-    <div style="display:flex;align-items:center;gap:8px"><h2 style="flex:1">เขียนประกาศ</h2><button type="button" class="btn sm" data-act="close">ปิด</button></div>
-    <label>ผู้อ่าน<select name="audience" id="aud">${opts.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select></label>
-    <p class="note" id="audNote"></p>
-    <label>หัวเรื่อง<input name="title" maxlength="150" required></label>
-    <label>เนื้อหาภาษาไทย<textarea name="body_th" maxlength="5000" required></textarea></label>
-    <label>เนื้อหาภาษามลายู (ถ้ามี)<textarea name="body_ms" maxlength="5000" style="min-height:70px"></textarea></label>
-    <div class="two"><label>วันที่กิจกรรม<input type="date" name="event_date" min="${today}"></label>
-    <label>แสดงถึงวันที่<input type="date" name="expires_on" min="${today}"></label></div>
-    <label>ลิงก์ไฟล์แนบใน Drive (ถ้ามี)<input type="url" name="attachments" placeholder="https://drive.google.com/…"></label>
-    ${m.canPublishSchool?'<label class="check"><input type="checkbox" name="pinned"> ปักหมุดไว้บนสุด</label>':''}
+    <div style="display:flex;align-items:center;gap:8px"><h2 style="flex:1">${E?'แก้ไขประกาศ':'เขียนประกาศ'}</h2><button type="button" class="btn sm" data-act="close">ปิด</button></div>
+    ${E?`<p class="note">ผู้อ่าน: <b>${esc(E.audienceLabel)}</b> (เปลี่ยนผู้อ่านไม่ได้ ถ้าต้องการให้ยกเลิกแล้วเขียนใหม่)</p>`:
+    `<label>ผู้อ่าน<select name="audience" id="aud">${opts.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select></label>
+    <p class="note" id="audNote"></p>`}
+    <label>หัวเรื่อง<input name="title" maxlength="150" required value="${v('title')}"></label>
+    <label>เนื้อหาภาษาไทย<textarea name="body_th" maxlength="5000" required>${v('body_th')}</textarea></label>
+    <label>เนื้อหาภาษามลายู (ถ้ามี)<textarea name="body_ms" maxlength="5000" style="min-height:70px">${v('body_ms')}</textarea></label>
+    <div class="two"><label>วันที่กิจกรรม<input type="date" name="event_date" value="${v('event_date')}"></label>
+    <label>แสดงถึงวันที่<input type="date" name="expires_on" value="${v('expires_on')}"></label></div>
+    <label>ลิงก์ไฟล์แนบใน Drive (ถ้ามี)<input type="url" name="attachments" placeholder="https://drive.google.com/…" value="${v('attachments')}"></label>
+    ${m.canPublishSchool?`<label class="check"><input type="checkbox" name="pinned"${E&&E.pinned?' checked':''}> ปักหมุดไว้บนสุด</label>`:''}
     <p class="err" id="annErr" hidden></p>
-    <button class="btn pri block" type="submit">ส่งประกาศ</button>
+    <button class="btn pri block" type="submit">${E?'บันทึกการแก้ไข':'ส่งประกาศ'}</button>
   </form>`);
   const aud=document.getElementById('aud');
-  const note=()=>{ const v=aud.value; const school=['staff','parents','all'].includes(v);
+  const note=()=>{ if(!aud) return; const v=aud.value; const school=['staff','parents','all'].includes(v);
     document.getElementById('audNote').textContent = school&&!m.canPublishSchool ? 'ประกาศถึงทั้งโรงเรียน ต้องรอ ผอ. อนุมัติก่อนเผยแพร่' : 'เผยแพร่ทันที'+(v==='staff'||v==='all'?' · บุคลากรกด "รับทราบ" ได้':''); };
-  aud.addEventListener('change',note); note();
+  if(aud) aud.addEventListener('change',note); note();
   const f=document.getElementById('annForm');
   f.addEventListener('submit',async ev=>{
     ev.preventDefault();
     const fd=new FormData(f); const data=Object.fromEntries(fd.entries()); data.pinned=!!fd.get('pinned');
-    const b=f.querySelector('button[type=submit]'); b.disabled=true; b.textContent='กำลังส่ง…';
+    const b=f.querySelector('button[type=submit]'); b.disabled=true; b.textContent='กำลังบันทึก…';
     try{
+      if(E){
+        const r=await api('announce.update',{id:E.id,data});
+        closeModal(); toast('บันทึกการแก้ไขแล้ว');
+        S.page='ann'; S.detail=E.id; applyHome(r.home); return;
+      }
       const r=await api('announce.create',{data});
       closeModal(); toast(r.announcement.status==='เผยแพร่'?'เผยแพร่ประกาศแล้ว':'ส่งให้ ผอ. อนุมัติแล้ว');
-      S.anns=null; S.page='ann'; S.detail=null; await refresh();
-    }catch(e){ const er=document.getElementById('annErr'); er.hidden=false; er.textContent=e.message; b.disabled=false; b.textContent='ส่งประกาศ'; }
+      S.page='ann'; S.detail=null; applyHome(r.home);
+    }catch(e){ const er=document.getElementById('annErr'); er.hidden=false; er.textContent=e.message; b.disabled=false; b.textContent=E?'บันทึกการแก้ไข':'ส่งประกาศ'; }
   });
 }
 async function showReaders(id){
@@ -637,7 +655,7 @@ function pageMenu(){
     <a class="mrow" href="privacy.html"><span class="ic c-g">${ic('shield',18)}</span><span class="tx">นโยบายความเป็นส่วนตัว</span><span class="chev">${ic('chev',16)}</span></a>
   </div>
   ${liff.isInClient()?'':`<button class="btn block" data-act="logout" style="color:var(--bad)">${ic('out',18)} ออกจากระบบ</button>`}
-  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.1 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.4 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
 
 /* ---------- ผูกบัญชีบุคลากร (ผอ.) ---------- */
@@ -676,8 +694,14 @@ function pageSwitch(){
 function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>{el.hidden=true;},3200); }
 function modal(html){ const m=document.getElementById('modal'); m.hidden=false; m.innerHTML=`<div class="overlay" data-act="overlay"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; }
 function closeModal(){ const m=document.getElementById('modal'); m.hidden=true; m.innerHTML=''; }
-async function refresh(){ S.cal=null; S.staff=null; S.settings=null; S.anns=null; try{ await loadHome(); }catch(e){ toast(e.message); } }
-function go(p){ S.page=p; S.detail=null; render(); window.scrollTo(0,0); }
+async function refresh(){ S.staff=null; S.settings=null; try{ await loadHome(); }catch(e){ toast(e.message); } }
+function go(p){
+  S.page=p; S.detail=null; render(); window.scrollTo(0,0);
+  // เปิดหน้าทันทีจากข้อมูลที่มี แล้วค่อยอัปเดตเงียบๆ ถ้าข้อมูลเก่ากว่า 1 นาที
+  if(['home','ann','cal','tasks'].includes(p) && Date.now()-(S.fetchedAt||0)>60000 && !S.loading){
+    S.loading=true; loadHome().catch(()=>{}).finally(()=>{S.loading=false;});
+  }
+}
 
 document.addEventListener('click',async ev=>{
   const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-day]');
@@ -696,7 +720,7 @@ document.addEventListener('click',async ev=>{
   if(t.dataset.sw){
     const [app,key]=t.dataset.sw.split('|'); const on=t.getAttribute('aria-checked')!=='true';
     t.disabled=true;
-    try{ await api('admin.setSetting',{app,key,enabled:on}); const s=S.settings.find(x=>x.app===app&&x.key===key); if(s) s.enabled=on; toast((on?'เปิด ':'ปิด ')+(s?s.name:key)); const keep=S.settings; await loadHome(); S.settings=keep; render(); }
+    try{ const r=await api('admin.setSetting',{app,key,enabled:on}); const s=S.settings.find(x=>x.app===app&&x.key===key); toast((on?'เปิด ':'ปิด ')+(s?s.name:key)); S.settings=r.settings||S.settings; applyHome(r.home); }
     catch(e){ toast(e.message); t.disabled=false; }
     return;
   }
@@ -709,20 +733,28 @@ document.addEventListener('click',async ev=>{
   if(act==='back'){ S.detail=null; render(); return; }
   if(act==='compose'){ if(canWrite()) composeForm(); else toast('ระบบประกาศยังไม่เปิดใช้'); return; }
   if(act==='readers'){ showReaders(id); return; }
+  if(act==='edit'){ const a=(S.anns||[]).find(x=>x.id===id); if(a) composeForm(a); return; }
+  if(act==='cancelAnn'){
+    const a=(S.anns||[]).find(x=>x.id===id);
+    if(!confirm('ยกเลิกประกาศ "'+(a?a.title:id)+'" ?\nครูจะไม่เห็นประกาศนี้อีก และจะเอาออกจากปฏิทิน (ประวัติยังเก็บไว้)')) return;
+    t.disabled=true;
+    try{ const r=await api('announce.cancel',{id}); toast('ยกเลิกประกาศแล้ว'); S.page='ann'; S.detail=id; applyHome(r.home); }
+    catch(e){ toast(e.message); t.disabled=false; }
+    return;
+  }
   if(act==='ack'||act==='approve'||act==='reject'){
     t.disabled=true;
     try{
-      if(act==='ack') await api('announce.ack',{id});
-      else await api('announce.approve',{id,approve:act==='approve'});
+      const r = act==='ack' ? await api('announce.ack',{id}) : await api('announce.approve',{id,approve:act==='approve'});
       toast(act==='ack'?'รับทราบแล้ว':act==='approve'?'อนุมัติและเผยแพร่แล้ว':'ไม่อนุมัติประกาศนี้');
-      const keep=S.detail; S.anns=null; await loadHome(); await loadAnns(); S.page='ann'; S.detail=keep; render();
+      const keep=S.detail; S.page='ann'; S.detail=keep; applyHome(r.home);
     }catch(e){ toast(e.message); t.disabled=false; }
     return;
   }
   if(act==='issue'){
     if(!confirm('ออกรหัสผูกบัญชีให้ '+((S.staff.find(s=>s.staff_id===id)||{}).name||id)+' ?\n(รหัสเดิมที่ยังไม่ใช้จะถูกยกเลิก)')) return;
     t.disabled=true;
-    try{ const r=await api('admin.issueCode',{staffId:id}); issuedSheet(r); const r2=await api('admin.staff'); S.staff=r2.staff; render(); }
+    try{ const r=await api('admin.issueCode',{staffId:id}); issuedSheet(r); if(r.staff) S.staff=r.staff; render(); }
     catch(e){ toast(e.message); t.disabled=false; }
     return;
   }
@@ -730,7 +762,7 @@ document.addEventListener('click',async ev=>{
     const n=(S.staff.find(s=>s.staff_id===id)||{}).name||id;
     if(!confirm('ยกเลิกการผูก LINE ของ '+n+' ?\nเขาจะเข้าแอปไม่ได้จนกว่าจะผูกใหม่ด้วยรหัสใหม่')) return;
     t.disabled=true;
-    try{ await api('admin.unlink',{staffId:id}); toast('ยกเลิกการผูกแล้ว'); const r2=await api('admin.staff'); S.staff=r2.staff; await loadHome(); }
+    try{ const r=await api('admin.unlink',{staffId:id}); toast('ยกเลิกการผูกแล้ว'); if(r.staff) S.staff=r.staff; applyHome(r.home); }
     catch(e){ toast(e.message); t.disabled=false; }
     return;
   }
