@@ -17,7 +17,7 @@
 const CONFIG = {
   LIFF_ID: '2012013981-CUuRUfnG',   // ได้จากขั้นสร้าง LIFF เช่น 2012013981-AbCdEfGh
   API_URL: 'https://script.google.com/macros/s/AKfycbyLw2XbIIA-6JJpssSqhtwP8MvAYW5GvJ5zIyB0mXHNVly7tlHtiFOwfhS3c3ljEW3X/exec',   // Deploy เวอร์ชัน 1 · 14 ต.ค. 2569
-  APP_URLS: { teacher: 'teacher/', budget: '', student: '', parent: '' },  // ลิงก์แอปอื่น
+  APP_URLS: { teacher: 'teacher/', budget: '', student: '', parent: '', academic: '' },  // ลิงก์แอปอื่น
   TEACHER_API: 'https://script.google.com/macros/s/AKfycbzF6I2oQGbhtf42zxyaWDvX3labWdWJW1zBMSkWiS2dLKeqyJ5eoDwQhaBm5mivPsfQGg/exec'  // Q-Teacher (ดึงงานมารวม)
 };
 </script>
@@ -223,6 +223,41 @@ button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:in
 .d-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
 .d-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;align-items:start}
 h1,h2,h3,.stat .v,.ring .v b,.ev .d b,.prof .pst b,.wd b,.brand b,.code,.intro .logo,.brand .lg,.avatar{font-family:var(--fh)}
+/* รุ่น 1.7 */
+:root:not([data-theme="dark"]){--muted:#5E6385}
+.m-top .hi,.d-head .hi{color:var(--muted);font-size:13.5px}
+.m-top .role,.d-head .role{color:var(--muted);font-size:13px}
+.upd{color:var(--pri)}
+.avbtn{border:0;background:none;padding:0;border-radius:50%}
+.sec .cnt{display:inline-block;min-width:22px;padding:0 7px;border-radius:999px;background:var(--bad);color:#fff;font-size:12px;text-align:center;vertical-align:2px;font-family:var(--f)}
+.okline{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin:2px 4px}
+.okline svg{color:var(--ok)}
+.linkline{font-size:13px;color:var(--muted);margin:8px 4px 0}
+.lnk{border:0;background:none;color:var(--pri);padding:0;font-weight:500}
+.apps2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (min-width:1000px){.apps2{grid-template-columns:1fr 1fr 1fr}}
+.appc{display:flex;gap:10px;align-items:center;border:0;background:var(--card);box-shadow:var(--shadow);border-radius:18px;padding:12px;text-align:left;color:var(--ink);min-width:0}
+.appc .ic{width:44px;height:44px;border-radius:14px}
+.appc .tx{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.appc b{font-family:var(--fh);font-weight:600;font-size:15px}
+.appc small{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.appc .st{font-size:11.5px;color:var(--faint);margin-top:2px}
+.appc .st.on{color:var(--ok)}
+.appc.off .ic{opacity:.6}
+.strip{display:flex;align-items:center;gap:8px;background:var(--pri-soft);color:var(--pri);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:500;margin-bottom:10px}
+.row2{display:flex;gap:6px}
+.search{border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--card);width:100%;font-size:15px;color:var(--ink)}
+.chips{flex-wrap:wrap;overflow:visible}
+details.more{border:1px dashed var(--line);border-radius:14px;padding:10px 14px}
+details.more summary{cursor:pointer;color:var(--pri);font-weight:500;font-size:14px}
+.form .hint{font-weight:400;color:var(--faint);font-size:12px}
+.ev .t2 .kind{font-weight:600;color:var(--ink)}
+.wd i.hol{background:var(--bad)}
+.ev .c.due{border-color:var(--warn);background:var(--warn-bg)}
+.pcard .t2{font-size:13px;color:var(--muted)}
+.m-nav{grid-template-columns:repeat(5,1fr)}
+.m-nav button{font-size:11px}
+@media (max-width:420px){.form .two{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.sw::after{transition:none}.spin{animation-duration:3s}}
 </style>
 </head>
@@ -242,6 +277,7 @@ menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
 bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
 badge:'<rect x="5" y="3" width="14" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M8 17c1-2 7-2 8 0"/>',
 coin:'<circle cx="12" cy="12" r="8"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.6 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6.5v11"/>',
+book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h7M8 11h5"/>',
 cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
 fam:'<circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-4 3-6 5-6s5 2 5 6M14 20c0-3 1.5-5 3-5s4 2 4 5"/>',
 gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
@@ -270,12 +306,14 @@ const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"${s?` styl
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const APPS=[
- {key:'teacher',name:'Q-Teacher',c:'t',icon:'badge',sub:'ลงเวลา · ลา'},
- {key:'budget',name:'Q-Budget',c:'b',icon:'coin',sub:'งบ · โครงการ'},
- {key:'student',name:'Q-Student',c:'s',icon:'cap',sub:'นักเรียน'},
- {key:'parent',name:'Q-Parent',c:'p',icon:'fam',sub:'ผู้ปกครอง'}
+ {key:'teacher',name:'Q-Teacher',c:'t',icon:'badge',sub:'ลงเวลา ลา สอนแทน'},
+ {key:'academic',name:'Q-Academic',c:'h',icon:'book',sub:'งานวิชาการ'},
+ {key:'student',name:'Q-Student',c:'s',icon:'cap',sub:'ดูแลนักเรียน'},
+ {key:'budget',name:'Q-Budget',c:'b',icon:'coin',sub:'งบประมาณ โครงการ'},
+ {key:'parent',name:'Q-Parent',c:'p',icon:'fam',sub:'ช่องทางผู้ปกครอง'}
 ];
-const APP_NAMES={hub:'หน้ากลาง',teacher:'Q-Teacher',budget:'Q-Budget',student:'Q-Student',parent:'Q-Parent'};
+const APP_NAMES={hub:'หน้ากลาง',teacher:'Q-Teacher',budget:'Q-Budget',student:'Q-Student',parent:'Q-Parent',academic:'Q-Academic'};
+const SRC={ack:'ประกาศ',approve:'ประกาศ',pending:'ประกาศ',link:'ตั้งค่า'};
 const ERR={
  CODE_NOT_FOUND:'ไม่พบรหัสนี้ หรือรหัสถูกใช้ไปแล้ว ตรวจตัวเลขอีกครั้ง',
  CODE_EXPIRED:'รหัสนี้หมดอายุแล้ว ขอรหัสใหม่จาก ผอ.',
@@ -284,7 +322,7 @@ const ERR={
  NETWORK:'เชื่อมต่อไม่ได้ ตรวจสัญญาณอินเทอร์เน็ตแล้วลองใหม่'
 };
 
-const S={me:null,home:null,page:'home',anns:null,annFilter:'all',annOn:false,detail:null,cal:null,calDay:null,staff:null,settings:null};
+const S={me:null,home:null,page:'home',anns:null,annFilter:'all',annQ:'',annOn:false,detail:null,cal:null,calDay:null,calWin:0,staff:null,settings:null,ext:null,extState:'',seq:0};
 const wide=matchMedia('(min-width:1000px)');
 wide.addEventListener('change',()=>render());
 
@@ -377,23 +415,25 @@ function renderLink(msg){
 }
 
 async function loadHome(){
+  const my=++S.seq;
   const r=await api('home');
+  if(my!==S.seq) return;          // คำขอเก่าตอบช้า ไม่ให้ทับข้อมูลใหม่
   applyHome(r);
   loadExt();
 }
-/** ดึงงานจาก Q-Teacher มารวมใน "งานของฉัน" (ถ้าโหลดไม่ได้ ก็ข้ามไป ไม่กระทบหน้ากลาง) */
-async function loadExt(){
+/** ดึงงานจาก Q-Teacher มารวมใน "งานของฉัน" · โหลดไม่ได้ก็ไม่กระทบหน้ากลาง */
+async function loadExt(force){
   if(!S.home||!appReady('teacher')||!CONFIG.TEACHER_API||S.extLoading) return;
-  if(S.ext&&Date.now()-(S.extAt||0)<60000) return;
-  S.extLoading=true;
+  if(!force&&S.ext&&Date.now()-(S.extAt||0)<60000) return;
+  S.extLoading=true; if(!S.ext){ S.extState='loading'; render(); }
   try{
     const r=await fetch(CONFIG.TEACHER_API,{method:'POST',body:JSON.stringify({action:'tasks',idToken:liff.getIDToken()})});
     const j=await r.json();
-    if(j.ok){ S.ext=j.tasks; S.extAt=Date.now(); S.teacherToday=j.today; S.home.tasks=S.home.tasks.filter(t=>t.app!=='teacher').concat(j.tasks); cacheSet(S.home); render(); }
-  }catch(e){}
-  S.extLoading=false;
+    if(j.ok){ S.ext=j.tasks; S.extAt=Date.now(); S.extState='ok'; S.home.tasks=S.home.tasks.filter(t=>t.app!=='teacher').concat(j.tasks); cacheSet(S.home); }
+    else S.extState='err';
+  }catch(e){ S.extState='err'; }
+  S.extLoading=false; render();
 }
-/** ใช้ข้อมูลชุดเดียวกับทุกหน้า: หน้าแรก ประกาศ ปฏิทิน */
 function applyHome(r,noRender){
   if(!r) return;
   if(S.ext) r.tasks=r.tasks.filter(t=>t.app!=='teacher').concat(S.ext);
@@ -406,37 +446,35 @@ function applyHome(r,noRender){
 
 /* ---------- โครงหน้า ---------- */
 function canWrite(){ return S.annOn||(S.me&&S.me.isAdmin); }
-function adminItems(){ return S.me&&S.me.isAdmin?[{id:'link',label:'ผูกบัญชีบุคลากร',icon:'key',c:'h'},{id:'switch',label:'สวิตช์ฟีเจอร์',icon:'gear',c:'g'}]:[]; }
-
+function adminItems(){ return S.me&&S.me.isAdmin?[{id:'link',label:'ผูกบัญชีบุคลากร',icon:'key',c:'h'},{id:'switch',label:'เปิด–ปิดการใช้งาน',icon:'gear',c:'g'}]:[]; }
+function myTasks(){ return S.home.tasks.filter(t=>t.type!=='link'); }
+function setupTasks(){ return S.home.tasks.filter(t=>t.type==='link'); }
 function render(){
   if(!S.home) return;
   const body=pageBody();
   const el=document.getElementById('app');
-  const n=S.home.tasks.length;
+  const n=myTasks().length;
   if(wide.matches){
-    const items=[{id:'home',label:'หน้าแรก',icon:'home'},{id:'tasks',label:'งานของฉัน',icon:'list',badge:n},{id:'ann',label:'ประกาศ',icon:'mega'},{id:'cal',label:'ปฏิทิน',icon:'cal'},{id:'menu',label:'โปรไฟล์',icon:'user'}];
+    const items=[{id:'home',label:'หน้าแรก',icon:'home'},{id:'tasks',label:'งานของฉัน',icon:'list',badge:n},{id:'ann',label:'ประกาศ',icon:'mega'},{id:'cal',label:'ปฏิทิน',icon:'cal'},{id:'menu',label:'บัญชี',icon:'user'}];
     const nav=items.map(i=>`<button class="nv" data-go="${i.id}"${S.page===i.id?' aria-current="page"':''}><span class="sq">${ic(i.icon)}</span>${i.label}${i.badge?`<span class="n">${i.badge}</span>`:''}</button>`).join('');
-    const appsNav=APPS.map(a=>`<button class="nv" data-app="${a.key}"><span class="sq c-${a.c}">${ic(a.icon)}</span>${a.name}${appReady(a.key)?'':'<span class="pill" style="margin-left:auto">ยังไม่เปิด</span>'}</button>`).join('');
+    const appsNav=APPS.map(a=>`<button class="nv" data-app="${a.key}"><span class="sq c-${a.c}">${ic(a.icon)}</span>${a.name}${appReady(a.key)?'':`<span class="pill" style="margin-left:auto">${appState(a.key)}</span>`}</button>`).join('');
     const adm=adminItems().map(i=>`<button class="nv" data-go="${i.id}"${S.page===i.id?' aria-current="page"':''}><span class="sq c-${i.c}">${ic(i.icon)}</span>${i.label}</button>`).join('');
     el.innerHTML=`<div class="d-shell"><nav class="side" aria-label="เมนูหลัก">
       <div class="brand"><div class="lg">Q</div><div><b>Q-Kawa</b><small>โรงเรียนบ้านกาวะ</small></div></div>
-      ${canWrite()?`<button class="btn pri new" data-act="compose">${ic('plus',18)} เขียนประกาศ</button>`:''}
       ${nav}<div class="grp">แอปของโรงเรียน</div>${appsNav}${adm?`<div class="grp">ผู้ดูแลระบบ</div>${adm}`:''}
       <div style="flex:1"></div><p class="credit">ผู้พัฒนา: นายฮาฟีซี อูมา</p></nav>
       <main class="d-main">${body}</main></div>`;
   }else{
-    const cur=S.page==='tasks'?'home':['link','switch'].includes(S.page)?'menu':S.page;
-    const b=(id,label,icon)=>`<button data-go="${id}"${cur===id?' aria-current="page"':''}>${ic(icon,22)}${label}</button>`;
+    const cur=['link','switch'].includes(S.page)?'menu':S.page;
+    const b=(id,label,icon,badge)=>`<button data-go="${id}"${cur===id?' aria-current="page"':''}>${ic(icon,22)}${label}${badge?`<span class="dot">${badge}</span>`:''}</button>`;
     el.innerHTML=`<div class="m-shell"><main class="m-main">${body}</main>
-      <nav class="m-nav" aria-label="เมนูหลัก">${b('home','หน้าแรก','home')}${b('ann','ประกาศ','mega')}
-        <button class="fab" data-act="compose" aria-label="เขียนประกาศ">${ic('plus')}</button>
-        ${b('cal','ปฏิทิน','cal')}${b('menu','โปรไฟล์','user')}</nav></div>`;
+      <nav class="m-nav" aria-label="เมนูหลัก">${b('home','หน้าแรก','home')}${b('tasks','งานของฉัน','list',n)}${b('ann','ประกาศ','mega')}${b('cal','ปฏิทิน','cal')}${b('menu','บัญชี','user')}</nav></div>`;
   }
 }
 function avatar(){ const m=S.me; return `<div class="avatar">${m.picture?`<img src="${esc(m.picture)}" alt="">`:esc((m.name.replace(/^(นาย|นางสาว|นาง)/,'')||'?').charAt(0))}</div>`; }
 function rolesText(){ const r=S.me.roles.filter(x=>x!=='ครู'); return r.length?r.join(' · '):(S.me.roles[0]||S.me.position||''); }
 function appReady(k){ return !!(S.home.apps[k]&&CONFIG.APP_URLS[k]); }
-
+function appState(k){ return appReady(k)?'พร้อมใช้งาน':(CONFIG.APP_URLS[k]&&S.home.apps[k]===false)?'ปิดชั่วคราว':'เร็ว ๆ นี้'; }
 function pageBody(){
   switch(S.page){
     case 'tasks': return pageTasks();
@@ -471,7 +509,7 @@ function ring(pct,big,small){
 function taskRow(t){
   const map={ack:['mega','c-h','pri'],approve:['check','c-w','warn'],link:['key','c-g',''],pending:['clock','c-w','warn'],checkin:['clock','c-t','pri'],'leave.hr':['check','c-w','warn'],'leave.dir':['check','c-w','warn'],'out.dir':['check','c-w','warn'],'out.sub':['refresh','c-p','warn'],mysub:['refresh','c-p',''],sub:['refresh','c-p','warn'],jan:['list','c-b','warn'],rate:['star','c-w',''],emg:['flag','c-r','bad'],work:['list','c-t',''],sup:['user','c-s',''],'leave.wait':['clock','c-g','']};
   const [icn,col,pc]=map[t.type]||['list','c-g',''];
-  return `<button class="task" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}" data-tapp="${esc(t.app||'')}"><span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(t.title)}</span><span class="t2">${esc(t.sub||'')}</span></span><span class="pill ${pc}">${esc(APP_NAMES[t.app]||'')}</span></button>`;
+  return `<button class="task" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}" data-tapp="${esc(t.app||'')}"><span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(t.title)}</span><span class="t2">${esc(t.sub||'')}</span></span><span class="pill ${pc}">${esc(t.app==='hub'?(SRC[t.type]||'หน้ากลาง'):(APP_NAMES[t.app]||''))}</span></button>`;
 }
 function annCard(a){
   const pills=[];
@@ -480,37 +518,43 @@ function annCard(a){
   if(a.status==='ไม่อนุมัติ') pills.push('<span class="pill bad">ไม่อนุมัติ</span>');
   if(a.status==='ยกเลิก') pills.push('<span class="pill bad">ยกเลิกแล้ว</span>');
   if(a.expired) pills.push('<span class="pill">หมดอายุ</span>');
+  if(a.due_date&&!a.expired) pills.push(`<span class="pill warn">ส่ง ${esc(thDate(a.due_date,{day:'numeric',month:'short'}))}</span>`);
   if(a.canAck) pills.push(a.acked?'<span class="pill ok">รับทราบแล้ว</span>':'<span class="pill bad">ยังไม่รับทราบ</span>');
   return `<button class="ann" data-ann="${esc(a.id)}"><h3>${esc(a.title)}</h3><p class="pv">${esc(a.body_th)}</p>
     <div class="meta">${pills.join('')}<span>${esc(a.audienceLabel)}</span><span>${esc(a.author)}</span><span>${esc(thDT(a.created_at))}</span></div></button>`;
 }
 function evRow(c){
   const d=d8(c.date);
-  const cls=c.kind==='holiday'?' hol':c.kind==='term'?' term':'';
-  const kind=c.kind==='holiday'?'วันหยุด':c.kind==='term'?'ภาคเรียน':(c.src?'กิจกรรม · จากประกาศ':'กิจกรรม');
+  const cls=c.kind==='holiday'?' hol':c.kind==='term'?' term':c.kind==='due'?' due':'';
+  const kind=c.kind==='holiday'?'วันหยุด':c.kind==='term'?'ภาคเรียน':c.kind==='due'?'กำหนดส่ง · จากประกาศ':(c.src?'กิจกรรม · จากประกาศ':'กิจกรรม');
   const canEd=c.kind==='event'&&!c.src&&S.me&&S.me.canEditCal;
-  const attrs=c.kind!=='event'?'':c.src?`data-ann="${esc(c.src)}"`:canEd?`data-ev="${esc(c.id)}" data-evdate="${esc(c.date)}" data-evtitle="${esc(c.title)}" data-evkey="${esc(c.key||'')}"`:'';
+  const attrs=(c.kind!=='event'&&c.kind!=='due')?'':c.src?`data-ann="${esc(c.src)}"`:canEd?`data-ev="${esc(c.id)}" data-evdate="${esc(c.date)}" data-evtitle="${esc(c.title)}" data-evkey="${esc(c.key||'')}"`:'';
   const tag=attrs?'button':'div';
   return `<${tag} class="ev" ${attrs}><div class="d"><b>${d.getDate()}</b><span>${d.toLocaleDateString('th-TH',{month:'short'})}</span></div>
-    <div class="c${cls}">${canEd?`<span class="edit">${ic('pen',16)}</span>`:''}<div style="font-weight:500">${esc(c.title)}</div><div class="t2">${esc(thDate(c.date,{weekday:'long'}))} · ${kind}</div></div></${tag}>`;
+    <div class="c${cls}">${canEd?`<span class="edit">${ic('pen',16)}</span>`:''}<div style="font-weight:500">${esc(c.title)}</div><div class="t2"><span class="kind">${kind}</span> · ${esc(thDate(c.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</div></div></${tag}>`;
 }
+function isHoliday(date){ return (S.cal||[]).find(c=>c.kind==='holiday'&&c.date===date); }
 function eventForm(ev){
   const today=S.home.today.date;
   const date=ev?ev.date:(S.calDay||today);
   modal(`<form class="form" id="evForm">
     <div style="display:flex;align-items:center;gap:8px"><h2 style="flex:1">${ev?'แก้ไขกิจกรรม':'เพิ่มกิจกรรม'}</h2><button type="button" class="btn sm" data-act="close">ปิด</button></div>
     <label>วันที่<input type="date" name="date" required value="${esc(date)}"></label>
+    <p class="note warn" id="evHol" hidden></p>
     <label>ชื่อกิจกรรม<input name="title" maxlength="120" required value="${ev?esc(ev.title):''}" placeholder="เช่น ประชุมครูประจำเดือน"></label>
-    <p class="note">กิจกรรมจะแสดงในปฏิทินของบุคลากรทุกคน · ถ้าต้องการให้ครูกด "รับทราบ" ด้วย ให้เขียนเป็นประกาศและใส่วันที่กิจกรรมแทน</p>
+    <p class="note">กิจกรรมจะแสดงในปฏิทินของบุคลากรทุกคน · ถ้าต้องการให้ครูกด "รับทราบ" ด้วย ให้เขียนเป็นประกาศและใส่วันกิจกรรมแทน</p>
     <p class="err" id="evErr" hidden></p>
     <button class="btn pri block" type="submit">${ev?'บันทึกการแก้ไข':'เพิ่มลงปฏิทิน'}</button>
     ${ev?'<button type="button" class="btn bad block" id="evDel">ลบกิจกรรมนี้</button>':''}
   </form>`);
   const f=document.getElementById('evForm');
+  const hol=()=>{ const h=isHoliday(f.date.value); const n=document.getElementById('evHol'); n.hidden=!h; if(h) n.textContent='วันที่นี้ตรงกับวันหยุด: '+h.title; };
+  f.date.addEventListener('change',hol); hol();
   const fail=(e,b,label)=>{ const er=document.getElementById('evErr'); er.hidden=false; er.textContent=e.message; if(b){b.disabled=false; b.textContent=label;} };
   f.addEventListener('submit',async e=>{
     e.preventDefault();
     const data={date:f.date.value,title:f.title.value};
+    const h=isHoliday(data.date); if(h&&!confirm('วันที่ '+thDate(data.date)+' ตรงกับวันหยุด "'+h.title+'"\nยืนยันเพิ่มกิจกรรมวันนี้?')) return;
     const b=f.querySelector('button[type=submit]'); const label=b.textContent; b.disabled=true; b.textContent='กำลังบันทึก…';
     try{
       const r=ev?await api('cal.update',{id:ev.id,orig:ev,data}):await api('cal.add',{data});
@@ -525,71 +569,56 @@ function eventForm(ev){
     catch(err){ fail(err,del,'ลบกิจกรรมนี้'); }
   });
 }
-function annOffNote(){ return (!S.annOn&&S.me.isAdmin)?`<p class="note warn">ระบบประกาศยังปิดอยู่ บุคลากรอื่นยังไม่เห็น เปิดได้ที่ "สวิตช์ฟีเจอร์"</p>`:''; }
-
+function annOffNote(){ return (!S.annOn&&S.me.isAdmin)?`<p class="note warn">ระบบประกาศยังปิดอยู่ บุคลากรอื่นยังไม่เห็น เปิดได้ที่ "เปิด–ปิดการใช้งาน" ในหน้าบัญชี</p>`:''; }
 /* ---------- หน้าแรก ---------- */
 function pageHome(){
   const h=S.home, m=S.me, t=h.today;
-  const dateTxt=thDate(t.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  let heroMain, heroSub, heroArt;
-  if(t.holiday){ heroMain='วันหยุด · '+t.holiday; heroSub=t.term.label; heroArt=`<div class="hero-ic">${ic('sun')}</div>`; }
-  else if(t.term.next){
-    const left=Math.max(0,daysBetween(t.date,t.term.next));
-    heroMain=t.term.label.replace('ปิดภาคเรียน · ','');
-    heroSub='ปิดภาคเรียน · เปิดเรียน '+thDate(t.term.next,{day:'numeric',month:'long'});
-    heroArt=ring(1-left/30,left,'วัน');
-  } else { heroMain=t.term.label; heroSub='ขอให้เป็นวันที่ดีของการเรียนรู้'; heroArt=`<div class="hero-ic">${ic('cap')}</div>`; }
-  const hero=`<div class="hero"><div class="in">${heroArt}<div style="min-width:0"><div class="k">${esc(dateTxt)}</div><h2>${esc(heroMain)}</h2><div class="s">${esc(heroSub)}</div></div></div></div>`;
-
-  const unack=h.tasks.filter(x=>x.type==='ack').length;
-  const nextHol=(h.calendar||[]).find(c=>c.kind==='holiday');
-  const stats=`<div class="stats">
-    <button class="stat" data-go="tasks"><span class="ic c-t">${ic('list',18)}</span><span><span class="k">งานค้าง</span><span class="v" style="display:block">${h.tasks.length}</span></span></button>
-    <button class="stat" data-go="ann"><span class="ic c-h">${ic('mega',18)}</span><span><span class="k">รอรับทราบ</span><span class="v" style="display:block">${unack}</span></span></button>
-    <button class="stat" data-go="cal"><span class="ic c-s">${ic('cal',18)}</span><span><span class="k">กิจกรรม 45 วัน</span><span class="v" style="display:block">${(h.calendar||[]).length}</span></span></button>
-    <button class="stat" data-go="cal"><span class="ic c-r">${ic('sun',18)}</span><span><span class="k">วันหยุดถัดไป</span><span class="v" style="display:block;font-size:16px">${nextHol?esc(thDate(nextHol.date,{day:'numeric',month:'short'})):'–'}</span></span></button>
-  </div>`;
-
-  const qs=[];
-  if(canWrite()) qs.push(['compose','เขียนประกาศ','plus','t',1]);
-  qs.push(['ann','ประกาศ','mega','h']);
-  qs.push(['cal','ปฏิทิน','cal','s']);
-  if(m.isAdmin){ qs.push(['link','ผูกบัญชี','key','b']); qs.push(['switch','สวิตช์','gear','p']); }
-  else qs.push(['tasks','งานของฉัน','list','b']);
-  const quick=`<section><div class="sec"><h3>เมนูด่วน</h3></div><div class="quick">${qs.slice(0,4).map(([id,l,i,c,act])=>`<button class="qa" ${act?'data-act':'data-go'}="${id}"><span class="ic c-${c}">${ic(i)}</span>${l}</button>`).join('')}</div></section>`;
-
-  const tasks=`<section><div class="sec"><h3>สิ่งที่ต้องดำเนินการ</h3>${h.tasks.length?'<button data-go="tasks">ดูทั้งหมด</button>':''}</div>
-    <div class="list">${h.tasks.length?h.tasks.slice(0,3).map(taskRow).join(''):`<div class="task"><span class="ic c-o">${ic('checkc')}</span><span class="tx"><span class="t1">ไม่มีงานค้าง</span><span class="t2">เยี่ยมมาก ทุกอย่างเรียบร้อย</span></span></div>`}</div></section>`;
-  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="card"><div class="apps">${APPS.map(a=>`<button class="app${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic c-${a.c}">${ic(a.icon)}</span>${a.name}<small>${appReady(a.key)?esc(a.key==='teacher'&&S.teacherToday?(S.teacherToday.in?'มา '+S.teacherToday.in:'ยังไม่ลงเวลา'):a.sub):'ยังไม่เปิด'}</small></button>`).join('')}</div></div></section>`;
+  const tasks=myTasks();
+  const bell=`<button class="bell" data-go="tasks" aria-label="งานของฉัน ${tasks.length} รายการ">${ic('bell')}${tasks.length?`<span class="dot">${tasks.length}</span>`:''}</button>`;
+  const top=`<div class="${wide.matches?'d-head':'m-top'}"><div style="flex:1;min-width:0"><p class="hi">${greet()}${S.stale?' · <span class="upd">กำลังอัปเดต…</span>':''}</p><h1>${esc(m.call)}</h1><p class="role">${esc(rolesText())}</p></div>${bell}<button class="avbtn" data-go="menu" aria-label="บัญชีของฉัน">${avatar()}</button></div>`;
+  const extNote=S.extState==='loading'?'<p class="linkline">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="linkline">โหลดงานจาก Q-Teacher ไม่สำเร็จ · <button class="lnk" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
+  const todo=`<section><div class="sec"><h3>ต้องดำเนินการ${tasks.length?` <span class="cnt">${tasks.length}</span>`:''}</h3>${tasks.length>3?'<button data-go="tasks">ดูทั้งหมด</button>':''}</div>
+    <div class="list">${tasks.length?tasks.slice(0,3).map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการตอนนี้</p>`)}</div>${extNote}</section>`;
+  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps2">${APPS.map(a=>`<button class="appc${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic c-${a.c}">${ic(a.icon)}</span><span class="tx"><b>${a.name}</b><small>${esc(a.sub)}</small><span class="st ${appReady(a.key)?'on':''}">${appState(a.key)}</span></span></button>`).join('')}</div></section>`;
+  let strip='';
+  if(t.holiday) strip=`วันนี้วันหยุด · ${esc(t.holiday)}`;
+  else if(t.term.next){ const left=Math.max(0,daysBetween(t.date,t.term.next)); strip=`${esc(t.term.label.replace('ปิดภาคเรียน · ','').replace('เปิดภาคเรียนที่','เปิดเทอม'))} · ${esc(thDate(t.term.next,{day:'numeric',month:'short'}))} · อีก ${left} วัน`; }
+  else strip=esc(t.term.label);
+  const ups=(h.calendar||[]).slice(0,3);
+  const nextHol=(S.cal||[]).find(c=>c.kind==='holiday');
+  const cal=`<section><div class="sec"><h3>กำหนดการใกล้ถึง</h3><button data-go="cal">ดูปฏิทิน</button></div>
+    <div class="strip">${ic('cal',18)}<span>${strip}</span></div>
+    <div class="list">${ups.length?ups.map(evRow).join(''):'<p class="okline">ไม่มีกิจกรรมใน 45 วันข้างหน้า</p>'}</div>
+    ${nextHol&&!ups.some(c=>c.kind==='holiday')?`<p class="linkline">วันหยุดถัดไป: ${esc(nextHol.title)} · ${esc(thDate(nextHol.date,{day:'numeric',month:'short'}))}</p>`:''}</section>`;
   const anns=(S.annOn||m.isAdmin)?`<section><div class="sec"><h3>ประกาศล่าสุด</h3><button data-go="ann">ดูทั้งหมด</button></div><div class="list">${annOffNote()}
-    ${h.announcements.length?h.announcements.map(annCard).join(''):'<p class="note">ยังไม่มีประกาศ</p>'}</div></section>`:'';
-  const cal=`<section><div class="sec"><h3>เร็ว ๆ นี้</h3><button data-go="cal">ปฏิทิน</button></div><div class="list">${h.calendar.length?h.calendar.slice(0,4).map(evRow).join(''):'<p class="note">ไม่มีกิจกรรมใน 45 วันข้างหน้า</p>'}</div></section>`;
-  const bell=`<button class="bell" data-go="tasks" aria-label="งานของฉัน ${h.tasks.length} รายการ">${ic('bell')}${h.tasks.length?`<span class="dot">${h.tasks.length}</span>`:''}</button>`;
-  const top=`<div class="${wide.matches?'d-head':'m-top'}"><div style="flex:1;min-width:0"><p style="color:var(--muted);font-size:14px">${greet()},${S.stale?' <span class="pill pri" style="font-size:11px">กำลังอัปเดต…</span>':''}</p><h1>${esc(m.call)}</h1><p style="color:var(--faint);font-size:13px">${esc(rolesText())}</p></div>${bell}${avatar()}</div>`;
-  if(wide.matches){
-    return `${top}<div class="d-grid"><div class="stack">${hero}${stats}${tasks}${anns}</div><div class="stack">${quick}${apps}${cal}</div></div>`;
-  }
-  return `${top}<div class="stack">${hero}${stats}${quick}${tasks}${apps}${anns}${cal}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+    ${h.announcements.length?h.announcements.slice(0,3).map(annCard).join(''):'<p class="okline">ยังไม่มีประกาศ</p>'}</div></section>`:'';
+  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${todo}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
+  return `${top}<div class="stack">${todo}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
-
 /* ---------- งานของฉัน ---------- */
 function pageTasks(){
-  const t=S.home.tasks;
-  return head('งานของฉัน','รวมสิ่งที่ต้องทำจากทุกแอป','', 'home')+`<div class="stack"><div class="list">${t.length?t.map(taskRow).join(''):`<div class="task"><span class="ic c-o">${ic('checkc')}</span><span class="tx"><span class="t1">ไม่มีงานค้าง</span><span class="t2">เยี่ยมมาก ทุกอย่างเรียบร้อย</span></span></div>`}</div>
-  <p class="note">รวมงานจากหน้ากลาง${appReady('teacher')?' และ Q-Teacher (ลงเวลา ใบลา)':''} · เมื่อเปิดใช้ Q-Budget งานจะมารวมที่นี่ด้วย</p></div>`;
+  const t=myTasks(), st=setupTasks();
+  const ext=S.extState==='loading'?'<p class="note">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="note warn">โหลดงานจาก Q-Teacher ไม่สำเร็จ <button class="btn sm" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
+  return head('งานของฉัน','เรื่องที่ต้องดำเนินการจากทุกแอป')+`<div class="stack"><div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการตอนนี้</p>`)}</div>${ext}
+  ${st.length?`<section><div class="sec"><h3>งานตั้งค่าระบบ</h3></div><div class="list">${st.map(taskRow).join('')}</div></section>`:''}
+  <p class="note">แตะรายการเพื่อไปยังเรื่องนั้นในแอปต้นทาง</p></div>`;
 }
-
 /* ---------- ประกาศ ---------- */
 function pageAnn(){
   if(!S.anns){ loadAnns(); return head('ประกาศ')+'<div class="spin"></div>'; }
-  const m=S.me, f=S.annFilter;
-  const chips=[['all','ทั้งหมด'],['unread','ยังไม่รับทราบ'],['pending','รออนุมัติ'],['mine','ของฉัน']];
-  const list=S.anns.filter(a=>f==='all'?a.status==='เผยแพร่'||a.mine||m.isAdmin:f==='unread'?(a.canAck&&!a.acked):f==='pending'?a.status==='รออนุมัติ':a.mine);
-  const btn=(canWrite()&&wide.matches)?`<button class="btn pri" data-act="compose">${ic('plus',16)} เขียนประกาศ</button>`:'';
-  return head('ประกาศ','ประกาศกลางของโรงเรียน',btn)+`<div class="stack" style="gap:16px">${annOffNote()}
+  const m=S.me, f=S.annFilter, q=(S.annQ||'').trim();
+  const anyPending=S.anns.some(a=>a.status==='รออนุมัติ'&&(m.isAdmin||a.mine));
+  const chips=[['all','ทั้งหมด'],['unread','ยังไม่รับทราบ']];
+  if(anyPending) chips.push(['pending','รออนุมัติ']);
+  if(canWrite()) chips.push(['mine','ของฉัน']);
+  let list=S.anns.filter(a=>f==='all'?a.status==='เผยแพร่'||a.mine||m.isAdmin:f==='unread'?(a.canAck&&!a.acked):f==='pending'?a.status==='รออนุมัติ':a.mine);
+  if(q) list=list.filter(a=>(a.title+' '+a.body_th).indexOf(q)>=0);
+  const btn=canWrite()?`<button class="btn pri sm" data-act="compose">${ic('plus',16)} เขียนประกาศ</button>`:'';
+  return head('ประกาศ','ประกาศกลางของโรงเรียน',btn)+`<div class="stack" style="gap:14px">${annOffNote()}
     ${!S.annOn&&!m.isAdmin?'<p class="note">ระบบประกาศยังไม่เปิดใช้</p>':''}
+    <input type="search" class="search" id="annQ" placeholder="ค้นหาประกาศ" value="${esc(q)}" aria-label="ค้นหาประกาศ">
     <div class="chips" role="group" aria-label="กรองประกาศ">${chips.map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${f===k}">${l}</button>`).join('')}</div>
-    <div class="list">${list.length?list.map(annCard).join(''):'<p class="note">ไม่มีประกาศในหมวดนี้</p>'}</div></div>`;
+    <div class="list">${list.length?list.map(annCard).join(''):'<p class="okline">ไม่มีประกาศในหมวดนี้</p>'}</div></div>`;
 }
 async function loadAnns(){
   try{ const r=await api('announce.list'); S.anns=r.announcements; S.annOn=r.annOn; render(); }
@@ -600,7 +629,7 @@ function pageAnnDetail(){
   if(!a){ S.detail=null; return pageAnn(); }
   const acts=[];
   if(a.canAck&&!a.acked) acts.push(`<button class="btn pri block" data-act="ack" data-id="${esc(a.id)}">${ic('check',18)} รับทราบ</button>`);
-  if(a.canAck&&a.acked) acts.push(`<p class="note" style="color:var(--ok);background:var(--ok-bg)">${ic('check',16)} คุณรับทราบแล้ว</p>`);
+  if(a.canAck&&a.acked) acts.push(`<p class="note" style="color:var(--ok);background:var(--ok-bg)">${ic('check',16)} คุณรับทราบแล้ว${a.ackedAt?' · '+esc(thDT(a.ackedAt)):''}</p>`);
   if(S.me.isAdmin&&a.status==='รออนุมัติ') acts.push(`<div style="display:flex;gap:8px"><button class="btn pri" style="flex:1" data-act="approve" data-id="${esc(a.id)}">อนุมัติและเผยแพร่</button><button class="btn bad" data-act="reject" data-id="${esc(a.id)}">ไม่อนุมัติ</button></div>`);
   if(a.canEdit) acts.push(`<div style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="edit" data-id="${esc(a.id)}">${ic('pen',16)} แก้ไข</button><button class="btn bad" style="flex:1" data-act="cancelAnn" data-id="${esc(a.id)}">ยกเลิกประกาศ</button></div>`);
   if(a.status==='ยกเลิก') acts.push('<p class="note">ประกาศนี้ถูกยกเลิกแล้ว ครูจะไม่เห็น และไม่แสดงในปฏิทิน</p>');
@@ -610,7 +639,8 @@ function pageAnnDetail(){
     <div><h1>${esc(a.title)}</h1><div class="meta">${a.pinned?`<span class="pill pri">${ic('tack',12)} ปักหมุด</span>`:''}${a.status!=='เผยแพร่'?`<span class="pill warn">${esc(a.status)}</span>`:''}<span>ถึง ${esc(a.audienceLabel)}</span><span>${esc(a.author)}</span><span>${esc(thDT(a.created_at))}</span></div></div>
     <p class="body">${esc(a.body_th)}</p>
     ${a.body_ms?`<div><p style="font-size:12.5px;color:var(--muted);margin-bottom:4px">Bahasa Melayu</p><p class="body">${esc(a.body_ms)}</p></div>`:''}
-    ${a.event_date?`<p class="note">${ic('cal',16)} วันที่กิจกรรม ${esc(thDate(a.event_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
+    ${a.event_date?`<p class="note">${ic('cal',16)} วันกิจกรรม ${esc(thDate(a.event_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
+    ${a.due_date?`<p class="note warn">${ic('clock',16)} กำหนดส่งงาน ${esc(thDate(a.due_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
     ${a.attachments?`<p><a href="${esc(a.attachments)}" target="_blank" rel="noopener">${ic('link',16)} เปิดไฟล์แนบ</a></p>`:''}
     ${a.expires_on?`<p style="font-size:13px;color:var(--muted)">แสดงถึง ${esc(thDate(a.expires_on))}</p>`:''}
     ${acts.join('')}
@@ -620,20 +650,24 @@ function composeForm(edit){
   const m=S.me; const E=edit||null;
   const rooms=S.home.rooms||[];
   const opts=[['staff','บุคลากร'],['all','ทุกคน (บุคลากร + ผู้ปกครอง)'],['parents','ผู้ปกครองทั้งโรงเรียน']].concat(rooms.map(r=>[r.room_id,'ผู้ปกครอง '+r.grade]));
-  const today=S.home.today.date;
   const v=k=>E?esc(E[k]||''):'';
+  const more=E&&(E.body_ms||E.event_date||E.due_date||E.expires_on||E.attachments);
   modal(`<form class="form" id="annForm">
     <div style="display:flex;align-items:center;gap:8px"><h2 style="flex:1">${E?'แก้ไขประกาศ':'เขียนประกาศ'}</h2><button type="button" class="btn sm" data-act="close">ปิด</button></div>
-    ${E?`<p class="note">ผู้อ่าน: <b>${esc(E.audienceLabel)}</b> (เปลี่ยนผู้อ่านไม่ได้ ถ้าต้องการให้ยกเลิกแล้วเขียนใหม่)</p>`:
-    `<label>ผู้อ่าน<select name="audience" id="aud">${opts.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select></label>
+    ${E?`<p class="note">ผู้รับ: <b>${esc(E.audienceLabel)}</b> (เปลี่ยนผู้รับไม่ได้ ถ้าต้องการให้ยกเลิกแล้วเขียนใหม่)</p>`:
+    `<label>ผู้รับ<select name="audience" id="aud">${opts.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select></label>
     <p class="note" id="audNote"></p>`}
     <label>หัวเรื่อง<input name="title" maxlength="150" required value="${v('title')}"></label>
-    <label>เนื้อหาภาษาไทย<textarea name="body_th" maxlength="5000" required>${v('body_th')}</textarea></label>
-    <label>เนื้อหาภาษามลายู (ถ้ามี)<textarea name="body_ms" maxlength="5000" style="min-height:70px">${v('body_ms')}</textarea></label>
-    <div class="two"><label>วันที่กิจกรรม<input type="date" name="event_date" value="${v('event_date')}"></label>
-    <label>แสดงถึงวันที่<input type="date" name="expires_on" value="${v('expires_on')}"></label></div>
-    <label>ลิงก์ไฟล์แนบใน Drive (ถ้ามี)<input type="url" name="attachments" placeholder="https://drive.google.com/…" value="${v('attachments')}"></label>
-    ${m.canPublishSchool?`<label class="check"><input type="checkbox" name="pinned"${E&&E.pinned?' checked':''}> ปักหมุดไว้บนสุด</label>`:''}
+    <label>เนื้อหา<textarea name="body_th" maxlength="5000" required>${v('body_th')}</textarea></label>
+    <details class="more"${more?' open':''}><summary>เพิ่มรายละเอียด (วันที่ ภาษามลายู ไฟล์แนบ)</summary><div class="form" style="margin-top:12px">
+      <label>วันกิจกรรม<span class="hint">ใส่แล้วขึ้นปฏิทินโรงเรียนให้เอง · แก้หรือยกเลิกประกาศ ปฏิทินเปลี่ยนตาม</span><input type="date" name="event_date" value="${v('event_date')}"></label>
+      <p class="note warn" id="annHol" hidden></p>
+      <label>กำหนดส่งงาน<span class="hint">วันที่ต้องส่งงาน ขึ้นปฏิทินเป็น "กำหนดส่ง"</span><input type="date" name="due_date" value="${v('due_date')}"></label>
+      <label>แสดงประกาศถึงวันที่<span class="hint">หลังวันนี้ประกาศจะซ่อนจากหน้าแรก</span><input type="date" name="expires_on" value="${v('expires_on')}"></label>
+      <label>เนื้อหาภาษามลายู<textarea name="body_ms" maxlength="5000" style="min-height:70px">${v('body_ms')}</textarea></label>
+      <label>ลิงก์ไฟล์แนบใน Drive<input type="url" name="attachments" placeholder="https://drive.google.com/…" value="${v('attachments')}"></label>
+      ${m.canPublishSchool?`<label class="check"><input type="checkbox" name="pinned"${E&&E.pinned?' checked':''}> ปักหมุดไว้บนสุด</label>`:''}
+    </div></details>
     <p class="err" id="annErr" hidden></p>
     <button class="btn pri block" type="submit">${E?'บันทึกการแก้ไข':'ส่งประกาศ'}</button>
   </form>`);
@@ -642,10 +676,13 @@ function composeForm(edit){
     document.getElementById('audNote').textContent = school&&!m.canPublishSchool ? 'ประกาศถึงทั้งโรงเรียน ต้องรอ ผอ. อนุมัติก่อนเผยแพร่' : 'เผยแพร่ทันที'+(v==='staff'||v==='all'?' · บุคลากรกด "รับทราบ" ได้':''); };
   if(aud) aud.addEventListener('change',note); note();
   const f=document.getElementById('annForm');
+  const hol=()=>{ const hs=[['วันกิจกรรม',f.event_date.value],['กำหนดส่งงาน',f.due_date.value]].map(([l,d])=>{const h=d&&isHoliday(d);return h?l+'ตรงกับวันหยุด: '+h.title:''}).filter(Boolean); const n=document.getElementById('annHol'); n.hidden=!hs.length; n.textContent=hs.join(' · '); };
+  f.event_date.addEventListener('change',hol); f.due_date.addEventListener('change',hol); hol();
   f.addEventListener('submit',async ev=>{
     ev.preventDefault();
     const fd=new FormData(f); const data=Object.fromEntries(fd.entries()); data.pinned=!!fd.get('pinned');
-    const b=f.querySelector('button[type=submit]'); b.disabled=true; b.textContent='กำลังบันทึก…';
+    const h=(data.event_date&&isHoliday(data.event_date))||(data.due_date&&isHoliday(data.due_date)); if(h&&!confirm('วันที่ที่เลือกตรงกับวันหยุด "'+h.title+'"\nยืนยันส่งประกาศ?')) return;
+    const b=f.querySelector('button[type=submit]'); if(b.disabled) return; b.disabled=true; b.textContent='กำลังบันทึก…';
     try{
       if(E){
         const r=await api('announce.update',{id:E.id,data});
@@ -655,7 +692,7 @@ function composeForm(edit){
       const r=await api('announce.create',{data});
       closeModal(); toast(r.announcement.status==='เผยแพร่'?'เผยแพร่ประกาศแล้ว':'ส่งให้ ผอ. อนุมัติแล้ว');
       S.page='ann'; S.detail=null; applyHome(r.home);
-    }catch(e){ const er=document.getElementById('annErr'); er.hidden=false; er.textContent=e.message; b.disabled=false; b.textContent=E?'บันทึกการแก้ไข':'ส่งประกาศ'; }
+    }catch(e){ const er=document.getElementById('annErr'); er.hidden=false; er.textContent=e.message+' · ข้อความที่กรอกยังอยู่ กดส่งใหม่ได้'; b.disabled=false; b.textContent=E?'บันทึกการแก้ไข':'ส่งประกาศ'; }
   });
 }
 async function showReaders(id){
@@ -672,45 +709,41 @@ async function showReaders(id){
 function pageCal(){
   if(!S.cal){ api('calendar').then(r=>{S.cal=r.calendar;render();}).catch(e=>toast(e.message)); return head('ปฏิทินโรงเรียน')+'<div class="spin"></div>'; }
   const today=d8(S.home.today.date);
-  const has={}; S.cal.forEach(c=>{has[c.date]=true;});
+  const has={}; S.cal.forEach(c=>{has[c.date]=c.kind==='holiday'?'hol':(has[c.date]||'on');});
   const days=[];
   for(let i=0;i<7;i++){ const d=new Date(today); d.setDate(d.getDate()+i); days.push(d); }
-  const week=`<div class="week" role="group" aria-label="7 วันข้างหน้า">${days.map(d=>{const k=ymd(d);
-    return `<button class="wd" data-day="${k}" aria-pressed="${S.calDay===k}"><small>${d.toLocaleDateString('th-TH',{weekday:'short'})}</small><b>${d.getDate()}</b><i class="${has[k]?'on':''}"></i></button>`;}).join('')}</div>`;
-  const list=S.calDay?S.cal.filter(c=>c.date===S.calDay):S.cal;
-  const label=S.calDay?thDate(S.calDay,{weekday:'long',day:'numeric',month:'long'}):'90 วันข้างหน้า';
-  const monthTxt=today.toLocaleDateString('th-TH',{month:'long',year:'numeric'});
+  const week=`<div class="week" role="group" aria-label="7 วันข้างหน้า แตะเพื่อดูเฉพาะวัน">${days.map(d=>{const k=ymd(d);
+    return `<button class="wd" data-day="${k}" aria-pressed="${S.calDay===k}"><small>${d.toLocaleDateString('th-TH',{weekday:'short'})}</small><b>${d.getDate()}</b><i class="${has[k]==='hol'?'hol':has[k]?'on':''}"></i></button>`;}).join('')}</div>`;
+  const w=S.calWin||0, a=new Date(today), z=new Date(today);
+  a.setDate(a.getDate()+w*30); z.setDate(z.getDate()+w*30+29);
+  const from=ymd(a), to=ymd(z);
+  const list=S.calDay?S.cal.filter(c=>c.date===S.calDay):S.cal.filter(c=>c.date>=from&&c.date<=to);
+  const label=S.calDay?thDate(S.calDay,{weekday:'long',day:'numeric',month:'long',year:'numeric'}):thDate(from,{day:'numeric',month:'short'})+' – '+thDate(to,{day:'numeric',month:'short',year:'numeric'});
   const addBtn=S.me.canEditCal?`<button class="btn pri sm" data-act="addEv">${ic('plus',16)} เพิ่มกิจกรรม</button>`:'';
-  return head('ปฏิทิน',monthTxt,addBtn)+`<div class="stack" style="gap:18px">${week}
-    <section><div class="sec"><h3>${esc(label)}</h3>${S.calDay?'<button data-day="">ดูทั้งหมด</button>':''}</div>
-    <div class="list">${list.length?list.map(evRow).join(''):'<p class="note">ไม่มีรายการ</p>'}</div></section>
-    <p class="note" style="display:flex;gap:14px;flex-wrap:wrap"><span><b style="color:var(--pri)">●</b> กิจกรรม</span><span><b style="color:var(--bad)">●</b> วันหยุด</span><span><b style="color:var(--s-c)">●</b> เปิด-ปิดภาคเรียน</span></p>
+  const nav=S.calDay?'<button class="btn sm" data-day="">ดูทุกวัน</button>':`<div class="row2"><button class="btn sm" data-win="-1"${w===0?' disabled':''}>${ic('left',16)} ก่อนหน้า</button><button class="btn sm" data-win="1"${w>=2?' disabled':''}>ถัดไป ${ic('chev',16)}</button></div>`;
+  return head('ปฏิทิน',today.toLocaleDateString('th-TH',{month:'long',year:'numeric'}),addBtn)+`<div class="stack" style="gap:16px">${week}
+    <section><div class="sec"><h3>${esc(label)}</h3>${nav}</div>
+    <div class="list">${list.length?list.map(evRow).join(''):'<p class="okline">ไม่มีรายการในช่วงนี้</p>'}</div></section>
+    <p class="note" style="display:flex;gap:14px;flex-wrap:wrap"><span><b style="color:var(--pri)">●</b> กิจกรรม</span><span><b style="color:var(--warn)">●</b> กำหนดส่ง</span><span><b style="color:var(--bad)">●</b> วันหยุด</span><span><b style="color:var(--s-c)">●</b> เปิด-ปิดภาคเรียน</span></p>
     ${S.me.canEditCal?'<p class="note">แตะกิจกรรมที่มีรูปดินสอเพื่อแก้ไขหรือลบ · กิจกรรมจากประกาศให้แก้ที่ประกาศ · วันหยุดและวันเปิด-ปิดภาคเรียนแก้ในทะเบียนกลาง (QK-Core)</p>':''}</div>`;
 }
-
 /* ---------- โปรไฟล์ / เมนู ---------- */
 function pageMenu(){
-  const m=S.me, h=S.home;
-  const unack=h.tasks.filter(x=>x.type==='ack').length;
+  const m=S.me;
   const row=(attr,icon,c,label,extra)=>`<button class="mrow" ${attr}><span class="ic c-${c}">${ic(icon,18)}</span><span class="tx">${label}</span>${extra||''}<span class="chev">${ic('chev',16)}</span></button>`;
-  const adm=adminItems().map(i=>row(`data-go="${i.id}"`,i.icon,i.c,i.label)).join('');
-  return `<div class="stack" style="gap:18px">
-  <div class="prof"><div style="display:flex;align-items:center;gap:14px">${avatar()}<div style="min-width:0"><h2 style="font-size:20px">${esc(m.name)}</h2><p style="opacity:.75;font-size:13.5px">${esc(rolesText())}</p><p style="opacity:.55;font-size:12.5px">รหัสบุคลากร ${esc(m.staff_id)}${m.rooms.length?' · ครูประจำชั้น '+esc(m.rooms.map(r=>r.grade).join(', ')):''}</p></div></div>
-    <div class="pst"><div><b>${h.tasks.length}</b><span>งานค้าง</span></div><div><b>${unack}</b><span>ประกาศใหม่</span></div><div><b>${(h.calendar||[]).length}</b><span>กิจกรรม</span></div></div></div>
-  <div class="card" style="padding:4px 16px">
-    ${row('data-go="tasks"','list','t','งานของฉัน',h.tasks.length?`<span class="pill bad">${h.tasks.length}</span>`:'')}
-    ${row('data-go="ann"','mega','h','ประกาศ')}
-    ${row('data-go="cal"','cal','s','ปฏิทินโรงเรียน')}
-  </div>
+  const notLinked=setupTasks().length?setupTasks()[0].sub:'';
+  const adm=m.isAdmin?row('data-go="link"','key','h','ผูกบัญชีบุคลากร',notLinked?`<span class="pill warn">${esc(notLinked)}</span>`:'')+row('data-go="switch"','gear','g','เปิด–ปิดการใช้งาน'):'';
+  return head('บัญชี')+`<div class="stack" style="gap:16px">
+  <div class="card pcard"><div style="display:flex;align-items:center;gap:14px">${avatar()}<div style="min-width:0"><h2 style="font-size:18px">${esc(m.name)}</h2><p class="t2">${esc(rolesText())}</p><p class="t2">รหัสบุคลากร ${esc(m.staff_id)}${m.rooms.length?' · ครูประจำชั้น '+esc(m.rooms.map(r=>r.grade).join(', ')):''}</p></div></div>
+    <p class="okline" style="margin-top:10px">${ic('checkc',18)} ผูกกับ LINE แล้ว${m.lineName?' ('+esc(m.lineName)+')':''}</p></div>
   ${adm?`<section><div class="sec"><h3>ผู้ดูแลระบบ</h3></div><div class="card" style="padding:4px 16px">${adm}</div></section>`:''}
   <div class="card" style="padding:4px 16px">
     ${row('data-act="refresh"','refresh','g','โหลดข้อมูลใหม่')}
     <a class="mrow" href="privacy.html"><span class="ic c-g">${ic('shield',18)}</span><span class="tx">นโยบายความเป็นส่วนตัว</span><span class="chev">${ic('chev',16)}</span></a>
   </div>
   ${liff.isInClient()?'':`<button class="btn block" data-act="logout" style="color:var(--bad)">${ic('out',18)} ออกจากระบบ</button>`}
-  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.6 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.7 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
-
 /* ---------- ผูกบัญชีบุคลากร (ผอ.) ---------- */
 function pageLinkAdmin(){
   if(!S.staff){ api('admin.staff').then(r=>{S.staff=r.staff;render();}).catch(e=>toast(e.message)); return head('ผูกบัญชีบุคลากร','','','menu')+'<div class="spin"></div>'; }
@@ -731,11 +764,11 @@ function issuedSheet(r){
 
 /* ---------- สวิตช์ฟีเจอร์ (ผอ.) ---------- */
 function pageSwitch(){
-  if(!S.settings){ api('admin.settings').then(r=>{S.settings=r.settings;render();}).catch(e=>toast(e.message)); return head('สวิตช์ฟีเจอร์','','','menu')+'<div class="spin"></div>'; }
+  if(!S.settings){ api('admin.settings').then(r=>{S.settings=r.settings;render();}).catch(e=>toast(e.message)); return head('เปิด–ปิดการใช้งาน','','','menu')+'<div class="spin"></div>'; }
   const groups={};
   S.settings.forEach(s=>{ (groups[s.app]=groups[s.app]||[]).push(s); });
   const order=['hub','teacher','budget','student','parent'];
-  return head('สวิตช์ฟีเจอร์','เปิด-ปิดได้ทันที · ค่าเวลาแก้ในแท็บ settings ของ QK-Hub','','menu')+`<div class="stack" style="gap:18px">
+  return head('เปิด–ปิดการใช้งาน','เปิด-ปิดได้ทันที · ค่าเวลาและเกณฑ์ของ Q-Teacher ตั้งในแอป Q-Teacher','','menu')+`<div class="stack" style="gap:18px">
   ${Object.keys(groups).sort((a,b)=>order.indexOf(a)-order.indexOf(b)).map(app=>`<section><div class="sec"><h3>${esc(APP_NAMES[app]||app)}</h3></div><div class="card" style="padding:4px 16px">
     ${groups[app].map(s=>`<div class="row"><div class="tx"><div>${esc(s.name)}</div>${s.value||s.note?`<div class="t2">${esc([s.value,s.note].filter(Boolean).join(' · '))}</div>`:''}</div>
     <button class="sw" role="switch" aria-checked="${s.enabled}" aria-label="${esc(s.name)}" data-sw="${esc(s.app)}|${esc(s.key)}"></button></div>`).join('')}
@@ -749,6 +782,7 @@ function modal(html){ const m=document.getElementById('modal'); m.hidden=false; 
 function closeModal(){ const m=document.getElementById('modal'); m.hidden=true; m.innerHTML=''; }
 async function refresh(){ S.staff=null; S.settings=null; try{ await loadHome(); }catch(e){ toast(e.message); } }
 function go(p){
+  if(p==='cal'&&S.page!=='cal'){ S.calWin=0; }
   S.page=p; S.detail=null; render(); window.scrollTo(0,0);
   // เปิดหน้าทันทีจากข้อมูลที่มี แล้วค่อยอัปเดตเงียบๆ ถ้าข้อมูลเก่ากว่า 1 นาที
   if(['home','ann','cal','tasks'].includes(p) && Date.now()-(S.fetchedAt||0)>60000 && !S.loading){
@@ -758,14 +792,15 @@ function go(p){
 }
 
 document.addEventListener('click',async ev=>{
-  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-day],[data-ev]');
+  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-day],[data-ev],[data-win]');
   if(!t) return;
   if(t.dataset.go){ go(t.dataset.go); return; }
   if(t.dataset.ev){ eventForm({id:t.dataset.ev,date:t.dataset.evdate,title:t.dataset.evtitle,key:t.dataset.evkey}); return; }
+  if(t.dataset.win){ S.calWin=Math.max(0,Math.min(2,(S.calWin||0)+Number(t.dataset.win))); render(); return; }
   if(t.dataset.day!==undefined){ S.calDay=(t.dataset.day&&S.calDay!==t.dataset.day)?t.dataset.day:null; render(); return; }
   if(t.dataset.filter){ S.annFilter=t.dataset.filter; render(); return; }
   if(t.dataset.ann){ S.page='ann'; S.detail=t.dataset.ann; if(!S.anns) await loadAnns(); render(); window.scrollTo(0,0); return; }
-  if(t.dataset.app){ const k=t.dataset.app; if(appReady(k)) location.href=CONFIG.APP_URLS[k]; else toast(APP_NAMES[k]+' ยังไม่เปิดใช้'); return; }
+  if(t.dataset.app){ const k=t.dataset.app; if(appReady(k)) location.href=CONFIG.APP_URLS[k]; else toast(APP_NAMES[k]+' · '+appState(k)); return; }
   if(t.dataset.task){
     const ty=t.dataset.task, id=t.dataset.id;
     if(t.dataset.tapp==='teacher'){ const TAB={'leave.hr':'endorse','leave.dir':'req','out.dir':'req','out.sub':'mysub',mysub:'mysub',sub:'sub',jan:'jan',rate:'fixreq',emg:'count',work:'mytasks',sup:'mydev','leave.wait':'myreq'}; location.href=CONFIG.APP_URLS.teacher+(TAB[ty]?'#tab='+TAB[ty]:''); return; }
@@ -784,8 +819,9 @@ document.addEventListener('click',async ev=>{
   if(act==='overlay'){ if(ev.target===t) closeModal(); return; }
   if(act==='close'){ closeModal(); return; }
   if(act==='reload'){ location.reload(); return; }
+  if(act==='extRetry'){ loadExt(true); return; }
   if(act==='refresh'){ await refresh(); toast('โหลดข้อมูลใหม่แล้ว'); return; }
-  if(act==='logout'){ cacheClear(); liff.logout(); location.reload(); return; }
+  if(act==='logout'){ cacheClear(); S.ext=null; liff.logout(); location.reload(); return; }
   if(act==='back'){ S.detail=null; render(); return; }
   if(act==='compose'){ if(canWrite()) composeForm(); else toast('ระบบประกาศยังไม่เปิดใช้'); return; }
   if(act==='readers'){ showReaders(id); return; }
@@ -831,6 +867,7 @@ document.addEventListener('click',async ev=>{
   }
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+document.addEventListener('input',e=>{ if(e.target.id==='annQ'){ S.annQ=e.target.value; const pos=e.target.selectionStart; render(); const el=document.getElementById('annQ'); if(el){ el.focus(); try{el.setSelectionRange(pos,pos);}catch(_){} } } });
 
 boot();
 </script>
