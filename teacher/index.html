@@ -495,6 +495,17 @@ input[type=search]{border:1px solid var(--line);border-radius:14px;padding:10px 
 .lvbox{display:grid;gap:8px}.lvbox:empty{display:none}.lvbig b{font-size:1.9rem;line-height:1.1;color:var(--accent)}.lvrules{margin:6px 0 0;padding-left:18px;font-size:.9rem;line-height:1.55}
 .lvsig{border:1px dashed var(--line);border-radius:12px;background:#fff;touch-action:none;width:100%;height:130px;display:block}
 .btn.lvgrey,.btn.lvgrey[disabled]{background:#C9CCD8!important;border-color:#C9CCD8!important;color:#fff!important;opacity:1;cursor:not-allowed}
+.sub.bad{color:var(--bad,#E04850)}
+.daily{background:var(--surface);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);display:grid;gap:8px;margin:12px 0}
+.daily h2{margin:0}.dl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.dl li{display:flex;gap:12px;align-items:center;padding:8px 4px;border-bottom:1px solid var(--line)}.dl li:last-child{border-bottom:0}
+.dl .main{display:flex;flex-direction:column;min-width:0;gap:2px}
+.dl li.done .main b{text-decoration:line-through;opacity:.6}
+.ptick{width:32px;height:32px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;background:var(--surface);cursor:pointer;padding:0}
+.ptick svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ptick.on{background:var(--good,#1E9E66);border-color:var(--good,#1E9E66)}
+.iq{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:8px 2px;font:inherit;color:inherit}
+.iq:not(.on){opacity:.7}.iq .ptick{width:26px;height:26px}.iq .ptick svg{width:15px;height:15px}
 .flow3{display:flex;flex-wrap:wrap;gap:6px;font-size:.78rem}
 .flow3 span{background:var(--sunk);border-radius:999px;padding:3px 10px;color:var(--muted)}
 .flow3 .on{background:var(--accent-soft);color:var(--accent);font-weight:600}
@@ -840,6 +851,8 @@ function pending(){
   ACTS.forEach(ac=>ac.groups.filter(g=>g.lead===m).forEach(g=>{const n=g.students.length||g.count;if(ac.cur>=0&&ac.cur<ac.cps.length&&n&&g.checks[ac.cur]==null)add({ic:'count',h:'rose',t:'เช็คยอด '+g.name,s:ac.name+' · '+ac.cps[ac.cur],go:'count',ct:'trip',act:ac.id},0);else if(ac.cur<0&&!n)add({ic:'count',h:'rose',t:'เพิ่มรายชื่อนักเรียนที่ดูแล · '+g.name,s:ac.name,go:'count',ct:'trip',act:ac.id},3)}));
   if(ME.isJan){const n=JOBS.filter(j=>j.st===0);if(n.length)add({ic:'job',h:'amber',t:'รับงาน '+n.length+' งาน',s:n[0].t+(n.some(j=>j.prio==='ด่วน')?' · มีงานด่วน':''),go:'jan'},n.some(j=>j.prio==='ด่วน')?0:1)}
   if(ME.isGuard&&CPS.length&&(NOW_HM>='17:00'||NOW_HM<'07:00'))add({ic:'guard',h:'slate',t:'เดินตรวจคืนนี้ '+ROUNDS.length+' รอบ',s:'รอบแรก '+(ROUNDS[0]||'')+' น.',go:'patrol'},2);
+  (B.notifs||[]).forEach(n=>add({ic:'tasks',h:'blue',t:n.text,s:n.sub,go:'mywork',pv:n.id,hot:true},0));
+  if(ME.isAdmin){const w=(B.inbox||[]).filter(x=>x.st==='wait').length;if(w)add({ic:'tasks',h:'amber',t:'งานเสนอ ผอ. รอตัดสินใจ '+w+' รายการ',s:'ตอบรับ / ปฏิเสธ / มอบหมายครูคนอื่นแทน',go:'tasks'},1)}
   return a.sort((x,y)=>x.p-y.p)}
 function needCheckIn(){return!B.my.in&&isWork()&&!(B.my.leaveToday&&B.my.leaveToday.part==='เต็มวัน')&&NOW_HM<=B.rules.general.out}
 function badgeFor(t){
@@ -1004,7 +1017,7 @@ function followLine(id){const u=id===me()&&!B.leaveAll?{n:B.myStats.leaveTimes,d
 function actionList(list,limit){
   if(!list.length)return'';
   const show=limit&&!st.allPend?list.slice(0,limit):list;
-  return`<div class="actions">${show.map(a=>`<button class="action ${a.hot?'hot':''}" data-go="${a.go}" ${a.ct?`data-gct="${a.ct}"`:''} ${a.act?`data-gact="${a.act}"`:''} ${a.ot?`data-got="${a.ot}"`:''} ${a.wf?`data-gwf="${a.wf}"`:''}>${tile(a.ic,a.h)}<span class="main"><b>${esc(a.t)}</b><span class="sub">${esc(a.s)}</span></span>${svg('chev','chev')}</button>`).join('')}</div>
+  return`<div class="actions">${show.map(a=>`<button class="action ${a.hot?'hot':''}" ${a.pv?`data-pvread="${a.pv}"`:''} data-go="${a.go}" ${a.ct?`data-gct="${a.ct}"`:''} ${a.act?`data-gact="${a.act}"`:''} ${a.ot?`data-got="${a.ot}"`:''} ${a.wf?`data-gwf="${a.wf}"`:''}>${tile(a.ic,a.h)}<span class="main"><b>${esc(a.t)}</b><span class="sub">${esc(a.s)}</span></span>${svg('chev','chev')}</button>`).join('')}</div>
    ${limit&&list.length>limit?`<button class="btn sm ghost" data-allpend="1">${st.allPend?'แสดงน้อยลง':'ดูทั้งหมด '+list.length+' รายการ'}</button>`:''}`}
 function emgBanner(){
   if(!EMG.on)return'';
@@ -1052,6 +1065,87 @@ function punchCard(){
    ${my.leaveToday?`<div class="callout c-info">วันนี้มีใบ${esc(my.leaveToday.type)}${my.leaveToday.part!=='เต็มวัน'?' ('+esc(my.leaveToday.part)+')':''} · ${esc(my.leaveToday.status)}</div>`:''}
    ${btn}<p class="sub tc">${duty?'ครูเวร':'ทั่วไป'} มาไม่เกิน ${x.on} น. · หลัง ${R.late} น. นับว่าสาย · เวลาออก ${x.out} น.</p></section>`}
 
+/* =====================================================================
+ *  v2.2: งานเสนอ ผอ. · แจ้งเตือนกระดิ่ง · รายการต้องทำประจำวันของครู (เช็คอิน · เช็คชื่อกิจกรรมเช้า · สแกนเข้าสอน · งานค้าง)
+ *  ข้อมูลมาจากหลังบ้าน (boot: inbox, notifs, morning, scans) ผ่านคำสั่ง inbox.* notif.read morning.save scan.in admin.roomQr
+ * ===================================================================== */
+const MORN_LABEL={read:'เช็คชื่อการอ่านภาษาไทย',iqra:'เช็คชื่ออิกเราะอ์'};
+let inboxAddOpen=false;
+/** งานเสนอ ผอ.: ธุรการเพิ่ม → ผอ. ตอบรับ / ปฏิเสธ / มอบหมายครูคนอื่นแทน → ครูที่ได้รับมอบหมายเห็นแจ้งเตือนที่กระดิ่ง */
+function inboxPanel(){
+  if(!(ME.isAdmin||ME.isClerk))return'';
+  const L=B.inbox||[],teachers=REAL.filter(s=>s.teacher&&s.id!==me());
+  const P={wait:['รอ ผอ. ตัดสินใจ','p-warn'],accepted:['ผอ. ตอบรับแล้ว','p-good'],declined:['ผอ. ปฏิเสธ','p-bad'],delegated:['มอบหมายแล้ว','p-info']};
+  const card=x=>`<article class="card"><div class="row between"><b>${esc(x.title)}</b><span class="pill ${(P[x.st]||P.wait)[1]}">${(P[x.st]||P.wait)[0]}</span></div>
+   <p class="sub">เสนอโดย ${esc(nm(x.from))} · กำหนด ${esc(thD(x.due))}${x.note?' · '+esc(x.note):''}</p>
+   ${x.st==='accepted'?`<p class="sub">ผอ. รับงานนี้ไว้ดำเนินการเอง · ${esc(thDT(x.at))}</p>`:''}
+   ${x.st==='declined'?`<p class="sub">เหตุผล: ${esc(x.reason||'-')}</p>`:''}
+   ${x.st==='delegated'?`<div class="callout c-info"><b>มอบหมายให้ ${esc(nm(x.to))} แล้ว</b>ครูได้รับแจ้งเตือนที่กระดิ่ง · ${esc(thDT(x.at))}</div>`:''}
+   ${ME.isAdmin&&x.st==='wait'?`<div class="fld"><label for="ibr${x.id}">เหตุผล (ถ้าปฏิเสธ)</label><input type="text" id="ibr${x.id}" maxlength="200" placeholder="เช่น ติดภารกิจ ขอให้ฝ่ายอื่นดำเนินการ"></div>
+    <div class="row"><button class="btn good" data-qdec="${esc(x.id)}:accept">ตอบรับ</button><button class="btn danger" data-qdec="${esc(x.id)}:decline">ปฏิเสธ</button></div>
+    <div class="row"><select id="ibs${esc(x.id)}" aria-label="เลือกครู">${teachers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select><button class="btn pri" data-qdec="${esc(x.id)}:delegate">มอบหมายครูคนนี้แทน</button></div>`:''}</article>`;
+  const form=ME.isClerk&&inboxAddOpen?`<div class="boxed f"><div class="fld"><label for="ibt">ชื่องานที่เสนอ ผอ.</label><input type="text" id="ibt" maxlength="150" placeholder="เช่น ตอบหนังสือเชิญประชุมเครือข่าย"></div>
+    <div class="fgrid"><div class="fld"><label for="ibd">กำหนด</label><input type="date" id="ibd" value="${addDays(TODAY_ISO,5)}"></div><div class="fld"><label for="ibn">หมายเหตุ</label><input type="text" id="ibn" maxlength="200" placeholder="เช่น หนังสือจาก สพป."></div></div>
+    <div><button class="btn pri" data-qadd="1">ส่งให้ ผอ.</button></div></div>`:'';
+  return`<section class="panel"><div class="ph"><h2>งานเสนอ ผอ.${ME.isAdmin?' · ตัดสินใจ':''}</h2>${ME.isClerk?`<button class="btn sm pri" data-qaddopen="1">${inboxAddOpen?'ปิด':'+ เพิ่มงานเสนอ ผอ.'}</button>`:''}</div>
+   <p class="sub">${ME.isAdmin?'ผอ. ตอบรับ ปฏิเสธ หรือมอบหมายครูคนอื่นแทนได้ · เมื่อมอบหมายแล้ว งานเข้า "งานที่ได้รับ" ของครู และมีแจ้งเตือนที่กระดิ่ง':'ธุรการเพิ่มงานเสนอ ผอ. ได้ที่นี่ · ผอ. ตอบรับ ปฏิเสธ หรือมอบหมายต่อ'}</p>
+   ${form}${L.length?`<div class="g2">${L.map(card).join('')}</div>`:empty('ยังไม่มีงานเสนอ')}</section>`}
+/** รายการต้องทำวันนี้ (หน้าแรกของครู): เช็คอิน · เช็คชื่อกิจกรรมเช้า (จ–อ อ่านภาษาไทย / พ–พฤ อิกเราะอ์ / ศ ไม่มี) · สแกนเข้าสอนทุกคาบ · งานค้าง */
+function dailyList(){
+  if(!ME.isTeacher)return'';
+  const M=B.morning||{kind:'',done:null},sc=B.scans||{},rows=[];
+  rows.push({k:'in',t:'เช็คอินมาโรงเรียน',s:B.my.in?'ลงเวลาแล้ว '+B.my.in.time+' น.':!isWork()?'วันนี้'+B.today.holiday+' · ไม่ต้องลงเวลา':'ยังไม่ได้ลงเวลา · แตะเพื่อไปที่ปุ่มลงเวลา',done:!!B.my.in||!isWork()});
+  if(M.kind&&isWork()&&(ME.rooms||[]).length)rows.push({k:'morn',t:MORN_LABEL[M.kind],s:M.done?'เช็คแล้ว '+M.done.present+'/'+M.done.total+' คน · '+M.done.at+' น.':'ชั้น '+(ME.cls||'-')+' · '+(M.kind==='read'?'เช็คชื่อนักเรียนที่เข้าชั่วโมงอ่านภาษาไทยตอนเช้า':'เช็คชื่อนักเรียนที่เข้าอิกเราะอ์ตอนเช้า'),done:!!M.done});
+  if(isWork())(B.myTT||[]).forEach(p=>{const t=sc[p.p],late=!t&&clockNow()>p.to;
+    rows.push({k:'scan:'+p.p,t:'สแกนเข้าสอน คาบ '+p.p+' · '+(p.cls||'')+' '+(p.subj||''),s:t?'สแกนแล้ว '+t+' น.':late?'เลยเวลา '+p.to+' ยังไม่ได้สแกน':p.from+'–'+p.to+' น. · สแกน QR หน้าห้อง '+(p.cls||''),done:!!t,warn:late})});
+  TASKS.filter(t=>t.own===me()&&['todo','doing','fix','sent'].includes(t.st)&&dayDiff(t.due)<=7).sort((a,b)=>dayDiff(a.due)-dayDiff(b.due)).forEach(t=>
+    rows.push({k:'w:'+t.id,t:t.t,s:(t.st==='sent'?'ส่งแล้ว · รอตรวจ':dayDiff(t.due)<0?'เลยกำหนด '+(-dayDiff(t.due))+' วัน':dayDiff(t.due)===0?'ครบกำหนดวันนี้':'ครบกำหนด '+t.dueTx)+(t.self?'':' · มอบหมายโดย '+nm(t.by)),done:t.st==='sent'||t.st==='done'}));
+  const n=rows.filter(r=>r.done).length;
+  return`<section class="daily" aria-label="รายการประจำวัน"><div class="row between"><h2>รายการต้องทำวันนี้</h2><span class="count">${n}/${rows.length}</span></div>
+   <div class="prog thin" aria-hidden="true"><i style="width:${Math.round(n/rows.length*100)}%"></i></div>
+   <ul class="dl">${rows.map(r=>`<li class="${r.done?'done':''}"><button class="ptick ${r.done?'on':''}" data-qtick="${esc(r.k)}" aria-pressed="${r.done}" aria-label="${esc(r.t)}${r.done?' (เสร็จแล้ว)':''}">${r.done?TICK:''}</button><span class="main"><b>${esc(r.t)}</b><span class="sub ${r.warn?'bad':''}">${esc(r.s)}</span></span></li>`).join('')}</ul>
+   ${!M.kind&&isWork()?'<p class="sub">วันนี้ไม่มีเช็คชื่อกิจกรรมเช้า (จ–อ อ่านภาษาไทย · พ–พฤ อิกเราะอ์ · ศุกร์ไม่มี)</p>':''}</section>`}
+function morningForm(){
+  const M=B.morning||{},label=MORN_LABEL[M.kind]||'เช็คชื่อกิจกรรมเช้า';
+  const go=list=>{const mine=list.filter(s=>s.cls===ME.cls);
+    modal(`<div class="row between"><h2>${esc(label)} · ${esc(ME.cls||'')}</h2><button class="btn sm" data-close="1">ปิด</button></div>
+     <p class="sub">แตะชื่อที่ไม่มา · ค่าเริ่มต้น = มาครบ</p>
+     <div class="steplist" id="mornList">${mine.map(s=>`<button type="button" class="iq on" data-qiq="${esc(s.id)}"><span class="ptick on">${TICK}</span>${esc(s.no)}. ${esc(s.name)}</button>`).join('')||'<p class="empty">ยังไม่มีรายชื่อนักเรียนในชั้นนี้</p>'}</div>
+     ${mine.length?`<div class="row"><button class="btn pri big wide" data-qiqsave="1">บันทึกการเช็คชื่อ</button></div>`:''}`)};
+  api('sec',{name:'students'}).then(j=>go((j.sec&&j.sec.list)||[])).catch(e=>toast(e.message));
+}
+async function scanIn(p){
+  const x=(B.myTT||[]).find(q=>q.p===p);if(!x)return;
+  const code=await scanCode('หน้าห้อง '+(x.cls||''),'QKAWA-RM-');if(!code)return;
+  closeModal();act('scan.in',{data:{period:p,code}}).catch(()=>{});
+}
+function notifRead(id){B.notifs=(B.notifs||[]).filter(n=>n.id!==id);api('notif.read',{id}).catch(()=>{})}
+/** QR ห้องเรียน (หน้าตั้งค่า ผอ.): พิมพ์ติดหน้าห้อง ใช้สแกนเข้าสอน */
+function roomQrPanel(A){
+  const L=A.roomQr||[];
+  return`<h3>QR ห้องเรียน (สแกนเข้าสอน)</h3><p class="sub">พิมพ์ติดหน้าห้องเรียน · ครูสแกนตอนเข้าสอนแต่ละคาบ ระบบตรวจว่าเป็นห้องเดียวกับคาบในตารางสอน</p>
+   ${L.some(r=>r.code)?`<div class="qrgrid">${L.filter(r=>r.code).map(r=>`<div class="qrcard" id="rm-${esc(r.room_id)}">${qrSvg(r.code)}<b>${esc(r.grade)}</b><code>${esc(r.code)}</code><div class="row noprint"><button class="btn sm" data-print="rm-${esc(r.room_id)}">พิมพ์</button></div></div>`).join('')}</div>`:empty('ยังไม่มี QR ห้องเรียน')}
+   ${L.some(r=>!r.code)?`<div><button class="btn pri" data-qroom="1">สร้าง QR ห้องเรียนที่ยังไม่มี (${L.filter(r=>!r.code).length} ห้อง)</button></div>`:''}`}
+const TQ={click(d,t){
+  if(d.qaddopen){inboxAddOpen=!inboxAddOpen;render();return true}
+  if(d.qadd){const ti=($('#ibt').value||'').trim();if(!ti){toast('กรุณาใส่ชื่องาน');return true}
+    act('inbox.add',{data:{title:ti,due:$('#ibd').value,note:($('#ibn').value||'').trim()}},t).then(()=>{inboxAddOpen=false;render()}).catch(()=>{});return true}
+  if(d.qdec){const[id,op]=d.qdec.split(':');
+    const data=op==='delegate'?{to:$('#ibs'+id).value}:op==='decline'?{reason:($('#ibr'+id).value||'').trim()}:{};
+    act('inbox.decide',{id,op,data},t).catch(()=>{});return true}
+  if(d.qtick){const k=d.qtick;
+    if(k==='in'){if(!B.my.in){const el=$('#punch');if(el)el.scrollIntoView({behavior:'smooth'})}return true}
+    if(k==='morn'){if(!(B.morning||{}).done)morningForm();return true}
+    if(k.indexOf('scan:')===0){const p=k.slice(5);if(!(B.scans||{})[p])scanIn(p);return true}
+    if(k.indexOf('w:')===0){const wid=k.slice(2),w=TASKS.find(x=>x.id===wid);if(w&&!['sent','done'].includes(w.st))act('work.edit',{data:{wid,op:'pct',v:100}},t).catch(()=>{});return true}
+    return true}
+  if(d.qiq){t.classList.toggle('on');const tk=t.querySelector('.ptick');tk.classList.toggle('on');tk.innerHTML=t.classList.contains('on')?TICK:'';return true}
+  if(d.qiqsave){const all=document.querySelectorAll('#mornList .iq'),on=document.querySelectorAll('#mornList .iq.on');
+    act('morning.save',{data:{present:on.length,total:all.length}},t).then(()=>closeModal()).catch(()=>{});return true}
+  if(d.qroom){act('admin.roomQr',{},t).catch(()=>{});return true}
+  if(d.pvread){notifRead(d.pvread);return false}
+  return false}};
+
 /* ---------- หน้าหลัก ---------- */
 function quick(){const r=ME.role,Q={
   dir:[['approve','รออนุมัติ','endorse','amber'],['sub','จัดสอนแทน','sub','violet'],['ops','อาคารสถานที่','ops','amber'],['dev','พัฒนา/นิเทศ','dev','green']],
@@ -1066,6 +1160,7 @@ V.home=()=>{
   const act=pending();
   return`${emgBanner()}
    ${punchCard()}
+   ${dailyList()}
    ${ME.isAdmin&&!EMG.on?`<button class="emgbtn" data-go="count" data-gct="emg">${svg('sos')}<span><b>เหตุฉุกเฉิน / ซ้อมอพยพ</b><small>เปิดหน้าตรวจประเภทเหตุและจุดรวมพลก่อนเริ่ม</small></span></button>`:''}
    <div class="sec" id="actions"><h2>งานที่ต้องดำเนินการ</h2>${act.length?`<span class="count">${act.length}</span>`:''}</div>
    ${act.length?actionList(act,4):'<p class="empty ok">ไม่มีงานค้าง</p>'}
@@ -1117,9 +1212,10 @@ function staffRound(S){
    ${isMobile()?`<ul class="slist">${sort.map(r=>`<li><div class="srow static"><span class="main"><b>${esc(r.s.name)}</b><span class="sub">สาย <b class="num ${lateFlag(r)?'bad':''}">${r.late}</b> ครั้ง · ไฟเหลือง ${r.yel} · ลา <b class="num ${leaveFlag(r)?'bad':''}">${r.n}</b> ครั้ง ${r.d} วัน</span></span>${lateFlag(r)||leaveFlag(r)?'<span class="pill p-warn">ถึงเกณฑ์ติดตาม</span>':''}</div></li>`).join('')}</ul>`
    :`<div class="scroll"><table><thead><tr><th>บุคลากร</th><th class="r">มาสาย (ครั้ง)</th><th class="r">ไฟเหลือง</th><th class="r">ลา (ครั้ง)</th><th class="r">ลา (วัน)</th><th></th></tr></thead><tbody>${sort.map(r=>`<tr><td>${esc(r.s.name)}</td><td class="r num ${lateFlag(r)?'bad':''}">${r.late}</td><td class="r num">${r.yel}</td><td class="r num">${r.n}</td><td class="r num">${r.d}</td><td>${lateFlag(r)||leaveFlag(r)?'<span class="pill p-warn">ถึงเกณฑ์ติดตาม</span>':''}</td></tr>`).join('')}</tbody></table></div>`}
    <p class="note">นับจากสถานะที่บันทึกตอนลงเวลา (แก้เวลาในตั้งค่าภายหลังไม่คำนวณย้อนหลัง) · การลานับเฉพาะใบที่อนุมัติแล้ว</p></section>`}
-function rankPanel(S,full){const R=S.ranking;const list=R[st.rank]||[];
+function rankPanel(S,full){const R=S.ranking;const list=(R[st.rank]||[]).filter(r=>!/ภารโรง|รปภ|รักษาความปลอดภัย/.test((SM[r[0]]||{}).pos||''));
   return`<section class="panel"><div class="ph"><h2>ดาวมาเช้า</h2>${seg('rank',[['w','สัปดาห์นี้'],['m','เดือนนี้']],st.rank)}</div>
    <p class="period">${esc(st.rank==='w'?R.wLabel:R.mLabel)}</p>
+   <div class="callout c-info"><b>ดาวมาเช้า นับเฉพาะครูและบุคลากรทั่วไป</b>ไม่รวมนักการภารโรงและ รปภ. เพราะสองตำแหน่งนี้เข้างานเป็นเวร/กะ เวลามาจึงเทียบกับคนอื่นไม่ได้ · ยิ่งมาก่อนเวลา "นับว่าสาย" มาก อันดับยิ่งสูง</div>
    ${list.length?`<ol class="rank">${list.map(([id,min,n],i)=>`<li ${id===me()?'class="mine"':''}><span class="medal ${i<3?'m'+(i+1):''}">${R.full||i<3?i+1:'–'}</span><span>${esc(nm(id))}<small class="sub"> · ${n} วัน</small></span><span class="num" style="font-size:.84rem">${min} นาที</span></li>`).join('')}</ol>`:empty('ยังไม่มีข้อมูลลงเวลาในช่วงนี้')}
    <p class="note">นาทีที่มาก่อน ${esc(R.base||B.rules.late)} น. โดยเฉลี่ย (เวลา "นับว่าสาย" จากค่าตั้งปัจจุบัน) · ข้อมูลชุดเดียวกันทุกหน้า · ไม่นับบัญชีทดสอบ${R.full?'':' · ครูเห็น 3 อันดับแรกและของตนเอง'}</p></section>`}
 function attText(){
@@ -1450,7 +1546,7 @@ function myTaskForm(){return`<form class="f boxed" id="myTaskForm">
   <div><button class="btn pri" type="submit">เพิ่มงาน</button></div></form>`}
 V.tasks=()=>{
   const list=sortTasks(workFilterList(TASKS,st.wf));
-  return`<section class="panel"><div class="ph"><h2>งานที่มอบหมาย</h2><button class="btn sm pri" data-addtask="1">${st.addTask?'ปิด':'+ เพิ่มงาน'}</button></div>
+  return`${inboxPanel()}<section class="panel"><div class="ph"><h2>งานที่มอบหมาย</h2><button class="btn sm pri" data-addtask="1">${st.addTask?'ปิด':'+ เพิ่มงาน'}</button></div>
    ${st.addTask?taskForm():''}
    ${TASKS.length?workFilters(TASKS):''}
    ${!TASKS.length?empty('ยังไม่มีงาน'):list.length?`<div class="tasks">${list.map(t=>taskCard(t,'all')).join('')}</div>`:empty('ไม่มีงานในกลุ่มนี้')}
@@ -1714,7 +1810,8 @@ V.set=()=>secBox('admin',A=>{const R=B.rules,Q=B.quota;
     <h3>QR สำรองสำหรับลงเวลา</h3><p class="sub">ใช้เมื่อ GPS ไม่พร้อม · พิมพ์ติดในโรงเรียน</p>
     <div class="qrgrid">${A.qrPoints.map(p=>`<div class="qrcard" id="qa-${esc(p.code)}" style="${p.active?'':'opacity:.5'}">${qrSvg(p.code)}<b>${esc(p.name)}</b><code>${esc(p.code)}</code><div class="row noprint"><button class="btn sm" data-print="qa-${esc(p.code)}">พิมพ์</button><button class="btn sm ${p.active?'danger':''}" data-qrtoggle="${esc(p.code)}">${p.active?'ปิดใช้':'เปิดใช้'}</button></div></div>`).join('')}</div>
     <form class="row" id="qrAddForm"><input type="text" id="qa1" placeholder="เพิ่มจุด QR เช่น ห้องพักครู" style="flex:1 1 200px" aria-label="ชื่อจุด QR"><button class="btn pri" type="submit">+ เพิ่ม</button></form>
-    <p class="note">QR ที่ติดถาวรอาจถูกถ่ายรูปไปใช้ที่อื่นได้ ถ้าสงสัย ให้เพิ่มจุดใหม่แล้วปิดจุดเดิม</p>`)}
+    <p class="note">QR ที่ติดถาวรอาจถูกถ่ายรูปไปใช้ที่อื่นได้ ถ้าสงสัย ให้เพิ่มจุดใหม่แล้วปิดจุดเดิม</p>
+    ${roomQrPanel(A)}`)}
   ${setSec('ops','งานประจำภารโรงและรอบตรวจ รปภ.','แม่แบบงานประจำ จุดตรวจ QR รอบเวร',`<h3>งานประจำภารโรง (แม่แบบ ใช้ทุกวันทำการ)</h3>
     ${A.routines.length?`<ul class="list">${A.routines.map(r=>`<li><span class="num sub" style="min-width:44px">${esc(r.when||'–')}</span><div class="main">${esc(r.t)}</div><button class="btn sm danger" data-rtdel="${r.id}">นำออก</button></li>`).join('')}</ul>`:empty('ยังไม่มีงานประจำ')}
     <form class="row" id="routineForm"><input type="text" id="rt1" placeholder="เพิ่มงานประจำ เช่น เช็ดกระจกห้องสมุด" style="flex:1 1 200px" aria-label="งานประจำใหม่"><input type="time" id="rt2" value="10:00" style="width:auto" aria-label="เวลา"><button class="btn" type="submit">เพิ่ม</button></form>
@@ -1769,6 +1866,7 @@ document.addEventListener('click',async e=>{
   if(e.target.id==='sheet'){st.sheet=false;renderChrome();return}
   const ov=e.target.closest('[data-ov]');if(ov&&e.target===ov){closeModal();return}
   const t=e.target.closest('button,[data-reload]');if(!t)return;const d=t.dataset;
+  if(TQ.click(d,t))return;
   if(d.reload){location.reload();return}
   if(d.close){closeModal();return}
   if(d.sheet){st.sheet=d.sheet==='1';renderChrome();return}
