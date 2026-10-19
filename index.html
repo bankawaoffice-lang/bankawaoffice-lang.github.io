@@ -239,6 +239,40 @@ h1,h2,h3,.stat .v,.ring .v b,.ev .d b,.prof .pst b,.wd b,.brand b,.code,.intro .
 .hdr .bell{box-shadow:none}
 .hdr .avatar{border:2px solid rgba(255,255,255,.35)}
 @media (min-width:1000px){.hdr{margin:-28px -34px 24px;padding:28px 34px 30px;border-radius:0 0 32px 32px}}
+/* การ์ดความสำเร็จเล็กๆ ของวันนี้ + ปุ่มลิงก์ในประกาศ */
+.win{display:flex;gap:14px;align-items:flex-start;background:var(--card);border-radius:20px;padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--ok)}
+.win.hello{border-left-color:var(--pri)}
+.win .ic{width:44px;height:44px;border-radius:50%}
+.win .k{font-size:12.5px;color:var(--muted)}
+.win h3{margin:2px 0 0}
+.win .pr{font-size:14px;color:var(--muted);margin-top:4px}
+.win .dt{font-size:12.5px;color:var(--muted);margin-top:6px}
+.win.cele{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--ok-bg) 0%,var(--card) 75%);padding:18px 18px 16px}
+.win.cele .ic{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;box-shadow:0 8px 20px rgba(30,158,102,.3)}
+.win.cele .ic svg{width:34px;height:34px}
+.win .big{font-family:var(--fh);font-size:21px;font-weight:600;line-height:1.3;color:var(--ink);margin-top:2px}
+.win .what{font-size:16px;font-weight:600;margin-top:4px}
+.win.cele .pr{font-size:14.5px}
+.win .sp{position:absolute;font-size:20px;line-height:1;animation:twk 2.4s ease-in-out infinite;pointer-events:none}
+.win .sp.a{top:10px;right:16px}.win .sp.b{top:46px;right:48px;font-size:15px;animation-delay:.7s}.win .sp.c{bottom:58px;right:14px;font-size:16px;animation-delay:1.3s}
+@keyframes twk{0%,100%{transform:scale(.8) rotate(-8deg);opacity:.7}50%{transform:scale(1.15) rotate(8deg);opacity:1}}
+.win .cf{position:absolute;top:0;width:8px;height:12px;border-radius:2px;pointer-events:none;opacity:0;animation:cf var(--du) cubic-bezier(.2,.7,.4,1) var(--dl) 1 forwards}
+@keyframes cf{0%{opacity:1;transform:translate(0,-14px) rotate(0)}100%{opacity:0;transform:translate(var(--dx),190px) rotate(var(--r))}}
+.win .acts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.thx{position:relative;display:inline-flex}
+.thx>button{border:0;background:var(--ok);color:#fff;border-radius:999px;padding:7px 16px;font-size:13.5px;font-weight:500}
+.thx .st{position:absolute;left:50%;top:50%;font-size:14px;line-height:1;color:var(--warn);pointer-events:none;animation:bs .8s ease-out forwards}
+@keyframes bs{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.2)}}
+@media (prefers-reduced-motion:reduce){.win .cf,.thx .st{display:none}.win .sp{animation:none}}
+/* ลิงก์แนบในประกาศ (preview) */
+.annw{background:var(--card);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.annw .ann{box-shadow:none;background:none;border-radius:0}
+.lks{display:flex;flex-direction:column;gap:8px}
+.annw .lks{padding:0 16px 14px}
+a.lk{display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;background:var(--pri);color:var(--on-pri);border-radius:14px;padding:11px 16px;font-weight:600;font-size:14.5px;min-width:0}
+a.lk span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.lk:hover{filter:brightness(1.06)}
+a.lk:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .avbtn{border:0;background:none;padding:0;border-radius:50%}
 .sec .cnt{display:inline-block;min-width:22px;padding:0 7px;border-radius:999px;background:var(--bad);color:#fff;font-size:12px;text-align:center;vertical-align:2px;font-family:var(--f)}
 .okline{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin:2px 4px}
@@ -312,7 +346,9 @@ refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/>',
 shield:'<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>',
 star:'<path d="M12 4l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z"/>',
 flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
-pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>'
+pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',
+trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8M9 17h6"/>',
+ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
 };
 const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"${s?` style="width:${s}px;height:${s}px"`:''}>${ICON[n]||''}</svg>`;
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -523,6 +559,12 @@ function taskRow(t){
   const [icn,col,pc]=map[t.type]||['list','c-g',''];
   return `<button class="task" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}" data-tapp="${esc(t.app||'')}"><span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(t.title)}</span><span class="t2">${esc(t.sub||'')}</span></span><span class="pill ${pc}">${esc(t.app==='hub'?(SRC[t.type]||'หน้ากลาง'):(APP_NAMES[t.app]||''))}</span></button>`;
 }
+/** ปุ่มลิงก์ในประกาศ: ลิงก์ในรายการ links (ถ้ามี) และลิงก์ไฟล์แนบ (attachments) ที่เป็น https */
+function linkBtns(a){
+  const ls=(a.links||[]).filter(l=>/^https?:\/\/\S+$/i.test(l.url||''));
+  if(a.attachments&&/^https?:\/\/\S+$/i.test(a.attachments)) ls.push({url:a.attachments,label:'เปิดไฟล์แนบ'});
+  return ls.length?`<div class="lks">${ls.map(l=>`<a class="lk" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"><span><small style="opacity:.85;font-weight:500">กดลิงก์ &gt;</small> ${esc(l.label||'เปิดลิงก์')}</span>${ic('ext',18)}</a>`).join('')}</div>`:'';
+}
 function annCard(a){
   const pills=[];
   if(a.pinned) pills.push(`<span class="pill pri">${ic('tack',12)} ปักหมุด</span>`);
@@ -532,8 +574,8 @@ function annCard(a){
   if(a.expired) pills.push('<span class="pill">หมดอายุ</span>');
   if(a.due_date&&!a.expired) pills.push(`<span class="pill warn">ส่ง ${esc(thDate(a.due_date,{day:'numeric',month:'short'}))}</span>`);
   if(a.canAck) pills.push(a.acked?'<span class="pill ok">รับทราบแล้ว</span>':'<span class="pill bad">ยังไม่รับทราบ</span>');
-  return `<button class="ann" data-ann="${esc(a.id)}"><h3>${esc(a.title)}</h3><p class="pv">${esc(a.body_th)}</p>
-    <div class="meta">${pills.join('')}<span>${esc(a.audienceLabel)}</span><span>${esc(a.author)}</span><span>${esc(thDT(a.created_at))}</span></div></button>`;
+  return `<div class="annw"><button class="ann" data-ann="${esc(a.id)}"><h3>${esc(a.title)}</h3><p class="pv">${esc(a.body_th)}</p>
+    <div class="meta">${pills.join('')}<span>${esc(a.audienceLabel)}</span><span>${esc(a.author)}</span><span>${esc(thDT(a.created_at))}</span></div></button>${linkBtns(a)}</div>`;
 }
 function evRow(c){
   const d=d8(c.date);
@@ -583,6 +625,21 @@ function eventForm(ev){
 }
 function annOffNote(){ return (!S.annOn&&S.me.isAdmin)?`<p class="note warn">ระบบประกาศยังปิดอยู่ บุคลากรอื่นยังไม่เห็น เปิดได้ที่ "เปิด–ปิดการใช้งาน" ในหน้าบัญชี</p>`:''; }
 /* ---------- หน้าแรก ---------- */
+/* ---------- ความสำเร็จเล็กๆ ของวันนี้ ---------- */
+/* ถ้าหลังบ้านส่ง home.win = {title, praise} มาในอนาคต จะขึ้นการ์ดฉลอง ไม่มีก็ขึ้นข้อความให้กำลังใจ */
+const WIN_HELLO=['สวัสดีวันใหม่ ขอให้เป็นวันที่ราบรื่น','วันนี้ค่อยๆ ไปทีละอย่าง ก็พอแล้ว','ขอบคุณที่ดูแลนักเรียนอย่างเต็มที่','พักดื่มน้ำสักแก้ว แล้วไปต่อกันนะ','ทุกความตั้งใจเล็กๆ มีความหมายต่อเด็กๆ','ยิ้มสักนิด วันนี้จะดีขึ้นอีกหน่อย','ขอบคุณที่เป็นกำลังสำคัญของบ้านกาวะ','งานที่ยังไม่เสร็จ พรุ่งนี้ค่อยต่อก็ได้','วันนี้ทำเท่าที่ไหว ก็เก่งแล้ว','เด็กๆ จำความใจดีของครูได้เสมอ','เริ่มต้นเล็กๆ ก็ถือว่าเริ่มแล้ว','ขอให้วันนี้มีเรื่องดีๆ เข้ามาสักเรื่อง','ขอบคุณที่ไม่ยอมแพ้ในวันที่เหนื่อย','อีกวันที่เราทำเต็มที่ร่วมกัน'];
+function winIdx(){ const d=d8(S.home.today.date); return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5); }
+function winCard(){
+  const i=winIdx(), w=S.home.win;
+  if(w&&w.title){
+    let cf=''; if(S.confetti!==false){ const cols=['--pri','--pri2','--ok','--warn','--p-c','--h-c']; for(let k=0;k<26;k++) cf+=`<i class="cf" style="left:${(k*3.9+Math.random()*3).toFixed(1)}%;background:var(${cols[k%6]});--dx:${Math.round(Math.random()*60-30)}px;--r:${Math.round(Math.random()*540-270)}deg;--du:${(1.5+Math.random()*.9).toFixed(2)}s;--dl:${(Math.random()*.5).toFixed(2)}s"></i>`; }
+    S.confetti=false;
+    return `<section><div class="win cele">${cf}<span class="sp a" aria-hidden="true">✨</span><span class="sp b" aria-hidden="true">🎉</span><span class="sp c" aria-hidden="true">✨</span>
+      <span class="ic">${ic('trophy')}</span><div style="flex:1;min-width:0"><p class="k">ความสำเร็จเล็กๆ ของวันนี้</p><p class="big">ยอดเยี่ยมมากครับ! 🎉</p><p class="what">${esc(w.title)}</p>${w.praise?`<p class="pr">${esc(w.praise)}</p>`:''}<p class="dt">${esc(thDate(S.home.today.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>
+      <div class="acts"><span class="thx"><button type="button" data-act="thanks">ขอบคุณครับ 🙏</button></span></div></div></div></section>`;
+  }
+  return `<section><div class="win hello"><span class="ic c-t">${ic('sun',22)}</span><div style="flex:1;min-width:0"><p class="k">ความสำเร็จเล็กๆ ของวันนี้</p><h3>${esc(WIN_HELLO[i%14])}</h3><p class="pr">วันนี้ยังไม่มีความสำเร็จที่บันทึกไว้ ไม่เป็นไร ค่อยๆ ไปก็ได้</p></div></div></section>`;
+}
 function pageHome(){
   const h=S.home, m=S.me, t=h.today;
   const tasks=myTasks();
@@ -604,8 +661,8 @@ function pageHome(){
     ${nextHol&&!ups.some(c=>c.kind==='holiday')?`<p class="linkline">วันหยุดถัดไป: ${esc(nextHol.title)} · ${esc(thDate(nextHol.date,{day:'numeric',month:'short'}))}</p>`:''}</section>`;
   const anns=(S.annOn||m.isAdmin)?`<section><div class="sec"><h3>ประกาศล่าสุด</h3><button data-go="ann">ดูทั้งหมด</button></div><div class="list">${annOffNote()}
     ${h.announcements.length?h.announcements.slice(0,3).map(annCard).join(''):'<p class="okline">ยังไม่มีประกาศ</p>'}</div></section>`:'';
-  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${todo}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
-  return `${top}<div class="stack">${todo}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${winCard()}${todo}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
+  return `${top}<div class="stack">${winCard()}${todo}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
 /* ---------- งานของฉัน ---------- */
 function pageTasks(){
@@ -653,7 +710,7 @@ function pageAnnDetail(){
     ${a.body_ms?`<div><p style="font-size:12.5px;color:var(--muted);margin-bottom:4px">Bahasa Melayu</p><p class="body">${esc(a.body_ms)}</p></div>`:''}
     ${a.event_date?`<p class="note">${ic('cal',16)} วันกิจกรรม ${esc(thDate(a.event_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
     ${a.due_date?`<p class="note warn">${ic('clock',16)} กำหนดส่งงาน ${esc(thDate(a.due_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
-    ${a.attachments?`<p><a href="${esc(a.attachments)}" target="_blank" rel="noopener">${ic('link',16)} <small style="opacity:.85;font-weight:500">กดลิงก์ &gt;</small> เปิดไฟล์แนบ</a></p>`:''}
+    ${linkBtns(a)}
     ${a.expires_on?`<p style="font-size:13px;color:var(--muted)">แสดงถึง ${esc(thDate(a.expires_on))}</p>`:''}
     ${acts.join('')}
   </article>`;
@@ -835,6 +892,7 @@ document.addEventListener('click',async ev=>{
   if(act==='refresh'){ await refresh(); toast('โหลดข้อมูลใหม่แล้ว'); return; }
   if(act==='logout'){ cacheClear(); S.ext=null; liff.logout(); location.reload(); return; }
   if(act==='back'){ S.detail=null; render(); return; }
+  if(act==='thanks'){ const w=t.parentNode; for(let k=0;k<10;k++){ const a=k/10*2*Math.PI, r=34+Math.random()*22, e=document.createElement('span'); e.className='st'; e.textContent='★'; e.style.setProperty('--dx',Math.round(Math.cos(a)*r)+'px'); e.style.setProperty('--dy',Math.round(Math.sin(a)*r)+'px'); w.appendChild(e); setTimeout(()=>e.remove(),900); } return; }
   if(act==='compose'){ if(canWrite()) composeForm(); else toast('ระบบประกาศยังไม่เปิดใช้'); return; }
   if(act==='readers'){ showReaders(id); return; }
   if(act==='addEv'){ eventForm(null); return; }
