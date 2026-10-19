@@ -492,6 +492,9 @@ input[type=search]{border:1px solid var(--line);border-radius:14px;padding:10px 
 .who1 .avatar{width:36px;height:36px}
 .calc{font-size:.9rem;background:var(--accent-soft);border-radius:12px;padding:8px 12px}
 .calc:empty{display:none}
+.lvbox{display:grid;gap:8px}.lvbox:empty{display:none}.lvbig b{font-size:1.9rem;line-height:1.1;color:var(--accent)}.lvrules{margin:6px 0 0;padding-left:18px;font-size:.9rem;line-height:1.55}
+.lvsig{border:1px dashed var(--line);border-radius:12px;background:#fff;touch-action:none;width:100%;height:130px;display:block}
+.btn.lvgrey,.btn.lvgrey[disabled]{background:#C9CCD8!important;border-color:#C9CCD8!important;color:#fff!important;opacity:1;cursor:not-allowed}
 .flow3{display:flex;flex-wrap:wrap;gap:6px;font-size:.78rem}
 .flow3 span{background:var(--sunk);border-radius:999px;padding:3px 10px;color:var(--muted)}
 .flow3 .on{background:var(--accent-soft);color:var(--accent);font-weight:600}
@@ -1185,17 +1188,133 @@ V.myreq=()=>{
      <div class="row">${r.hasFile?`<button class="btn sm" data-evid="${r.id}">ดูหลักฐาน</button>`:''}${r.canBack?`<button class="btn sm good" data-back="${r.id}">กลับถึงโรงเรียนแล้ว</button>`:''}${r.kind==='gov'&&r.st==='approved'&&!r.report?`<button class="btn sm pri" data-report="${r.id}">เขียนรายงานหลังอบรม</button>`:''}${r.report?'<span class="pill p-good">ส่งรายงานแล้ว</span>':''}${r.canCancel?`<button class="btn sm danger" data-rcancel="${r.id}:${r.kind}">ยกเลิก</button>`:''}</div></article>`).join('')}</div>`:empty('ยังไม่มีคำขอ')}</section>`;
 };
 function leaveForm(){
-  const myTypes=(B.leaveTypes||[]).filter(x=>x!=='ไปราชการ');
   return`<form class="f" id="fLeave">
-   <div class="fld"><span class="lbl">ประเภทการลา</span><div class="opts">${myTypes.map((x,i)=>`<label><input type="radio" name="lt" value="${esc(x)}" ${i===0?'checked':''}>${esc(x)}</label>`).join('')}</div></div>
+   ${lvTypeSelect()}
    <div class="fgrid"><div class="fld"><label for="l1">ตั้งแต่</label><input type="date" id="l1" value="${TODAY_ISO}"></div><div class="fld"><label for="l2">ถึง</label><input type="date" id="l2" value="${TODAY_ISO}"></div>
    <div class="fld" id="lpart"><label for="l5">ช่วงเวลา</label><select id="l5"><option>เต็มวัน</option><option>ครึ่งวันเช้า</option><option>ครึ่งวันบ่าย</option></select></div></div>
-   <p class="calc" id="lDays" aria-live="polite"></p>
+   <p class="calc" id="lDays" aria-live="polite"></p><div id="lSum" class="lvbox"></div>
    <div class="fld"><label for="l3">เหตุผล</label><textarea id="l3" required placeholder="เช่น ไข้หวัด แพทย์ให้พัก"></textarea></div>
    ${fileField('l4','หลักฐาน (ถ้ามี) เช่น ใบรับรองแพทย์ บัตรนัด','เก็บแบบส่วนตัว เปิดได้เฉพาะท่าน หัวหน้างานบุคคล และ ผอ.')}
+   ${lvExtraFields()}
    <div class="note">ในรอบนี้: ${followLine(me())}</div>
    <p class="note">${ME.isDirector?'ใบของ ผอ.: บันทึกเป็น "รอผู้มีอำนาจ" แล้ว ผอ. บันทึกผลภายหลัง (ระบบไม่อนุมัติให้อัตโนมัติ)':ME.isHR||!B.hasHR?'ส่งถึง ผอ. อนุมัติ':'ส่งถึงหัวหน้างานบุคคลเห็นชอบ แล้วถึง ผอ. อนุมัติ'} · ถ้าเกินเกณฑ์ติดตามยังยื่นได้ โดยแนบเหตุผลและหลักฐาน</p>
    <div><button class="btn pri big" type="submit">ตรวจแล้ว ยื่นใบลา</button></div></form>`}
+/* =====================================================================
+ *  ระบบลา 11 ประเภทตามระเบียบ (อยู่ในฟอร์มใบลา) — สรุประเบียบเพื่อช่วยตรวจทานเบื้องต้น
+ *  ประเภทที่หลังบ้านยังไม่รองรับ (be ว่าง) ดู/คำนวณ/Export PDF ได้ แต่ยื่นผ่านระบบยังไม่ได้
+ * ===================================================================== */
+const LV_MAXT=6, LV_NEAR_D=3;   // เกณฑ์เลื่อนเงินเดือน: ป่วย+กิจ ไม่เกิน RULE.d วัน (ตั้งค่าในแอป) และไม่เกิน 6 ครั้งต่อครึ่งปี
+const LV_VAC_MSG='ครูที่ได้หยุดภาคเรียนเกินสิทธิแล้ว ไม่มีสิทธิใช้การลาประเภทนี้';
+const LV_TYPES=[
+ {k:'sick',n:'ลาป่วย',be:'ลาป่วย',cnt:true,pay:'ได้รับเงินเดือน',doc:30,rules:['ลาได้ตามความจำเป็น ยื่นใบลาตามระเบียบ','ป่วยตั้งแต่ 30 วันขึ้นไป ต้องแนบใบรับรองแพทย์','ลาไม่ทันยื่นล่วงหน้า ให้ยื่นในวันแรกที่มาปฏิบัติงาน','นับเฉพาะวันทำการ']},
+ {k:'mat',n:'ลาคลอดบุตร',be:'ลาคลอดบุตร',cap:90,unit:'วัน',cal:true,pay:'ได้รับเงินเดือนตลอดการลา',rules:['ลาได้ครั้งละไม่เกิน 90 วัน','นับรวมวันหยุดราชการที่อยู่ในช่วงลา','ยื่นใบลาก่อนหรือในวันที่ลา']},
+ {k:'pat',n:'ลาไปช่วยเหลือภริยาที่คลอดบุตร',be:'',cap:15,unit:'วันทำการ',pay:'ได้รับเงินเดือน',rules:['ลาได้ไม่เกิน 15 วันทำการ','ต้องลาภายใน 90 วันนับแต่วันที่ภริยาคลอดบุตร']},
+ {k:'per',n:'ลากิจส่วนตัว',be:'ลากิจส่วนตัว',cnt:true,cap:45,unit:'วันทำการ',fy:true,pay:'ได้รับเงินเดือน',rules:['ต้องได้รับอนุญาตก่อนจึงหยุดได้ (ยกเว้นกรณีจำเป็นเร่งด่วน)','ปีแรกที่รับราชการลาได้ไม่เกิน 15 วันทำการ','ปีต่อไปไม่เกิน 45 วันทำการต่อปีงบประมาณ']},
+ {k:'vac',n:'ลาพักผ่อน',be:'ลาพักผ่อน',block:true,pay:'ได้รับเงินเดือน',rules:['ปีละ 10 วันทำการ ต้องรับราชการครบ 6 เดือนจึงมีสิทธิ','สะสมวันที่ยังไม่ได้ลามารวมได้ ไม่เกิน 20 วัน (รับราชการ 10 ปีขึ้นไป ไม่เกิน 30 วัน)','นับเฉพาะวันทำการ']},
+ {k:'ord',n:'ลาอุปสมบท / ประกอบพิธีฮัจย์',be:'ลาอุปสมบท/ประกอบพิธีฮัจย์',cap:120,unit:'วัน',cal:true,lead:60,pay:'ได้รับเงินเดือนไม่เกิน 120 วัน',rules:['ลาอุปสมบท ต้องรับราชการมาแล้วไม่น้อยกว่า 1 ปี','ลาประกอบพิธีฮัจย์ ต้องรับราชการมาแล้วไม่น้อยกว่า 4 ปี และลาได้ครั้งเดียว','ลาได้ไม่เกิน 120 วัน นับรวมวันหยุดราชการ','ยื่นล่วงหน้าไม่น้อยกว่า 60 วัน']},
+ {k:'mil',n:'ลาตรวจเลือกเข้ารับราชการทหาร',be:'',cal:true,pay:'ได้รับเงินเดือนตามที่ราชการทหารเรียก',rules:['ลาตามหมายเรียก ยื่นก่อนวันรายงานตัว','ถ้าได้รับหมายเรียกกะทันหัน ให้ยื่นภายใน 48 ชั่วโมง','แนบสำเนาหมายเรียก']},
+ {k:'stu',n:'ลาไปศึกษา ฝึกอบรม ปฏิบัติการวิจัย หรือดูงาน',be:'',cal:true,pay:'ตามที่ได้รับอนุมัติ',rules:['ต้องได้รับอนุญาตก่อนเดินทาง','แนบหนังสืออนุมัติ/หนังสือเชิญจากหน่วยงานที่จัด','ไปศึกษาต่อต้องทำสัญญาตามที่ราชการกำหนด']},
+ {k:'int',n:'ลาไปปฏิบัติงานในองค์การระหว่างประเทศ',be:'',cal:true,pay:'ไม่ได้รับเงินเดือน (ตามที่ได้รับอนุมัติ)',rules:['ต้องรับราชการมาแล้วไม่น้อยกว่า 1 ปี','ต้องได้รับอนุญาตจากผู้มีอำนาจก่อนเดินทาง','ลาได้ตามระยะเวลาที่ได้รับอนุมัติ']},
+ {k:'spo',n:'ลาติดตามคู่สมรส',be:'',cap:730,unit:'วัน',cal:true,pay:'ไม่ได้รับเงินเดือน',rules:['ต้องรับราชการมาแล้วไม่น้อยกว่า 1 ปี','ลาได้ครั้งละไม่เกิน 2 ปี (รวมแล้วไม่เกิน 4 ปี)','ไม่ได้รับเงินเดือนระหว่างลา']},
+ {k:'reh',n:'ลาไปฟื้นฟูสมรรถภาพด้านอาชีพ',be:'',cap:365,unit:'วัน',cal:true,pay:'ตามที่ระเบียบกำหนด',rules:['สำหรับผู้ได้รับบาดเจ็บหรือเจ็บป่วยจากการปฏิบัติราชการ','ลาได้ไม่เกิน 12 เดือน','แนบความเห็นแพทย์/หนังสือรับรอง']},
+ {k:'oth',n:'อื่น ๆ (นอกเหนือ 11 ประเภท)',be:'อื่น ๆ',pay:'ตามที่ผู้อนุมัติพิจารณา',rules:['ระบุเหตุผลให้ชัดเจน ผู้อนุมัติจะพิจารณาเป็นรายกรณี']}
+];
+const lvT=k=>LV_TYPES.find(x=>x.k===k);
+const lvSel=()=>lvT(($('#lt')||{}).value||'sick');
+const lvSupported=ty=>!!ty.be&&(B.leaveTypes||[]).includes(ty.be);
+const lvFmtN=n=>Number.isInteger(n)?String(n):n.toFixed(1);
+const lvFull=s=>d8(s).toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+function lvFY(){const y=Number(TODAY_ISO.slice(0,4)),m=Number(TODAY_ISO.slice(5,7)),s=(m>=10?y:y-1);return{start:s+'-10-01',end:(s+1)+'-09-30'}}
+/** ใบลาของฉันที่ยังใช้สิทธิอยู่ (อนุมัติแล้วหรืออยู่ระหว่างพิจารณา) */
+const lvMine=()=>REQ.filter(r=>r.who===me()&&r.kind==='leave'&&['approved','head','dir','ext'].includes(r.st));
+function lvUsed(ty,range){return lvMine().filter(r=>r.type===ty.be&&(!range||(r.from>=range.start&&r.from<=range.end))).reduce((s,r)=>s+(Number(r.days)||0),0)}
+/** ป่วย+กิจ ในรอบเลื่อนเงินเดือนนี้ */
+function lvRound(){const R=B.round||{start:'0000-01-01',end:'9999-12-31'};const l=lvMine().filter(r=>(r.type==='ลาป่วย'||r.type==='ลากิจส่วนตัว')&&r.to>=R.start&&r.from<=R.end);return{days:l.reduce((s,r)=>s+(Number(r.days)||0),0),times:l.length}}
+function lvRemain(ty){
+  if(ty.block)return{text:LV_VAC_MSG,short:'ไม่มีสิทธิ',ok:false};
+  if(ty.k==='sick'){return{num:Math.max(0,RULE.d-lvRound().days),unit:'วัน ก่อนถึงเกณฑ์เลื่อนเงินเดือนรอบนี้',ok:true}}
+  if(ty.cap){const used=lvUsed(ty,ty.fy?lvFY():null);return{num:Math.max(0,ty.cap-used),unit:ty.unit+(ty.fy?' (ปีงบประมาณนี้ · ปีแรกรับราชการเพดาน 15)':''),ok:true,cap:ty.cap}}
+  return{text:'ตามที่ได้รับอนุมัติ',ok:true}
+}
+function lvRaise(days){const u=lvRound(),dA=u.days+days,tA=u.times+1,overD=dA>RULE.d,overT=tA>LV_MAXT;
+  const lvl=(overD||overT)?'over':(dA>=RULE.d-LV_NEAR_D||tA>=LV_MAXT)?'near':'ok';return{dA,tA,overD,overT,lvl}}
+function lvRaiseHtml(r){
+  const base=`รอบนี้ลาป่วย+ลากิจรวม <b>${lvFmtN(r.dA)}</b> วัน (เกณฑ์ไม่เกิน ${RULE.d}) · <b>${r.tA}</b> ครั้ง (เกณฑ์ไม่เกิน ${LV_MAXT} ครั้งต่อครึ่งปี)`;
+  if(r.lvl==='over')return`<div class="callout c-bad"><b>⚠ เกินเกณฑ์เลื่อนเงินเดือน</b>${base}${r.overD?' · เกินจำนวนวัน':''}${r.overT?' · เกินจำนวนครั้ง':''}</div>`;
+  if(r.lvl==='near')return`<div class="callout c-bad"><b>⚠ ใกล้ถึงเกณฑ์เลื่อนเงินเดือน</b>${base} · เหลืออีก ${Math.max(0,RULE.d-r.dA)} วัน / ${Math.max(0,LV_MAXT-r.tA)} ครั้ง</div>`;
+  return`<div class="callout c-good">ยังอยู่ในเกณฑ์เลื่อนเงินเดือน — ${base}</div>`}
+function lvTypeSelect(){return`<div class="fld"><label for="lt">ประเภทการลา (11 ประเภทตามระเบียบ)</label><select id="lt">${LV_TYPES.map((t,i)=>`<option value="${t.k}">${i<11?(i+1)+'. ':''}${esc(t.n)}</option>`).join('')}</select></div><div id="lInfo" aria-live="polite" class="lvbox"></div>`}
+function lvExtraFields(){return`<div class="fld"><label for="lSig">ลายเซ็นดิจิทัล (ใช้กับ Export PDF · เซ็นด้วยนิ้วหรือเมาส์)</label><canvas id="lSig" class="lvsig" width="600" height="260" aria-label="พื้นที่เซ็นชื่อ"></canvas><div class="row"><button class="btn sm" type="button" data-lvsig="clear">ล้างลายเซ็น</button></div></div>
+   <div><button class="btn" type="button" data-lvpdf="1">Export ใบลาเป็น PDF</button></div>`}
+function lvRefresh(){
+  const ty=lvSel(),r=lvRemain(ty),box=$('#lInfo');if(!ty||!box)return;
+  const a=$('#l1').value,b=$('#l2').value,part=$('#lpart').hidden?'เต็มวัน':$('#l5').value;
+  const nWork=workDays(a,b,part),nCal=(a&&b&&b>=a)?Math.round((d8(b)-d8(a))/864e5)+1:0,n=ty.cal?nCal:nWork;
+  const big=r.ok&&r.num!=null?`<div class="lvbig"><b>${lvFmtN(r.num)}</b> <span class="sub">${esc(r.unit||'วัน')}</span></div>`:`<div class="lvbig"><b style="font-size:1.05rem;color:${r.ok?'var(--accent)':'var(--bad)'}">${esc(r.short||r.text)}</b></div>`;
+  let raise='';
+  if(ty.cnt)raise=lvRaiseHtml(lvRaise(n));else if(ty.block)raise=`<div class="callout c-bad"><b>${esc(LV_VAC_MSG)}</b></div>`;else raise=`<div class="callout c-good">ประเภทนี้ไม่นับรวมเกณฑ์ลาป่วย+ลากิจ ในการเลื่อนเงินเดือน</div>`;
+  box.innerHTML=`<div><span class="sub">เหลือสิทธิ</span>${big}<span class="sub">${esc(ty.pay||'')} · ${ty.cal?'นับรวมวันหยุดราชการ':'นับเฉพาะวันทำการ'}</span></div>
+   <div><b style="font-size:.9rem">เงื่อนไขสำคัญ</b><ul class="lvrules">${ty.rules.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>${raise}`;
+  // สรุปวันที่ + คำเตือนตามช่วงที่เลือก
+  const out=[];
+  if(a&&b&&b>=a){
+    let back=a;do{const d=d8(back);d.setDate(d.getDate()+1);back=ymd(d)}while(workDays(back,back,'เต็มวัน')===0&&back<'2100');
+    const left=r.ok&&r.num!=null&&ty.k!=='sick'?r.num-n:null;
+    out.push(`<div class="calc"><b>ลา ${lvFmtN(n)} ${ty.cal?'วัน (นับรวมวันหยุด)':'วันทำการ'}</b> · สิ้นสุดการลา ${esc(lvFull(b))} · กลับมาปฏิบัติงาน ${esc(lvFull(back))}${left!=null&&left>=0?` · เหลือสิทธิหลังลา ${lvFmtN(left)} ${esc(ty.unit||'วัน')}`:''}</div>`);
+    if(ty.cal&&nCal!==nWork)out.push(`<p class="sub">ระบบหลังบ้านบันทึกเป็นวันทำการ (${lvFmtN(nWork)} วัน) ส่วนระเบียบนับรวมวันหยุด (${nCal} วัน)</p>`);
+    if(left!=null&&left<0)out.push(`<div class="callout c-bad"><b>เกินสิทธิ์ที่เหลืออยู่ ${lvFmtN(-left)} วัน</b>เหลือ ${lvFmtN(r.num)} วัน</div>`);
+    if(ty.k==='sick'&&n>=ty.doc)out.push(`<div class="callout c-warn"><b>ลาป่วยตั้งแต่ 30 วันขึ้นไป ต้องแนบใบรับรองแพทย์</b></div>`);
+    if(ty.lead){const gap=Math.round((d8(a)-d8(TODAY_ISO))/864e5);if(gap<ty.lead)out.push(`<div class="callout c-warn"><b>ควรยื่นล่วงหน้าไม่น้อยกว่า ${ty.lead} วัน</b>ตอนนี้ล่วงหน้า ${Math.max(0,gap)} วัน</div>`)}
+  }
+  let sum=$('#lSum');if(!sum){sum=document.createElement('div');sum.id='lSum';sum.className='lvbox';$('#lDays').after(sum)}
+  sum.innerHTML=out.join('');
+  // ปุ่มยื่นลา: ลาพักผ่อน / ประเภทที่หลังบ้านยังไม่รองรับ = สีเทากดไม่ได้
+  const sb=$('#fLeave button[type=submit]'),why=ty.block?LV_VAC_MSG:(!lvSupported(ty)?'ประเภทนี้ยังยื่นผ่านระบบไม่ได้ (หลังบ้านยังไม่รองรับ) · ใช้ Export PDF ส่งใบลาแทน':'');
+  if(sb){sb.disabled=!!why;sb.classList.toggle('lvgrey',!!why);sb.title=why;sb.textContent=why?'ยื่นใบลาไม่ได้':'ตรวจแล้ว ยื่นใบลา';
+    let nt=$('#lBlock');if(why){if(!nt){nt=document.createElement('p');nt.id='lBlock';nt.className='note';sb.parentNode.after(nt)}nt.textContent=why}else if(nt)nt.remove()}
+}
+function lvSigBlank(){const c=$('#lSig');if(!c)return true;const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=3;i<d.length;i+=4)if(d[i])return false;return true}
+function lvBind(){
+  if(!$('#lt'))return;
+  ['#lt','#l1','#l2','#l5'].forEach(s=>{const el=$(s);if(el)el.addEventListener('change',lvRefresh)});
+  const c=$('#lSig');
+  if(c&&!c._ok){c._ok=true;const g=c.getContext('2d');g.lineWidth=3.5;g.lineCap='round';g.lineJoin='round';g.strokeStyle='#1B1F3B';let dr=false;
+    const pos=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+    c.addEventListener('pointerdown',e=>{dr=true;c.setPointerCapture(e.pointerId);const[x,y]=pos(e);g.beginPath();g.moveTo(x,y);g.lineTo(x+.1,y+.1);g.stroke();e.preventDefault()});
+    c.addEventListener('pointermove',e=>{if(!dr)return;const[x,y]=pos(e);g.lineTo(x,y);g.stroke()});
+    ['pointerup','pointercancel'].forEach(t=>c.addEventListener(t,()=>{dr=false}))}
+  lvRefresh();
+}
+function lvExport(){
+  const ty=lvSel(),a=$('#l1').value,b=$('#l2').value,why=($('#l3').value||'').trim();
+  if(!a||!b||b<a){toast('กรุณาเลือกวันที่ลาให้ครบ');return}
+  if(!why){toast('กรุณากรอกเหตุผลการลา');return}
+  if(lvSigBlank()){toast('กรุณาเซ็นชื่อในช่องลายเซ็นก่อน');return}
+  const part=$('#lpart').hidden?'เต็มวัน':$('#l5').value,nWork=workDays(a,b,part),nCal=Math.round((d8(b)-d8(a))/864e5)+1,n=ty.cal?nCal:nWork;
+  const pos=(SM[me()]||{}).pos||ME.position||'',r=lvRemain(ty),rd=lvRound(),fy=lvFY();
+  const D=s=>d8(s).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}),now=new Date(),nowIso=ymd(now);
+  const stamp=D(nowIso)+' เวลา '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+' น.';
+  const sig=$('#lSig').toDataURL('image/png');let h=5381;for(let i=0;i<sig.length;i+=7)h=((h<<5)+h+sig.charCodeAt(i))>>>0;
+  const ref='LVX-'+nowIso.replace(/-/g,'').slice(2)+'-'+String(h%10000).padStart(4,'0');
+  const rows=['sick','per','vac'].map(k=>{const t=lvT(k),used=k==='vac'?0:lvUsed(t,fy),cur=t===ty?n:0;return`<tr><td>${esc(t.n)}</td><td>${lvFmtN(used)}</td><td>${lvFmtN(cur)}</td><td>${lvFmtN(used+cur)}</td></tr>`}).join('');
+  const html=`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>ใบลา ${esc(ref)}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap">
+<style>@page{size:A4;margin:18mm 20mm}body{font-family:Sarabun,"TH Sarabun New",Thonburi,Tahoma,sans-serif;font-size:16px;line-height:1.6;color:#111;margin:0}h1{font-size:22px;text-align:center;margin:0 0 4px}.sub{text-align:center;color:#555;font-size:13px;margin-bottom:14px}.r{text-align:right}p{margin:6px 0}.ind{text-indent:2.2em}table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px}th,td{border:1px solid #444;padding:4px 8px;text-align:center}td:first-child{text-align:left}.sig{margin-top:22px;text-align:center;width:55%;margin-left:auto}.sig img{height:70px}.stamp{font-size:12px;color:#555;margin-top:4px}.box{border:1px solid #444;padding:10px 14px;margin-top:18px;min-height:90px;font-size:14.5px}</style></head><body>
+<h1>ใบลา${esc(ty.n.split(' / ')[0])}</h1><div class="sub">โรงเรียนบ้านกาวะ · เลขที่อ้างอิง ${esc(ref)}</div>
+<p class="r">เขียนที่ โรงเรียนบ้านกาวะ<br>วันที่ ${esc(D(nowIso))}</p><p>เรื่อง&nbsp; ขอ${esc(ty.n)}</p><p>เรียน&nbsp; ผู้อำนวยการโรงเรียนบ้านกาวะ</p>
+<p class="ind">ข้าพเจ้า ${esc(ME.name)} ตำแหน่ง ${esc(pos)} สังกัด โรงเรียนบ้านกาวะ มีความประสงค์ขอ${esc(ty.n)} เนื่องจาก ${esc(why)}</p>
+<p class="ind">ตั้งแต่วันที่ ${esc(lvFull(a))} ถึงวันที่ ${esc(lvFull(b))} มีกำหนด <b>${lvFmtN(n)}</b> ${ty.cal?'วัน (นับรวมวันหยุดราชการ)':'วันทำการ'}</p>
+${r.ok&&r.num!=null?`<p class="ind">สิทธิคงเหลือก่อนลาครั้งนี้ ${lvFmtN(r.num)} ${esc(r.unit||'วัน')}</p>`:''}
+<table><thead><tr><th>สถิติการลาปีงบประมาณนี้ (ตามที่บันทึกในระบบ)</th><th>ลามาแล้ว (วัน)</th><th>ลาครั้งนี้ (วัน)</th><th>รวม (วัน)</th></tr></thead><tbody>${rows}</tbody></table>
+<p style="font-size:13px">ลาป่วย+ลากิจในรอบเลื่อนเงินเดือนนี้ ${lvFmtN(rd.days)} วัน ${rd.times} ครั้ง (ก่อนใบนี้)</p>
+<div class="sig"><img src="${sig}" alt="ลายเซ็น"><div>(${esc(ME.name)})</div><div>${esc(pos)}</div><div class="stamp">ลงลายมือชื่ออิเล็กทรอนิกส์เมื่อ ${esc(stamp)}<br>รหัสตรวจสอบ ${esc(ref)}</div></div>
+<div class="box"><b>ความเห็นผู้บังคับบัญชา / คำสั่ง</b><br>☐ อนุญาต &nbsp; ☐ ไม่อนุญาต<br><br>ลงชื่อ ................................................. ผู้อำนวยการโรงเรียน<br>วันที่ ........../........../..........</div></body></html>`;
+  const old=$('#lvPrintFrame');if(old)old.remove();
+  const f=document.createElement('iframe');f.id='lvPrintFrame';f.setAttribute('aria-hidden','true');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+  const w=f.contentWindow;w.document.open();w.document.write(html);w.document.close();
+  setTimeout(()=>{try{w.focus();w.print()}catch(e){toast('เปิดหน้าต่างพิมพ์ไม่ได้ ลองใหม่อีกครั้ง')}},900);
+  toast('กำลังเปิดหน้าต่างพิมพ์ · เลือก "บันทึกเป็น PDF"');
+}
+
 function outForm(){const P=PERIODS.filter(p=>p[0]!=='เช้า');return`<form class="f" id="fOut">
    <div class="fgrid"><div class="fld"><label for="o1">ออกช่วงคาบ (วันนี้)</label><select id="o1">${P.map(([p,t,f,to])=>`<option value="${esc(p)}" ${clockNow()<to&&clockNow()>=f?'selected':''}>คาบ ${esc(p)} · ${t}${B.hasTT?' · '+(MY_TT[p]?'มีสอน':'ว่าง'):''}</option>`).join('')}</select></div>
    <div class="fld"><label for="o2">ไปที่ไหน / ทำอะไร</label><input type="text" id="o2" required placeholder="เช่น ไปไปรษณีย์"></div></div>
@@ -1634,6 +1753,7 @@ function after(){
   const l1=$('#l1');if(l1){const upd=()=>{const a=l1.value,b=$('#l2').value;if(b<a)$('#l2').value=a;const same=a===$('#l2').value;$('#lpart').hidden=!same;if(!same)$('#l5').value='เต็มวัน';
     const n=workDays(a,$('#l2').value,$('#l5').value);$('#lDays').innerHTML=n?`ตรวจทาน: <b>${n} วันทำการ</b> (${thRange(a,$('#l2').value)} · ไม่นับเสาร์-อาทิตย์และวันหยุด)`:'<span class="bad">ช่วงที่เลือกเป็นวันหยุดทั้งหมด ไม่ต้องยื่นลา</span>'};
     ['#l1','#l2','#l5'].forEach(s=>$(s).onchange=upd);upd()}
+  lvBind();
   const g3=$('#g3');if(g3){const upd=()=>{if($('#g6').value<g3.value)$('#g6').value=g3.value;const a=g3.value,b=$('#g6').value;const n=Math.round((d8(b)-d8(a))/864e5)+1;$('#gDays').innerHTML=`ตรวจทาน: <b>${n} วัน</b> (${thRange(a,b)})`};g3.onchange=upd;$('#g6').onchange=upd;upd()}
   if(B&&B.projNames&&!$('#projList')){const dl=document.createElement('datalist');dl.id='projList';dl.innerHTML=B.projNames.map(p=>`<option value="${esc(p)}">`).join('');document.body.appendChild(dl)}
 }
@@ -1644,6 +1764,7 @@ const clearPick=(...ids)=>ids.forEach(id=>delete PICKED[id]);
 async function openEvidence(id){busyModal('กำลังเปิดหลักฐาน…');try{const j=await api('evidence',{id});if(j.url){closeModal();window.open(j.url,'_blank','noopener');return}
   modal(`<div class="row between"><h2>หลักฐานที่แนบ</h2><button class="btn sm" data-close="1">ปิด</button></div><img src="${j.dataUrl}" alt="หลักฐาน" style="width:100%;border-radius:12px"><p class="note">ข้อมูลส่วนบุคคล เปิดได้เฉพาะเจ้าของคำขอและผู้พิจารณา</p>`)}catch(e){closeModal();toast(e.message)}}
 
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-lvpdf],[data-lvsig]');if(!t)return;if(t.dataset.lvpdf)lvExport();else{const c=$('#lSig');if(c)c.getContext('2d').clearRect(0,0,c.width,c.height)}});
 document.addEventListener('click',async e=>{
   if(e.target.id==='sheet'){st.sheet=false;renderChrome();return}
   const ov=e.target.closest('[data-ov]');if(ov&&e.target===ov){closeModal();return}
@@ -1663,7 +1784,7 @@ document.addEventListener('click',async e=>{
   if(d.punch){closeModal();startCheck(d.punch,false);return}
   if(d.punchqr){closeModal();startCheck(d.punchqr,true);return}
   if(d.retrycheck){if(st.retryCheck)sendCheck(st.retryCheck);return}
-  if(d.halfleave){closeModal();st.kind='leave';go('myreq');setTimeout(()=>{if($('#l5')){$('#l5').value='ครึ่งวันเช้า';const r=$('input[name="lt"][value="ลากิจส่วนตัว"]');if(r)r.checked=true;$('#l5').dispatchEvent(new Event('change'))}},50);return}
+  if(d.halfleave){closeModal();st.kind='leave';go('myreq');setTimeout(()=>{if($('#l5')){$('#l5').value='ครึ่งวันเช้า';const r=$('#lt');if(r)r.value='per';$('#l5').dispatchEvent(new Event('change'))}},50);return}
   if('kind' in d&&!d.go){st.kind=d.kind;st.dirty=false;render();return}
   if(d.forcheck){forCheckForm(d.forcheck);return}
   if(d.copyatt){copyTxt(attText(),'สรุปการมา');return}
@@ -1790,7 +1911,7 @@ document.addEventListener('submit',async e=>{
   e.preventDefault();const btn=e.submitter||f.querySelector('button[type=submit]');
   const v=s=>($(s)?.value||'').trim();
   try{
-  if(f.id==='fLeave'){if(!workDays(v('#l1'),v('#l2'),$('#lpart').hidden?'เต็มวัน':v('#l5'))){toast('ช่วงที่เลือกเป็นวันหยุดทั้งหมด');return}const ph=photoOf('l4');await act('leave.create',{data:{type:$('input[name="lt"]:checked').value,start:v('#l1'),end:v('#l2'),part:$('#lpart').hidden?'เต็มวัน':$('#l5').value,reason:v('#l3'),photo:ph}},btn);clearPick('l4');st.kind='';render()}
+  if(f.id==='fLeave'){const lty=lvSel();if(lty.block||!lvSupported(lty)){toast(lty.block?LV_VAC_MSG:'ประเภทนี้ยังยื่นผ่านระบบไม่ได้');return}if(!workDays(v('#l1'),v('#l2'),$('#lpart').hidden?'เต็มวัน':v('#l5'))){toast('ช่วงที่เลือกเป็นวันหยุดทั้งหมด');return}const ph=photoOf('l4');await act('leave.create',{data:{type:lty.be,start:v('#l1'),end:v('#l2'),part:$('#lpart').hidden?'เต็มวัน':$('#l5').value,reason:v('#l3'),photo:ph}},btn);clearPick('l4');st.kind='';render()}
   if(f.id==='fOut'){const teach=B.hasTT?!!MY_TT[v('#o1')]:!!st.outTeach;await act('out.create',{data:{period:v('#o1'),why:v('#o2'),teaching:teach,sub:teach?v('#o4'):'',work:teach?v('#o5'):''}},btn);st.outTeach=false;st.kind='';render()}
   if(f.id==='fGov'){await act('leave.create',{data:{type:'ไปราชการ',start:v('#g3'),end:v('#g6')||v('#g3'),reason:v('#g1'),place:v('#g2'),proj:v('#g4'),cost:v('#g5'),attachment:v('#g7')}},btn);st.kind='';render()}
   if(f.id==='myTaskForm'){const steps=$('#mt4').value.trim();await act('work.addMine',{data:{title:v('#mt1'),to:v('#mt2'),due:v('#mt3'),mode:steps?'steps':'ten',steps}},btn);st.addTask=false;render()}
