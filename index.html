@@ -206,6 +206,8 @@ button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:in
 .m-nav .fab{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;margin:-30px auto 2px;padding:0;justify-content:center;box-shadow:0 10px 22px rgba(91,91,240,.4)}
 .m-nav .fab svg{width:26px;height:26px;stroke-width:2.2}
 .m-nav .dot{top:-2px;right:calc(50% - 22px)}
+.bell .dot{top:-9px;right:-9px;min-width:26px;height:26px;border-radius:13px;font-size:14px;line-height:22px;padding:0 6px;font-weight:700;background:#E5121F;border:2px solid #fff;box-shadow:0 3px 8px rgba(229,18,31,.55)}
+:root[data-theme="dark"] .bell .dot{border-color:var(--card)}
 /* คอมพิวเตอร์ */
 .d-shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
 .side{background:var(--card);padding:22px 14px;display:flex;flex-direction:column;gap:3px;position:sticky;top:0;height:100vh;overflow-y:auto;box-shadow:var(--shadow)}
@@ -238,6 +240,7 @@ h1,h2,h3,.stat .v,.ring .v b,.ev .d b,.prof .pst b,.wd b,.brand b,.code,.intro .
 @media (min-width:1000px){.apps2{grid-template-columns:1fr 1fr 1fr}}
 .appc{display:flex;gap:10px;align-items:center;border:0;background:var(--card);box-shadow:var(--shadow);border-radius:18px;padding:12px;text-align:left;color:var(--ink);min-width:0}
 .appc .ic{width:44px;height:44px;border-radius:14px}
+.appc .ic.e3d{font-size:25px;line-height:1;color:#fff;background:var(--g);box-shadow:inset 0 2px 3px rgba(255,255,255,.55),inset 0 -4px 6px rgba(0,0,0,.18),0 6px 12px var(--sh);text-shadow:0 2px 3px rgba(0,0,0,.25)}
 .appc .tx{display:flex;flex-direction:column;min-width:0;line-height:1.3}
 .appc b{font-family:var(--fh);font-weight:600;font-size:15px}
 .appc small{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -306,11 +309,11 @@ const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"${s?` styl
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const APPS=[
- {key:'teacher',name:'Q-Teacher',c:'t',icon:'badge',sub:'ลงเวลา ลา สอนแทน'},
- {key:'academic',name:'Q-Academic',c:'h',icon:'book',sub:'งานวิชาการ'},
- {key:'student',name:'Q-Student',c:'s',icon:'cap',sub:'ดูแลนักเรียน'},
- {key:'budget',name:'Q-Budget',c:'b',icon:'coin',sub:'งบประมาณ โครงการ'},
- {key:'parent',name:'Q-Parent',c:'p',icon:'fam',sub:'ช่องทางผู้ปกครอง'}
+ {key:'teacher',name:'Q-Teacher',c:'t',icon:'badge',sub:'ลงเวลา ลา สอนแทน',e:'🧑‍🏫',g:'linear-gradient(145deg,#9A9AFF,#5B5BF0 60%,#4338CA)',sh:'rgba(91,91,240,.4)'},
+ {key:'academic',name:'Q-Academic',c:'h',icon:'book',sub:'งานวิชาการ',e:'📚',g:'linear-gradient(145deg,#7CC4FF,#2C8CE6 60%,#1D6FC4)',sh:'rgba(44,140,230,.4)'},
+ {key:'student',name:'Q-Student',c:'s',icon:'cap',sub:'ดูแลนักเรียน',e:'🎓',g:'linear-gradient(145deg,#5EE6C8,#11A188 60%,#0B7F6B)',sh:'rgba(17,161,136,.4)'},
+ {key:'budget',name:'Q-Budget',c:'b',icon:'coin',sub:'งบประมาณ โครงการ',e:'💰',g:'linear-gradient(145deg,#FFC066,#E9820C 60%,#C46A00)',sh:'rgba(233,130,12,.4)'},
+ {key:'parent',name:'Q-Parent',c:'p',icon:'fam',sub:'ช่องทางผู้ปกครอง',e:'👨‍👩‍👧',g:'linear-gradient(145deg,#FF8FC2,#E0498D 60%,#B8286B)',sh:'rgba(224,73,141,.4)'}
 ];
 const APP_NAMES={hub:'หน้ากลาง',teacher:'Q-Teacher',budget:'Q-Budget',student:'Q-Student',parent:'Q-Parent',academic:'Q-Academic'};
 const SRC={ack:'ประกาศ',approve:'ประกาศ',pending:'ประกาศ',link:'ตั้งค่า'};
@@ -579,7 +582,7 @@ function pageHome(){
   const extNote=S.extState==='loading'?'<p class="linkline">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="linkline">โหลดงานจาก Q-Teacher ไม่สำเร็จ · <button class="lnk" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
   const todo=`<section><div class="sec"><h3>ต้องดำเนินการ${tasks.length?` <span class="cnt">${tasks.length}</span>`:''}</h3>${tasks.length>3?'<button data-go="tasks">ดูทั้งหมด</button>':''}</div>
     <div class="list">${tasks.length?tasks.slice(0,3).map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการตอนนี้</p>`)}</div>${extNote}</section>`;
-  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps2">${APPS.map(a=>`<button class="appc${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic c-${a.c}">${ic(a.icon)}</span><span class="tx"><b>${a.name}</b><small>${esc(a.sub)}</small><span class="st ${appReady(a.key)?'on':''}">${appState(a.key)}</span></span></button>`).join('')}</div></section>`;
+  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps2">${APPS.map(a=>`<button class="appc${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic e3d" style="--g:${a.g};--sh:${a.sh}" aria-hidden="true">${a.e}</span><span class="tx"><b>${a.name}</b><small>${esc(a.sub)}</small><span class="st ${appReady(a.key)?'on':''}">${appState(a.key)}</span></span></button>`).join('')}</div></section>`;
   let strip='';
   if(t.holiday) strip=`วันนี้วันหยุด · ${esc(t.holiday)}`;
   else if(t.term.next){ const left=Math.max(0,daysBetween(t.date,t.term.next)); strip=`${esc(t.term.label.replace('ปิดภาคเรียน · ','').replace('เปิดภาคเรียนที่','เปิดเทอม'))} · ${esc(thDate(t.term.next,{day:'numeric',month:'short'}))} · อีก ${left} วัน`; }
@@ -641,7 +644,7 @@ function pageAnnDetail(){
     ${a.body_ms?`<div><p style="font-size:12.5px;color:var(--muted);margin-bottom:4px">Bahasa Melayu</p><p class="body">${esc(a.body_ms)}</p></div>`:''}
     ${a.event_date?`<p class="note">${ic('cal',16)} วันกิจกรรม ${esc(thDate(a.event_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
     ${a.due_date?`<p class="note warn">${ic('clock',16)} กำหนดส่งงาน ${esc(thDate(a.due_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
-    ${a.attachments?`<p><a href="${esc(a.attachments)}" target="_blank" rel="noopener">${ic('link',16)} เปิดไฟล์แนบ</a></p>`:''}
+    ${a.attachments?`<p><a href="${esc(a.attachments)}" target="_blank" rel="noopener">${ic('link',16)} <small style="opacity:.85;font-weight:500">กดลิงก์ &gt;</small> เปิดไฟล์แนบ</a></p>`:''}
     ${a.expires_on?`<p style="font-size:13px;color:var(--muted)">แสดงถึง ${esc(thDate(a.expires_on))}</p>`:''}
     ${acts.join('')}
   </article>`;
