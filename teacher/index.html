@@ -1950,5 +1950,40 @@ boot();
 })();
 
 </script>
+<script>
+/* ป็อปอัพแนะนำแอปครั้งแรก: ขึ้นครั้งเดียว (จำใน localStorage) · ไม่แตะโค้ดส่วนอื่นของแอป */
+(function(){
+  var KEY='qk_welcome_teacher_v1';
+  try{ if(localStorage.getItem(KEY)) return; }catch(e){ return; }
+  var css='.wl-ov{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,22,50,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:wlf .25s ease}'
+   +'.wl-card{width:100%;max-width:420px;max-height:calc(100vh - 32px);overflow:auto;border-radius:28px;background:var(--card,var(--surface,#fff));color:var(--ink,#1B1F3B);box-shadow:0 24px 60px rgba(20,22,60,.35);font-family:var(--f,"IBM Plex Sans Thai","Leelawadee UI",Tahoma,system-ui,sans-serif);animation:wlu .35s cubic-bezier(.2,.8,.2,1)}'
+   +'.wl-top{padding:28px 22px 22px;text-align:center;color:#fff;background:linear-gradient(135deg,#1E2341 0%,#2C3263 55%,#4B47C9 100%);border-radius:28px 28px 0 0}'
+   +'.wl-logo{width:72px;height:72px;margin:0 auto 12px;border-radius:22px;display:flex;align-items:center;justify-content:center;font:600 36px/1 Kanit,"IBM Plex Sans Thai",sans-serif;color:#fff;background:linear-gradient(135deg,#5B5BF0,#8B6CF7);box-shadow:0 10px 24px rgba(91,91,240,.5),inset 0 2px 3px rgba(255,255,255,.45)}'
+   +'.wl-brand{margin:0;font:500 13px/1.3 inherit;letter-spacing:.14em;opacity:.8}.wl-name{margin:2px 0 4px;font:600 26px/1.2 Kanit,"IBM Plex Sans Thai",sans-serif}.wl-tag{margin:0;font-size:14px;opacity:.85}'
+   +'.wl-body{padding:18px 20px 6px}.wl-body h2{margin:0 0 10px;font-size:15px;font-weight:600}'
+   +'.wl-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}.wl-list li{display:flex;gap:12px;align-items:center;padding:9px 12px;border-radius:14px;background:var(--soft,var(--sunk,#F2F3F9));font-size:14px;line-height:1.4}.wl-list .i{font-size:22px;line-height:1;flex:none}'
+   +'.wl-dev{margin:14px 0 0;padding:12px 14px;border-radius:14px;background:var(--pri-soft,var(--accent-soft,#ECEBFE));text-align:center;font-size:13px;color:var(--muted,#6B7092)}.wl-dev b{display:block;font-size:15px;color:var(--ink,#1B1F3B);font-weight:600}'
+   +'.wl-act{padding:16px 20px 22px}.wl-btn{width:100%;border:0;border-radius:16px;padding:14px 18px;font:600 16px/1.2 inherit;color:#fff;background:linear-gradient(135deg,#5B5BF0,#8B6CF7);box-shadow:0 8px 20px rgba(91,91,240,.35);cursor:pointer}.wl-btn:focus-visible{outline:3px solid #1B1F3B;outline-offset:2px}'
+   +'@keyframes wlf{from{opacity:0}to{opacity:1}}@keyframes wlu{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}'
+   +'@media (prefers-reduced-motion:reduce){.wl-ov,.wl-card{animation:none}}@media (max-width:380px){.wl-name{font-size:23px}.wl-top{padding:22px 16px 18px}}';
+  function show(){
+    if(document.getElementById('wlOv'))return;
+    var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+    var ov=document.createElement('div');ov.className='wl-ov';ov.id='wlOv';
+    ov.innerHTML='<div class="wl-card" role="dialog" aria-modal="true" aria-labelledby="wlT">'
+     +'<div class="wl-top"><div class="wl-logo" aria-hidden="true">Q</div><p class="wl-brand">Q-KAWA · โรงเรียนบ้านกาวะ</p><h1 class="wl-name" id="wlT">Q-Teacher</h1><p class="wl-tag">บริหารงานบุคคลและพัฒนาครู โรงเรียนบ้านกาวะ</p></div>'
+     +'<div class="wl-body"><h2>แอปนี้ทำอะไรได้บ้าง</h2><ul class="wl-list"><li><span class="i" aria-hidden="true">📍</span><span>ลงเวลามา-กลับ ด้วย GPS หรือสแกน QR</span></li><li><span class="i" aria-hidden="true">📝</span><span>ยื่นใบลา 11 ประเภท ไปราชการ และขออกนอกบริเวณ ดูสิทธิคงเหลือได้ทันที</span></li><li><span class="i" aria-hidden="true">🔄</span><span>สอนแทน งานมอบหมาย และติดตามความคืบหน้า</span></li><li><span class="i" aria-hidden="true">🛠</span><span>แจ้งซ่อม ผู้มาติดต่อ และเช็คยอดนักเรียนฉุกเฉิน</span></li><li><span class="i" aria-hidden="true">🌱</span><span>บันทึกชั่วโมงพัฒนาตนเองและการนิเทศ</span></li></ul>'
+     +'<div class="wl-dev">พัฒนาโดย<b>นายฮาฟีซี อูมา</b>ผู้อำนวยการโรงเรียนบ้านกาวะ</div></div>'
+     +'<div class="wl-act"><button type="button" class="wl-btn" id="wlGo">เริ่มใช้งาน</button></div></div>';
+    document.body.appendChild(ov);
+    var btn=document.getElementById('wlGo');
+    function close(){try{localStorage.setItem(KEY,String(Date.now()))}catch(e){}document.removeEventListener('keydown',key);ov.remove()}
+    function key(e){if(e.key==='Escape'||e.key==='Enter'&&document.activeElement===btn)close()}
+    btn.addEventListener('click',close);document.addEventListener('keydown',key);
+    try{btn.focus()}catch(e){}
+  }
+  if(document.readyState==='complete')setTimeout(show,500);else window.addEventListener('load',function(){setTimeout(show,500)});
+})();
+</script>
 </body>
 </html>
