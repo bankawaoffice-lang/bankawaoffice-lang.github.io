@@ -238,6 +238,10 @@ h1,h2,h3,.stat .v,.ring .v b,.ev .d b,.prof .pst b,.wd b,.brand b,.code,.intro .
 .hdr .upd{color:#CFCBFF}
 .hdr .bell{box-shadow:none}
 .hdr .avatar{border:2px solid rgba(255,255,255,.35)}
+.hubb{background:var(--card);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);display:grid;gap:8px}
+.achv{list-style:none;margin:0;padding:0;display:grid;gap:6px}.achv li{display:flex;gap:10px;align-items:center;background:#FFF6DA;color:#4A3500;border-radius:12px;padding:8px 12px;font-size:14px}.achv .ai{font-size:22px;line-height:1}
+.starcard{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(135deg,#FFF9E5,#FFEFC2);color:#4A3500;border-radius:18px;padding:12px 14px;box-shadow:var(--shadow)}.starcard .si{font-size:30px;line-height:1}.starcard .k{font-size:12px;opacity:.8;margin:0}.starcard p{margin:2px 0}.starcard .t2{color:#6B4F00}
+.starprof{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.starprof p{margin:0 0 4px}.starprof ul{margin:0;padding-left:18px;font-size:13.5px}
 @media (min-width:1000px){.hdr{margin:-28px -34px 24px;padding:28px 34px 30px;border-radius:0 0 32px 32px}}
 /* การ์ดความสำเร็จเล็กๆ ของวันนี้ + ปุ่มลิงก์ในประกาศ */
 .win{display:flex;gap:14px;align-items:flex-start;background:var(--card);border-radius:20px;padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--ok)}
@@ -468,6 +472,7 @@ async function loadHome(){
   if(my!==S.seq) return;          // คำขอเก่าตอบช้า ไม่ให้ทับข้อมูลใหม่
   applyHome(r);
   loadExt();
+  loadPraise();
 }
 /** ดึงงานจาก Q-Teacher มารวมใน "งานของฉัน" · โหลดไม่ได้ก็ไม่กระทบหน้ากลาง */
 async function loadExt(force){
@@ -481,6 +486,34 @@ async function loadExt(force){
     else S.extState='err';
   }catch(e){ S.extState='err'; }
   S.extLoading=false; render();
+}
+/** คำชมครูจากระบบ + ดาวจากผู้ปกครอง: ดึงจาก Q-Teacher (ครูที่ทำได้ตามเป้า · ดาวล่าสุด · ดาวสะสมของฉัน) */
+let PR=null,PRAT=0,PRLOAD=false;
+async function loadPraise(force){
+  if(!S.home||!appReady('teacher')||!CONFIG.TEACHER_API||PRLOAD) return;
+  if(!force&&PR&&Date.now()-PRAT<60000) return;
+  PRLOAD=true;
+  try{
+    const r=await fetch(CONFIG.TEACHER_API,{method:'POST',body:JSON.stringify({action:'sec',name:'praise',idToken:liff.getIDToken()})});
+    const j=await r.json();
+    if(j.ok&&j.sec){ PR=j.sec; PRAT=Date.now(); }
+  }catch(e){}
+  PRLOAD=false; render();
+}
+/** การ์ดหน้ากลางของทุกคน: ชื่อครูที่ทำได้ตามเป้า (ถ้วย/ดาว) + ดาวล่าสุดจากผู้ปกครอง */
+function praiseBoard(){
+  if(!PR) return '';
+  const T=(PR.team||[]), L=PR.star;
+  const rows=T.slice(0,4).map(x=>{ const both=x.onTimeAll&&x.morningAll;
+    return `<li><span class="ai" aria-hidden="true">${both?'🏆':'⭐'}</span><span><b>${esc(x.name)}</b> ${both?'มาตรงเวลาและเช็คชื่อกิจกรรมเช้าครบสัปดาห์':x.onTimeAll?'มาตรงเวลาครบสัปดาห์':'เช็คชื่อกิจกรรมเช้าครบสัปดาห์'}</span></li>`; }).join('');
+  return (T.length?`<section class="hubb" aria-label="ครูที่ทำได้ตามเป้าวันนี้"><div class="sec" style="margin:0"><h3>ชื่นชมครูวันนี้</h3><span class="t2">ระบบคิดให้อัตโนมัติ</span></div><ul class="achv">${rows}</ul>${T.length>4?`<p class="t2">และอีก ${T.length-4} ท่าน</p>`:''}</section>`:'')
+   +(L?`<section class="starcard" aria-label="ดาวล่าสุดจากผู้ปกครอง"><span class="si" aria-hidden="true">⭐</span><div style="min-width:0"><p class="k">ดาวล่าสุดจากผู้ปกครอง</p><b>${esc(L.name)} ได้รับดาว</b>${L.msg?`<p>"${esc(L.msg)}"</p>`:''}<p class="t2">${esc(L.from)} · ${esc(thDT(L.at))} · ดาวสะสม ⭐ ${L.total}</p></div></section>`:'');
+}
+/** ดาวสะสมในโปรไฟล์ครู (หน้า "บัญชี") */
+function starProfile(){
+  if(!PR||!PR.mine) return '';
+  const M=PR.myStars||{count:0,recent:[]};
+  return `<div class="starprof"><p><b>ดาวสะสมจากผู้ปกครอง ⭐ ${M.count}</b></p>${M.recent.length?`<ul>${M.recent.slice(0,3).map(x=>`<li>${x.msg?'"'+esc(x.msg)+'"':'ให้ดาว ⭐'} <span class="t2">· ${esc(x.from)} · ${esc(thDT(x.at))}</span></li>`).join('')}</ul>`:'<p class="t2">ยังไม่มีดาวจากผู้ปกครอง</p>'}</div>`;
 }
 function applyHome(r,noRender){
   if(!r) return;
@@ -555,7 +588,7 @@ function ring(pct,big,small){
     <div class="v"><b>${big}</b><small>${small}</small></div></div>`;
 }
 function taskRow(t){
-  const map={ack:['mega','c-h','pri'],approve:['check','c-w','warn'],link:['key','c-g',''],pending:['clock','c-w','warn'],checkin:['clock','c-t','pri'],'leave.hr':['check','c-w','warn'],'leave.dir':['check','c-w','warn'],'out.dir':['check','c-w','warn'],'out.sub':['refresh','c-p','warn'],mysub:['refresh','c-p',''],sub:['refresh','c-p','warn'],jan:['list','c-b','warn'],rate:['star','c-w',''],emg:['flag','c-r','bad'],work:['list','c-t',''],sup:['user','c-s',''],'leave.wait':['clock','c-g','']};
+  const map={ack:['mega','c-h','pri'],approve:['check','c-w','warn'],link:['key','c-g',''],pending:['clock','c-w','warn'],checkin:['clock','c-t','pri'],'leave.hr':['check','c-w','warn'],'leave.dir':['check','c-w','warn'],'out.dir':['check','c-w','warn'],'out.sub':['refresh','c-p','warn'],mysub:['refresh','c-p',''],sub:['refresh','c-p','warn'],jan:['list','c-b','warn'],rate:['star','c-w',''],emg:['flag','c-r','bad'],notif:['list','c-b','pri'],inbox:['list','c-w','warn'],work:['list','c-t',''],sup:['user','c-s',''],'leave.wait':['clock','c-g','']};
   const [icn,col,pc]=map[t.type]||['list','c-g',''];
   return `<button class="task" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}" data-tapp="${esc(t.app||'')}"><span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(t.title)}</span><span class="t2">${esc(t.sub||'')}</span></span><span class="pill ${pc}">${esc(t.app==='hub'?(SRC[t.type]||'หน้ากลาง'):(APP_NAMES[t.app]||''))}</span></button>`;
 }
@@ -661,8 +694,8 @@ function pageHome(){
     ${nextHol&&!ups.some(c=>c.kind==='holiday')?`<p class="linkline">วันหยุดถัดไป: ${esc(nextHol.title)} · ${esc(thDate(nextHol.date,{day:'numeric',month:'short'}))}</p>`:''}</section>`;
   const anns=(S.annOn||m.isAdmin)?`<section><div class="sec"><h3>ประกาศล่าสุด</h3><button data-go="ann">ดูทั้งหมด</button></div><div class="list">${annOffNote()}
     ${h.announcements.length?h.announcements.slice(0,3).map(annCard).join(''):'<p class="okline">ยังไม่มีประกาศ</p>'}</div></section>`:'';
-  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${winCard()}${todo}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
-  return `${top}<div class="stack">${winCard()}${todo}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${winCard()}${praiseBoard()}${todo}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
+  return `${top}<div class="stack">${winCard()}${praiseBoard()}${todo}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
 /* ---------- งานของฉัน ---------- */
 function pageTasks(){
@@ -804,7 +837,7 @@ function pageMenu(){
   const adm=m.isAdmin?row('data-go="link"','key','h','ผูกบัญชีบุคลากร',notLinked?`<span class="pill warn">${esc(notLinked)}</span>`:'')+row('data-go="switch"','gear','g','เปิด–ปิดการใช้งาน'):'';
   return head('บัญชี')+`<div class="stack" style="gap:16px">
   <div class="card pcard"><div style="display:flex;align-items:center;gap:14px">${avatar()}<div style="min-width:0"><h2 style="font-size:18px">${esc(m.name)}</h2><p class="t2">${esc(rolesText())}</p><p class="t2">รหัสบุคลากร ${esc(m.staff_id)}${m.rooms.length?' · ครูประจำชั้น '+esc(m.rooms.map(r=>r.grade).join(', ')):''}</p></div></div>
-    <p class="okline" style="margin-top:10px">${ic('checkc',18)} ผูกกับ LINE แล้ว${m.lineName?' ('+esc(m.lineName)+')':''}</p></div>
+    <p class="okline" style="margin-top:10px">${ic('checkc',18)} ผูกกับ LINE แล้ว${m.lineName?' ('+esc(m.lineName)+')':''}</p>${starProfile()}</div>
   ${adm?`<section><div class="sec"><h3>ผู้ดูแลระบบ</h3></div><div class="card" style="padding:4px 16px">${adm}</div></section>`:''}
   <div class="card" style="padding:4px 16px">
     ${row('data-act="refresh"','refresh','g','โหลดข้อมูลใหม่')}
@@ -856,7 +889,8 @@ function go(p){
   // เปิดหน้าทันทีจากข้อมูลที่มี แล้วค่อยอัปเดตเงียบๆ ถ้าข้อมูลเก่ากว่า 1 นาที
   if(['home','ann','cal','tasks'].includes(p) && Date.now()-(S.fetchedAt||0)>60000 && !S.loading){
     S.loading=true; loadHome().catch(()=>{}).finally(()=>{S.loading=false;});
-  } else if(p==='home'||p==='tasks'){ loadExt();
+  } else if(p==='home'||p==='tasks'){ loadExt(); loadPraise();
+  } else if(p==='menu'){ loadPraise();
   }
 }
 
@@ -872,7 +906,7 @@ document.addEventListener('click',async ev=>{
   if(t.dataset.app){ const k=t.dataset.app; if(appReady(k)) location.href=CONFIG.APP_URLS[k]; else toast(APP_NAMES[k]+' · '+appState(k)); return; }
   if(t.dataset.task){
     const ty=t.dataset.task, id=t.dataset.id;
-    if(t.dataset.tapp==='teacher'){ const TAB={'leave.hr':'endorse','leave.dir':'req','out.dir':'req','out.sub':'mysub',mysub:'mysub',sub:'sub',jan:'jan',rate:'fixreq',emg:'count',work:'mytasks',sup:'mydev','leave.wait':'myreq'}; location.href=CONFIG.APP_URLS.teacher+(TAB[ty]?'#tab='+TAB[ty]:''); return; }
+    if(t.dataset.tapp==='teacher'){ const TAB={'leave.hr':'endorse','leave.dir':'req','out.dir':'req','out.sub':'mysub',mysub:'mysub',sub:'sub',jan:'jan',rate:'fixreq',emg:'count',work:'mytasks',sup:'mydev','leave.wait':'myreq',notif:'mywork',inbox:'tasks'}; location.href=CONFIG.APP_URLS.teacher+(TAB[ty]?'#tab='+TAB[ty]:''); return; }
     if(ty==='link'){ go('link'); return; }
     if(ty==='approve'){ S.annFilter='pending'; }
     S.page='ann'; S.detail=id||null; if(!S.anns) await loadAnns(); render(); window.scrollTo(0,0); return;
