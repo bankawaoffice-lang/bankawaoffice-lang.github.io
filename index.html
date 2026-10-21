@@ -309,6 +309,46 @@ details.more summary{cursor:pointer;color:var(--pri);font-weight:500;font-size:1
 .m-nav button{font-size:11px}
 @media (max-width:420px){.form .two{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.sw::after{transition:none}.spin{animation-duration:3s}}
+/* ===== ปรับ UI (preview) ===== */
+.m-nav button{border-radius:16px;padding:6px 0;transition:background .15s,color .15s}
+.m-nav button[aria-current="page"]{background:var(--pri-soft);color:var(--pri);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--pri)}
+.m-nav button[aria-current="page"] svg{stroke:var(--pri);stroke-width:2.3}
+.homeb{margin-right:0}.m-top .back+.homeb,.d-head .back+.homeb{margin-left:-4px}
+.pill.info{background:var(--h-bg);color:var(--h-c)}
+.chip{border:1.5px solid var(--line)}.chip[aria-pressed="true"]{border-color:var(--pri)}
+.task{border-left:6px solid var(--line)}.task.lv-r{border-left-color:var(--bad)}.task.lv-y{border-left-color:var(--warn)}.task.lv-g{border-left-color:var(--ok)}
+.task .go{flex:none;display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:999px;white-space:nowrap}
+.task .go.r{background:var(--bad-bg);color:var(--bad)}.task .go.y{background:var(--warn-bg);color:var(--warn)}.task .go.g{background:var(--ok-bg);color:var(--ok)}
+.tlegend{display:flex;gap:14px;flex-wrap:wrap}.tlegend span{display:inline-flex;align-items:center;gap:6px}
+.tl{display:inline-block;width:11px;height:11px;border-radius:50%}.tl.r{background:var(--bad)}.tl.y{background:var(--warn)}.tl.g{background:var(--ok)}
+.appc.off{opacity:.5;filter:grayscale(1)}.appc.off .ic{opacity:1}
+.appc b.th{font-size:17px;font-weight:600}.appc small.en{font-size:11.5px;color:var(--muted)}
+.wd b.dn{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:2.5px solid transparent;font-size:15px}
+.wd b.dn.k-event{border-color:var(--pri)}.wd b.dn.k-due{border-color:var(--warn)}.wd b.dn.k-holiday{border-color:var(--bad)}.wd b.dn.k-term{border-color:var(--s-c)}
+.wd b.dn.today{background:var(--navy);color:#fff;border-color:var(--navy)}
+.wd[aria-pressed="true"]{background:var(--pri-soft);color:var(--ink)}.wd[aria-pressed="true"] small{color:var(--pri);opacity:1;font-weight:600}
+.btn.logout{color:var(--muted);font-size:13px;padding:6px 14px;background:none;box-shadow:none;border:1px solid var(--line)}
+
+:root{--pu:#8E44D6;--pu-bg:#F1E6FB}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pu:#C9A2FF;--pu-bg:#33204A}}
+:root[data-theme="dark"]{--pu:#C9A2FF;--pu-bg:#33204A}
+.task.lv-b{border-left-color:var(--h-c)}.task.lv-p{border-left-color:var(--pu)}
+.task .go.b{background:var(--h-bg);color:var(--h-c)}.task .go.p{background:var(--pu-bg);color:var(--pu)}
+.tl.b{background:var(--h-c)}.tl.p{background:var(--pu)}
+.lvstrip{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.lvstrip span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:var(--card);border-radius:999px;padding:4px 10px;box-shadow:var(--shadow);color:var(--muted)}
+.lvstrip b{color:var(--ink);font-variant-numeric:tabular-nums}
+.pray{background:var(--card);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);display:grid;gap:10px}
+.pray .sec{margin:0}
+.pray-g{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.pray-g div{text-align:center;border-radius:12px;padding:8px 2px;background:var(--soft);font-size:12.5px;color:var(--muted)}
+.pray-g b{display:block;font-size:14.5px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:2px}
+.pray-g .nx{background:var(--pri);color:var(--on-pri)}.pray-g .nx b{color:var(--on-pri)}
+.pray-g .ps{opacity:.55}
+.pray .nxl{font-size:13.5px;color:var(--muted)}
+.tfs{margin-bottom:2px}
+.chip small{font-variant-numeric:tabular-nums;opacity:.8;margin-left:4px}
+
 </style>
 </head>
 <body>
@@ -502,12 +542,11 @@ async function loadPraise(force){
 }
 /** การ์ดหน้ากลางของทุกคน: ชื่อครูที่ทำได้ตามเป้า (ถ้วย/ดาว) + ดาวล่าสุดจากผู้ปกครอง */
 function praiseBoard(){
-  if(!PR) return '';
-  const T=(PR.team||[]), L=PR.star;
+  const P=PR||{}; const T=(P.team||[]), L=P.star;
   const rows=T.slice(0,4).map(x=>{ const both=x.onTimeAll&&x.morningAll;
     return `<li><span class="ai" aria-hidden="true">${both?'🏆':'⭐'}</span><span><b>${esc(x.name)}</b> ${both?'มาตรงเวลาและเช็คชื่อกิจกรรมเช้าครบสัปดาห์':x.onTimeAll?'มาตรงเวลาครบสัปดาห์':'เช็คชื่อกิจกรรมเช้าครบสัปดาห์'}</span></li>`; }).join('');
-  return (T.length?`<section class="hubb" aria-label="ครูที่ทำได้ตามเป้าวันนี้"><div class="sec" style="margin:0"><h3>ชื่นชมครูวันนี้</h3><span class="t2">ระบบคิดให้อัตโนมัติ</span></div><ul class="achv">${rows}</ul>${T.length>4?`<p class="t2">และอีก ${T.length-4} ท่าน</p>`:''}</section>`:'')
-   +(L?`<section class="starcard" aria-label="ดาวล่าสุดจากผู้ปกครอง"><span class="si" aria-hidden="true">⭐</span><div style="min-width:0"><p class="k">ดาวล่าสุดจากผู้ปกครอง</p><b>${esc(L.name)} ได้รับดาว</b>${L.msg?`<p>"${esc(L.msg)}"</p>`:''}<p class="t2">${esc(L.from)} · ${esc(thDT(L.at))} · ดาวสะสม ⭐ ${L.total}</p></div></section>`:'');
+  return (T.length?`<section class="hubb" aria-label="ครูที่ทำได้ตามเป้าวันนี้"><div class="sec" style="margin:0"><h3>ชื่นชมครูวันนี้</h3><span class="t2">ระบบคิดให้อัตโนมัติ</span></div><ul class="achv">${rows}</ul>${T.length>4?`<p class="t2">และอีก ${T.length-4} ท่าน</p>`:''}</section>`:`<section class="hubb" aria-label="ครูที่ทำได้ตามเป้าวันนี้"><div class="sec" style="margin:0"><h3>ชื่นชมครูวันนี้</h3><span class="t2">ระบบคิดให้อัตโนมัติ</span></div><p class="okline">วันนี้ยังไม่มีครูที่ทำได้ตามเป้า พรุ่งนี้เริ่มใหม่ได้</p></section>`)
+   +(L?`<section class="starcard" aria-label="ดาวล่าสุดจากผู้ปกครอง"><span class="si" aria-hidden="true">⭐</span><div style="min-width:0"><p class="k">ดาวล่าสุดจากผู้ปกครอง</p><b>${esc(L.name)} ได้รับดาว</b>${L.msg?`<p>"${esc(L.msg)}"</p>`:''}<p class="t2">${esc(L.from)} · ${esc(thDT(L.at))} · ดาวสะสม ⭐ ${L.total}</p></div></section>`:`<section class="starcard" aria-label="ดาวล่าสุดจากผู้ปกครอง"><span class="si" aria-hidden="true">⭐</span><div style="min-width:0"><p class="k">ดาวล่าสุดจากผู้ปกครอง</p><b>ยังไม่มีดาวใหม่</b><p class="t2">เมื่อผู้ปกครองให้ดาว จะแสดงที่นี่</p></div></section>`);
 }
 /** ดาวสะสมในโปรไฟล์ครู (หน้า "บัญชี") */
 function starProfile(){
@@ -527,8 +566,15 @@ function applyHome(r,noRender){
 
 /* ---------- โครงหน้า ---------- */
 function canWrite(){ return S.annOn||(S.me&&S.me.isAdmin); }
-function adminItems(){ return S.me&&S.me.isAdmin?[{id:'link',label:'ผูกบัญชีบุคลากร',icon:'key',c:'h'},{id:'switch',label:'เปิด–ปิดการใช้งาน',icon:'gear',c:'g'}]:[]; }
-function myTasks(){ return S.home.tasks.filter(t=>t.type!=='link'); }
+function adminItems(){ return isDir()?[{id:'admin',label:'Admin Panel',icon:'gear',c:'g'}]:[]; }
+const LV_ORD={r:0,y:1,p:2,b:3,g:4};
+const LV_NAME={r:'แดง · ด่วน/เกินกำหนด',y:'เหลือง · ใกล้ครบกำหนด',p:'ม่วง · รอผู้อื่น',b:'น้ำเงิน · งานใหม่',g:'เขียว · เสร็จแล้ว'};
+function myTasks(){ return S.home.tasks.filter(t=>t.type!=='link').sort((a,b)=>LV_ORD[taskLevel(a)]-LV_ORD[taskLevel(b)]); }
+function levelStrip(ts){
+  const c={r:0,y:0,p:0,b:0}; ts.forEach(t=>{ const l=taskLevel(t); if(c[l]!==undefined) c[l]++; });
+  return '<div class="lvstrip">'+['r','y','p','b'].map(l=>c[l]?'<span><i class="tl '+l+'"></i><b>'+c[l]+'</b> '+LV_NAME[l].split(' · ')[0]+'</span>':'').join('')+'</div>';
+}
+function isDir(){ return !!(S.me&&S.me.roles&&S.me.roles.includes('ผอ.')); }
 function setupTasks(){ return S.home.tasks.filter(t=>t.type==='link'); }
 function render(){
   if(!S.home) return;
@@ -546,7 +592,7 @@ function render(){
       <div style="flex:1"></div><p class="credit">ผู้พัฒนา: นายฮาฟีซี อูมา</p></nav>
       <main class="d-main">${body}</main></div>`;
   }else{
-    const cur=['link','switch'].includes(S.page)?'menu':S.page;
+    const cur=['link','switch','admin'].includes(S.page)?'menu':S.page;
     const b=(id,label,icon,badge)=>`<button data-go="${id}"${cur===id?' aria-current="page"':''}>${ic(icon,22)}${label}${badge?`<span class="dot">${badge}</span>`:''}</button>`;
     el.innerHTML=`<div class="m-shell"><main class="m-main">${body}</main>
       <nav class="m-nav" aria-label="เมนูหลัก">${b('home','หน้าแรก','home')}${b('tasks','งานของฉัน','list',n)}${b('ann','ประกาศ','mega')}${b('cal','ปฏิทิน','cal')}${b('menu','บัญชี','user')}</nav></div>`;
@@ -562,13 +608,14 @@ function pageBody(){
     case 'ann': return S.detail?pageAnnDetail():pageAnn();
     case 'cal': return pageCal();
     case 'menu': return pageMenu();
+    case 'admin': return isDir()?pageAdmin():pageMenu();
     case 'link': return pageLinkAdmin();
     case 'switch': return pageSwitch();
     default: return pageHome();
   }
 }
 function head(title,sub,extra,backTo){
-  return `<div class="${wide.matches?'d-head':'m-top'}">${backTo?`<button class="back" data-go="${backTo}" aria-label="ย้อนกลับ">${ic('left')}</button>`:''}<div style="flex:1;min-width:0"><h1>${title}</h1>${sub?`<p style="color:var(--muted);font-size:14px;margin-top:2px">${sub}</p>`:''}</div>${extra||''}</div>`;
+  return `<div class="${wide.matches?'d-head':'m-top'}">${backTo?`<button class="back" data-go="${backTo}" aria-label="ย้อนกลับ">${ic('left')}</button>`:''}${S.page!=='home'?`<button class="back homeb" data-go="home" aria-label="กลับหน้าแรก">${ic('home')}</button>`:''}<div style="flex:1;min-width:0"><h1>${title}</h1>${sub?`<p style="color:var(--muted);font-size:14px;margin-top:2px">${sub}</p>`:''}</div>${extra||''}</div>`;
 }
 
 /* ---------- วันที่ ---------- */
@@ -587,10 +634,28 @@ function ring(pct,big,small){
     <circle cx="46" cy="46" r="${r}" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg>
     <div class="v"><b>${big}</b><small>${small}</small></div></div>`;
 }
+/** แปลงวันที่ ISO ในข้อความเป็นภาษาไทยสั้น เช่น 22 ต.ค. 69 */
+const TH_ISO=s=>String(s==null?'':s).replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g,m=>thDate(m,{day:'numeric',month:'short',year:'2-digit'}));
+/** ไฟจราจร: แดง = ด่วน · เหลือง = ใกล้ครบกำหนด · เขียว = เสร็จแล้ว */
+const URGENT_TYPES=['emg','checkin','out.dir','out.sub','mysub'];
+const WAIT_TYPES=['leave.wait','pending'];
+function taskLevel(t){
+  if(t.done) return 'g';
+  if(t.wait||WAIT_TYPES.includes(t.type)) return 'p';
+  if(URGENT_TYPES.includes(t.type)) return 'r';
+  if(t.due){ const d=daysBetween(S.home.today.date,t.due); if(d<=1) return 'r'; if(d<=3) return 'y'; }
+  return 'b';
+}
 function taskRow(t){
-  const map={ack:['mega','c-h','pri'],approve:['check','c-w','warn'],link:['key','c-g',''],pending:['clock','c-w','warn'],checkin:['clock','c-t','pri'],'leave.hr':['check','c-w','warn'],'leave.dir':['check','c-w','warn'],'out.dir':['check','c-w','warn'],'out.sub':['refresh','c-p','warn'],mysub:['refresh','c-p',''],sub:['refresh','c-p','warn'],jan:['list','c-b','warn'],rate:['star','c-w',''],emg:['flag','c-r','bad'],notif:['list','c-b','pri'],inbox:['list','c-w','warn'],work:['list','c-t',''],sup:['user','c-s',''],'leave.wait':['clock','c-g','']};
-  const [icn,col,pc]=map[t.type]||['list','c-g',''];
-  return `<button class="task" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}" data-tapp="${esc(t.app||'')}"><span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(t.title)}</span><span class="t2">${esc(t.sub||'')}</span></span><span class="pill ${pc}">${esc(t.app==='hub'?(SRC[t.type]||'หน้ากลาง'):(APP_NAMES[t.app]||''))}</span></button>`;
+  const map={ack:['mega','c-h'],approve:['check','c-w'],link:['key','c-g'],pending:['clock','c-w'],checkin:['clock','c-t'],'leave.hr':['check','c-w'],'leave.dir':['check','c-w'],'out.dir':['check','c-w'],'out.sub':['refresh','c-p'],mysub:['refresh','c-p'],sub:['refresh','c-p'],jan:['list','c-b'],rate:['star','c-w'],emg:['flag','c-r'],notif:['list','c-b'],inbox:['list','c-w'],work:['list','c-t'],sup:['user','c-s'],'leave.wait':['clock','c-g']};
+  const [icn,col]=map[t.type]||['list','c-g'];
+  const lv=taskLevel(t);
+  const src=t.app==='hub'?(SRC[t.type]||'หน้ากลาง'):(APP_NAMES[t.app]||'');
+  const due=t.due?' · กำหนด '+thDate(t.due,{day:'numeric',month:'short',year:'2-digit'}):'';
+  const inner=`<span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(TH_ISO(t.title))}</span><span class="t2">${esc(src)} · ${esc(TH_ISO(t.sub||''))}${esc(due)}</span></span>`
+    +(lv==='g'?`<span class="go g">✓ เสร็จแล้ว</span>`:lv==='p'?`<span class="go p">รอผู้อื่น ›</span>`:`<span class="go ${lv}">กดเพื่อทำงานนี้ ›</span>`);
+  return t.done?`<div class="task lv-g">${inner}</div>`
+    :`<button class="task lv-${lv}" data-task="${esc(t.type)}" data-id="${esc(t.id||'')}" data-tapp="${esc(t.app||'')}">${inner}</button>`;
 }
 /** ปุ่มลิงก์ในประกาศ: ลิงก์ในรายการ links (ถ้ามี) และลิงก์ไฟล์แนบ (attachments) ที่เป็น https */
 function linkBtns(a){
@@ -601,12 +666,13 @@ function linkBtns(a){
 function annCard(a){
   const pills=[];
   if(a.pinned) pills.push(`<span class="pill pri">${ic('tack',12)} ปักหมุด</span>`);
-  if(a.status==='รออนุมัติ') pills.push('<span class="pill warn">รออนุมัติ</span>');
+  if(a.status==='รออนุมัติ') pills.push('<span class="pill '+(S.me&&S.me.isAdmin?'bad':'warn')+'">รออนุมัติ</span>');
   if(a.status==='ไม่อนุมัติ') pills.push('<span class="pill bad">ไม่อนุมัติ</span>');
   if(a.status==='ยกเลิก') pills.push('<span class="pill bad">ยกเลิกแล้ว</span>');
   if(a.expired) pills.push('<span class="pill">หมดอายุ</span>');
   if(a.due_date&&!a.expired) pills.push(`<span class="pill warn">ส่ง ${esc(thDate(a.due_date,{day:'numeric',month:'short'}))}</span>`);
-  if(a.canAck) pills.push(a.acked?'<span class="pill ok">รับทราบแล้ว</span>':'<span class="pill bad">ยังไม่รับทราบ</span>');
+  if(a.canAck) pills.push(a.acked?'<span class="pill ok">✓ รับทราบแล้ว</span>':'<span class="pill bad">ยังไม่รับทราบ</span>');
+  else if(a.status==='เผยแพร่'&&(a.audience==='staff'||a.audience==='all')) pills.push('<span class="pill info">แจ้งเพื่อทราบ</span>');
   return `<div class="annw"><button class="ann" data-ann="${esc(a.id)}"><h3>${esc(a.title)}</h3><p class="pv">${esc(a.body_th)}</p>
     <div class="meta">${pills.join('')}<span>${esc(a.audienceLabel)}</span><span>${esc(a.author)}</span><span>${esc(thDT(a.created_at))}</span></div></button>${linkBtns(a)}</div>`;
 }
@@ -618,7 +684,7 @@ function evRow(c){
   const attrs=(c.kind!=='event'&&c.kind!=='due')?'':c.src?`data-ann="${esc(c.src)}"`:canEd?`data-ev="${esc(c.id)}" data-evdate="${esc(c.date)}" data-evtitle="${esc(c.title)}" data-evkey="${esc(c.key||'')}"`:'';
   const tag=attrs?'button':'div';
   return `<${tag} class="ev" ${attrs}><div class="d"><b>${d.getDate()}</b><span>${d.toLocaleDateString('th-TH',{month:'short'})}</span></div>
-    <div class="c${cls}">${canEd?`<span class="edit">${ic('pen',16)}</span>`:''}<div style="font-weight:500">${esc(c.title)}</div><div class="t2"><span class="kind">${kind}</span> · ${esc(thDate(c.date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</div></div></${tag}>`;
+    <div class="c${cls}">${canEd?`<span class="edit">${ic('pen',16)}</span>`:''}<div style="font-weight:500">${esc(c.title)}</div><div class="t2"><span class="kind">${kind}</span></div></div></${tag}>`;
 }
 function isHoliday(date){ return (S.cal||[]).find(c=>c.kind==='holiday'&&c.date===date); }
 function eventForm(ev){
@@ -656,6 +722,30 @@ function eventForm(ev){
     catch(err){ fail(err,del,'ลบกิจกรรมนี้'); }
   });
 }
+/* ---------- ตัวช่วยเพิ่มเติม (ปรับ UI) ---------- */
+const TH_APP={teacher:'งานครู',academic:'งานวิชาการ',student:'ดูแลนักเรียน',budget:'งบประมาณ',parent:'ผู้ปกครอง'};
+/** บันทึกว่าครูเปิดอ่านประกาศแล้ว (ผอ. เห็นว่าอ่านตอนไหน กี่คน) */
+function markSeen(a){
+  if(!a||a.seenByMe||a.mine||a.status!=='เผยแพร่'||!(a.audience==='staff'||a.audience==='all')) return;
+  a.seenByMe=true; a.seenCount=(a.seenCount||0)+1;
+  api('announce.seen',{id:a.id}).catch(()=>{});
+}
+/** แจ้งปัญหา / ติดต่อแอดมิน */
+function reportSheet(){
+  const m=S.me, when=thDT(S.home.today.date+' '+new Date().toTimeString().slice(0,5));
+  const msg='แจ้งปัญหาการใช้งาน Q-Kawa Hub\nผู้แจ้ง: '+m.name+' ('+m.staff_id+') · '+rolesText()+'\nวันที่แจ้ง: '+when+'\nหน้าที่พบปัญหา: \nรายละเอียด: ';
+  modal(`<div class="stack" style="gap:14px"><div style="display:flex;align-items:center"><h2 style="flex:1">แจ้งปัญหา / ติดต่อแอดมิน</h2><button class="btn sm" data-act="close">ปิด</button></div>
+    <p class="note">ถ้าข้อมูลไม่ขึ้น ลองกด "อัปเดตข้อมูลให้เป็นปัจจุบัน" ก่อน ถ้ายังไม่หาย ส่งข้อความด้านล่างถึงแอดมินได้เลย</p>
+    <div class="copybox" id="copyText">${esc(msg)}</div>
+    <button class="btn pri block" data-act="copy">${ic('copy',18)} คัดลอกข้อความ แล้วไปวางในไลน์</button>
+    <a class="btn block" href="https://line.me/R/ti/p/@318gnwkx" target="_blank" rel="noopener">เปิดไลน์ OA โรงเรียนบ้านกาวะ (@318gnwkx)</a>
+    <a class="btn block" href="mailto:bankawa.office@gmail.com?subject=${encodeURIComponent('แจ้งปัญหา Q-Kawa Hub')}&body=${encodeURIComponent(msg)}">ส่งอีเมลถึงแอดมิน</a></div>`);
+}
+function logoutSheet(){
+  modal(`<div class="stack" style="gap:14px"><h2>ออกจากระบบ?</h2><p class="note">ถ้าออกจากระบบ ต้องเข้าสู่ระบบด้วย LINE อีกครั้งจึงจะใช้งานต่อได้</p>
+    <div style="display:flex;gap:8px"><button class="btn block" style="flex:1" data-act="close">ยกเลิก</button><button class="btn bad block" style="flex:1" data-act="logoutYes">ออกจากระบบ</button></div></div>`);
+}
+
 function annOffNote(){ return (!S.annOn&&S.me.isAdmin)?`<p class="note warn">ระบบประกาศยังปิดอยู่ บุคลากรอื่นยังไม่เห็น เปิดได้ที่ "เปิด–ปิดการใช้งาน" ในหน้าบัญชี</p>`:''; }
 /* ---------- หน้าแรก ---------- */
 /* ---------- ความสำเร็จเล็กๆ ของวันนี้ ---------- */
@@ -673,6 +763,37 @@ function winCard(){
   }
   return `<section><div class="win hello"><span class="ic c-t">${ic('sun',22)}</span><div style="flex:1;min-width:0"><p class="k">ความสำเร็จเล็กๆ ของวันนี้</p><h3>${esc(WIN_HELLO[i%14])}</h3><p class="pr">วันนี้ยังไม่มีความสำเร็จที่บันทึกไว้ ไม่เป็นไร ค่อยๆ ไปก็ได้</p></div></div></section>`;
 }
+/* เวลาละหมาด: คำนวณจากพิกัดโรงเรียน (home.school ← แท็บ settings gps_lat/gps_lng ของ QK-Hub) ด้วยสูตรดาราศาสตร์มาตรฐาน
+ * ค่าเริ่มต้น: ซุบฮิ 20° · อิชาอ์ 18° · อัสริแบบชาฟิอี (เงา 1 เท่า) · เขตเวลา +7 — ต้องให้โรงเรียนยืนยันวิธีคำนวณที่ใช้ */
+const PRAY_CFG={fajr:20,isha:18,asrFactor:1,tz:7};
+function prayerTimes(date,lat,lng){
+  const R=Math.PI/180,sin=a=>Math.sin(a*R),cos=a=>Math.cos(a*R),tan=a=>Math.tan(a*R),acos=x=>Math.acos(x)/R,asin=x=>Math.asin(x)/R,atan2=(a,b)=>Math.atan2(a,b)/R,acot=x=>Math.atan(1/x)/R;
+  const fa=a=>a-360*Math.floor(a/360), fh=h=>h-24*Math.floor(h/24);
+  let y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();
+  if(m<=2){ y-=1; m+=12; }
+  const A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+  const jd=Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5-lng/360;
+  const sp=t=>{ const D=jd+t-2451545.0,g=fa(357.529+0.98560028*D),q=fa(280.459+0.98564736*D),L=fa(q+1.915*sin(g)+0.020*sin(2*g)),e=23.439-0.00000036*D,RA=fh(atan2(cos(e)*sin(L),cos(L))/15); return {decl:asin(sin(e)*sin(L)),eqt:q/15-RA}; };
+  const mid=t=>fh(12-sp(t).eqt);
+  const ang=(a,t,ccw)=>{ const dc=sp(t).decl, v=acos((-sin(a)-sin(dc)*sin(lat))/(cos(dc)*cos(lat)))/15; return mid(t)+(ccw?-v:v); };
+  const asr=(f,t)=>ang(-acot(f+tan(Math.abs(lat-sp(t).decl))),t);
+  let T={fajr:5,sunrise:6,dhuhr:12,asr:13,sunset:18,isha:18};
+  for(let i=0;i<2;i++){ const p=k=>T[k]/24; T={fajr:ang(PRAY_CFG.fajr,p('fajr'),true),sunrise:ang(0.833,p('sunrise'),true),dhuhr:mid(p('dhuhr')),asr:asr(PRAY_CFG.asrFactor,p('asr')),sunset:ang(0.833,p('sunset')),isha:ang(PRAY_CFG.isha,p('isha'))}; }
+  const adj=PRAY_CFG.tz-lng/15, mins=h=>Math.round((h+adj)*60);
+  return [['ซุบฮิ',mins(T.fajr)],['ซุฮรี',mins(T.dhuhr)+1],['อัสริ',mins(T.asr)],['มัฆริบ',mins(T.sunset)+1],['อิชาอ์',mins(T.isha)]];
+}
+const hhmm=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
+function prayerCard(){
+  const sc=S.home&&S.home.school;
+  if(!sc) return isDir()?'<section class="pray"><div class="sec"><h3>เวลาละหมาดวันนี้</h3></div><p class="okline">ยังไม่มีพิกัดโรงเรียน · ตั้งค่า GPS ใน Q-Teacher เพื่อแสดงเวลาละหมาด</p></section>':'';
+  const now=new Date(), cur=now.getHours()*60+now.getMinutes();
+  const P=prayerTimes(now,sc.lat,sc.lng);
+  const nx=P.findIndex(p=>p[1]>cur), tom=nx<0, ni=tom?0:nx;
+  const left=P[ni][1]+(tom?1440:0)-cur, lh=Math.floor(left/60), lm=left%60;
+  return `<section class="pray" aria-label="เวลาละหมาดวันนี้"><div class="sec"><h3>เวลาละหมาดวันนี้</h3><span class="t2">คำนวณจากพิกัดโรงเรียน</span></div>
+   <p class="nxl">ถัดไป: <b>${P[ni][0]}${tom?' (พรุ่งนี้)':''}</b> ${hhmm(P[ni][1])} น. · อีก ${lh?lh+' ชม. ':''}${lm} นาที</p>
+   <div class="pray-g">${P.map((p,i)=>`<div class="${i===ni?'nx':(tom||i<ni)?'ps':''}">${p[0]}<b>${hhmm(p[1])}</b></div>`).join('')}</div></section>`;
+}
 function pageHome(){
   const h=S.home, m=S.me, t=h.today;
   const tasks=myTasks();
@@ -680,8 +801,8 @@ function pageHome(){
   const top=`<header class="hdr"><div style="flex:1;min-width:0"><p class="hi">${greet()}${S.stale?' · <span class="upd">กำลังอัปเดต…</span>':''}</p><h1>${esc(m.call)}</h1><p class="role">${esc(rolesText())}</p></div>${bell}<button class="avbtn" data-go="menu" aria-label="บัญชีของฉัน">${avatar()}</button></header>`;
   const extNote=S.extState==='loading'?'<p class="linkline">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="linkline">โหลดงานจาก Q-Teacher ไม่สำเร็จ · <button class="lnk" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
   const todo=`<section><div class="sec"><h3>ต้องดำเนินการ${tasks.length?` <span class="cnt">${tasks.length}</span>`:''}</h3>${tasks.length>3?'<button data-go="tasks">ดูทั้งหมด</button>':''}</div>
-    <div class="list">${tasks.length?tasks.slice(0,3).map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการตอนนี้</p>`)}</div>${extNote}</section>`;
-  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps2">${APPS.map(a=>`<button class="appc${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic e3d" style="--g:${a.g};--sh:${a.sh}" aria-hidden="true">${a.e}</span><span class="tx"><b>${a.name}</b><small>${esc(a.sub)}</small><span class="st ${appReady(a.key)?'on':''}">${appState(a.key)}</span></span></button>`).join('')}</div></section>`;
+    ${levelStrip(tasks)}<div class="list">${tasks.length?tasks.slice(0,3).map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการตอนนี้</p>`)}</div>${extNote}</section>`;
+  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps2">${APPS.map(a=>`<button class="appc${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic e3d" style="--g:${a.g};--sh:${a.sh}" aria-hidden="true">${a.e}</span><span class="tx"><b class="th">${TH_APP[a.key]||a.name}</b><small class="en">${a.name} · ${esc(a.sub)}</small><span class="st ${appReady(a.key)?'on':''}">${appState(a.key)}</span></span></button>`).join('')}</div></section>`;
   let strip='';
   if(t.holiday) strip=`วันนี้วันหยุด · ${esc(t.holiday)}`;
   else if(t.term.next){ const left=Math.max(0,daysBetween(t.date,t.term.next)); strip=`${esc(t.term.label.replace('ปิดภาคเรียน · ','').replace('เปิดภาคเรียนที่','เปิดเทอม'))} · ${esc(thDate(t.term.next,{day:'numeric',month:'short'}))} · อีก ${left} วัน`; }
@@ -694,16 +815,24 @@ function pageHome(){
     ${nextHol&&!ups.some(c=>c.kind==='holiday')?`<p class="linkline">วันหยุดถัดไป: ${esc(nextHol.title)} · ${esc(thDate(nextHol.date,{day:'numeric',month:'short'}))}</p>`:''}</section>`;
   const anns=(S.annOn||m.isAdmin)?`<section><div class="sec"><h3>ประกาศล่าสุด</h3><button data-go="ann">ดูทั้งหมด</button></div><div class="list">${annOffNote()}
     ${h.announcements.length?h.announcements.slice(0,3).map(annCard).join(''):'<p class="okline">ยังไม่มีประกาศ</p>'}</div></section>`:'';
-  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${winCard()}${praiseBoard()}${todo}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
-  return `${top}<div class="stack">${winCard()}${praiseBoard()}${todo}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${todo}${prayerCard()}${winCard()}${praiseBoard()}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
+  return `${top}<div class="stack">${todo}${prayerCard()}${winCard()}${praiseBoard()}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
 /* ---------- งานของฉัน ---------- */
+const TF=[['all','ทั้งหมด'],['teacher','Teacher'],['academic','Academic'],['student','Student'],['budget','Budget']];
 function pageTasks(){
-  const t=myTasks(), st=setupTasks();
+  const all=myTasks(), st=setupTasks(), f=S.taskApp||'all';
+  const pick=a=>f==='all'?a:a.filter(x=>x.app===f);
+  const t=pick(all);
+  const done=pick(S.doneTasks||[]);
+  const cnt=k=>k==='all'?all.length:all.filter(x=>x.app===k).length;
+  const chips=`<div class="chips tfs" role="tablist" aria-label="กรองตามแอป">${TF.map(([k,l])=>`<button class="chip" data-tf="${k}" aria-pressed="${f===k}">${l}<small>${cnt(k)}</small></button>`).join('')}</div>`;
   const ext=S.extState==='loading'?'<p class="note">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="note warn">โหลดงานจาก Q-Teacher ไม่สำเร็จ <button class="btn sm" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
-  return head('งานของฉัน','เรื่องที่ต้องดำเนินการจากทุกแอป')+`<div class="stack"><div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการตอนนี้</p>`)}</div>${ext}
-  ${st.length?`<section><div class="sec"><h3>งานตั้งค่าระบบ</h3></div><div class="list">${st.map(taskRow).join('')}</div></section>`:''}
-  <p class="note">แตะรายการเพื่อไปยังเรื่องนั้นในแอปต้นทาง</p></div>`;
+  return head('งานของฉัน','กล่องงานกลางจากทุกแอป')+`<div class="stack">${chips}${levelStrip(t)}<div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการ${f==='all'?'ตอนนี้':'ในแอปนี้'}</p>`)}</div>${ext}
+  ${st.length&&f==='all'?`<section><div class="sec"><h3>งานตั้งค่าระบบ</h3></div><div class="list">${st.map(taskRow).join('')}</div></section>`:''}
+  ${done.length?`<section><div class="sec"><h3>ทำเสร็จแล้ว</h3></div><div class="list">${done.map(taskRow).join('')}</div></section>`:''}
+  <p class="note tlegend"><span><i class="tl b"></i>น้ำเงิน = งานใหม่/ยังไม่ถึงกำหนด</span><span><i class="tl p"></i>ม่วง = รอผู้อื่น</span><span><i class="tl g"></i>เขียว = เสร็จแล้ว</span><span><i class="tl y"></i>เหลือง = ใกล้ครบกำหนด (≤3 วัน)</span><span><i class="tl r"></i>แดง = ด่วน/เกินกำหนด</span></p>
+  <p class="note">แตะรายการเพื่อไปยังเรื่องนั้นในแอปต้นทาง · งานของแอปที่ยังไม่เปิดใช้ (Academic / Student / Budget) จะขึ้นที่นี่เมื่อแอปนั้นพร้อมส่งงานเข้ามา</p></div>`;
 }
 /* ---------- ประกาศ ---------- */
 function pageAnn(){
@@ -712,10 +841,10 @@ function pageAnn(){
   const anyPending=S.anns.some(a=>a.status==='รออนุมัติ'&&(m.isAdmin||a.mine));
   const chips=[['all','ทั้งหมด'],['unread','ยังไม่รับทราบ']];
   if(anyPending) chips.push(['pending','รออนุมัติ']);
-  if(canWrite()) chips.push(['mine','ของฉัน']);
+  if(canWrite()&&m.canPublishSchool) chips.push(['mine','ของฉัน']);
   let list=S.anns.filter(a=>f==='all'?a.status==='เผยแพร่'||a.mine||m.isAdmin:f==='unread'?(a.canAck&&!a.acked):f==='pending'?a.status==='รออนุมัติ':a.mine);
   if(q) list=list.filter(a=>(a.title+' '+a.body_th).indexOf(q)>=0);
-  const btn=canWrite()?`<button class="btn pri sm" data-act="compose">${ic('plus',16)} เขียนประกาศ</button>`:'';
+  const btn=canWrite()&&m.canPublishSchool?`<button class="btn pri sm" data-act="compose">${ic('plus',16)} เขียนประกาศ</button>`:'';
   return head('ประกาศ','ประกาศกลางของโรงเรียน',btn)+`<div class="stack" style="gap:14px">${annOffNote()}
     ${!S.annOn&&!m.isAdmin?'<p class="note">ระบบประกาศยังไม่เปิดใช้</p>':''}
     <input type="search" class="search" id="annQ" placeholder="ค้นหาประกาศ" value="${esc(q)}" aria-label="ค้นหาประกาศ">
@@ -729,16 +858,17 @@ async function loadAnns(){
 function pageAnnDetail(){
   const a=(S.anns||[]).find(x=>x.id===S.detail);
   if(!a){ S.detail=null; return pageAnn(); }
+  markSeen(a);
   const acts=[];
   if(a.canAck&&!a.acked) acts.push(`<button class="btn pri block" data-act="ack" data-id="${esc(a.id)}">${ic('check',18)} รับทราบ</button>`);
   if(a.canAck&&a.acked) acts.push(`<p class="note" style="color:var(--ok);background:var(--ok-bg)">${ic('check',16)} คุณรับทราบแล้ว${a.ackedAt?' · '+esc(thDT(a.ackedAt)):''}</p>`);
   if(S.me.isAdmin&&a.status==='รออนุมัติ') acts.push(`<div style="display:flex;gap:8px"><button class="btn pri" style="flex:1" data-act="approve" data-id="${esc(a.id)}">อนุมัติและเผยแพร่</button><button class="btn bad" data-act="reject" data-id="${esc(a.id)}">ไม่อนุมัติ</button></div>`);
   if(a.canEdit) acts.push(`<div style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="edit" data-id="${esc(a.id)}">${ic('pen',16)} แก้ไข</button><button class="btn bad" style="flex:1" data-act="cancelAnn" data-id="${esc(a.id)}">ยกเลิกประกาศ</button></div>`);
   if(a.status==='ยกเลิก') acts.push('<p class="note">ประกาศนี้ถูกยกเลิกแล้ว ครูจะไม่เห็น และไม่แสดงในปฏิทิน</p>');
-  if(a.canSeeReaders) acts.push(`<button class="btn" data-act="readers" data-id="${esc(a.id)}">${ic('user',16)} รับทราบแล้ว ${a.ackCount}/${a.staffTotal} คน · ดูรายชื่อ</button>`);
-  return `<div class="${wide.matches?'d-head':'m-top'}"><button class="back" data-act="back" aria-label="ประกาศทั้งหมด">${ic('left')}</button><h2 style="flex:1">ประกาศ</h2></div>
+  if(a.canSeeReaders) acts.push(`<button class="btn" data-act="readers" data-id="${esc(a.id)}">${ic('user',16)} ครูเปิดอ่านแล้ว ${a.seenCount||0}/${a.staffTotal} คน${a.needAck?' · รับทราบแล้ว '+a.ackCount:''} · ดูรายชื่อและเวลาอ่าน</button>`);
+  return `<div class="${wide.matches?'d-head':'m-top'}"><button class="back" data-act="back" aria-label="ประกาศทั้งหมด">${ic('left')}</button>${S.page!=='home'?`<button class="back homeb" data-go="home" aria-label="กลับหน้าแรก">${ic('home')}</button>`:''}<h2 style="flex:1">ประกาศ</h2></div>
   <article class="card stack" style="gap:16px;padding:20px">
-    <div><h1>${esc(a.title)}</h1><div class="meta">${a.pinned?`<span class="pill pri">${ic('tack',12)} ปักหมุด</span>`:''}${a.status!=='เผยแพร่'?`<span class="pill warn">${esc(a.status)}</span>`:''}<span>ถึง ${esc(a.audienceLabel)}</span><span>${esc(a.author)}</span><span>${esc(thDT(a.created_at))}</span></div></div>
+    <div><h1>${esc(a.title)}</h1><div class="meta">${a.pinned?`<span class="pill pri">${ic('tack',12)} ปักหมุด</span>`:''}${a.canAck?(a.acked?'<span class="pill ok">✓ รับทราบแล้ว</span>':'<span class="pill bad">ผอ. ขอให้กดรับทราบ</span>'):(a.status==='เผยแพร่'&&(a.audience==='staff'||a.audience==='all')?'<span class="pill info">แจ้งเพื่อทราบ</span>':'')}${a.status!=='เผยแพร่'?`<span class="pill warn">${esc(a.status)}</span>`:''}<span>ถึง ${esc(a.audienceLabel)}</span><span>${esc(a.author)}</span><span>${esc(thDT(a.created_at))}</span></div></div>
     <p class="body">${esc(a.body_th)}</p>
     ${a.body_ms?`<div><p style="font-size:12.5px;color:var(--muted);margin-bottom:4px">Bahasa Melayu</p><p class="body">${esc(a.body_ms)}</p></div>`:''}
     ${a.event_date?`<p class="note">${ic('cal',16)} วันกิจกรรม ${esc(thDate(a.event_date,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
@@ -761,6 +891,7 @@ function composeForm(edit){
     <p class="note" id="audNote"></p>`}
     <label>หัวเรื่อง<input name="title" maxlength="150" required value="${v('title')}"></label>
     <label>เนื้อหา<textarea name="body_th" maxlength="5000" required>${v('body_th')}</textarea></label>
+    ${m.isAdmin?`<label class="check" style="background:var(--pri-soft);padding:10px 12px;border-radius:12px"><input type="checkbox" name="need_ack"${E&&E.needAck?' checked':''}> <span><b>ให้ครูกดรับทราบ</b><br><small>ผอ. เป็นผู้กำหนด · ถ้าไม่ติ๊ก จะเป็น "แจ้งเพื่อทราบ" (ระบบบันทึกเวลาที่ครูเปิดอ่านให้เอง)</small></span></label>`:''}
     <details class="more"${more?' open':''}><summary>เพิ่มรายละเอียด (วันที่ ภาษามลายู ไฟล์แนบ)</summary><div class="form" style="margin-top:12px">
       <label>วันกิจกรรม<span class="hint">ใส่แล้วขึ้นปฏิทินโรงเรียนให้เอง · แก้หรือยกเลิกประกาศ ปฏิทินเปลี่ยนตาม</span><input type="date" name="event_date" value="${v('event_date')}"></label>
       <p class="note warn" id="annHol" hidden></p>
@@ -782,7 +913,7 @@ function composeForm(edit){
   f.event_date.addEventListener('change',hol); f.due_date.addEventListener('change',hol); hol();
   f.addEventListener('submit',async ev=>{
     ev.preventDefault();
-    const fd=new FormData(f); const data=Object.fromEntries(fd.entries()); data.pinned=!!fd.get('pinned');
+    const fd=new FormData(f); const data=Object.fromEntries(fd.entries()); data.pinned=!!fd.get('pinned'); data.need_ack=!!fd.get('need_ack');
     const h=(data.event_date&&isHoliday(data.event_date))||(data.due_date&&isHoliday(data.due_date)); if(h&&!confirm('วันที่ที่เลือกตรงกับวันหยุด "'+h.title+'"\nยืนยันส่งประกาศ?')) return;
     const b=f.querySelector('button[type=submit]'); if(b.disabled) return; b.disabled=true; b.textContent='กำลังบันทึก…';
     try{
@@ -801,9 +932,13 @@ async function showReaders(id){
   modal('<div class="spin"></div>');
   try{
     const r=await api('announce.readers',{id});
-    modal(`<div class="stack" style="gap:16px"><div style="display:flex;align-items:center"><h2 style="flex:1">การรับทราบ</h2><button class="btn sm" data-act="close">ปิด</button></div>
-      <section><div class="sec"><h3>ยังไม่รับทราบ (${r.unread.length})</h3></div><div class="card" style="padding:4px 16px">${r.unread.map(u=>`<div class="row">${esc(u.name)}</div>`).join('')||'<p class="note" style="margin:10px 0">ครบทุกคนแล้ว</p>'}</div></section>
-      <section><div class="sec"><h3>รับทราบแล้ว (${r.read.length})</h3></div><div class="card" style="padding:4px 16px">${r.read.map(u=>`<div class="row"><span class="tx">${esc(u.name)}</span><span class="t2">${esc(thDT(u.at))}</span></div>`).join('')||'<p class="note" style="margin:10px 0">ยังไม่มี</p>'}</div></section></div>`);
+    const sec=(title,list,empty,showAt)=>`<section><div class="sec"><h3>${title} (${list.length})</h3></div><div class="card" style="padding:4px 16px">${list.map(u=>`<div class="row"><span class="tx">${esc(u.name)}</span>${showAt?`<span class="t2">${esc(thDT(u.at))}</span>`:''}</div>`).join('')||`<p class="note" style="margin:10px 0">${empty}</p>`}</div></section>`;
+    const total=r.seen.length+r.unseen.length;
+    modal(`<div class="stack" style="gap:16px"><div style="display:flex;align-items:center"><h2 style="flex:1">ครูอ่านประกาศ</h2><button class="btn sm" data-act="close">ปิด</button></div>
+      <div class="strip">${ic('user',18)}<span>เปิดอ่านแล้ว <b>${r.seen.length}/${total}</b> คน${r.needAck?` · กดรับทราบแล้ว <b>${r.read.length}/${total}</b> คน`:''}</span></div>
+      ${sec('เปิดอ่านแล้ว · เวลาที่อ่าน',r.seen,'ยังไม่มีใครเปิดอ่าน',true)}
+      ${sec('ยังไม่เปิดอ่าน',r.unseen,'ทุกคนเปิดอ่านแล้ว',false)}
+      ${r.needAck?sec('กดรับทราบแล้ว · เวลา',r.read,'ยังไม่มีใครกดรับทราบ',true)+sec('ยังไม่กดรับทราบ',r.unread,'ครบทุกคนแล้ว',false):'<p class="note">ประกาศนี้เป็น "แจ้งเพื่อทราบ" ไม่ต้องกดรับทราบ · ระบบบันทึกเวลาที่ครูเปิดอ่านให้อัตโนมัติ</p>'}</div>`);
   }catch(e){ closeModal(); toast(e.message); }
 }
 
@@ -811,11 +946,11 @@ async function showReaders(id){
 function pageCal(){
   if(!S.cal){ api('calendar').then(r=>{S.cal=r.calendar;render();}).catch(e=>toast(e.message)); return head('ปฏิทินโรงเรียน')+'<div class="spin"></div>'; }
   const today=d8(S.home.today.date);
-  const has={}; S.cal.forEach(c=>{has[c.date]=c.kind==='holiday'?'hol':(has[c.date]||'on');});
+  const PRI={holiday:4,due:3,term:2,event:1}; const has={}; S.cal.forEach(c=>{ if(!has[c.date]||(PRI[c.kind]||0)>(PRI[has[c.date]]||0)) has[c.date]=c.kind; });
   const days=[];
   for(let i=0;i<7;i++){ const d=new Date(today); d.setDate(d.getDate()+i); days.push(d); }
   const week=`<div class="week" role="group" aria-label="7 วันข้างหน้า แตะเพื่อดูเฉพาะวัน">${days.map(d=>{const k=ymd(d);
-    return `<button class="wd" data-day="${k}" aria-pressed="${S.calDay===k}"><small>${d.toLocaleDateString('th-TH',{weekday:'short'})}</small><b>${d.getDate()}</b><i class="${has[k]==='hol'?'hol':has[k]?'on':''}"></i></button>`;}).join('')}</div>`;
+    return `<button class="wd" data-day="${k}" aria-pressed="${S.calDay===k}"><small>${d.toLocaleDateString('th-TH',{weekday:'short'})}</small><b class="dn${has[k]?' k-'+has[k]:''}${k===S.home.today.date?' today':''}">${d.getDate()}</b></button>`;}).join('')}</div>`;
   const w=S.calWin||0, a=new Date(today), z=new Date(today);
   a.setDate(a.getDate()+w*30); z.setDate(z.getDate()+w*30+29);
   const from=ymd(a), to=ymd(z);
@@ -834,23 +969,42 @@ function pageMenu(){
   const m=S.me;
   const row=(attr,icon,c,label,extra)=>`<button class="mrow" ${attr}><span class="ic c-${c}">${ic(icon,18)}</span><span class="tx">${label}</span>${extra||''}<span class="chev">${ic('chev',16)}</span></button>`;
   const notLinked=setupTasks().length?setupTasks()[0].sub:'';
-  const adm=m.isAdmin?row('data-go="link"','key','h','ผูกบัญชีบุคลากร',notLinked?`<span class="pill warn">${esc(notLinked)}</span>`:'')+row('data-go="switch"','gear','g','เปิด–ปิดการใช้งาน'):'';
+  const adm=isDir()?row('data-go="admin"','gear','h','Admin Panel <small style="display:block;font-size:12px;color:var(--muted)">บุคลากร · รหัสผูกบัญชี · เปิด–ปิดแอป · แจ้งเตือน LINE</small>',notLinked?`<span class="pill warn">${esc(notLinked)}</span>`:''):'';
   return head('บัญชี')+`<div class="stack" style="gap:16px">
   <div class="card pcard"><div style="display:flex;align-items:center;gap:14px">${avatar()}<div style="min-width:0"><h2 style="font-size:18px">${esc(m.name)}</h2><p class="t2">${esc(rolesText())}</p><p class="t2">รหัสบุคลากร ${esc(m.staff_id)}${m.rooms.length?' · ครูประจำชั้น '+esc(m.rooms.map(r=>r.grade).join(', ')):''}</p></div></div>
     <p class="okline" style="margin-top:10px">${ic('checkc',18)} ผูกกับ LINE แล้ว${m.lineName?' ('+esc(m.lineName)+')':''}</p>${starProfile()}</div>
   ${adm?`<section><div class="sec"><h3>ผู้ดูแลระบบ</h3></div><div class="card" style="padding:4px 16px">${adm}</div></section>`:''}
   <div class="card" style="padding:4px 16px">
-    ${row('data-act="refresh"','refresh','g','โหลดข้อมูลใหม่')}
+    ${row('data-act="refresh"','refresh','g','อัปเดตข้อมูลให้เป็นปัจจุบัน <small style="display:block;font-size:12px;color:var(--muted)">(กดเมื่อข้อมูลไม่ขึ้น)</small>')}
+    ${row('data-act="report"','info','h','แจ้งปัญหา / ติดต่อแอดมิน')}
     <a class="mrow" href="privacy.html"><span class="ic c-g">${ic('shield',18)}</span><span class="tx">นโยบายความเป็นส่วนตัว</span><span class="chev">${ic('chev',16)}</span></a>
   </div>
-  ${liff.isInClient()?'':`<button class="btn block" data-act="logout" style="color:var(--bad)">${ic('out',18)} ออกจากระบบ</button>`}
-  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.7 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  <p class="credit">Q-Kawa Hub เวอร์ชัน 1.7 · โรงเรียนบ้านกาวะ<br>ผู้พัฒนา: นายฮาฟีซี อูมา</p>${liff.isInClient()?'':`<div style="text-align:center"><button class="btn sm logout" data-act="logout">${ic('out',14)} ออกจากระบบ</button></div>`}</div>`;
+}
+/* ---------- Admin Panel (เฉพาะ ผอ.) ---------- */
+function adminStaff(){
+  if(!S.staff){ api('admin.staff').then(r=>{S.staff=r.staff;render();}).catch(e=>toast(e.message)); return '<div class="spin"></div>'; }
+  const linked=S.staff.filter(s=>s.linked).length;
+  return `<p class="note">บุคลากร ${S.staff.length} คน · ผูกบัญชีแล้ว ${linked} คน</p><div class="card" style="padding:4px 16px">${S.staff.map(s=>`<div class="row"><div class="tx"><b style="font-weight:500">${esc(s.name)}</b><div class="t2">${esc(s.staff_id)} · ${esc(s.roles.filter(r=>r!=='ครู').join(' · ')||s.roles[0]||s.position)}</div></div><span class="pill ${s.linked?'ok':'warn'}">${s.linked?'ผูกแล้ว':'ยังไม่ผูก'}</span></div>`).join('')}</div>`;
+}
+function adminLine(){
+  if(!S.line){ api('admin.settings').then(r=>{S.settings=r.settings;S.line=r.line;render();}).catch(e=>toast(e.message)); return '<div class="spin"></div>'; }
+  return `<p class="note warn">ตอนนี้ระบบ "บันทึกค่า" ไว้ในชีต QK-Hub เท่านั้น ยังไม่ได้ส่งข้อความผ่าน LINE OA จริง (ต้องต่อ LINE Messaging API ที่หลังบ้านก่อน)</p>
+  <div class="card pcard"><b>LINE OA โรงเรียนบ้านกาวะ</b><p class="t2">@318gnwkx</p></div>
+  <div class="card" style="padding:4px 16px">${S.line.map(x=>`<div class="row"><div class="tx"><div>${esc(x.name)}</div>${x.note?`<div class="t2">${esc(x.note)}</div>`:''}</div><button class="sw" role="switch" aria-checked="${x.enabled}" aria-label="${esc(x.name)}" data-lcfg="${esc(x.key)}"></button></div>`).join('')}</div>`;
+}
+function pageAdmin(){
+  const tab=S.adminTab||'staff';
+  const TABS=[['staff','บุคลากร'],['code','ออกรหัส'],['sw','เปิด–ปิดแอป'],['line','แจ้งเตือน LINE']];
+  const tabs=`<div class="chips" role="tablist">${TABS.map(([k,l])=>`<button class="chip" role="tab" data-atab="${k}" aria-pressed="${tab===k}">${l}</button>`).join('')}</div>`;
+  const body=tab==='staff'?adminStaff():tab==='code'?pageLinkAdmin(true):tab==='sw'?pageSwitch(true):adminLine();
+  return head('Admin Panel','เห็นเฉพาะ ผอ.','','menu')+`<div class="stack" style="gap:16px">${tabs}${body}</div>`;
 }
 /* ---------- ผูกบัญชีบุคลากร (ผอ.) ---------- */
-function pageLinkAdmin(){
-  if(!S.staff){ api('admin.staff').then(r=>{S.staff=r.staff;render();}).catch(e=>toast(e.message)); return head('ผูกบัญชีบุคลากร','','','menu')+'<div class="spin"></div>'; }
+function pageLinkAdmin(embed){
+  if(!S.staff){ api('admin.staff').then(r=>{S.staff=r.staff;render();}).catch(e=>toast(e.message)); return (embed?'':head('ผูกบัญชีบุคลากร','','','menu'))+'<div class="spin"></div>'; }
   const linked=S.staff.filter(s=>s.linked).length;
-  return head('ผูกบัญชีบุคลากร',`ผูกแล้ว ${linked}/${S.staff.length} คน`,'','menu')+`<div class="stack" style="gap:16px">
+  return (embed?`<p class="note">ผูกแล้ว ${linked}/${S.staff.length} คน</p>`:head('ผูกบัญชีบุคลากร',`ผูกแล้ว ${linked}/${S.staff.length} คน`,'','menu'))+`<div class="stack" style="gap:16px">
   <p class="note">กด "ออกรหัส" แล้วคัดลอกข้อความส่งให้บุคลากรทางไลน์ส่วนตัว รหัสใช้ได้ 24 ชั่วโมง ครั้งเดียว · ต้องเปิดสวิตช์ "ผูกบัญชี LINE ด้วยรหัสใช้ครั้งเดียว" ก่อน บุคลากรจึงผูกได้</p>
   <div class="card" style="padding:4px 16px">${S.staff.map(s=>`<div class="row"><div class="tx"><b style="font-weight:500">${esc(s.name)}</b><div class="t2">${esc(s.staff_id)} · ${esc(s.roles.filter(r=>r!=='ครู').join(' · ')||s.roles[0]||s.position)}</div>
     ${s.linked?`<div class="t2" style="color:var(--ok)">ผูกแล้ว ${esc(thDT(s.linked_at))}</div>`:s.code?`<div class="t2">รหัส ${esc(s.code)} · ถึง ${esc(thDT(s.code_expires))}</div>`:''}</div>
@@ -865,12 +1019,12 @@ function issuedSheet(r){
 }
 
 /* ---------- สวิตช์ฟีเจอร์ (ผอ.) ---------- */
-function pageSwitch(){
-  if(!S.settings){ api('admin.settings').then(r=>{S.settings=r.settings;render();}).catch(e=>toast(e.message)); return head('เปิด–ปิดการใช้งาน','','','menu')+'<div class="spin"></div>'; }
+function pageSwitch(embed){
+  if(!S.settings){ api('admin.settings').then(r=>{S.settings=r.settings;render();}).catch(e=>toast(e.message)); return (embed?'':head('เปิด–ปิดการใช้งาน','','','menu'))+'<div class="spin"></div>'; }
   const groups={};
   S.settings.forEach(s=>{ (groups[s.app]=groups[s.app]||[]).push(s); });
   const order=['hub','teacher','budget','student','parent'];
-  return head('เปิด–ปิดการใช้งาน','เปิด-ปิดได้ทันที · ค่าเวลาและเกณฑ์ของ Q-Teacher ตั้งในแอป Q-Teacher','','menu')+`<div class="stack" style="gap:18px">
+  return (embed?'':head('เปิด–ปิดการใช้งาน','เปิด-ปิดได้ทันที · ค่าเวลาและเกณฑ์ของ Q-Teacher ตั้งในแอป Q-Teacher','','menu'))+`<div class="stack" style="gap:18px">
   ${Object.keys(groups).sort((a,b)=>order.indexOf(a)-order.indexOf(b)).map(app=>`<section><div class="sec"><h3>${esc(APP_NAMES[app]||app)}</h3></div><div class="card" style="padding:4px 16px">
     ${groups[app].map(s=>`<div class="row"><div class="tx"><div>${esc(s.name)}</div>${s.value||s.note?`<div class="t2">${esc([s.value,s.note].filter(Boolean).join(' · '))}</div>`:''}</div>
     <button class="sw" role="switch" aria-checked="${s.enabled}" aria-label="${esc(s.name)}" data-sw="${esc(s.app)}|${esc(s.key)}"></button></div>`).join('')}
@@ -882,7 +1036,7 @@ function pageSwitch(){
 function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>{el.hidden=true;},3200); }
 function modal(html){ const m=document.getElementById('modal'); m.hidden=false; m.innerHTML=`<div class="overlay" data-act="overlay"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; }
 function closeModal(){ const m=document.getElementById('modal'); m.hidden=true; m.innerHTML=''; }
-async function refresh(){ S.staff=null; S.settings=null; try{ await loadHome(); }catch(e){ toast(e.message); } }
+async function refresh(){ S.staff=null; S.settings=null; S.line=null; try{ await loadHome(); }catch(e){ toast(e.message); } }
 function go(p){
   if(p==='cal'&&S.page!=='cal'){ S.calWin=0; }
   S.page=p; S.detail=null; render(); window.scrollTo(0,0);
@@ -895,8 +1049,16 @@ function go(p){
 }
 
 document.addEventListener('click',async ev=>{
-  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-day],[data-ev],[data-win]');
+  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-tf],[data-atab],[data-lcfg],[data-day],[data-ev],[data-win]');
   if(!t) return;
+  if(t.dataset.tf){ S.taskApp=t.dataset.tf; render(); return; }
+  if(t.dataset.atab){ S.adminTab=t.dataset.atab; render(); return; }
+  if(t.dataset.lcfg){
+    const k=t.dataset.lcfg, on=t.getAttribute('aria-checked')!=='true'; t.disabled=true;
+    try{ const r=await api('admin.setSetting',{app:'hub',key:k,enabled:on}); S.line=r.line||S.line; S.settings=r.settings||S.settings; toast('บันทึกแล้ว'); render(); }
+    catch(e){ toast(e.message); t.disabled=false; }
+    return;
+  }
   if(t.dataset.go){ go(t.dataset.go); return; }
   if(t.dataset.ev){ eventForm({id:t.dataset.ev,date:t.dataset.evdate,title:t.dataset.evtitle,key:t.dataset.evkey}); return; }
   if(t.dataset.win){ S.calWin=Math.max(0,Math.min(2,(S.calWin||0)+Number(t.dataset.win))); render(); return; }
@@ -914,7 +1076,7 @@ document.addEventListener('click',async ev=>{
   if(t.dataset.sw){
     const [app,key]=t.dataset.sw.split('|'); const on=t.getAttribute('aria-checked')!=='true';
     t.disabled=true;
-    try{ const r=await api('admin.setSetting',{app,key,enabled:on}); const s=S.settings.find(x=>x.app===app&&x.key===key); toast((on?'เปิด ':'ปิด ')+(s?s.name:key)); S.settings=r.settings||S.settings; applyHome(r.home); }
+    try{ const r=await api('admin.setSetting',{app,key,enabled:on}); const s=S.settings.find(x=>x.app===app&&x.key===key); toast((on?'เปิด ':'ปิด ')+(s?s.name:key)); S.settings=r.settings||S.settings; S.line=r.line||S.line; applyHome(r.home); }
     catch(e){ toast(e.message); t.disabled=false; }
     return;
   }
@@ -924,7 +1086,9 @@ document.addEventListener('click',async ev=>{
   if(act==='reload'){ location.reload(); return; }
   if(act==='extRetry'){ loadExt(true); return; }
   if(act==='refresh'){ await refresh(); toast('โหลดข้อมูลใหม่แล้ว'); return; }
-  if(act==='logout'){ cacheClear(); S.ext=null; liff.logout(); location.reload(); return; }
+  if(act==='logout'){ logoutSheet(); return; }
+  if(act==='logoutYes'){ cacheClear(); S.ext=null; liff.logout(); location.reload(); return; }
+  if(act==='report'){ reportSheet(); return; }
   if(act==='back'){ S.detail=null; render(); return; }
   if(act==='thanks'){ const w=t.parentNode; for(let k=0;k<10;k++){ const a=k/10*2*Math.PI, r=34+Math.random()*22, e=document.createElement('span'); e.className='st'; e.textContent='★'; e.style.setProperty('--dx',Math.round(Math.cos(a)*r)+'px'); e.style.setProperty('--dy',Math.round(Math.sin(a)*r)+'px'); w.appendChild(e); setTimeout(()=>e.remove(),900); } return; }
   if(act==='compose'){ if(canWrite()) composeForm(); else toast('ระบบประกาศยังไม่เปิดใช้'); return; }
@@ -941,11 +1105,19 @@ document.addEventListener('click',async ev=>{
   }
   if(act==='ack'||act==='approve'||act==='reject'){
     t.disabled=true;
+    let rollback=null;
+    if(act==='ack'){ const a=(S.anns||[]).find(x=>x.id===id); if(a){
+      const prev={acked:a.acked,ackedAt:a.ackedAt,n:a.ackCount,tasks:S.home.tasks};
+      a.acked=true; a.ackedAt=S.home.today.date+' '+new Date().toTimeString().slice(0,5); a.ackCount=(a.ackCount||0)+1;
+      S.doneTasks=(S.doneTasks||[]).filter(x=>x.id!==id).concat([{type:'ack',id:a.id,title:'รับทราบประกาศ',sub:a.title,app:'hub',done:true}]);
+      S.home.tasks=S.home.tasks.filter(x=>!(x.type==='ack'&&x.id===id));
+      rollback=()=>{ Object.assign(a,{acked:prev.acked,ackedAt:prev.ackedAt,ackCount:prev.n}); S.home.tasks=prev.tasks; S.doneTasks=S.doneTasks.filter(x=>x.id!==id); };
+      render(); } }
     try{
       const r = act==='ack' ? await api('announce.ack',{id}) : await api('announce.approve',{id,approve:act==='approve'});
       toast(act==='ack'?'รับทราบแล้ว':act==='approve'?'อนุมัติและเผยแพร่แล้ว':'ไม่อนุมัติประกาศนี้');
       const keep=S.detail; S.page='ann'; S.detail=keep; applyHome(r.home);
-    }catch(e){ toast(e.message); t.disabled=false; }
+    }catch(e){ if(rollback){ rollback(); render(); } toast(e.message); t.disabled=false; }
     return;
   }
   if(act==='issue'){
@@ -974,6 +1146,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 document.addEventListener('input',e=>{ if(e.target.id==='annQ'){ S.annQ=e.target.value; const pos=e.target.selectionStart; render(); const el=document.getElementById('annQ'); if(el){ el.focus(); try{el.setSelectionRange(pos,pos);}catch(_){} } } });
 
 boot();
+
 </script>
 <script>
 /* ป็อปอัพแนะนำแอปครั้งแรก: ขึ้นครั้งเดียว (จำใน localStorage) · ไม่แตะโค้ดส่วนอื่นของแอป */
