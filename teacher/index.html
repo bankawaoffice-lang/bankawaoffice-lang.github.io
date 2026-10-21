@@ -608,6 +608,30 @@ details.more>.f{margin-top:8px}
 .slist .ld{display:grid;gap:6px;padding:10px 4px}.slist .ld.above{background:rgba(214,64,74,.07);border-radius:12px;padding:10px 8px}.slist .ld.avg{background:var(--surface-2,#f2f3f9);border-radius:12px;padding:10px 8px}
 .thb{border:0;background:none;font:inherit;font-weight:600;color:inherit;cursor:pointer;padding:2px 0;text-align:inherit}.thb:hover{text-decoration:underline}
 .ldg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;text-align:center}.ldg span{display:grid;gap:1px;font-size:.95rem}.ldg small{font-size:.62rem;color:var(--muted);line-height:1.15}
+
+/* รอบ 3ก: PA */
+#paForm .boxed{border:1.5px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px}
+#paForm h3{margin:6px 0 0;font-size:1rem}
+
+/* รอบ 3ข */
+.evt{width:100%;border-collapse:collapse}.evt th,.evt td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top;font-size:.9rem}.evt th{text-align:left;color:var(--muted);font-weight:600;font-size:.8rem}
+.evt th.r,.evt td.r{text-align:right}.evt tr.grp td{background:var(--accent-soft,#e6f1fc);font-size:.88rem}.evt tr.tot td{border-top:2px solid var(--ink)}
+.lvs{display:flex;gap:5px}.lvb{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface,#fff);font:inherit;font-weight:600;cursor:pointer;color:inherit}
+.lvb.on{background:var(--nv,#1e2341);color:#fff;border-color:var(--nv,#1e2341)}
+.lvnum{display:inline-grid;place-items:center;min-width:30px;height:30px;border-radius:9px;background:var(--surface-2,#f2f3f9);font-size:1rem}
+.lvnum.sys{background:#e2f6ec;color:#117a4d}.lvnum.dir{background:#fde8e9;color:#b3262e}
+.nodata{display:inline-block;font-size:.8rem;color:var(--muted);background:var(--surface-2,#f2f3f9);border-radius:8px;padding:3px 8px}
+.cov{height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin:4px 0 2px;min-width:70px}.cov i{display:block;height:100%;background:var(--good,#1e9e66)}
+.evk{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.evm{display:grid;gap:8px;margin-top:6px}.evm>div{display:grid;gap:3px;border-top:1px dashed var(--line);padding-top:6px}
+/* ปุ่ม Hub ทุกหน้า + เมนูล่างช่องที่เปิดอยู่ */
+.hubrow{display:flex;justify-content:flex-end;margin:6px 0 2px}
+.hublink.hubbig,.mrole .hublink{display:inline-flex;align-items:center;gap:6px;background:var(--accent,#2c8ce6);color:#fff!important;border-radius:999px;padding:7px 14px;font-weight:600;font-size:.88rem;text-decoration:none;box-shadow:0 3px 10px rgba(44,140,230,.35)}
+.hublink.hubbig svg,.mrole .hublink svg{stroke:#fff}
+#bottom .in>button{position:relative;border-radius:16px;transition:background .15s,color .15s}
+#bottom .in>button[aria-current="page"]{background:var(--nv,#1e2341)!important;color:#fff!important;font-weight:700;box-shadow:inset 0 3px 0 #7fc4ff}
+#bottom .in>button[aria-current="page"] svg{stroke:#fff!important;stroke-width:2.6}
+#bottom .in>button[aria-current="page"] span{color:#fff!important}
 </style>
 </head>
 <body class="plain">
@@ -835,7 +859,7 @@ const PAGES={
  mywork:['งานของฉัน','tasks','blue'],myreq:['คำขอ','req','coral'],mytime:['ประวัติลงเวลา','clock','teal'],
  sub:['จัดสอนแทน','sub','violet'],mysub:['สอนแทนของฉัน','sub','violet'],
  ops:['งานอาคารสถานที่','ops','amber'],jan:['งานวันนี้','job','amber'],patrol:['งาน รปภ.','guard','slate'],visit:['ผู้มาติดต่อ','visit','teal'],
- fixreq:['แจ้งซ่อม','fix','coral'],count:['เช็คยอดนักเรียน','count','rose'],dev:['พัฒนาครู','dev','green'],set:['ตั้งค่า','set','slate']};
+ fixreq:['แจ้งซ่อม','fix','coral'],count:['เช็คยอดนักเรียน','count','rose'],dev:['พัฒนาครู','dev','green'],pachal:['PA ประเด็นท้าทาย','dev','green'],eval:['ประเมินผลการปฏิบัติงาน','dev','green'],set:['ตั้งค่า','set','slate']};
 /** ชื่อแท็บรุ่นก่อน (หน้ากลางยังส่งมา) → หน้าปัจจุบัน */
 const ALIAS={req:'approve',endorse:'approve',mytasks:'mywork',mydev:'dev',dash:'home',today:'home',att:'staff'};
 const SHORT={approve:'อนุมัติ',tasks:'ติดตามงาน',staff:'บุคลากร',mywork:'งานของฉัน',myreq:'คำขอ',sub:'สอนแทน',mysub:'สอนแทน',jan:'งานวันนี้',patrol:'งาน รปภ.',visit:'ผู้มาติดต่อ',dev:'พัฒนาครู',ops:'อาคาร'};
@@ -853,6 +877,7 @@ function avail(){
   if(m.isAdmin||m.isClerk||m.isGuard)t.push('visit');
   t.push('count');
   if(m.isTeacher||m.isAdmin||m.isAcad)t.push('dev');
+  if(m.paElig||m.isHR||m.isDirector)t.push('pachal','eval');
   if(m.isAdmin)t.push('set');
   return t}
 /** เมนูล่าง 5 ช่อง (สเปก Q-Kawa App ข้อ 2): หน้าแรก · คำขอ · งาน · อาคาร · บุคลากร — แต่ละช่องรวมหน้าเดิมไว้เป็นแท็บย่อย */
@@ -861,10 +886,10 @@ const SLOTS=[
  {id:'req',label:'คำขอ',icon:'req',pages:['myreq','approve']},
  {id:'work',label:'งาน',icon:'tasks',pages:['mywork','tasks','sub','mysub']},
  {id:'bld',label:'อาคาร',icon:'ops',pages:['jan','patrol','visit','fixreq','ops','count']},
- {id:'ppl',label:'บุคลากร',icon:'staff',pages:['staff','dev','pa','set']}];
+ {id:'ppl',label:'บุคลากร',icon:'staff',pages:['staff','dev','pachal','eval','pa','set']}];
 /** ช่องที่แต่ละบทบาทเห็นที่แถบล่าง (หน้าอื่นที่เข้าได้ เช่น ภารโรงยื่นใบลา ยังเปิดได้จากปุ่มลัดหน้าแรกหรือเมนูบัญชี) */
 const SLOT_VIS={dir:['home','req','work','bld','ppl'],head:['home','req','work','bld','ppl'],acad:['home','req','work','ppl'],tch:['home','req','work','ppl'],adm:['home','req','work'],jan:['home','bld'],grd:['home','bld']};
-const TAB_LABEL={mytime:'ประวัติลงเวลา',myreq:'คำขอของฉัน',approve:'พิจารณาคำขอ',mywork:'งานของฉัน',tasks:'ติดตามงาน',sub:'จัดสอนแทน',mysub:'สอนแทนของฉัน',jan:'งานวันนี้',patrol:'งาน รปภ.',visit:'ผู้มาติดต่อ',fixreq:'แจ้งซ่อม',ops:'ภาพรวมอาคาร',count:'เหตุฉุกเฉิน',staff:'บุคลากรวันนี้',dev:'พัฒนาครู',pa:'ประเมิน & PA',set:'ตั้งค่า'};
+const TAB_LABEL={mytime:'ประวัติลงเวลา',myreq:'คำขอของฉัน',approve:'พิจารณาคำขอ',mywork:'งานของฉัน',tasks:'ติดตามงาน',sub:'จัดสอนแทน',mysub:'สอนแทนของฉัน',jan:'งานวันนี้',patrol:'งาน รปภ.',visit:'ผู้มาติดต่อ',fixreq:'แจ้งซ่อม',ops:'ภาพรวมอาคาร',count:'เหตุฉุกเฉิน',staff:'บุคลากรวันนี้',dev:'พัฒนาครู',pachal:'PA ประเด็นท้าทาย',eval:'ประเมินผล',pa:'ประเมิน & PA (ต้นแบบ)',set:'ตั้งค่า'};
 const slotOf=t=>SLOTS.find(s=>s.pages.includes(t));
 const slotPages=s=>s.pages.filter(p=>avail().includes(p));
 const visibleSlots=()=>SLOTS.filter(s=>(SLOT_VIS[ME.role]||SLOT_VIS.tch).includes(s.id)&&slotPages(s).length);
@@ -909,8 +934,11 @@ function pending(){
   JOBS.filter(j=>j.st===2&&j.by===m&&!j.rReq).forEach(j=>add({ic:'fix',h:'coral',t:'ให้คะแนนงานซ่อม: '+j.t,s:'ซ่อมเสร็จแล้ว',go:'fixreq'},4));
   if(ME.isJan){const n=JOBS.filter(j=>j.st===0);if(n.length)add({ic:'job',h:'amber',t:'รับงาน '+n.length+' งาน',s:n[0].t+(n.some(j=>j.prio==='ด่วน')?' · มีงานด่วน':''),go:'jan'},n.some(j=>j.prio==='ด่วน')?0:1)}
   if(ME.isGuard&&CPS.length&&(NOW_HM>='17:00'||NOW_HM<'07:00'))add({ic:'guard',h:'slate',t:'เดินตรวจคืนนี้ '+ROUNDS.length+' รอบ',s:'รอบแรก '+(ROUNDS[0]||'')+' น.',go:'patrol'},2);
-  (B.notifs||[]).forEach(n=>add({ic:'tasks',h:'blue',t:n.text,s:n.sub,go:/^LV/.test(n.ref||'')?'mysub':/^MOOD:/.test(n.ref||'')?'staff':'mywork',pv:n.id,hot:true},0));
+  (B.notifs||[]).forEach(n=>add({ic:'tasks',h:'blue',t:n.text,s:n.sub,go:/^LV/.test(n.ref||'')?'mysub':/^MOOD:/.test(n.ref||'')?'staff':/^PA:ER/.test(n.ref||'')?'eval':/^PA:/.test(n.ref||'')?'pachal':'mywork',pv:n.id,hot:true},0));
   if(ME.isAdmin){const w=(B.inbox||[]).filter(x=>x.st==='wait').length;if(w)add({ic:'tasks',h:'amber',t:'งานเสนอ ผอ. รอตัดสินใจ '+w+' รายการ',s:'ตอบรับ / ปฏิเสธ / มอบหมายครูคนอื่นแทน',go:'tasks'},1)}
+  evalPending(add);
+  riskPending(add);
+  paPending(add);
   return a.sort((x,y)=>x.p-y.p)}
 function needCheckIn(){return!B.my.in&&isWork()&&!(B.my.leaveToday&&B.my.leaveToday.part==='เต็มวัน')&&NOW_HM<=B.rules.general.out}
 function badgeFor(t){
@@ -923,6 +951,8 @@ function badgeFor(t){
   if(t==='mywork')return TASKS.filter(x=>x.own===me()&&['todo','fix'].includes(x.st)).length;
   if(t==='tasks')return TASKS.filter(x=>x.st==='sent'&&(ME.isAdmin||x.by===me())).length;
   if(t==='myreq')return REQ.filter(x=>x.canBack||x.canExt).length;
+  if(t==='pachal')return B.pa?(B.pa.wait||0)+(B.pa.mine.returned||0):0;
+  if(t==='eval'){const E=B.eval;return E&&E.round.opened&&E.round.status==='open'?((E.mine==='self'||E.mine==='signed')?1:0)+(E.wait||0):0}
   return 0}
 
 /* ---------- ส่วนหัว เมนูล่าง เมนูข้าง ---------- */
@@ -935,10 +965,11 @@ function renderChrome(){
   $('#roles').innerHTML=`<span class="pill p-info">${esc(ROLE_LABEL[ME.role])}</span>${hubLink()}${avatar()}`;
   const vs=visibleSlots(),inSlots=vs.reduce((a,s)=>a.concat(slotPages(s)),[]),rest=all.filter(t=>!inSlots.includes(t));
   const mi=t=>{const b=badgeFor(t);return`<button class="mi" data-tab="${t}" ${st.tab===t?'aria-current="page"':''}>${tile(PAGES[t][1],PAGES[t][2])}<span>${pageTitle(t)}</span>${b?`<span class="badge">${b}</span>`:''}</button>`};
-  $('#side').innerHTML=vs.map(s=>(s.id==='home'?'':`<div class="mgrp">${esc(s.label)}</div>`)+slotPages(s).map(mi).join('')).join('')+(rest.length?`<div class="mgrp">หน้าอื่น</div>`+rest.map(mi).join(''):'')+`<div class="credit">Q-Teacher ${esc(B.version)}<br>พัฒนาโดย <b>${DEV_NAME}</b></div>`;
+  $('#side').innerHTML=`<div class="hubrow">${hubLink('hubbig')}</div>`+vs.map(s=>(s.id==='home'?'':`<div class="mgrp">${esc(s.label)}</div>`)+slotPages(s).map(mi).join('')).join('')+(rest.length?`<div class="mgrp">หน้าอื่น</div>`+rest.map(mi).join(''):'')+`<div class="credit">Q-Teacher ${esc(B.version)}<br>พัฒนาโดย <b>${DEV_NAME}</b></div>`;
   $('#apptop').innerHTML=home?`<div class="row1"><div style="min-width:0"><div class="eyebrow">${greet()}${st.stale?' · กำลังอัปเดต…':st.offline?' · ออฟไลน์':''}</div><h1>${esc(ME.call)}</h1></div><div class="toprow"><button class="bell" data-bell="1" aria-label="รายการต้องดำเนินการ ${p} รายการ">${svg('bell')}${p?`<span class="badge">${p}</span>`:''}</button>${avatarBtn()}</div></div>
    <div class="mrole"><span class="pill p-info">${esc(ROLE_LABEL[ME.role])}</span>${hubLink()}</div>`
    :`<div class="row1 sub1"><button class="iconbtn" data-tab="home" aria-label="กลับหน้าหลัก">${svg('back')}</button><div style="min-width:0;flex:1"><div class="eyebrow">Q-TEACHER${st.stale?' · กำลังอัปเดต…':''}</div><h1>${esc(pageTitle(st.tab))}</h1></div>${avatar()}</div>`;
+  if(!home)$('#apptop').insertAdjacentHTML('beforeend',`<div class="hubrow">${hubLink('hubbig')}</div>`);
   $('#bottom').innerHTML=`<div class="in" style="grid-template-columns:repeat(${vs.length},1fr)">${vs.map(s=>{const cur=slotOf(st.tab)===s,b=slotBadge(s),pg=slotPages(s),last=(st.slotPg||{})[s.id],tgt=s.id==='home'?'home':(pg.includes(last)?last:pg[0]);return`<button data-tab="${tgt}" ${cur?'aria-current="page"':''}>${svg(s.icon)}<span>${esc(s.label)}</span>${b?`<span class="badge">${b}</span>`:''}</button>`}).join('')}</div>`;
   $('#sheetCard').innerHTML=`<div class="row between"><h2>เมนูบัญชี</h2><button class="btn sm" data-sheet="0">ปิด</button></div>
    ${rest.length?`<div class="sub">หน้าอื่นที่ใช้ได้</div><div class="shortcuts">${rest.map(t=>{const b=badgeFor(t);return`<button class="sc" data-tab="${t}">${tile(PAGES[t][1],PAGES[t][2])}<span>${pageTitle(t)}${b?` <b class="bnum">${b}</b>`:''}</span></button>`}).join('')}</div>`:''}
@@ -1084,7 +1115,7 @@ function followLine(id){const u=id===me()&&!B.leaveAll?{n:B.myStats.leaveTimes,d
 function actionList(list,limit){
   if(!list.length)return'';
   const show=limit&&!st.allPend?list.slice(0,limit):list;
-  return`<div class="actions">${show.map(a=>`<button class="action ${a.hot?'hot':''}" ${a.pv?`data-pvread="${a.pv}"`:''} data-go="${a.go}" ${a.ct?`data-gct="${a.ct}"`:''} ${a.act?`data-gact="${a.act}"`:''} ${a.ot?`data-got="${a.ot}"`:''} ${a.wf?`data-gwf="${a.wf}"`:''}>${tile(a.ic,a.h)}<span class="main"><b>${esc(a.t)}</b><span class="sub">${esc(a.s)}</span></span>${svg('chev','chev')}</button>`).join('')}</div>
+  return`<div class="actions">${show.map(a=>`<button class="action ${a.hot?'hot':''}" ${a.pv?`data-pvread="${a.pv}"`:''} data-go="${a.go}" ${a.ct?`data-gct="${a.ct}"`:''} ${a.act?`data-gact="${a.act}"`:''} ${a.ot?`data-got="${a.ot}"`:''} ${a.wf?`data-gwf="${a.wf}"`:''} ${a.gst?`data-gst="${a.gst}"`:''}>${tile(a.ic,a.h)}<span class="main"><b>${esc(a.t)}</b><span class="sub">${esc(a.s)}</span></span>${svg('chev','chev')}</button>`).join('')}</div>
    ${limit&&list.length>limit?`<button class="btn sm ghost" data-allpend="1">${st.allPend?'แสดงน้อยลง':'ดูทั้งหมด '+list.length+' รายการ'}</button>`:''}`}
 function emgBanner(){
   if(!EMG.on)return'';
@@ -1205,6 +1236,401 @@ function urgentBar(){
   return`<div class="urgent2"><button class="ub fix" data-go="fixreq">${svg('fix')}<span><b>แจ้งซ่อม</b><small>รายงานของเสียพร้อมรูป</small></span></button>
    <button class="ub emg${EMG.on?' on':''}" data-go="count" data-gct="emg">${svg('sos')}<span><b>เหตุฉุกเฉิน</b><small>${EMG.on?'กำลังเกิดเหตุ · แตะเพื่อรายงาน':'ดูสถานะ / ซ้อมอพยพ'}</small></span></button>${ME.isDirector?'':`<button class="ub help" data-help="1">${svg('sos')}<span><b>ขอความช่วยเหลือ</b><small>ส่งเรื่องถึง ผอ. ทันที</small></span></button>`}</div>`}
 /** ดัชนีความสุขตอนเลิกงาน: แตะ 1 ครั้ง · ครูเห็นของตน · ผอ./ผู้ดูแลเห็นภาพรวม (ไม่แสดงชื่อ) */
+/* =====================================================================
+ *  PA ประเด็นท้าทาย (รอบ 3ก): เก็บในชีต · ข้อตกลงต้นรอบ → หัวหน้างานบุคคลให้ความเห็น → ผอ. อนุมัติ/ส่งกลับ
+ *  เห็นเฉพาะข้าราชการ/พนักงานราชการ (me.paElig) · หัวหน้างานบุคคล/ผอ. เห็นทุกคนที่ส่งแล้ว
+ * ===================================================================== */
+const PA_ST={draft:['ฉบับร่าง','p-mute'],sent:['รอหัวหน้างานบุคคล','p-warn'],head_ok:['รอ ผอ. อนุมัติ','p-warn'],approved:['อนุมัติแล้ว','p-good'],returned:['ส่งกลับให้แก้','p-bad']};
+const PA_LEGACY_KEY='qk_pa_pv1';
+const paN=v=>(v===''||v==null)?null:Number(v);
+const paFmt=v=>(v===''||v==null)?'–':String(Number(v));
+/** ความก้าวหน้า = (จริง − ฐาน) ÷ (เป้า − ฐาน) · ได้ทั้งตัวชี้วัดที่ยิ่งมากยิ่งดี และยิ่งน้อยยิ่งดี */
+function paProg(it){const b=paN(it.base),t=paN(it.target),a=paN(it.actual);if(b==null||t==null||a==null||t===b)return null;return Math.round((a-b)/(t-b)*1000)/10}
+function paProgBox(it){
+  const p=paProg(it),u=it.ind.u?' '+esc(it.ind.u):'';
+  return`<div class="kv"><div><span>ค่าฐาน</span><b class="num">${paFmt(it.base)}${it.base===''?'':u}</b></div><div><span>ค่าเป้า</span><b class="num">${paFmt(it.target)}${it.target===''?'':u}</b></div><div><span>ค่าจริง</span><b class="num">${paFmt(it.actual)}${it.actual===''?'':u}</b><small>${it.asrc==='auto'?'ดึงจากแอป':'ครูกรอกเอง'}${it.aat?' · '+esc(thDT(it.aat)):''}</small></div></div>
+   <div class="row between"><span class="sub">ความก้าวหน้า = (จริง − ฐาน) ÷ (เป้า − ฐาน)</span><b class="num">${p==null?'–':p+'%'}</b></div>
+   <div class="prog"><i style="width:${p==null?0:clamp(p,0,100)}%"></i></div>${p==null?'<p class="sub">กรอกค่าฐาน ค่าเป้า และค่าจริงให้ครบ (ค่าเป้าต้องไม่เท่าค่าฐาน) จึงจะคำนวณได้</p>':''}`;
+}
+function paCard(it){
+  const s=PA_ST[it.st]||['','p-mute'];
+  const pd=it.pdca.map(p=>`<li><span class="sw" style="background:${p.done?'var(--good)':'var(--c-blue)'}"></span><div class="main"><b>${esc((p.ph||'').slice(0,1))}</b> ${esc(p.what||'–')}<div class="sub">${p.due?esc(thD(p.due)):'ยังไม่กำหนดวัน'}${p.done?' · ✓ ทำแล้ว':''}${p.note?' · '+esc(p.note):''}</div></div></li>`).join('');
+  const files=it.files.length?`<div class="row">${it.files.map(f=>`<button class="btn sm" data-pafile="${it.id}:${f.i}">${svg('file','i16')} ${esc(f.n)}</button>`).join('')}</div>`:'<p class="sub">ยังไม่มีหลักฐานแนบ</p>';
+  const notes=(it.head.note?`<div class="callout c-info"><b>ความเห็นหัวหน้างานบุคคล${it.head.by?' · '+esc(it.head.by):''}</b>${esc(it.head.note)}</div>`:'')
+    +(it.dir.note?`<div class="callout ${it.st==='returned'?'c-warn':'c-info'}"><b>${it.st==='returned'?'ผอ. ส่งกลับให้แก้':'ความเห็น ผอ.'}${it.dir.by?' · '+esc(it.dir.by):''}</b>${esc(it.dir.note)}</div>`:'')
+    +(it.comments.length?`<div class="stack" style="gap:6px"><span class="sub">ความเห็นระหว่างรอบ</span>${it.comments.slice(-5).map(c=>`<div class="callout c-info"><b>${esc(c.role)} · ${esc(c.by)} · ${esc(thDT(c.at))}</b>${esc(c.text)}</div>`).join('')}</div>`:'');
+  const A=[];
+  if(it.canSubmit)A.push(`<button class="btn pri" data-pasend="${it.id}">ส่งข้อตกลง</button>`);
+  if(it.edit)A.push(`<button class="btn" data-paedit="${it.id}">${it.edit==='full'?'แก้ไข':'อัปเดตค่าจริง / หลักฐาน'}</button>`);
+  if(it.canRecall)A.push(`<button class="btn" data-parecall="${it.id}">ถอนกลับมาแก้ไข</button>`);
+  if(it.canDelete)A.push(`<button class="btn sm danger" data-padel="${it.id}">ลบฉบับร่าง</button>`);
+  const board=(it.canHead?`<div class="fld"><label for="phn${it.id}">ความเห็นหัวหน้างานบุคคล (จำเป็น)</label><input type="text" id="phn${it.id}" maxlength="500" placeholder="เช่น ประเด็นสอดคล้องกับปัญหาของโรงเรียน ตัวชี้วัดวัดผลได้"></div><div><button class="btn good" data-pahead="${it.id}">ให้ความเห็น · ส่งต่อ ผอ.</button></div>`:'')
+    +(it.canDir?`<div class="fld"><label for="pdn${it.id}">ความเห็น ผอ. (ถ้าส่งกลับ ต้องใส่เหตุผล)</label><input type="text" id="pdn${it.id}" maxlength="500" placeholder="เช่น ปรับค่าเป้าให้ท้าทายขึ้น"></div><div class="row"><button class="btn good" data-padir="${it.id}:ok">อนุมัติข้อตกลง</button><button class="btn danger" data-padir="${it.id}:back">ส่งกลับให้แก้</button></div>${it.st==='sent'?'<p class="sub">ยังไม่ผ่านหัวหน้างานบุคคล · ผอ. อนุมัติได้เลยถ้าจำเป็น</p>':''}`:'')
+    +(it.canComment?`<div class="fld"><label for="pcm${it.id}">ให้ความเห็นระหว่างรอบ</label><div class="row"><input type="text" id="pcm${it.id}" maxlength="500" placeholder="ความเห็น/ข้อเสนอแนะถึงครู" style="flex:1 1 200px"><button class="btn sm" data-pacmt="${it.id}">ส่งความเห็น</button></div></div>`:'');
+  return`<article class="card"><div class="row between"><b>${esc(it.topic)}</b><span class="pill ${s[1]}">${s[0]}${it.locked?' · ล็อกแล้ว':''}</span></div>
+   ${it.own?'':`<p class="sub">${esc(it.name)} · ปีงบประมาณ ${it.fy}${it.sent?' · ส่งเมื่อ '+esc(thDT(it.sent)):''}</p>`}
+   <p class="sub">ตัวชี้วัด: ${esc(it.ind.n)}${it.ind.u?' ('+esc(it.ind.u)+')':''}${it.ind.app&&it.ind.app!=='manual'?' · ภายหลังดึงค่าจริงจาก Q-'+(it.ind.app==='student'?'Student':'Academic')+'ได้':''}</p>
+   ${paProgBox(it)}
+   <details class="more"><summary>แนวคิดความเป็นมา · ขั้นตอน PDCA · ผลลัพธ์</summary><div class="stack" style="gap:8px"><p>${esc(it.bg)}</p><ul class="list">${pd}</ul>
+    <p><b>เชิงปริมาณ:</b> ${esc(it.rq||'–')}</p><p><b>เชิงคุณภาพ:</b> ${esc(it.rl||'–')}</p></div></details>
+   ${files}${notes}${A.length?`<div class="row">${A.join('')}</div>`:''}${board}</article>`;
+}
+function paLegacyAvail(S){
+  if(S.legacyDone||!S.elig)return null;
+  try{const x=JSON.parse(localStorage.getItem(PA_LEGACY_KEY)||'null');if(!x)return null;const m=me();
+    const o={self:(x.self||{})[m]||null,c3:(x.c3||{})[m]||null,stat:(x.stat||{})[m]||null};return(o.self||o.c3||o.stat)?o:null}catch(e){return null}
+}
+function paPage(S){
+  const fy=st.paFy||S.fy,board=ME.isHR||ME.isDirector,P=B.pa||{wait:0};
+  const tab=board?(st.paTab||(ME.isDirector?'all':'mine')):'mine';
+  const head=`<section class="panel"><div class="ph"><h2>PA ประเด็นท้าทาย</h2></div><div class="row"><label class="sub" for="paFy">ปีงบประมาณ</label><select id="paFy">${S.fys.map(y=>`<option value="${y}" ${y===fy?'selected':''}>${y}${y===S.fy?' (ปัจจุบัน)':''}</option>`).join('')}</select></div>
+    <p class="sub">ข้อตกลงต้นรอบ: ครูส่ง → หัวหน้างานบุคคลให้ความเห็น → ผอ. อนุมัติหรือส่งกลับให้แก้ · อนุมัติแล้วล็อกหัวข้อและค่าเป้า ยังกรอกค่าจริงและหลักฐานได้ · กรอกค่าฐานภายใน ${esc(thD(S.due))}</p></section>`;
+  const tabs=board?seg('paTab',[['mine','ของฉัน'],['all','ทุกคน'+(P.wait?' ('+P.wait+' รอ)':'')]],tab):'';
+  let body='';
+  if(tab==='mine'){
+    const mine=S.items.filter(x=>x.own&&x.fy===fy),lg=paLegacyAvail(S);
+    if(!S.elig)body=`<div class="callout c-info"><b>${ME.isDirector?'ผอ. ไม่ต้องกรอกข้อตกลงในระบบนี้':'ยังใช้ PA ประเด็นท้าทายไม่ได้'}</b>${ME.isDirector?'ใช้แท็บ "ทุกคน" เพื่ออนุมัติข้อตกลงของครู':'PA ใช้ได้เฉพาะข้าราชการและพนักงานราชการ · ประเภทบุคลากรของท่านในทะเบียน: '+esc(S.staffType||'ยังไม่ได้กรอก')+' · ถ้าไม่ตรง แจ้ง ผอ. ให้แก้ที่ QK-Core → แท็บ staff → คอลัมน์ staff_type'}</div>`;
+    else body=(lg?`<div class="callout c-warn"><b>พบข้อมูลประเมิน PA เดิมในเครื่องนี้</b>(รุ่นทดลอง · เป็นระดับการประเมินตนเอง ไม่ใช่ข้อตกลงประเด็นท้าทาย) นำเข้าเก็บไว้ในชีตได้ครั้งเดียว เพื่อใช้กับตารางประเมินรอบต่อไป
+       <div><button class="btn sm" data-paimport="1">นำเข้าชีต (ครั้งเดียว) แล้วล้างจากเครื่องนี้</button></div></div>`:'')
+      +(fy===S.fy?`<div><button class="btn pri" data-panew="1">${svg('plus','i16')} เพิ่มประเด็นท้าทาย</button></div>`:'')
+      +(mine.length?`<div class="cards">${mine.map(paCard).join('')}</div>`:empty('ยังไม่มีประเด็นท้าทายในปีงบประมาณ '+fy,fy===S.fy?'กด "เพิ่มประเด็นท้าทาย" เพื่อเริ่ม':''));
+  }else{
+    const others=S.items.filter(x=>!x.own&&x.fy===fy),first=others.filter(x=>x.canHead||x.canDir),rest=others.filter(x=>!(x.canHead||x.canDir));
+    const ro=(S.roster||[]).filter(p=>p.elig);
+    const noSend=ro.filter(p=>!p.sent);
+    body=`<section class="panel"><div class="ph"><h2>ภาพรวมการส่งข้อตกลง</h2><span class="count">${ro.filter(p=>p.sent).length}/${ro.length}</span></div>
+      ${noSend.length?`<p class="sub"><b>ยังไม่ส่ง ${noSend.length} คน:</b> ${noSend.map(p=>esc(p.name)).join(', ')}</p>`:'<p class="sub">ทุกคนส่งข้อตกลงแล้ว</p>'}
+      ${ro.some(p=>p.noBase)?`<p class="sub"><b>ยังไม่กรอกค่าฐาน:</b> ${ro.filter(p=>p.noBase).map(p=>esc(p.name)).join(', ')}</p>`:''}
+      ${S.missingType&&S.missingType.length?`<div class="callout c-warn"><b>ยังไม่ได้กรอกประเภทบุคลากร ${S.missingType.length} คน</b>${S.missingType.map(esc).join(', ')}<br>กรอกที่ QK-Core → แท็บ staff → คอลัมน์ staff_type (ข้าราชการ / พนักงานราชการ / ลูกจ้างประจำ / ลูกจ้างชั่วคราว) · คนที่เว้นว่างจะไม่เห็นเมนู PA</div>`:''}</section>
+      ${first.length?`<div class="sec"><h2>รอท่านพิจารณา</h2><span class="count">${first.length}</span></div><div class="cards">${first.map(paCard).join('')}</div>`:''}
+      ${rest.length?`<div class="sec"><h2>รายการอื่น</h2></div><div class="cards">${rest.map(paCard).join('')}</div>`:''}
+      ${!others.length?empty('ยังไม่มีข้อตกลงที่ส่งเข้ามาในปีงบประมาณ '+fy):''}`;
+  }
+  return head+tabs+body;
+}
+V.pachal=()=>secBox('pa',paPage,60000);
+/** ฟอร์มเพิ่ม/แก้ประเด็นท้าทาย · หลังอนุมัติ: ล็อกหัวข้อ ตัวชี้วัด และค่าเป้า (ยังกรอกค่าจริง หลักฐาน ความคืบหน้าได้) */
+function paForm(it){
+  const S=SEC.pa;if(!S)return;
+  const e=it||{},partial=!!it&&it.edit==='partial',lk=partial?' disabled':'';
+  const pd=[0,1,2,3].map(i=>(e.pdca&&e.pdca[i])||{what:'',due:'',done:false,note:''});
+  const bl=it&&!it.baseOpen?' disabled':'';
+  modal(`<form class="f" id="paForm"><div class="row between"><h2>${it?(partial?'อัปเดตค่าจริง / หลักฐาน':'แก้ประเด็นท้าทาย'):'เพิ่มประเด็นท้าทาย'}</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div>
+   <input type="hidden" id="paid" value="${esc(e.id||'')}">
+   ${partial?'<div class="callout c-info"><b>อนุมัติแล้ว</b>หัวข้อ ตัวชี้วัด และค่าเป้าถูกล็อก · แก้ได้เฉพาะค่าจริง ผลลัพธ์ ความคืบหน้า PDCA และหลักฐาน'+(it.baseOpen?' (ค่าฐานแก้ได้ถึง '+esc(thD(S.due))+')':' (ค่าฐานปิดแก้แล้ว)')+'</div>':''}
+   <div class="fld"><label for="pa1">หัวข้อประเด็นท้าทาย</label><input type="text" id="pa1" maxlength="150" required${lk} value="${esc(e.topic||'')}" placeholder="เช่น การพัฒนาทักษะการอ่านภาษาไทยของนักเรียน ป.2"></div>
+   <div class="fld"><label for="pa2">แนวคิดความเป็นมา</label><textarea id="pa2" maxlength="1500" required placeholder="สภาพปัญหา ข้อมูลที่พบ และเหตุผลที่เลือกประเด็นนี้">${esc(e.bg||'')}</textarea></div>
+   <h3>ขั้นตอน PDCA พร้อมกำหนดวัน</h3>
+   ${pd.map((p,i)=>`<div class="boxed f"><b>${esc(S.phases[i])}</b><div class="fld"><label for="pdw${i}">สิ่งที่จะทำ</label><input type="text" id="pdw${i}" maxlength="300" value="${esc(p.what||'')}" required></div>
+     <div class="fgrid"><div class="fld"><label for="pdd${i}">กำหนดวัน</label><input type="date" id="pdd${i}" min="${S.fyStart}" max="${S.fyEnd}" value="${esc(p.due||'')}" required></div>
+     ${it?`<div class="fld"><label for="pdn${i}">บันทึกความคืบหน้า</label><input type="text" id="pdn${i}" maxlength="300" value="${esc(p.note||'')}"></div>`:''}</div>
+     ${it?`<label class="row"><input type="checkbox" id="pdc${i}" style="width:auto" ${p.done?'checked':''}> ทำขั้นนี้แล้ว</label>`:''}</div>`).join('')}
+   <div class="fld"><label for="pa3">ผลลัพธ์ที่คาดหวัง เชิงปริมาณ</label><textarea id="pa3" maxlength="500" required placeholder="เช่น นักเรียนอ่านผ่านเกณฑ์เพิ่มจาก 60% เป็น 85%">${esc(e.rq||'')}</textarea></div>
+   <div class="fld"><label for="pa4">ผลลัพธ์ที่คาดหวัง เชิงคุณภาพ</label><textarea id="pa4" maxlength="500" required placeholder="เช่น นักเรียนมีเจตคติที่ดีต่อการอ่าน กล้าอ่านออกเสียง">${esc(e.rl||'')}</textarea></div>
+   <h3>ตัวชี้วัด และค่าฐาน / เป้า / จริง</h3>
+   <div class="fld"><label for="pi">ตัวชี้วัด</label><select id="pi"${lk}>${S.catalog.map(c=>`<option value="${c.k}" ${(e.ind&&e.ind.k===c.k)?'selected':''}>${esc(c.n)}${c.u?' ('+esc(c.u)+')':''}</option>`).join('')}</select></div>
+   <div class="fgrid"><div class="fld"><label for="pin">ชื่อตัวชี้วัด (เมื่อเลือก "อื่น ๆ")</label><input type="text" id="pin" maxlength="80"${lk} value="${esc(e.ind&&e.ind.k==='X-CUSTOM'?e.ind.n:'')}"></div><div class="fld"><label for="piu">หน่วย</label><input type="text" id="piu" maxlength="16"${lk} value="${esc(e.ind&&e.ind.k==='X-CUSTOM'?e.ind.u:'')}" placeholder="เช่น %, คน"></div></div>
+   <div class="fgrid"><div class="fld"><label for="pb">ค่าฐาน (ก่อนเริ่ม)</label><input type="number" step="any" inputmode="decimal" id="pb"${bl} value="${esc(e.base==null?'':e.base)}"></div>
+    <div class="fld"><label for="pt">ค่าเป้า</label><input type="number" step="any" inputmode="decimal" id="pt"${lk} value="${esc(e.target==null?'':e.target)}"></div>
+    <div class="fld"><label for="pc">ค่าจริง (ปัจจุบัน)</label><input type="number" step="any" inputmode="decimal" id="pc" value="${esc(e.actual==null?'':e.actual)}"></div></div>
+   <p class="note">ตอนนี้ Q-Student และ Q-Academic ยังไม่มี ให้กรอกค่าจริงเองพร้อมแนบหลักฐาน · ภายหลังระบบจะดึงค่าจริงจากแอปเหล่านั้นมาให้</p>
+   <h3>หลักฐาน (เก็บแบบส่วนตัว)</h3>
+   ${it&&it.files.length?`<div class="row">${it.files.map(f=>`<span class="pill p-info">${esc(f.n)}</span>${it.canRemoveFile?`<button type="button" class="btn sm danger" data-pafilerm="${it.id}:${f.i}">ลบ</button>`:''}`).join('')}</div>`:''}
+   ${(!it||it.canFile)?fileField('pf','แนบหลักฐาน (รูปหรือ PDF)','ไม่เกิน 5 MB · แนบได้สูงสุด 6 ไฟล์ต่อเรื่อง · แนบได้ทีละไฟล์ (เปิดแก้ไขอีกครั้งเพื่อแนบเพิ่ม)',true):'<p class="sub">แนบหลักฐานไม่ได้ในสถานะนี้</p>'}
+   <div class="row"><button class="btn pri big" type="submit" data-after="save">บันทึก</button>${(!it||it.edit==='full')?'<button class="btn good big" type="submit" data-after="send">บันทึกและส่งข้อตกลง</button>':''}</div></form>`);
+}
+async function paSubmitForm(btn){
+  const g=s=>(($(s)||{}).value||'').trim();
+  const data={pid:g('#paid')||undefined,topic:g('#pa1'),background:g('#pa2'),res_quant:g('#pa3'),res_qual:g('#pa4'),ind_key:g('#pi'),ind_name:g('#pin'),ind_unit:g('#piu'),base:g('#pb'),target:g('#pt'),actual:g('#pc'),
+    pdca:[0,1,2,3].map(i=>({what:g('#pdw'+i),due:g('#pdd'+i),done:!!($('#pdc'+i)||{}).checked,note:g('#pdn'+i)}))};
+  const photo=photoOf('pf');
+  const j=await act('pa.save',{data},btn);
+  const pid=j.pid;
+  if(photo&&pid){await act('pa.file',{data:{pid,photo,name:(PICKED.pf||{}).name}});clearPick('pf')}
+  if(btn&&btn.dataset.after==='send'&&pid)await act('pa.submit',{id:pid});
+  closeModal();
+}
+async function paOpenFile(id,i){
+  busyModal('กำลังเปิดหลักฐาน…');
+  try{
+    const j=await api('pa.evidence',{id,i});closeModal();
+    if(j.url){window.open(j.url,'_blank','noopener');return}
+    if(/^data:application\/pdf/.test(j.dataUrl||'')){const bl=await(await fetch(j.dataUrl)).blob(),u=URL.createObjectURL(bl);modal(`<div class="row between"><h2>${esc(j.name||'หลักฐาน')} (PDF)</h2><button class="btn sm" data-close="1">ปิด</button></div><a class="btn pri big wide" style="text-align:center" href="${u}" target="_blank" rel="noopener" download="${esc(j.name||'หลักฐาน')}.pdf">เปิด / ดาวน์โหลดไฟล์ PDF</a><p class="note">ข้อมูลส่วนบุคคล เปิดได้เฉพาะเจ้าของ หัวหน้างานบุคคล และ ผอ.</p>`);return}
+    modal(`<div class="row between"><h2>${esc(j.name||'หลักฐาน')}</h2><button class="btn sm" data-close="1">ปิด</button></div><img src="${j.dataUrl}" alt="หลักฐาน" style="width:100%;border-radius:12px"><p class="note">ข้อมูลส่วนบุคคล เปิดได้เฉพาะเจ้าของ หัวหน้างานบุคคล และ ผอ.</p>`);
+  }catch(e){closeModal();toast(e.message)}
+}
+async function paImportLegacy(btn){
+  const S=SEC.pa,lg=S&&paLegacyAvail(S);if(!lg){toast('ไม่พบข้อมูลเดิมในเครื่องนี้');return}
+  await act('pa.import',{data:lg},btn);
+  try{const x=JSON.parse(localStorage.getItem(PA_LEGACY_KEY)||'null')||{},m=me();['self','c3','stat','dir'].forEach(k=>{if(x[k])delete x[k][m]});localStorage.setItem(PA_LEGACY_KEY,JSON.stringify(x))}catch(e){}
+  toast('นำเข้าแล้ว และล้างข้อมูลเดิมของท่านจากเครื่องนี้แล้ว');
+}
+/** เตือนในหน้าแรก "งานที่ต้องดำเนินการ" */
+function paPending(add){
+  const P=B.pa;if(!P)return;
+  if(P.elig&&!ME.isDirector){
+    if(!P.mine.sent)add({ic:'dev',h:'amber',t:'ส่งข้อตกลง PA ประเด็นท้าทาย',s:'ปีงบประมาณ '+P.fy+(P.mine.n?' · มีฉบับร่าง '+P.mine.n+' เรื่อง':' · ยังไม่ได้เพิ่ม'),go:'pachal'},2);
+    if(P.mine.n&&P.mine.noBase){const d=dayDiff(P.due);add({ic:'dev',h:d<0?'rose':'blue',t:'กรอกค่าฐาน PA ให้ครบ',s:(d<0?'เลยกำหนด '+(-d)+' วัน (ภายใน '+thD(P.due)+')':'ภายใน '+thD(P.due)+(d<=3?' · อีก '+d+' วัน':''))+' · '+P.mine.noBase+' เรื่อง',go:'pachal',hot:d<=3},d<=3?1:3)}
+    if(P.mine.returned)add({ic:'dev',h:'rose',t:'ผอ. ส่งข้อตกลง PA กลับให้แก้ไข',s:P.mine.returned+' เรื่อง · เปิดดูเหตุผลแล้วส่งใหม่',go:'pachal',hot:true},1);
+  }
+  if(P.wait)add({ic:'dev',h:'violet',t:(ME.isDirector?'ข้อตกลง PA รออนุมัติ ':'ข้อตกลง PA รอความเห็น ')+P.wait+' เรื่อง',s:'เปิดดูและพิจารณา',go:'pachal',hot:true},1);
+}
+/* =====================================================================
+ *  ประเมินผลการปฏิบัติงานครู (รอบ 3ข) · ตาราง 3 ช่อง: ครูประเมินตนเอง | ข้อมูลจริง (ระบบเสนอ) | ผู้บริหาร
+ *  อ.1 ตอน 1 (15 ข้อ ระดับ 1–4) · ตอน 2 PA · อ.2 งานมอบหมาย (ระดับ 1–5) · อ.3 วินัย (10 ข้อ) → 100 คะแนน
+ * ===================================================================== */
+const EV_ST={self:['กำลังประเมินตนเอง','p-mute'],self_sent:['รอ ผอ. พิจารณา','p-warn'],signed:['ผอ. ลงนามแล้ว · รอครูรับทราบ','p-info'],acked:['ครูรับทราบแล้ว','p-good'],locked:['ล็อกรอบแล้ว','p-good']};
+const EV_RS={open:['เปิดรอบ','p-good'],locked:['ล็อกรอบแล้ว','p-mute'],closed:['ยังไม่เปิดรอบ','p-warn']};
+const EV_COL={self:'#2c8ce6',sys:'#1e9e66',dir:'#d6404a'};
+const evKey=()=>'eval'+((st.evRound||st.evStaff)?':'+(st.evRound||'')+':'+(st.evStaff||''):'');
+const evAct=(a,p,b)=>{SEC_STALE_AFTER[a]=Object.keys(SEC).filter(k=>/^eval/.test(k));return act(a,p,b)};   // หลังบันทึกสำเร็จ ให้ดึงข้อมูลหน้าประเมินใหม่ (ยังแสดงของเดิมระหว่างรอ)
+const evNum=v=>v==null?'–':String(Math.round(v*100)/100);
+function evRadar(R){
+  const ax=R.axes,n=ax.length,cx=190,cy=140,r=84;
+  const pt=(i,p)=>{const a=-Math.PI/2+i*2*Math.PI/n,rr=r*Math.max(0,Math.min(100,p))/100;return[cx+rr*Math.cos(a),cy+rr*Math.sin(a)]};
+  const pts=(arr)=>arr.map((p,i)=>pt(i,p).map(v=>v.toFixed(1)).join(',')).join(' ');
+  const poly=(arr,c,dash)=>`<polygon points="${pts(arr)}" fill="${c}" fill-opacity=".10" stroke="${c}" stroke-width="2.2" ${dash?'stroke-dasharray="5 4"':''}/>`;
+  const rings=[25,50,75,100].map(p=>`<polygon points="${pts(ax.map(()=>p))}" fill="none" stroke="var(--line)" stroke-width="1"/>`).join('');
+  const spokes=ax.map((_,i)=>{const q=pt(i,100);return`<line x1="${cx}" y1="${cy}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="var(--line)"/>`}).join('');
+  const labels=ax.map((a,i)=>{const q=pt(i,128),an=q[0]<cx-10?'end':q[0]>cx+10?'start':'middle';
+    return`<text x="${q[0].toFixed(1)}" y="${q[1].toFixed(1)}" text-anchor="${an}" font-size="10.5" fill="currentColor">${esc(a[1])}<tspan x="${q[0].toFixed(1)}" dy="12" font-size="9.5" fill="${EV_COL.dir}">${R.dir[i]}%</tspan></text>`}).join('');
+  return`<svg viewBox="0 0 380 285" style="width:100%;max-width:420px;display:block;margin:0 auto;color:var(--ink)" role="img" aria-label="กราฟเรดาร์ 6 แกน">${rings}${spokes}${poly(R.self,EV_COL.self,false)}${poly(R.sys,EV_COL.sys,true)}${poly(R.dir,EV_COL.dir,false)}${labels}</svg>
+   <div class="row" style="justify-content:center;gap:14px;font-size:.84rem"><span><i class="evk" style="background:${EV_COL.self}"></i>ตนเอง</span><span><i class="evk" style="background:${EV_COL.sys}"></i>ข้อมูลจริง (ระบบ)</span><span><i class="evk" style="background:${EV_COL.dir}"></i>ผู้บริหาร</span></div>`;
+}
+function evTotals(V){
+  const T=V.totals,row=(l,mx,f)=>`<tr><td>${l}</td><td class="r num">${mx}</td>${['self','sys','dir'].map(k=>`<td class="r num">${f(T[k])}</td>`).join('')}</tr>`;
+  const lab=k=>{const x=T[k];return x.complete?`<b>${esc(x.label)}</b>`:x.filled?`<span class="sub">ยังไม่ครบ ${x.miss.length} ข้อ<br>ชั่วคราว: ${esc(x.provLabel)} (${x.provPct}%)</span>`:'<span class="sub">ยังไม่มีข้อมูล</span>'};
+  return`<div class="scroll"><table class="evt"><thead><tr><th>คะแนน</th><th class="r">เต็ม</th><th class="r">ตนเอง</th><th class="r">ข้อมูลจริง</th><th class="r">ผู้บริหาร</th></tr></thead><tbody>
+   ${row('อ.1 ตอน 1 ระดับความสำเร็จตามมาตรฐานตำแหน่ง',60,x=>evNum(x.p1))}${row('อ.1 ตอน 2 PA ประเด็นท้าทาย (แปลง ×20÷40)',20,x=>evNum(x.paScore))}${row('อ.2 การมีส่วนร่วมพัฒนาการศึกษา',10,x=>evNum(x.c2))}${row('อ.3 วินัย คุณธรรม จริยธรรม (÷4)',10,x=>evNum(x.c3Score))}
+   <tr class="tot"><td><b>คะแนนรวม</b></td><td class="r num">100</td>${['self','sys','dir'].map(k=>`<td class="r num"><b>${evNum(T[k].total)}</b></td>`).join('')}</tr>
+   <tr><td>ระดับผล</td><td></td>${['self','sys','dir'].map(k=>`<td class="r">${lab(k)}</td>`).join('')}</tr></tbody></table></div>
+   <p class="note">ระดับผล: ดีเด่น ≥90 · ดีมาก 80–89.99 · ดี 70–79.99 · พอใช้ 60–69.99 · ปรับปรุง ต่ำกว่า 60 · ตัดสินระดับเมื่อให้ระดับครบทุกข้อเท่านั้น (ข้อที่ไม่มีข้อมูลไม่นับเป็นระดับ 1 แต่ยังไม่ได้คะแนน)</p>`;
+}
+function evLvBtns(it,V){
+  const mx=it.kind==='lv5w'?5:4;
+  if(V.can.self)return`<div class="lvs" role="group" aria-label="ระดับ ${esc(it.no)}">${Array.from({length:mx},(_,i)=>i+1).map(n=>`<button class="lvb ${it.self===n?'on':''}" data-evlv="${it.id}:${n}" aria-pressed="${it.self===n}">${n}</button>`).join('')}</div>`;
+  return it.self?`<b class="lvnum">${it.self}</b>`:'<span class="sub">–</span>';
+}
+function evCells(it,V){
+  const S=SEC[evKey()]||{};
+  const selfC=evLvBtns(it,V)+(it.exNote||it.files.length?`<small class="sub"> ${it.self===4?'★ มีหลักฐานแบบอย่าง':''}</small>`:'');
+  const hasEv=it.basis.length||it.files.length||it.hist.length;
+  const sysC=(it.sys?`<b class="lvnum sys">${it.sys}</b>`:`<span class="nodata">ยังไม่มีข้อมูล</span>`)+(it.hasSrc?`<div class="cov" title="ข้อมูลครบ ${it.cover}%"><i style="width:${it.cover}%"></i></div><small class="sub">ครบ ${it.cover}%</small>`:`<small class="sub">${esc(it.ds==='A'?'รอแอปเจ้าของข้อมูล':it.ds==='B'?'ข้อมูลบางส่วน รอแอป':'ยังไม่มีแหล่งข้อมูล')}</small>`)
+    +(hasEv?` <button class="btn sm" data-evev="${it.id}">${it.basis.length?'หลักฐาน':'ไฟล์/ประวัติ'}</button>`:'');
+  const dirC=(it.dir?`<b class="lvnum dir edited">${it.dir}</b><small class="sub"> ปรับโดย ${esc(it.dirBy)}</small>${it.dirReason?`<div class="sub">${esc(it.dirReason)}</div>`:''}`:it.sys?`<b class="lvnum">${it.sys}</b><small class="sub"> ตามข้อมูลจริง</small>`:`<span class="nodata">ยังไม่ให้ระดับ</span>`)
+    +(V.can.dir?` <button class="btn sm" data-evdir="${it.id}">${it.dir?'แก้':'ปรับ/ให้ระดับ'}</button>`:'');
+  return[selfC,sysC,dirC];
+}
+function evItemsView(V){
+  const groups=[];V.items.forEach(it=>{let g=groups[groups.length-1];if(!g||g.name!==it.group){g={name:it.group,items:[]};groups.push(g)}g.items.push(it)});
+  if(isMobile())return groups.map(g=>`<section class="panel"><div class="ph"><h2>${esc(g.name)}</h2></div><div class="cards">${g.items.map(it=>{const c=evCells(it,V);return`<article class="card"><b>${esc(it.no)} ${esc(it.name)}</b>
+     <div class="evm"><div><span class="sub">ครูประเมินตนเอง</span>${c[0]}</div><div><span class="sub">ข้อมูลจริง (ระบบเสนอ)</span>${c[1]}</div><div><span class="sub">ผู้บริหาร</span>${c[2]}</div></div></article>`}).join('')}</div></section>`).join('');
+  return`<section class="panel"><div class="scroll"><table class="evt evi"><thead><tr><th>ข้อ</th><th>รายการประเมิน</th><th>ครูประเมินตนเอง</th><th>ข้อมูลจริง (ระบบเสนอ)</th><th>ผู้บริหาร</th></tr></thead><tbody>
+   ${groups.map(g=>`<tr class="grp"><td colspan="5"><b>${esc(g.name)}</b></td></tr>${g.items.map(it=>{const c=evCells(it,V);return`<tr><td class="num">${esc(it.no)}</td><td>${esc(it.name)}</td><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td></tr>`}).join('')}`).join('')}</tbody></table></div></section>`;
+}
+function evalPage(S){
+  if(!S.elig&&!S.board)return`<section class="panel"><div class="ph"><h2>ประเมินผลการปฏิบัติงาน</h2></div><div class="callout c-info"><b>ใช้ได้เฉพาะข้าราชการและพนักงานราชการ</b>ประเภทบุคลากรของท่านยังไม่อยู่ในกลุ่มนี้ (ให้ ผอ. ตรวจคอลัมน์ staff_type ใน QK-Core แท็บ staff)</div></section>`;
+  const V=S.view,cur=S.current;
+  const rounds=S.rounds.slice();if(!rounds.some(r=>r.id===cur.id))rounds.unshift({id:cur.id,label:cur.label,status:'closed'});
+  const rid=S.roundId||cur.id;
+  let head=`<section class="panel"><div class="ph"><h2>ประเมินผลการปฏิบัติงานครู</h2>${V?`<span class="pill ${(EV_RS[V.round.status]||EV_RS.closed)[1]}">${(EV_RS[V.round.status]||EV_RS.closed)[0]}</span>`:''}</div>
+   <div class="fgrid"><div class="fld"><label for="evRound">รอบการประเมิน</label><select id="evRound">${rounds.map(r=>`<option value="${esc(r.id)}" ${r.id===rid?'selected':''}>${esc(r.label)}${r.status==='locked'?' · ล็อกแล้ว':r.status==='closed'?' · ยังไม่เปิด':''}</option>`).join('')}</select></div>
+   ${S.board&&S.roster?`<div class="fld"><label for="evStaff">ครู</label><select id="evStaff">${S.roster.map(p=>`<option value="${p.id}" ${p.id===S.sid?'selected':''}>${esc(p.name)} · ${esc((EV_ST[p.status]||['ยังไม่เริ่ม'])[0])}</option>`).join('')}</select></div>`:''}</div>`;
+  if(S.director)head+=`<div class="row"><button class="btn" data-evall="1">📊 คะแนนครูทุกคน</button><span class="sub">ตารางรวมทุกคน เปรียบเทียบ เรียงได้</span></div>`;
+  if(S.director&&!cur.opened)head+=`<div class="row"><button class="btn pri" data-evopen="1">เปิดรอบ ${esc(cur.label)}</button><span class="sub">เปิดแล้วครูทุกคนที่เข้าข่ายได้รับแจ้งให้ประเมินตนเอง</span></div>`;
+  if(!V){
+    head+=S.notOpen||!cur.opened&&rid===cur.id?`<div class="callout c-info"><b>ยังไม่เปิดรอบประเมิน</b>${S.director?'กด "เปิดรอบ" เมื่อพร้อม':'รอ ผอ. เปิดรอบ · ท่านจะได้รับแจ้งที่หน้าแรก'}</div>`:`<div class="callout c-info"><b>ยังไม่มีข้อมูลให้แสดง</b>${S.board?'ยังไม่มีครูที่เข้าข่าย (ต้องกรอก staff_type เป็น ข้าราชการ/พนักงานราชการ)':''}</div>`;
+    return head+'</section>'+evCriteria(S);
+  }
+  const fs=EV_ST[V.form.status]||EV_ST.self;
+  head+=`<div class="row between"><b>${esc(V.staff.full)}</b><span class="pill ${fs[1]}">${fs[0]}</span></div><p class="sub">${esc(V.round.label)}${V.form.signedAt?' · ผอ. ลงนาม '+esc(thDT(V.form.signedAt))+(V.form.signedBy?' ('+esc(V.form.signedBy)+')':''):''}${V.form.ackedAt?' · ครูรับทราบ '+esc(thDT(V.form.ackedAt)):''}</p>
+   <div class="fgrid"><div><div class="row between"><span class="sub">ผ่านรอบมาแล้ว</span><b class="num">${V.round.prog}%</b></div><div class="prog"><i style="width:${V.round.prog}%"></i></div></div>
+   <div><div class="row between"><span class="sub">ข้อมูลครบ (ถ่วงตามคะแนนเต็ม)</span><b class="num">${V.cover}%</b></div><div class="prog"><i style="width:${V.cover}%;background:var(--good,#1e9e66)"></i></div></div></div>`;
+  const A=[];
+  if(V.can.send)A.push(`<button class="btn pri" data-evsend="${V.round.id}">ส่งประเมินตนเอง</button>`);
+  if(V.can.recall)A.push(`<button class="btn" data-evrecall="${V.round.id}">ถอนการส่ง (แก้ไข)</button>`);
+  if(V.can.ack)A.push(`<button class="btn good" data-evack="${V.round.id}">รับทราบผลการประเมิน</button>`);
+  if(V.can.sign)A.push(`<button class="btn good" data-evsign="${V.staff.id}">ลงนามผลการประเมิน</button>`);
+  if(V.can.unsign)A.push(`<button class="btn" data-evunsign="${V.staff.id}">ยกเลิกลงนาม</button>`);
+  A.push(`<button class="btn" data-evpdf="${V.staff.id}">⬇ ส่งออก PDF ตามแบบราชการ</button>`);
+  if(S.director&&V.round.status==='open')A.push(`<button class="btn danger" data-evlock="${V.round.id}">ล็อกรอบ</button>`);
+  head+=`<div class="row">${A.join('')}</div>${V.can.self?'<p class="sub">ท่านเห็นข้อมูลจริงของตนเองได้ทันที ไม่ต้องประเมินตนเองก่อน · ประเมินให้ครบทุกข้อแล้วกด "ส่งประเมินตนเอง" · ระดับ 4 ต้องมีหลักฐานแบบอย่าง</p>':''}</section>`;
+  return head+evCpBox(V)+`<section class="panel"><div class="ph"><h2>กราฟเรดาร์ 6 แกน</h2></div>${evRadar(V.radar)}</section><section class="panel"><div class="ph"><h2>สรุปคะแนน</h2></div>${evTotals(V)}</section>${evItemsView(V)}${evCriteria(S)}`;
+}
+function evCriteria(S){
+  return`<section class="panel"><details class="more"><summary>เกณฑ์แปลงข้อมูลเป็นระดับ (ร่าง · เก็บในชีต eval_items ให้ ผอ. ปรับได้)</summary><div class="stack" style="gap:8px">
+   <p class="sub">ระบบเสนอระดับสูงสุด 3 (ยกเว้น อ.2 ที่คิดตามร้อยละงานสำเร็จ) · ระดับ 4 ต้องมีหลักฐานแบบอย่าง · ข้อที่ไม่มีข้อมูลแสดง "ยังไม่มีข้อมูล" ไม่นับเป็นระดับ 1</p>
+   <ul class="list">${S.items.map(it=>`<li style="flex-wrap:wrap"><div class="main"><b>${esc(it.no)} ${esc(it.name)}</b><div class="sub">แหล่งข้อมูล: ${esc(it.srcText||'-')}</div>${it.critText?`<div class="sub"><b>เกณฑ์:</b> ${esc(it.critText)}</div>`:`<div class="sub">รอบนี้ ผอ. ให้ระดับเอง</div>`}</div><span class="pill ${it.src?'p-good':'p-mute'}">${it.src?'ดึงข้อมูลจริง':'ผอ. ให้เอง'}</span></li>`).join('')}</ul></div></details></section>`;
+}
+V.eval=()=>st.evAll&&ME.isDirector?secBox('evalall:'+(st.evaRound||''),evalAllPage,45000):secBox(evKey(),evalPage,45000);
+function evFind(id){const S=SEC[evKey()];return S&&S.view?S.view.items.find(x=>x.id===id):null}
+function evEvidenceModal(id){
+  const S=SEC[evKey()],V=S&&S.view,it=evFind(id);if(!it)return;
+  const canAdd=(V.can.self&&!V.can.dir)||(V.can.dir)&&true;
+  modal(`<div class="stack" style="gap:10px"><div class="row between"><h2>${esc(it.no)} ${esc(it.name)}</h2><button class="btn sm" data-close="1">ปิด</button></div>
+   ${it.basis.length?`<section><h3>ที่มาของข้อมูลจริง</h3><ul class="list">${it.basis.map(b=>`<li><div class="main">${esc(b)}</div></li>`).join('')}</ul></section>`:''}
+   ${it.exNote?`<p><b>หลักฐานแบบอย่าง:</b> ${esc(it.exNote)}</p>`:''}
+   <section><h3>ไฟล์แนบ</h3>${it.files.length?`<div class="row">${it.files.map(f=>`<button class="btn sm" data-evfile="${it.id}:${f.i}">${svg('file','i16')} ${esc(f.n)}</button>`).join('')}</div>`:'<p class="sub">ยังไม่มีไฟล์แนบ</p>'}
+   ${(V.can.self||V.can.dir)?`${fileField('evf','เพิ่มหลักฐาน (รูปหรือ PDF)','ไม่เกิน 5 MB · เก็บแบบส่วนตัว · สูงสุด 6 ไฟล์ต่อข้อ',true)}<div><button class="btn" data-evfadd="${it.id}">แนบไฟล์นี้</button></div>`:''}</section>
+   ${it.hist.length?`<section><h3>ประวัติการให้/แก้ระดับ</h3><ul class="list">${it.hist.slice().reverse().map(h=>`<li style="flex-wrap:wrap"><div class="main"><b>${esc(h.role)} · ${esc(h.by)}</b> ${h.f==='self'?'ตนเอง':'ผู้บริหาร'}: ${h.from==null?'–':esc(String(h.from))} → ${h.to==null?'ใช้ค่าข้อมูลจริง':esc(String(h.to))}<div class="sub">${esc(thDT(h.at))}${h.why?' · '+esc(h.why):''}</div></div></li>`).join('')}</ul></section>`:''}</div>`);
+}
+function evSelf4Modal(id){
+  const it=evFind(id);if(!it)return;
+  modal(`<form class="f" id="evForm4"><div class="row between"><h2>ระดับ 4 · ข้อ ${esc(it.no)}</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div><input type="hidden" id="ev4i" value="${it.id}">
+   <div class="callout c-info"><b>ระดับ 4 ต้องมีหลักฐานแบบอย่าง</b>เช่น รางวัล ผลงานเผยแพร่ การขยายผล ดาวชื่นชม · ระบุสั้นๆ และ/หรือแนบไฟล์ อย่างน้อย 1 อย่าง</div>
+   <div class="fld"><label for="ev4n">หลักฐานแบบอย่าง</label><textarea id="ev4n" maxlength="300" placeholder="เช่น ได้รับรางวัลครูดีเด่นระดับเขต ปี 2569">${esc(it.exNote||'')}</textarea></div>
+   ${fileField('evf','แนบหลักฐาน (ถ้ามี)','รูปหรือ PDF ไม่เกิน 5 MB',true)}<button class="btn pri big wide" type="submit">บันทึกระดับ 4</button></form>`);
+}
+function evDirModal(id){
+  const it=evFind(id);if(!it)return;const mx=it.kind==='lv5w'?5:4,cur=it.dir||it.sys||0;
+  modal(`<form class="f" id="evFormDir"><div class="row between"><h2>ระดับผู้บริหาร · ข้อ ${esc(it.no)}</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div><input type="hidden" id="evdi" value="${it.id}">
+   <p class="sub">${esc(it.name)}</p><p class="sub">ข้อมูลจริงเสนอ: <b>${it.sys||'ยังไม่มีข้อมูล'}</b>${it.self?' · ครูประเมินตนเอง: <b>'+it.self+'</b>':''}</p>
+   <div class="fld"><span class="lbl">ระดับ</span><div class="opts">${Array.from({length:mx},(_,i)=>i+1).map(n=>`<label><input type="radio" name="evdl" value="${n}" ${n===cur?'checked':''}>${n}</label>`).join('')}</div></div>
+   <div class="fld"><label for="evdr">เหตุผล (จำเป็น · เก็บประวัติ)</label><textarea id="evdr" maxlength="300" required placeholder="เช่น ตรวจรายงานแล้ว คุณภาพสูงกว่าที่ระบบเสนอ">${esc(it.dirReason||'')}</textarea></div>
+   <div class="boxed f"><span class="sub">เฉพาะระดับ 4: หลักฐานแบบอย่าง</span><label class="row"><input type="checkbox" id="evdx" style="width:auto"> ผอ. ยืนยันว่ามีหลักฐานแบบอย่างแล้ว</label><div class="fld"><label for="evdn">ระบุหลักฐาน (ถ้ามี)</label><input type="text" id="evdn" maxlength="300"></div>${fileField('evf','แนบหลักฐาน (ถ้ามี)','รูปหรือ PDF ไม่เกิน 5 MB',true)}</div>
+   <div class="row"><button class="btn pri big" type="submit">บันทึกระดับ</button>${it.dir?'<button class="btn" type="button" data-evdirclear="'+it.id+'">ใช้ค่าข้อมูลจริง</button>':''}</div></form>`);
+}
+async function evSubmit4(btn){
+  const S=SEC[evKey()],V=S.view,g=s=>(($(s)||{}).value||'').trim();
+  const photo=photoOf('evf');
+  await evAct('eval.self',{data:{round:V.round.id,item:g('#ev4i'),level:4,exNote:g('#ev4n'),photo:photo||undefined,name:(PICKED.evf||{}).name}},btn);clearPick('evf');closeModal();
+}
+async function evSubmitDir(btn){
+  const S=SEC[evKey()],V=S.view,g=s=>(($(s)||{}).value||'').trim(),lv=Number((document.querySelector('input[name=evdl]:checked')||{}).value);
+  if(!lv){toast('เลือกระดับก่อน');return}
+  const photo=photoOf('evf');
+  await evAct('eval.dir',{data:{round:V.round.id,staff:V.staff.id,item:g('#evdi'),level:lv,reason:g('#evdr'),exConfirm:!!($('#evdx')||{}).checked,exNote:g('#evdn'),photo:photo||undefined,name:(PICKED.evf||{}).name}},btn);clearPick('evf');closeModal();
+}
+async function evOpenFile(item,i){
+  const S=SEC[evKey()],V=S&&S.view;if(!V)return;busyModal('กำลังเปิดหลักฐาน…');
+  try{
+    const j=await api('eval.evidence',{round:V.round.id,staff:V.staff.id,item,i});closeModal();
+    if(j.url){window.open(j.url,'_blank','noopener');return}
+    if(/^data:application\/pdf/.test(j.dataUrl||'')){const bl=await(await fetch(j.dataUrl)).blob(),u=URL.createObjectURL(bl);modal(`<div class="row between"><h2>${esc(j.name||'หลักฐาน')} (PDF)</h2><button class="btn sm" data-close="1">ปิด</button></div><a class="btn pri big wide" style="text-align:center" href="${u}" target="_blank" rel="noopener" download="${esc(j.name||'หลักฐาน')}.pdf">เปิด / ดาวน์โหลดไฟล์ PDF</a>`);return}
+    modal(`<div class="row between"><h2>${esc(j.name||'หลักฐาน')}</h2><button class="btn sm" data-close="1">ปิด</button></div><img src="${j.dataUrl}" alt="หลักฐาน" style="width:100%;border-radius:12px">`);
+  }catch(e){closeModal();toast(e.message)}
+}
+/** ส่งออก PDF ตามแบบราชการ: ส่วนที่ 1–4 · แบบประเมิน อ.1 (ตอน 1–2) · อ.2 · อ.3 · ลายเซ็นที่บันทึกไว้ */
+async function evExport(staff){
+  const S=SEC[evKey()],V0=S&&S.view;if(!V0)return;busyModal('กำลังเตรียมเอกสาร…');
+  let P;try{P=await api('eval.pdf',{round:V0.round.id,staff});closeModal()}catch(e){closeModal();toast(e.message);return}
+  const V=P.view,I=V.items,DT=s=>s?d8(s.slice(0,10)).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'..........................',fin=it=>it.final||0;
+  const lvs=(it,k)=>k==='self'?it.self:fin(it),tick=(l,n)=>l===n?'✓':'',pts=(it,l)=>l?(it.kind==='lv5w'?l*2:it.kind==='pa'?it.max*l/4:l):0;
+  const tot=(k)=>{const lv={};I.forEach(it=>{lv[it.id]=lvs(it,k)});let p1=0,pa=0,c2=0,c3=0;I.forEach(it=>{const p=pts(it,lv[it.id]);if(it.part==='p1')p1+=p;else if(it.part==='pa')pa+=p;else if(it.part==='c2')c2+=p;else c3+=p});return{p1,pa:pa*20/40,c2,c3:c3/4,total:p1+pa*20/40+c2+c3/4}};
+  const TS=tot('self'),TD=tot('dir'),lab=t=>t>=90?'ดีเด่น':t>=80?'ดีมาก':t>=70?'ดี':t>=60?'พอใช้':'ปรับปรุง';
+  const f2=n=>(Math.round(n*100)/100).toFixed(2);
+  const rows4=(part,max)=>I.filter(it=>it.part===part).map(it=>`<tr><td>${esc(it.no)}</td><td class="l">${esc(it.name)}</td>${[1,2,3,4].map(n=>`<td>${tick(it.self,n)}</td>`).join('')}<td>${pts(it,it.self)||''}</td>${[1,2,3,4].map(n=>`<td>${tick(fin(it),n)}</td>`).join('')}<td>${pts(it,fin(it))||''}</td></tr>`).join('');
+  const head4=`<tr><th rowspan="2">ข้อ</th><th rowspan="2">รายการ</th><th colspan="5">ผลการประเมินตนเอง</th><th colspan="5">ผลการประเมินของผู้บังคับบัญชา</th></tr><tr><th>1</th><th>2</th><th>3</th><th>4</th><th>คะแนน</th><th>1</th><th>2</th><th>3</th><th>4</th><th>คะแนน</th></tr>`;
+  const paRows=I.filter(it=>it.part==='pa').map(it=>`<tr><td>${esc(it.no)}</td><td class="l">${esc(it.name)}</td>${[1,2,3,4].map(n=>`<td>${tick(it.self,n)}</td>`).join('')}<td>${pts(it,it.self)||''}</td>${[1,2,3,4].map(n=>`<td>${tick(fin(it),n)}</td>`).join('')}<td>${pts(it,fin(it))||''}</td></tr>`).join('');
+  const c2=I.find(it=>it.part==='c2'),sg=(img,n,p)=>`<div class="sg">${img?`<img src="${img}" alt="">`:'<div class="blank"></div>'}<div>(${esc(n)})</div><div>${esc(p)}</div></div>`;
+  const css=`<style>@page{size:A4;margin:14mm}body{font-family:Sarabun,"TH Sarabun New",Thonburi,Tahoma,sans-serif;font-size:14px;color:#000}h1{font-size:18px;text-align:center;margin:0 0 4px}h2{font-size:15px;margin:10px 0 4px}table{width:100%;border-collapse:collapse;margin:6px 0}th,td{border:1px solid #444;padding:3px 5px;text-align:center;font-size:12.5px}td.l{text-align:left}.pg{page-break-after:always}.pg:last-child{page-break-after:auto}.sg{display:inline-block;width:45%;text-align:center;vertical-align:top;margin-top:8px}.sg img{height:56px;display:block;margin:0 auto}.blank{height:56px}.small{font-size:12px;color:#333}.box{border:1px solid #444;padding:6px;margin:6px 0}</style>`;
+  const html=`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>แบบประเมินผลการปฏิบัติงาน ${esc(V.staff.full)}</title>${css}</head><body>
+  <div class="pg"><h1>แบบประเมินผลการปฏิบัติงานของข้าราชการครูและบุคลากรทางการศึกษา<br>ตำแหน่งครู วิทยฐานะครูชำนาญการพิเศษ (ทุกสังกัด)</h1>
+   <h2>ส่วนที่ ๑ : ข้อมูลของผู้ขอรับการประเมิน</h2>
+   <div class="box">รอบการประเมิน ${V.round.no===1?'☑':'☐'} ครั้งที่ ๑ (๑ ตุลาคม – ๓๑ มีนาคม) &nbsp; ${V.round.no===2?'☑':'☐'} ครั้งที่ ๒ (๑ เมษายน – ๓๐ กันยายน) &nbsp; ปีงบประมาณ ${V.round.fy}<br>
+   ชื่อผู้รับการประเมิน: <b>${esc(V.staff.full)}</b> · ตำแหน่ง: ${esc(V.staff.pos||'ครู')} ${esc(P.rank||'')} · สถานศึกษา: ${esc(P.school)}<br>ชื่อผู้ประเมิน: <b>${esc(P.director?P.director.name:'')}</b> · ตำแหน่ง: ${esc(P.director?P.director.pos:'')}</div>
+   <h2>ส่วนที่ ๒ : สรุปผลการประเมิน</h2>
+   <table><tr><th rowspan="2">องค์ประกอบการประเมิน</th><th rowspan="2">คะแนนเต็ม</th><th>คะแนนประเมินตนเอง</th><th>คะแนนประเมินของผู้บังคับบัญชา</th></tr><tr><th></th><th></th></tr>
+   <tr><td class="l">องค์ประกอบที่ ๑ ประสิทธิภาพและประสิทธิผลการปฏิบัติงานตามมาตรฐานตำแหน่ง (ตอน ๑ = ๖๐ + ตอน ๒ = ๒๐)</td><td>80</td><td>${f2(TS.p1+TS.pa)}</td><td>${f2(TD.p1+TD.pa)}</td></tr>
+   <tr><td class="l">องค์ประกอบที่ ๒ การมีส่วนร่วมในการพัฒนาการศึกษา</td><td>10</td><td>${f2(TS.c2)}</td><td>${f2(TD.c2)}</td></tr>
+   <tr><td class="l">องค์ประกอบที่ ๓ การปฏิบัติตนในการรักษาวินัย คุณธรรม จริยธรรม และจรรยาบรรณวิชาชีพ</td><td>10</td><td>${f2(TS.c3)}</td><td>${f2(TD.c3)}</td></tr>
+   <tr><td class="l"><b>คะแนนรวม</b></td><td>100</td><td><b>${f2(TS.total)}</b></td><td><b>${f2(TD.total)}</b></td></tr></table>
+   <h2>ส่วนที่ ๓ : ผลการประเมิน</h2>
+   <div class="box"><b>๓.๑ ผลการประเมินตนเอง</b> ข้าพเจ้าขอรับรองว่าได้ประเมินตนเองตรงตามความเป็นจริง<br>${sg(P.sigTeacher,V.staff.full,V.staff.pos||'ครู')} <span class="small">วันที่ ${DT(P.selfSentAt)}</span></div>
+   <div class="box"><b>๓.๒ ผลการประเมินและความเห็นของผู้บังคับบัญชา</b><br>ผลการประเมิน: ${[['ดีเด่น','ร้อยละ ๙๐.๐๐ ขึ้นไป'],['ดีมาก','๘๐.๐๐–๘๙.๙๙'],['ดี','๗๐.๐๐–๗๙.๙๙'],['พอใช้','๖๐.๐๐–๖๙.๙๙'],['ปรับปรุง','๕๙.๙๙ ลงมา']].map(x=>(lab(TD.total)===x[0]?'☑':'☐')+' '+x[0]+' ('+x[1]+')').join(' &nbsp; ')}<br>คะแนนรวม ${f2(TD.total)} คะแนน (${lab(TD.total)})<br>ความเห็นของผู้บังคับบัญชา: ${esc(P.dirNote||'.................................................................')}<br>${sg(P.sigDirector,P.director?P.director.name:'',P.director?P.director.pos:'')} <span class="small">วันที่ ${DT(P.signedAt)}</span></div>
+   <h2>ส่วนที่ ๔ : การรับทราบผลการประเมิน</h2><div class="box">ผู้รับการประเมินได้รับทราบผลการประเมินและความเห็นของผู้บังคับบัญชาแล้ว<br>${P.ackedAt?sg(P.sigTeacher,V.staff.full,V.staff.pos||'ครู'):'(ยังไม่ได้รับทราบ)'} <span class="small">วันที่ ${DT(P.ackedAt)}</span></div>
+   <p class="small">พิมพ์จากระบบ Q-Teacher โรงเรียนบ้านกาวะ · ข้อมูลระดับตามที่บันทึกในระบบ ณ ${DT(new Date().toISOString())}</p></div>
+  <div class="pg"><h1>แบบประเมินองค์ประกอบที่ ๑ ประสิทธิภาพและประสิทธิผลการปฏิบัติงานตามมาตรฐานตำแหน่ง</h1><h2>ตอนที่ ๑ ระดับความสำเร็จในการพัฒนางานตามมาตรฐานตำแหน่ง (๖๐ คะแนน) · ระดับ ๑–๔ = ๑–๔ คะแนน</h2>
+   <table>${head4}${rows4('p1')}<tr><td colspan="6" class="l"><b>คะแนนรวมตอนที่ ๑</b></td><td><b>${f2(TS.p1)}</b></td><td colspan="4"></td><td><b>${f2(TD.p1)}</b></td></tr></table></div>
+  <div class="pg"><h1>ตอนที่ ๒ ประเด็นท้าทาย (๒๐ คะแนน)</h1><p class="small">คะแนนระดับ ๔/๓/๒/๑ = เต็ม ๒๐: ๒๐/๑๕/๑๐/๕ · เต็ม ๑๐: ๑๐/๗.๕/๕/๒.๕ · คะแนนประเมิน = คะแนนรวม × ๒๐ ÷ ๔๐</p>
+   <table>${head4}${paRows}<tr><td colspan="6" class="l"><b>คะแนนรวม (เต็ม ๔๐)</b></td><td><b>${f2(TS.pa*2)}</b></td><td colspan="4"></td><td><b>${f2(TD.pa*2)}</b></td></tr><tr><td colspan="6" class="l"><b>แปลงเป็นคะแนนเต็ม ๒๐</b></td><td><b>${f2(TS.pa)}</b></td><td colspan="4"></td><td><b>${f2(TD.pa)}</b></td></tr></table>
+   <h1 style="margin-top:14px">แบบประเมินองค์ประกอบที่ ๒ การมีส่วนร่วมในการพัฒนาการศึกษา (๑๐ คะแนน)</h1>
+   <table><tr><th rowspan="2">รายการ</th><th colspan="5">ตนเอง (ระดับ)</th><th rowspan="2">น้ำหนัก</th><th rowspan="2">คะแนน</th><th colspan="5">ผู้บังคับบัญชา (ระดับ)</th><th rowspan="2">คะแนน</th></tr><tr>${[1,2,3,4,5].map(n=>`<th>${n}</th>`).join('')}${[1,2,3,4,5].map(n=>`<th>${n}</th>`).join('')}</tr>
+   ${c2?`<tr><td class="l">ความสำเร็จของงานที่ได้รับมอบหมายจากผู้บังคับบัญชา</td>${[1,2,3,4,5].map(n=>`<td>${tick(c2.self,n)}</td>`).join('')}<td>2</td><td>${pts(c2,c2.self)||''}</td>${[1,2,3,4,5].map(n=>`<td>${tick(fin(c2),n)}</td>`).join('')}<td>${pts(c2,fin(c2))||''}</td></tr>`:''}</table></div>
+  <div class="pg"><h1>แบบประเมินองค์ประกอบที่ ๓ วินัย คุณธรรม จริยธรรม และจรรยาบรรณวิชาชีพ (๑๐ คะแนน)</h1>
+   <table><tr><th rowspan="2">ที่</th><th rowspan="2">รายการประเมิน</th><th colspan="5">ตนเอง</th><th colspan="5">ผู้บังคับบัญชา</th></tr><tr><th>1</th><th>2</th><th>3</th><th>4</th><th>รวม</th><th>1</th><th>2</th><th>3</th><th>4</th><th>รวม</th></tr>
+   ${I.filter(it=>it.part==='c3').map((it,i)=>`<tr><td>${i+1}</td><td class="l">${esc(it.name)}</td>${[1,2,3,4].map(n=>`<td>${tick(it.self,n)}</td>`).join('')}<td>${it.self||''}</td>${[1,2,3,4].map(n=>`<td>${tick(fin(it),n)}</td>`).join('')}<td>${fin(it)||''}</td></tr>`).join('')}
+   <tr><td colspan="6" class="l"><b>คะแนนรวม (เต็ม ๔๐) → ÷ ๔ = ${f2(TS.c3)}</b></td><td colspan="5" class="l"><b>คะแนนรวม (เต็ม ๔๐) → ÷ ๔ = ${f2(TD.c3)}</b></td></tr></table></div>
+  </body></html>`;
+  const old=$('#evPrintFrame');if(old)old.remove();
+  const fr=document.createElement('iframe');fr.id='evPrintFrame';fr.setAttribute('aria-hidden','true');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(fr);
+  const w=fr.contentWindow;w.document.open();w.document.write(html);w.document.close();
+  setTimeout(()=>{try{w.focus();w.print()}catch(e){toast('เปิดหน้าต่างพิมพ์ไม่ได้ ลองใหม่อีกครั้ง')}},900);
+  toast('กำลังเปิดหน้าต่างพิมพ์ · เลือก "บันทึกเป็น PDF"');
+}
+/** การ์ด "ประเมินรอบนี้" ใน "งานที่ต้องดำเนินการ" ของหน้าแรก (ขึ้นเมื่อ ผอ. เปิดรอบ) */
+/** การ์ด "งานเสี่ยงล่าช้า" (ผอ.): งานที่ติ๊กนับเข้าการประเมิน เลยกำหนด หรือคืบหน้าต่ำกว่าเวลาที่ผ่านไป */
+function riskCard(){
+  const R=ME.isDirector&&B.risk;if(!R||!R.n)return'';
+  return`<section class="panel"><div class="ph"><h2>งานเสี่ยงล่าช้า</h2><span class="pill p-bad">${R.n} งาน · ${R.people.length} คน</span></div>
+   <p class="sub">เฉพาะงานที่ติ๊ก "นับเข้าการประเมิน" และยังไม่ส่งครบ · เลยกำหนด หรือความคืบหน้าต่ำกว่าเวลาที่ผ่านไปเกิน 15 จุด</p>
+   <ul class="slist">${R.people.map(p=>{const late=p.items.filter(x=>x.kind==='late').length,lag=p.items.length-late,o=st.open['r'+p.id];
+    return`<li><button class="srow" data-open="r${p.id}" aria-expanded="${!!o}"><span class="main"><b>${esc(p.name)}</b><span class="sub one">${late?'เลยกำหนด '+late+' งาน':''}${late&&lag?' · ':''}${lag?'ช้ากว่าเวลา '+lag+' งาน':''}</span></span>${late?'<span class="pill p-bad">เลยกำหนด</span>':'<span class="pill p-warn">ช้ากว่าเวลา</span>'}</button>
+     ${o?`<div class="sdet">${p.items.map(x=>`<div><div><b>${esc(x.t)}</b></div><div class="sub">กำหนด ${esc(thD(x.due))} · ทำแล้ว <b class="num">${x.pct}%</b>${x.kind==='late'?` · <span class="bad">เลยกำหนด ${x.days} วัน</span>`:` · เวลาผ่านไป <b class="num">${x.el}%</b>`} · น้ำหนัก ${x.wt}</div></div>`).join('')}</div>`:''}</li>`}).join('')}</ul></section>`}
+function riskPending(add){
+  const R=ME.isDirector&&B.risk;if(!R||!R.n)return;
+  const late=R.people.reduce((s,p)=>s+p.items.filter(x=>x.kind==='late').length,0);
+  add({ic:'tasks',h:'rose',t:'งานเสี่ยงล่าช้า '+R.n+' งาน · '+R.people.length+' คน',s:(late?'เลยกำหนด '+late+' งาน · ':'')+R.people.slice(0,2).map(p=>p.name).join(', '),go:'staff',gst:'today',hot:late>0},late?1:3)}
+/** สรุปกลางรอบ (เช็คพอยต์ 31 ธ.ค. / 30 มิ.ย.) ในแท็บประเมิน */
+function evCpBox(V){
+  const c=(V.cp||[])[0],y=V.round.start.slice(0,4),nxt=V.round.no===1?y+'-12-31':y+'-06-30';
+  if(!c)return V.round.status==='open'?`<section class="panel"><div class="ph"><h2>สรุปกลางรอบ</h2></div><p class="sub">ระบบจะสรุปคะแนน อ.2 (งานที่ได้รับมอบหมาย) ถึงวันที่ ${esc(thD(nxt))} ให้อัตโนมัติ และแจ้งเตือนที่หน้าแรก</p></section>`:'';
+  return`<section class="panel"><div class="ph"><h2>สรุปกลางรอบ · ถึง ${esc(thD(c.cp))}</h2><span class="pill p-info">ยังไม่ใช่ผลสุดท้าย</span></div>
+   ${c.n?`<div class="fgrid"><div><span class="sub">งานที่ครบกำหนดถึงวันนั้น</span><div><b class="num">${c.n}</b> งาน · ตรวจรับแล้ว <b class="num">${c.cover}%</b></div></div>
+   <div><span class="sub">ร้อยละงานสำเร็จ</span><div><b class="num">${c.pct}%</b> → ระดับ <b class="num">${c.level}</b>/5 = <b class="num">${c.score}</b>/10 คะแนน</div></div></div>
+   <details class="more"><summary>รายการงานที่นับ</summary><ul class="list">${c.basis.map(b=>`<li><div class="main">${esc(b)}</div></li>`).join('')}</ul></details>`:'<p class="sub">ยังไม่มีงานที่ติ๊กนับเข้าการประเมินและครบกำหนดถึงวันนั้น</p>'}
+   <p class="sub">สรุปจากข้อมูล ณ วันนั้นและเก็บไว้เป็นเช็คพอยต์ · ผลสุดท้ายยังคิดตอนปิดรอบ</p></section>`}
+/** หน้า "คะแนนครูทุกคน" (ผอ.): ใช้ค่าผู้บริหารถ้าให้แล้ว ไม่งั้นค่าข้อมูลจริง · ข้อที่ไม่มีข้อมูลไม่นับเป็นศูนย์ */
+const EA_ST={self:'ยังไม่ประเมินตนเอง',self_sent:'รอ ผอ.',signed:'ลงนามแล้ว',acked:'ครูรับทราบ',locked:'ล็อก'};
+const EA_ORD={self:0,self_sent:1,signed:2,acked:3,locked:4};
+const EA_PILL={self:'p-mute',self_sent:'p-warn',signed:'p-info',acked:'p-good',locked:'p-good'};
+const EA_COLS=[['name','ชื่อ'],['p1','อ.1 ตอน 1 (60)'],['pa','PA (20)'],['c2','อ.2 (10)'],['c3','อ.3 (10)'],['total','รวม (100)'],['label','ระดับผล'],['cover','ข้อมูลครบ'],['status','สถานะรอบ']];
+const eaN=v=>String(Math.round(v*100)/100);
+function eaSorted(rows){
+  const s=st.evaSort||{k:'name',d:1},g=r=>s.k==='name'?r.name:s.k==='label'?r.total:s.k==='status'?(EA_ORD[r.status]||0):r[s.k];
+  return rows.slice().sort((a,b)=>{const x=g(a),y=g(b),c=typeof x==='string'?x.localeCompare(y,'th'):x-y;return (c||a.name.localeCompare(b.name,'th'))*s.d})}
+function evalAllPage(S){
+  const rounds=S.rounds.slice();if(!rounds.some(r=>r.id===S.current.id))rounds.unshift({id:S.current.id,label:S.current.label,status:'closed'});
+  const sel=`<div class="row"><button class="btn sm" data-evaback="1">‹ กลับหน้าประเมิน</button><label class="sub" for="evaRound">รอบ</label><select id="evaRound" aria-label="เลือกรอบ">${rounds.map(r=>`<option value="${esc(r.id)}" ${r.id===S.roundId?'selected':''}>${esc(r.label)}${r.status==='locked'?' · ล็อกแล้ว':r.status==='closed'?' · ยังไม่เปิด':''}</option>`).join('')}</select></div>`;
+  const head=`<section class="panel"><div class="ph"><h2>คะแนนครูทุกคน</h2><span class="pill p-info">เห็นเฉพาะ ผอ.</span></div>${sel}`;
+  if(S.notOpen)return head+'<div class="callout c-info"><b>ยังไม่เปิดรอบนี้</b>ยังไม่มีคะแนนให้แสดง</div></section>';
+  if(!S.rows.length)return head+'<div class="callout c-info"><b>ยังไม่มีครูที่เข้าข่าย</b>ต้องกรอก staff_type เป็น ข้าราชการ หรือ พนักงานราชการ</div></section>';
+  const s0=st.evaSort||{k:'name',d:1},rows=eaSorted(S.rows),A=S.avg;
+  const arrow=k=>s0.k===k?(s0.d<0?' ▼':' ▲'):'';
+  const SRC={dir:'ผอ.',mix:'ผสม',sys:'ระบบ'};
+  const part=(r,p)=>r.src[p]?`<b class="num">${eaN(r[p])}</b><small class="sub"> ${SRC[r.src[p]]}${r.miss[p]?' · ขาด '+r.miss[p]+' ข้อ':''}</small>`:'<span class="sub">ยังไม่มีข้อมูล</span>';
+  const tot=r=>!r.avail?'<span class="sub">ยังไม่มีข้อมูล</span>':r.done?`<b class="num">${eaN(r.total)}</b>`:`<b class="num">${eaN(r.total)}</b><small class="sub"> จาก ${eaN(r.avail)} คะแนนที่มีข้อมูล</small>`;
+  const lab=r=>r.done?esc(r.label):r.avail>=50?`<span class="sub">เบื้องต้น ${esc(r.prov)}</span>`:r.avail?'<span class="sub">ข้อมูลยังน้อย</span>':'-';
+  const stp=r=>`<span class="pill ${EA_PILL[r.status]||'p-mute'}">${EA_ST[r.status]||'-'}</span>`;
+  const nameBtn=r=>`<button class="thb" data-evaopen="${esc(S.roundId)}|${r.id}">${esc(r.name)}</button>`;
+  const sortBar=!isMobile()?'':`<div class="seg" role="group" aria-label="เรียงตาม"><span class="sub" style="align-self:center">เรียงตาม</span>${EA_COLS.map(([k,l])=>`<button class="chip" data-evasort="${k}" aria-pressed="${s0.k===k}">${esc(l)}${arrow(k)}</button>`).join('')}</div>`;
+  const avgRow=A?`<b>เฉลี่ยโรงเรียน</b> <small class="sub">(${A.n} คนที่มีข้อมูล)</small>`:'';
+  const body=isMobile()?`<ul class="slist">${rows.map(r=>`<li class="ld"><div class="row between">${nameBtn(r)}${stp(r)}</div>
+     <div class="ldg"><span><small>อ.1 ตอน 1</small>${part(r,'p1')}</span><span><small>PA</small>${part(r,'pa')}</span><span><small>อ.2</small>${part(r,'c2')}</span><span><small>อ.3</small>${part(r,'c3')}</span></div>
+     <div class="row between"><span>รวม ${tot(r)}</span><span>${lab(r)} · ครบ <b class="num">${r.cover}%</b></span></div></li>`).join('')}
+     ${A?`<li class="ld avg">${avgRow}<div class="ldg"><span><small>อ.1 ตอน 1</small><b class="num">${eaN(A.p1)}</b></span><span><small>PA</small><b class="num">${eaN(A.pa)}</b></span><span><small>อ.2</small><b class="num">${eaN(A.c2)}</b></span><span><small>อ.3</small><b class="num">${eaN(A.c3)}</b></span></div><div>รวม <b class="num">${eaN(A.total)}</b> · ครบ <b class="num">${A.cover}%</b></div></li>`:''}</ul>`
+   :`<div class="scroll"><table class="ldt"><thead><tr>${EA_COLS.map(([k,l])=>`<th class="${k==='name'?'':'r'}" aria-sort="${s0.k===k?(s0.d<0?'descending':'ascending'):'none'}"><button class="thb" data-evasort="${k}">${esc(l)}${arrow(k)}</button></th>`).join('')}</tr></thead><tbody>
+     ${A?`<tr class="avg"><td>${avgRow}</td><td class="r num">${eaN(A.p1)}</td><td class="r num">${eaN(A.pa)}</td><td class="r num">${eaN(A.c2)}</td><td class="r num">${eaN(A.c3)}</td><td class="r num">${eaN(A.total)}</td><td class="r">-</td><td class="r num">${A.cover}%</td><td class="r">-</td></tr>`:''}
+     ${rows.map(r=>`<tr><td>${nameBtn(r)}</td><td class="r">${part(r,'p1')}</td><td class="r">${part(r,'pa')}</td><td class="r">${part(r,'c2')}</td><td class="r">${part(r,'c3')}</td><td class="r">${tot(r)}</td><td class="r">${lab(r)}</td><td class="r num">${r.cover}%</td><td class="r">${stp(r)}</td></tr>`).join('')}</tbody></table></div>`;
+  return head+sortBar+`<div class="callout c-info"><b>วิธีอ่านตาราง</b>คะแนนใช้ค่าที่ ผอ. ให้แล้ว ถ้ายังไม่ให้ใช้ค่าข้อมูลจริง · ตัวเล็กใต้คะแนนบอกที่มา (ผอ. / ระบบ / ผสม) · ข้อที่ยังไม่มีข้อมูลไม่นับเป็นศูนย์ จึงแสดง "x จาก y คะแนนที่มีข้อมูล" · กดชื่อเพื่อเปิดแบบประเมินของคนนั้น · กดหัวคอลัมน์เพื่อเรียง</div>${body}
+   <p class="note">ระดับผลจะแสดงเมื่อให้ระดับครบทุกข้อ ถ้ายังไม่ครบแสดงเป็น "เบื้องต้น" จากคะแนนที่มีข้อมูล · ค่าเฉลี่ยคิดจากคนที่มีข้อมูลอย่างน้อย 1 ข้อ</p></section>`}
+function evalPending(add){
+  const E=B.eval;if(!E)return;
+  if(E.round.opened&&E.round.status==='open'){
+    const d=dayDiff(E.round.end);
+    if(E.elig&&E.mine==='self')add({ic:'dev',h:'amber',t:'ประเมินรอบนี้ · ประเมินตนเอง',s:E.round.label+' · ประเมินให้ครบทุกข้อแล้วกดส่ง',go:'eval',hot:d<=14},2);
+    if(E.elig&&E.mine==='signed')add({ic:'dev',h:'green',t:'ประเมินรอบนี้ · รับทราบผลการประเมิน',s:'ผอ. ลงนามแล้ว · กด "รับทราบ"',go:'eval',hot:true},1);
+    if(ME.isDirector&&E.wait)add({ic:'dev',h:'violet',t:'ประเมินรอบนี้ · ครูรอท่านพิจารณา '+E.wait+' คน',s:E.round.label,go:'eval',hot:true},1);
+  }else if(E.unopened&&ME.isDirector)add({ic:'dev',h:'blue',t:'เปิดรอบประเมินผลการปฏิบัติงาน',s:E.round.label,go:'eval'},3);
+}
+function evSignModal(staff){
+  const S=SEC[evKey()],V=S&&S.view;if(!V)return;const sent=V.form.status==='self_sent',D=V.totals.dir;
+  modal(`<form class="f" id="evFormSign"><div class="row between"><h2>ลงนามผลการประเมิน</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div>
+   <p>${esc(V.staff.full)} · คะแนนรวมผู้บริหาร <b class="num">${evNum(D.total)}</b>${D.complete?' ('+esc(D.label)+')':' · <span class="bad">ยังให้ระดับไม่ครบ '+D.miss.length+' ข้อ</span>'}</p>
+   ${sent?'':`<div class="callout c-warn"><b>ครูยังไม่ได้ส่งประเมินตนเอง</b><label class="row"><input type="checkbox" id="evsf" style="width:auto"> ลงนามโดยครูยังไม่ส่ง</label><div class="fld"><label for="evsw">เหตุผล</label><input type="text" id="evsw" maxlength="200"></div></div>`}
+   <div class="fld"><label for="evsn">ความเห็นของผู้บังคับบัญชา (ไม่บังคับ)</label><textarea id="evsn" maxlength="500"></textarea></div>
+   <p class="sub">ลายเซ็นที่บันทึกไว้ของท่านจะแสดงใน PDF (บันทึกได้ที่ฟอร์มใบลา → ลายเซ็น)</p><button class="btn good big wide" type="submit">ลงนาม</button></form>`);
+}
 const MOODS=[[1,'😞','แย่'],[2,'😕','ไม่ค่อยดี'],[3,'😐','เฉยๆ'],[4,'🙂','ดี'],[5,'😄','ดีมาก']];
 function moodCard(){
   const M=B.mood||{mine:0},A=M.all;
@@ -1256,7 +1682,7 @@ function mySummary(){
 /* ---------- บุคลากร (ผอ. / หัวหน้างานบุคคล) ---------- */
 V.staff=()=>{
   const t=st.staffTab;
-  return`${seg('staffTab',[['today','วันนี้'],['round','สถิติรอบนี้']].concat(ME.isDirector?[['load','ภาระงานรายคน']]:[]),t)}
+  return`${riskCard()}${seg('staffTab',[['today','วันนี้'],['round','สถิติรอบนี้']].concat(ME.isDirector?[['load','ภาระงานรายคน']]:[]),t)}
    ${t==='today'?staffToday():t==='load'&&ME.isDirector?(st.loadYm=st.loadYm||TODAY_ISO.slice(0,7),secBox('load:'+st.loadYm,loadPanel)):secBox('stats',staffRound)}`};
 function staffToday(){
   const c=dayCounts(),F=st.staffF,q=st.staffQ.trim();
@@ -1662,7 +2088,7 @@ function taskCard(t,mode){
    <div class="row between"><span class="sub">ความคืบหน้า${t.st==='done'&&!t.self?' (ตรวจรับแล้ว)':' (เจ้าของงานรายงานเอง)'}</span><b class="num">${t.pct}%</b></div><div class="prog"><i style="width:${t.pct}%"></i></div>
    ${t.st==='fix'&&t.rnote?`<div class="callout c-bad"><b>ต้องแก้ไข</b>${esc(t.rnote)}${t.rby?' · '+esc(t.rby):''}</div>`:''}
    ${open||ed&&t.st!=='done'?`
-   ${t.proj?`<p class="sub">โครงการ: ${esc(t.proj)}</p>`:''}${!t.self?`<p class="sub">มอบหมายโดย ${esc(nm(t.by))} · ${esc(thDT(t.at))}</p>`:'<p class="sub">เพิ่มเอง</p>'}
+   ${t.proj?`<p class="sub">โครงการ: ${esc(t.proj)}</p>`:''}${!t.self?`<p class="sub">มอบหมายโดย ${esc(nm(t.by))} · ${esc(thDT(t.at))}${t.cnt?' · <b>นับเข้าการประเมิน (น้ำหนัก '+t.wt+')</b>':''}${t.acc?' · รับทราบแล้ว '+esc(thDT(t.acc)):''}${t.vp!=null?' · ตรวจรับ '+t.vp+'% '+esc(t.ot||'')+(t.dl?' ('+esc(t.dl)+')':''):''}</p>${own&&!t.acc&&t.st!=='done'?`<div><button class="btn sm" data-wacc="${t.id}">รับทราบงาน</button></div>`:''}`:'<p class="sub">เพิ่มเอง</p>'}
    ${t.steps?`<div class="steplist">${t.steps.map((x,i)=>ed&&t.st!=='done'?`<button data-step="${t.id}:${i}"><span class="tick ${x[1]?'on':''}">${x[1]?TICK:''}</span>${esc(x[0])}</button>`:`<span class="sstep"><span class="tick ${x[1]?'on':''}">${x[1]?TICK:''}</span>${esc(x[0])}</span>`).join('')}</div>`:''}
    ${t.log?`<p class="sub">ล่าสุด: ${esc(t.log)}</p>`:''}
    ${ed&&!['done','sent'].includes(t.st)?`
@@ -1670,7 +2096,8 @@ function taskCard(t,mode){
      :`<div class="row"><span class="sub">รายงานความคืบหน้า:</span>${[25,50,75].map(v=>`<button class="chip" data-tset="${t.id}:${v}" aria-pressed="${t.pct===v}">${v}%</button>`).join('')}<button class="btn sm ghost" data-mode="${t.id}:steps">แบ่งเป็นขั้นตอน</button></div>`}
     <div class="row"><input type="text" id="lg${t.id}" placeholder="บันทึกสั้น ๆ ว่าทำถึงไหน" style="flex:1 1 160px" aria-label="บันทึกความคืบหน้า"><input type="url" id="lk${t.id}" placeholder="ลิงก์ไฟล์ (ถ้ามี)" style="flex:1 1 140px" aria-label="ลิงก์ไฟล์"><button class="btn sm" data-log="${t.id}">บันทึก</button></div>
     <div class="row"><button class="btn good" data-tp="${t.id}:100">${t.self?'เสร็จแล้ว':'ส่งงาน'}</button>${t.self&&(ME.isAdmin||ME.isClerk)?`<button class="btn sm danger" data-wdel="${t.id}">ลบ</button>`:''}</div>`:''}
-   ${canRev?`<div class="callout c-info"><b>ตรวจรับงาน</b><div class="fld"><label for="rv${t.id}">สิ่งที่ต้องแก้ไข (ถ้าส่งกลับ)</label><input type="text" id="rv${t.id}" placeholder="เช่น แนบไฟล์ให้ครบ"></div><div class="row"><button class="btn sm good" data-rev="${t.id}:ok">ตรวจรับ เสร็จสิ้น</button><button class="btn sm danger" data-rev="${t.id}:no">ส่งกลับแก้ไข</button></div></div>`:''}
+   ${canRev?`<div class="callout c-info"><b>ตรวจรับงาน</b><div class="fld"><label for="rv${t.id}">สิ่งที่ต้องแก้ไข (ถ้าส่งกลับ)</label><input type="text" id="rv${t.id}" placeholder="เช่น แนบไฟล์ให้ครบ"></div>${t.cnt?`<div class="fgrid"><div class="fld"><label for="rvp${t.id}">ร้อยละที่ยืนยัน (ใช้คิดคะแนน อ.2)</label><input type="number" id="rvp${t.id}" min="0" max="100" step="1" value="100"></div><div class="fld"><label for="rvo${t.id}">การส่งงาน</label><select id="rvo${t.id}"><option ${t.sub&&t.sub.slice(0,10)>t.due?'':'selected'}>ตรงเวลา</option><option ${t.sub&&t.sub.slice(0,10)>t.due?'selected':''}>ล่าช้า</option></select></div><div class="fld"><label for="rvd${t.id}">สาเหตุนอกการควบคุม (ถ้าล่าช้า)</label><select id="rvd${t.id}"><option value="">ไม่มี</option><option>ลา</option><option>ไปราชการ</option><option>ผอ.เลื่อนกำหนด</option><option>อื่น ๆ</option></select></div></div><p class="sub">ครูส่งเมื่อ ${t.sub?esc(thDT(t.sub)):'-'} · กำหนด ${esc(t.dueTx)} · ช่วงรอตรวจไม่นับว่าครูช้า</p>`:''}<div class="row"><button class="btn sm good" data-rev="${t.id}:ok">ตรวจรับ เสร็จสิ้น</button><button class="btn sm danger" data-rev="${t.id}:no">ส่งกลับแก้ไข</button></div></div>`:''}
+   ${(ME.isAdmin||ME.isClerk)&&t.self===false?`<div class="row"><label class="row"><input type="checkbox" id="ef${t.id}" style="width:auto" ${t.cnt?'checked':''}> นับเข้าการประเมิน</label><input type="number" id="ew${t.id}" min="0.5" max="5" step="0.5" value="${t.wt}" style="width:84px" aria-label="น้ำหนัก"><button class="btn sm" data-evflag="${t.id}">บันทึก</button></div>`:''}
    ${mode==='all'&&(ME.isAdmin||ME.isClerk)&&t.self===false&&t.st!=='done'?`<div><button class="btn sm danger" data-wdel="${t.id}">ลบงาน</button></div>`:''}`:''}</article>`}
 const HOWTO=`<details class="howto"><summary>วิธีใช้งาน</summary><p>งานที่ได้รับมอบหมายแสดงทันที · เลือกวิธีติดตามได้ 2 แบบ: <b>แบ่งเป็นขั้นตอน</b> ติ๊กทีละขั้น ระบบคิด % ให้ หรือ <b>รายงาน %</b> กดครั้งเดียว 25/50/75% · งานสั้นกด "ส่งงาน" ได้เลย · งานที่มอบหมายจะ "เสร็จสิ้น" เมื่อผู้มอบหมายตรวจรับ · % เป็นค่าที่เจ้าของงานรายงานเอง</p></details>`;
 function workFilterList(list,f){const d=t=>dayDiff(t.due);return f==='open'?list.filter(t=>t.st!=='done'):f==='late'?list.filter(t=>['todo','doing','fix'].includes(t.st)&&d(t)<0):f==='soon'?list.filter(t=>['todo','doing','fix'].includes(t.st)&&d(t)>=0&&d(t)<=3):f==='sent'?list.filter(t=>t.st==='sent'):f==='fix'?list.filter(t=>t.st==='fix'):f==='done'?list.filter(t=>t.st==='done'):list}
@@ -1698,6 +2125,7 @@ function taskForm(){return`<form class="f boxed" id="taskForm">
   <div class="fld"><label for="tk1">ชื่องาน</label><input type="text" id="tk1" required placeholder="เช่น รายงานผลสอบ NT ป.3"></div>
   <div class="fgrid"><div class="fld"><label for="tk3">ผู้รับผิดชอบ</label><select id="tk3">${REAL.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></div>
   <div class="fld"><label for="tk4">กำหนดส่ง</label><input type="date" id="tk4" value="${addDays(TODAY_ISO,7)}"></div></div>
+  <div class="boxed f" style="gap:6px"><label class="row"><input type="checkbox" id="tk7" style="width:auto"> นับเข้าการประเมิน (อ.2 งานที่ได้รับมอบหมายจากผู้บังคับบัญชา)</label><div class="fld"><label for="tk8">น้ำหนักของงาน (เริ่มต้น 1)</label><input type="number" id="tk8" min="0.5" max="5" step="0.5" value="1"></div><p class="sub">ติ๊กเฉพาะงานที่ต้องการให้ใช้เป็นคะแนนการประเมินของครู · ตอนตรวจรับต้องใส่ร้อยละที่ยืนยันและตรงเวลา/ล่าช้า</p></div>
   <details class="more"><summary>เพิ่มรายละเอียด (ส่งถึง ขั้นตอนย่อย โครงการ)</summary><div class="f">
    <div class="fld"><label for="tk2">ส่งถึง</label><input type="text" id="tk2" value="สพป.นราธิวาส เขต 2"></div>
    <div class="fld"><label for="tk6">ขั้นตอนย่อย (บรรทัดละขั้น)</label><textarea id="tk6" placeholder="เช่น&#10;รวบรวมข้อมูล&#10;ตรวจทาน&#10;เสนอ ผอ."></textarea></div>
@@ -2017,6 +2445,37 @@ document.addEventListener('click',async e=>{
   if(d.refresh){st.sheet=false;refresh(false);return}
   if(d.secretry){delete SEC_ERR[d.secretry];SEC_AT[d.secretry]=0;ensureSec(d.secretry);render();return}
   if(d.xapp){extGo(d.xapp);return}
+  if(d.panew){paForm(null);return}
+  if(d.paedit){const it=((SEC.pa||{}).items||[]).find(x=>x.id===d.paedit);if(it)paForm(it);return}
+  if(d.pasend){if(!confirm('ส่งข้อตกลงนี้ให้พิจารณา? ส่งแล้วแก้ไม่ได้จนกว่าจะถอนกลับหรือถูกส่งกลับ'))return;act('pa.submit',{id:d.pasend},t).catch(()=>{});return}
+  if(d.parecall){act('pa.recall',{id:d.parecall},t).catch(()=>{});return}
+  if(d.padel){if(!confirm('ลบฉบับร่างนี้?'))return;act('pa.del',{id:d.padel},t).catch(()=>{});return}
+  if(d.pahead){act('pa.head',{id:d.pahead,note:(($('#phn'+d.pahead)||{}).value||'').trim()},t).catch(()=>{});return}
+  if(d.padir){const p=d.padir.split(':');act('pa.dir',{id:p[0],approve:p[1]==='ok',note:(($('#pdn'+p[0])||{}).value||'').trim()},t).catch(()=>{});return}
+  if(d.pacmt){act('pa.comment',{id:d.pacmt,text:(($('#pcm'+d.pacmt)||{}).value||'').trim()},t).catch(()=>{});return}
+  if(d.pafile){const p=d.pafile.split(':');paOpenFile(p[0],Number(p[1]));return}
+  if(d.pafilerm){const p=d.pafilerm.split(':');if(!confirm('ลบไฟล์หลักฐานนี้?'))return;act('pa.fileDel',{id:p[0],i:Number(p[1])},t).then(closeModal).catch(()=>{});return}
+  if(d.paimport){paImportLegacy(t).catch(()=>{});return}
+  if(d.wacc){act('work.edit',{data:{wid:d.wacc,op:'accept'}},t).catch(()=>{});return}
+  if(d.evflag){const id=d.evflag;act('work.edit',{data:{wid:id,op:'evalflag',count:!!($('#ef'+id)||{}).checked,weight:(($('#ew'+id)||{}).value||'1')}},t).catch(()=>{});return}
+  if(d.evopen){if(!confirm('เปิดรอบประเมินผลการปฏิบัติงาน? ครูทุกคนที่เข้าข่ายจะได้รับแจ้งให้ประเมินตนเอง'))return;evAct('eval.open',{},t).catch(()=>{});return}
+  if(d.evlv){const p=d.evlv.split(':'),S=SEC[evKey()],V=S&&S.view;if(!V)return;const it0=evFind(p[0]);if(Number(p[1])===4&&it0&&it0.kind!=='lv5w'){evSelf4Modal(p[0]);return}evAct('eval.self',{data:{round:V.round.id,item:p[0],level:Number(p[1])}},t).catch(()=>{});return}
+  if(d.evev){evEvidenceModal(d.evev);return}
+  if(d.evdir){evDirModal(d.evdir);return}
+  if(d.evdirclear){const S=SEC[evKey()],V=S&&S.view,why=(($('#evdr')||{}).value||'').trim();evAct('eval.dir',{data:{round:V.round.id,staff:V.staff.id,item:d.evdirclear,clear:true,reason:why||'ใช้ค่าข้อมูลจริง'}},t).then(closeModal).catch(()=>{});return}
+  if(d.evsend){if(!confirm('ส่งประเมินตนเอง? ส่งแล้วแก้ไขไม่ได้จนกว่าจะถอนการส่ง'))return;evAct('eval.selfSend',{data:{round:d.evsend}},t).catch(()=>{});return}
+  if(d.evrecall){evAct('eval.selfRecall',{data:{round:d.evrecall}},t).catch(()=>{});return}
+  if(d.evack){if(!confirm('รับทราบผลการประเมิน?'))return;evAct('eval.ack',{data:{round:d.evack}},t).catch(()=>{});return}
+  if(d.evsign){evSignModal(d.evsign);return}
+  if(d.evunsign){const S=SEC[evKey()],V=S&&S.view;if(!V||!confirm('ยกเลิกการลงนาม? แล้วแก้ระดับได้'))return;evAct('eval.unsign',{data:{round:V.round.id,staff:d.evunsign}},t).catch(()=>{});return}
+  if(d.evlock){const go=force=>evAct('eval.lock',{data:{round:d.evlock,force}},t).catch(e=>{if(e.code==='PENDING'&&confirm(e.message+'\nล็อกรอบเลยหรือไม่?'))go(true)});if(!confirm('ล็อกรอบ? ล็อกแล้วแก้ระดับไม่ได้ และระบบเก็บ snapshot ข้อมูลจริง ณ วันนี้'))return;go(false);return}
+  if(d.evpdf){evExport(d.evpdf);return}
+  if(d.evfile){const p=d.evfile.split(':');evOpenFile(p[0],Number(p[1]));return}
+  if(d.evfadd){const S=SEC[evKey()],V=S&&S.view;let ph;try{ph=photoOf('evf')}catch(e){toast(e.message);return}if(!ph){toast('เลือกไฟล์ก่อน');return}evAct('eval.file',{data:{round:V.round.id,staff:V.staff.id,item:d.evfadd,photo:ph,name:(PICKED.evf||{}).name}},t).then(()=>{clearPick('evf');closeModal()}).catch(()=>{});return}
+  if(d.evall){st.evAll=true;render();return}
+  if(d.evaback){st.evAll=false;render();return}
+  if(d.evaopen){const p=d.evaopen.split('|');st.evAll=false;st.evRound=p[0];st.evStaff=p[1];render();return}
+  if(d.evasort){const k=d.evasort,s=st.evaSort||{k:'name',d:1};st.evaSort=s.k===k?{k,d:-s.d}:{k,d:k==='name'?1:-1};render();return}
   if(d.lsort){const k=d.lsort,s=st.loadSort||{k:'over',d:-1};st.loadSort=s.k===k?{k,d:-s.d}:{k,d:k==='name'?1:-1};render();return}
   if(d.docdel){if(!confirm('ลบรายการนี้?'))return;act('doc.del',{id:d.docdel},t).catch(()=>{});return}
   if(d.mood){act('mood.set',{data:{level:Number(d.mood)}},t).catch(()=>{});return}
@@ -2028,7 +2487,7 @@ document.addEventListener('click',async e=>{
   if(d.allpend){st.allPend=!st.allPend;render();return}
   if(d.seg){const[k,v]=d.seg.split(':');st[k]=k==='round'?+v:v;if(k==='staffTab'||k==='opsTab')st.open={};render();return}
   if(d.open){st.open[d.open]=!st.open[d.open];render();return}
-  if(d.go){if(d.gct)st.countTab=d.gct;if(d.gact)st.act=d.gact;if('kind' in d)st.kind=d.kind;if(d.got)st.opsTab=d.got;if(d.gwf)st.wf=d.gwf;if(d.gsf){st.staffF=d.gsf;st.staffTab='today'}if(d.addtask)st.addTask=true;
+  if(d.go){if(d.gct)st.countTab=d.gct;if(d.gact)st.act=d.gact;if('kind' in d)st.kind=d.kind;if(d.got)st.opsTab=d.got;if(d.gwf)st.wf=d.gwf;if(d.gst){st.staffTab=d.gst;st.open={}}if(d.gsf){st.staffF=d.gsf;st.staffTab='today'}if(d.addtask)st.addTask=true;
     go(d.go);if(d.inc)setTimeout(()=>$('#incPanel')?.scrollIntoView({behavior:'smooth'}),30);return}
   if(d.punch){closeModal();startCheck(d.punch,false);return}
   if(d.punchqr){closeModal();startCheck(d.punchqr,true);return}
@@ -2065,7 +2524,7 @@ document.addEventListener('click',async e=>{
   if(d.tp){const[id,v]=d.tp.split(':');if(+v===100&&!confirm('ยืนยัน '+(TASKS.find(x=>x.id===id)?.self?'งานนี้เสร็จแล้ว':'ส่งงานนี้ให้ผู้มอบหมายตรวจรับ')+'?'))return;act('work.edit',{data:{wid:id,op:'pct',v:+v}},t).catch(()=>{});return}
   if(d.tset){const[id,v]=d.tset.split(':');act('work.edit',{data:{wid:id,op:'set',v:+v}},t).catch(()=>{});return}
   if(d.mode){const[id,mode]=d.mode.split(':');act('work.edit',{data:{wid:id,op:'mode',mode}},t).catch(()=>{});return}
-  if(d.rev){const[id,a]=d.rev.split(':');const note=($('#rv'+id)?.value||'').trim();if(a==='no'&&!note){toast('ระบุสิ่งที่ต้องแก้ไข');$('#rv'+id)?.focus();return}act('work.edit',{data:{wid:id,op:'review',ok:a==='ok',note}},t).catch(()=>{});return}
+  if(d.rev){const[id,a]=d.rev.split(':');const note=($('#rv'+id)?.value||'').trim();if(a==='no'&&!note){toast('ระบุสิ่งที่ต้องแก้ไข');$('#rv'+id)?.focus();return}act('work.edit',{data:{wid:id,op:'review',ok:a==='ok',note,verified_pct:($('#rvp'+id)||{}).value,on_time:($('#rvo'+id)||{}).value,delay_reason:($('#rvd'+id)||{}).value}},t).catch(()=>{});return}
   if(d.addstep){const v=($('#ns'+d.addstep)?.value||'').trim();if(!v){toast('พิมพ์ชื่อขั้นตอนก่อน');return}act('work.edit',{data:{wid:d.addstep,op:'addStep',text:v}},t).catch(()=>{});return}
   if(d.wdel){if(!confirm('ลบงานนี้?'))return;act('work.del',{id:d.wdel},t).catch(()=>{});return}
   /* อาคารสถานที่ รปภ. */
@@ -2161,11 +2620,15 @@ document.addEventListener('submit',async e=>{
   const v=s=>($(s)?.value||'').trim();
   try{
   if(f.id==='fLeave'){const lty=lvSel();if(lty.block||!lvSupported(lty)){toast(lty.block?LV_VAC_MSG:'ประเภทนี้ยังยื่นผ่านระบบไม่ได้');return}if(!workDays(v('#l1'),v('#l2'),$('#lpart').hidden?'เต็มวัน':v('#l5'))){toast('ช่วงที่เลือกเป็นวันหยุดทั้งหมด');return}const ph=photoOf('l4');await act('leave.create',{data:{type:lty.be,start:v('#l1'),end:v('#l2'),part:$('#lpart').hidden?'เต็มวัน':$('#l5').value,reason:v('#l3'),photo:ph}},btn);clearPick('l4');st.kind='';render()}
+  if(f.id==='paForm'){await paSubmitForm(btn);return}
+  if(f.id==='evForm4'){await evSubmit4(btn);return}
+  if(f.id==='evFormDir'){await evSubmitDir(btn);return}
+  if(f.id==='evFormSign'){const S=SEC[evKey()],V=S.view,g=s=>(($(s)||{}).value||'').trim();await evAct('eval.sign',{data:{round:V.round.id,staff:V.staff.id,note:g('#evsn'),force:!!($('#evsf')||{}).checked,forceWhy:g('#evsw')}},btn);closeModal();return}
   if(f.id==='fDoc'){await act('doc.add',{data:{date:v('#dc1'),hours:v('#dc2'),what:v('#dc3')}},btn);return}
   if(f.id==='fOut'){const teach=B.hasTT?!!MY_TT[v('#o1')]:!!st.outTeach;await act('out.create',{data:{period:v('#o1'),why:v('#o2'),teaching:teach,sub:teach?v('#o4'):'',work:teach?v('#o5'):''}},btn);st.outTeach=false;st.kind='';render()}
   if(f.id==='fGov'){await act('leave.create',{data:{type:'ไปราชการ',start:v('#g3'),end:v('#g6')||v('#g3'),reason:v('#g1'),place:v('#g2'),proj:v('#g4'),cost:v('#g5'),attachment:v('#g7'),photo:photoOf('g8')}},btn);clearPick('g8');st.kind='';render()}
   if(f.id==='myTaskForm'){const steps=$('#mt4').value.trim();await act('work.addMine',{data:{title:v('#mt1'),to:v('#mt2'),due:v('#mt3'),mode:steps?'steps':'ten',steps}},btn);st.addTask=false;render()}
-  if(f.id==='taskForm'){await act('work.add',{data:{title:v('#tk1'),to:v('#tk2'),owner:v('#tk3'),due:v('#tk4'),steps:$('#tk6').value,proj:v('#tk5')}},btn);st.addTask=false;render()}
+  if(f.id==='taskForm'){await act('work.add',{data:{title:v('#tk1'),to:v('#tk2'),owner:v('#tk3'),due:v('#tk4'),steps:$('#tk6').value,proj:v('#tk5'),count_for_eval:!!($('#tk7')||{}).checked,weight:v('#tk8')}},btn);st.addTask=false;render()}
   if(f.id==='cpForm'){if(!v('#cp1')){toast('พิมพ์ชื่อจุดตรวจ');return}await act('cp.add',{name:v('#cp1')},btn)}
   if(f.id==='actForm'){syncDraft();const d=st.draft2;await act('act.create',{data:{name:d.name,start:d.start,days:d.days,places:d.places,cps:d.cps,rows:d.rows}},btn);st.newAct=false;st.draft2={name:'',start:'',days:1,places:[''],cps:st.draft2.cps,rows:[]};render()}
   if(f.id==='cntForm'){await act('act.pick',{data:{gid:f.dataset.g,students:[],count:$('#gc'+f.dataset.g).value}},btn)}
@@ -2198,6 +2661,9 @@ setInterval(()=>{if(B&&EMG.on&&st.tab==='count'&&st.countTab==='emg'&&!document.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&B&&Date.now()-st.fetchedAt>180000)refresh(true)});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='loadYm'){st.loadYm=e.target.value;render()}});
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='reqQ'){st.reqQ=e.target.value;const pos=e.target.selectionStart;render();const el=$('#reqQ');if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}}});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='paFy'){st.paFy=Number(e.target.value);render()}});
+document.addEventListener('change',e=>{const id=e.target&&e.target.id;if(id==='evRound'){st.evRound=e.target.value;st.evStaff=st.evStaff||'';render()}if(id==='evStaff'){st.evStaff=e.target.value;render()}});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='evaRound'){st.evaRound=e.target.value;render()}});
 boot();
 })();
 
