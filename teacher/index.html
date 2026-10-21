@@ -567,6 +567,47 @@ details.more>.f{margin-top:8px}
 @media (max-width:999.98px){.bottom button{color:var(--muted)}}
 @media (min-width:1000px){.ptitle{padding-top:4px}}
 
+
+/* รอบ 1: เมนู 5 ช่อง · ปุ่มลัดไปแอปอื่น */
+.avbtn{border:0;background:none;padding:0;cursor:pointer;display:inline-flex}
+.slotbar{margin:0 0 10px}
+.extlinks{display:grid;gap:8px;margin-top:10px}
+.extlink{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;border:1.5px dashed var(--line);background:var(--surface,#fff);border-radius:14px;padding:11px 14px;font:inherit;color:inherit;cursor:pointer}
+.extlink b{display:block;font-weight:600}.extlink small{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+.extlink .go{flex:none;font-size:.82rem;font-weight:600;color:var(--accent,#2c8ce6);white-space:nowrap}
+
+.urgent2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 2px}
+.ub{display:flex;align-items:center;gap:10px;text-align:left;border:0;border-radius:16px;padding:13px 14px;font:inherit;cursor:pointer;color:#fff;box-shadow:var(--shadow)}
+.ub svg{width:26px;height:26px;flex:none;stroke:currentColor}
+.ub b{display:block;font-size:1.02rem}.ub small{display:block;opacity:.9;font-size:.74rem;line-height:1.3;margin-top:1px}
+.ub.fix{background:linear-gradient(135deg,#e9820c,#f0a23a)}
+.ub.emg{background:linear-gradient(135deg,#d6404a,#ee6a72)}
+.ub.emg.on{animation:ubp 1.4s ease-in-out infinite}
+@keyframes ubp{50%{box-shadow:0 0 0 6px rgba(214,64,74,.28)}}
+@media (prefers-reduced-motion:reduce){.ub.emg.on{animation:none}}
+@media (max-width:380px){.urgent2{grid-template-columns:1fr}}
+
+/* รอบ 2 */
+.ub.help{grid-column:1/-1;background:linear-gradient(135deg,#5b5bf0,#8b6cf7)}
+.moodbox{background:var(--surface,#fff);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);display:grid;gap:8px;margin-top:10px}
+.moodbox h2{font-size:1rem;margin:0}
+.mood-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.mo{border:1.5px solid var(--line);background:var(--bg,#fff);border-radius:14px;padding:8px 2px;display:grid;gap:2px;justify-items:center;font:inherit;color:inherit;cursor:pointer}
+.mo span{font-size:1.7rem;line-height:1}.mo small{font-size:.68rem;color:var(--muted)}
+.mo.on{border-color:var(--accent,#2c8ce6);background:var(--accent-soft,#e6f1fc);box-shadow:0 0 0 2px var(--accent-soft,#e6f1fc)}
+.mood-ov{border-top:1px dashed var(--line);padding-top:8px;display:grid;gap:6px}
+.mood-bars{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;align-items:end;height:84px}
+.mood-bars div{display:grid;grid-template-rows:auto 1fr auto;justify-items:center;height:100%;gap:2px}
+.mood-bars i{align-self:end;width:70%;min-height:2px;background:var(--accent,#2c8ce6);border-radius:4px 4px 0 0;display:block}
+
+/* รอบ 3 */
+.btn.good,.btn.bad.fill{color:#fff!important}   /* แก้บั๊กเดิม: .good{color!important} ทำให้ตัวหนังสือปุ่มเขียว (อนุมัติ/เห็นชอบ) กลืนกับพื้น */
+.moodnote{background:var(--accent-soft,#e6f1fc);border-radius:10px;padding:7px 10px;color:var(--ink)}
+.hot{color:var(--bad,#c0392b)!important;font-weight:700}
+.ldt tr.above td{background:rgba(214,64,74,.07)}.ldt tr.avg td{background:var(--surface-2,#f2f3f9);font-size:.9rem}
+.slist .ld{display:grid;gap:6px;padding:10px 4px}.slist .ld.above{background:rgba(214,64,74,.07);border-radius:12px;padding:10px 8px}.slist .ld.avg{background:var(--surface-2,#f2f3f9);border-radius:12px;padding:10px 8px}
+.thb{border:0;background:none;font:inherit;font-weight:600;color:inherit;cursor:pointer;padding:2px 0;text-align:inherit}.thb:hover{text-decoration:underline}
+.ldg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;text-align:center}.ldg span{display:grid;gap:1px;font-size:.95rem}.ldg small{font-size:.62rem;color:var(--muted);line-height:1.15}
 </style>
 </head>
 <body class="plain">
@@ -810,13 +851,32 @@ function avail(){
   if(m.isJan)t.push('jan');
   if(m.isGuard)t.push('patrol');
   if(m.isAdmin||m.isClerk||m.isGuard)t.push('visit');
-  if(m.isTeacher||m.isAdmin||EMG.on)t.push('count');
+  t.push('count');
   if(m.isTeacher||m.isAdmin||m.isAcad)t.push('dev');
   if(m.isAdmin)t.push('set');
   return t}
-const NAV={dir:['home','approve','tasks','staff'],head:['home','approve','staff','myreq'],acad:['home','mywork','myreq','sub'],tch:['home','mywork','myreq','dev'],
-  adm:['home','tasks','visit','myreq'],jan:['home','jan','myreq'],grd:['home','patrol','visit','myreq']};
-const navTabs=()=>NAV[ME.role].filter(t=>avail().includes(t));
+/** เมนูล่าง 5 ช่อง (สเปก Q-Kawa App ข้อ 2): หน้าแรก · คำขอ · งาน · อาคาร · บุคลากร — แต่ละช่องรวมหน้าเดิมไว้เป็นแท็บย่อย */
+const SLOTS=[
+ {id:'home',label:'หน้าแรก',icon:'home',pages:['home','mytime']},
+ {id:'req',label:'คำขอ',icon:'req',pages:['myreq','approve']},
+ {id:'work',label:'งาน',icon:'tasks',pages:['mywork','tasks','sub','mysub']},
+ {id:'bld',label:'อาคาร',icon:'ops',pages:['jan','patrol','visit','fixreq','ops','count']},
+ {id:'ppl',label:'บุคลากร',icon:'staff',pages:['staff','dev','pa','set']}];
+/** ช่องที่แต่ละบทบาทเห็นที่แถบล่าง (หน้าอื่นที่เข้าได้ เช่น ภารโรงยื่นใบลา ยังเปิดได้จากปุ่มลัดหน้าแรกหรือเมนูบัญชี) */
+const SLOT_VIS={dir:['home','req','work','bld','ppl'],head:['home','req','work','bld','ppl'],acad:['home','req','work','ppl'],tch:['home','req','work','ppl'],adm:['home','req','work'],jan:['home','bld'],grd:['home','bld']};
+const TAB_LABEL={mytime:'ประวัติลงเวลา',myreq:'คำขอของฉัน',approve:'พิจารณาคำขอ',mywork:'งานของฉัน',tasks:'ติดตามงาน',sub:'จัดสอนแทน',mysub:'สอนแทนของฉัน',jan:'งานวันนี้',patrol:'งาน รปภ.',visit:'ผู้มาติดต่อ',fixreq:'แจ้งซ่อม',ops:'ภาพรวมอาคาร',count:'เหตุฉุกเฉิน',staff:'บุคลากรวันนี้',dev:'พัฒนาครู',pa:'ประเมิน & PA',set:'ตั้งค่า'};
+const slotOf=t=>SLOTS.find(s=>s.pages.includes(t));
+const slotPages=s=>s.pages.filter(p=>avail().includes(p));
+const visibleSlots=()=>SLOTS.filter(s=>(SLOT_VIS[ME.role]||SLOT_VIS.tch).includes(s.id)&&slotPages(s).length);
+const navTabs=()=>visibleSlots().map(s=>slotPages(s)[0]);
+const slotBadge=s=>slotPages(s).reduce((a,p)=>a+(badgeFor(p)||0),0);
+const slotBar=()=>{const s=slotOf(st.tab);if(!s||s.id==='home')return'';const ps=slotPages(s);if(ps.length<2)return'';
+  return`<div class="seg slotbar" role="tablist" aria-label="${esc(s.label)}">${ps.map(p=>{const b=badgeFor(p);return`<button class="chip" role="tab" data-tab="${p}" aria-pressed="${st.tab===p}">${esc(TAB_LABEL[p]||pageTitle(p))}${b?` <b class="num">${b}</b>`:''}</button>`}).join('')}</div>`};
+/** แอปที่ย้ายงานออกไป (ใส่ลิงก์เมื่อแอปพร้อม · ว่างไว้ = ขึ้น "ยังไม่เปิดใช้") */
+const EXT_APPS={student:{name:'Q-Student',url:''},academic:{name:'Q-Academic',url:''}};
+const extGo=k=>{const a=EXT_APPS[k];if(a&&a.url)location.href=a.url;else toast((a?a.name:'แอปนี้')+' ยังไม่เปิดใช้')};
+const linkCard=(k,t,s)=>`<button class="extlink" data-xapp="${k}"><span><b>${esc(t)}</b><small>${esc(s)}</small></span><span class="go">ไป ${esc(EXT_APPS[k].name)} ›</span></button>`;
+const extLinks=()=>`<div class="extlinks">${linkCard('student','เช็คชื่อกิจกรรมเช้า','ย้ายไป Q-Student แล้ว')}${linkCard('academic','สแกนเข้าสอน','ย้ายไป Q-Academic แล้ว')}</div>`;
 const pageTitle=t=>t==='approve'?(ME.isAdmin?'อนุมัติคำขอ':'เห็นชอบคำขอ'):PAGES[t][0];
 const st={round:null,act:null,roll:{},picking:null,pq:'',pc:'all',newAct:false,
   draft2:{name:'',start:'',days:1,places:[''],cps:'ว1 ขึ้นรถที่โรงเรียน\nว1 ถึงที่หมาย\nว1 ขึ้นรถกลับ\nว1 ถึงโรงเรียน',rows:[]},
@@ -839,7 +899,6 @@ function pending(){
   const noWork=SUBS.filter(s=>s.for===m&&!s.work&&s.date>=TODAY_ISO);if(noWork.length)add({ic:'sub',h:'violet',t:'ฝากงานให้ครูสอนแทน '+noWork.length+' คาบ',s:'เริ่ม '+thD(noWork[0].date),go:'myreq'},3);
   REQ.filter(x=>x.canBack).forEach(x=>add({ic:'out',h:'teal',t:'กดเมื่อกลับถึงโรงเรียน',s:'ออกนอกบริเวณ '+x.time,go:'myreq'},1));
   REQ.filter(x=>x.who===m&&x.kind==='gov'&&x.st==='approved'&&!x.report&&x.to<=TODAY_ISO).forEach(x=>add({ic:'gov',h:'violet',t:'เขียนรายงานหลังไปราชการ/อบรม',s:x.why,go:'myreq'},3));
-  SUP.filter(s=>s.who===m&&s.st==='นัดแล้ว'&&s.d>=TODAY_ISO).forEach(s=>add({ic:'dev',h:'green',t:'ยืนยันนัดรับการนิเทศ '+thD(s.d)+(s.p?' คาบ '+s.p:''),s:'ผู้นิเทศ '+nm(s.by),go:'dev'},2));
   TASKS.filter(t=>t.own===m&&['todo','doing','fix'].includes(t.st)).sort((x,y)=>(x.st==='fix'?-1:0)-(y.st==='fix'?-1:0)||dayDiff(x.due)-dayDiff(y.due)).forEach(t=>{const d=dayDiff(t.due);
     add({ic:'tasks',h:t.st==='fix'?'rose':d<0?'rose':'blue',t:(t.st==='fix'?'ต้องแก้ไข: ':'')+t.t,s:(d<0?'เลยกำหนด '+(-d)+' วัน':d===0?'ครบกำหนดวันนี้':'ครบกำหนด '+t.dueTx)+(t.self?'':' · มอบหมายโดย '+nm(t.by)),go:'mywork',hot:d<=3},d<=3||t.st==='fix'?1:4)});
   if(ME.isAdmin||ME.isClerk){const r=TASKS.filter(t=>t.st==='sent'&&(ME.isAdmin||t.by===m));if(r.length)add({ic:'tasks',h:'green',t:'ตรวจรับงานที่ส่งแล้ว '+r.length+' งาน',s:r.slice(0,2).map(x=>x.t).join(', '),go:'tasks',wf:'sent'},2);
@@ -848,10 +907,9 @@ function pending(){
     const r=JOBS.filter(j=>j.st===2&&!j.rDir);if(r.length)add({ic:'job',h:'amber',t:'ให้คะแนนงานภารโรงที่เสร็จ '+r.length+' งาน',s:r[0].t,go:'ops',ot:'jobs'},4);
     INCIDENTS.filter(x=>x.st==='แจ้ง ผอ. แล้ว').forEach(x=>add({ic:'sos',h:'rose',t:'รปภ. แจ้งเหตุ: '+x.what,s:x.where+' · '+thD(x.d)+' '+x.t+' น.',go:'ops',ot:'guard'},1))}
   JOBS.filter(j=>j.st===2&&j.by===m&&!j.rReq).forEach(j=>add({ic:'fix',h:'coral',t:'ให้คะแนนงานซ่อม: '+j.t,s:'ซ่อมเสร็จแล้ว',go:'fixreq'},4));
-  ACTS.forEach(ac=>ac.groups.filter(g=>g.lead===m).forEach(g=>{const n=g.students.length||g.count;if(ac.cur>=0&&ac.cur<ac.cps.length&&n&&g.checks[ac.cur]==null)add({ic:'count',h:'rose',t:'เช็คยอด '+g.name,s:ac.name+' · '+ac.cps[ac.cur],go:'count',ct:'trip',act:ac.id},0);else if(ac.cur<0&&!n)add({ic:'count',h:'rose',t:'เพิ่มรายชื่อนักเรียนที่ดูแล · '+g.name,s:ac.name,go:'count',ct:'trip',act:ac.id},3)}));
   if(ME.isJan){const n=JOBS.filter(j=>j.st===0);if(n.length)add({ic:'job',h:'amber',t:'รับงาน '+n.length+' งาน',s:n[0].t+(n.some(j=>j.prio==='ด่วน')?' · มีงานด่วน':''),go:'jan'},n.some(j=>j.prio==='ด่วน')?0:1)}
   if(ME.isGuard&&CPS.length&&(NOW_HM>='17:00'||NOW_HM<'07:00'))add({ic:'guard',h:'slate',t:'เดินตรวจคืนนี้ '+ROUNDS.length+' รอบ',s:'รอบแรก '+(ROUNDS[0]||'')+' น.',go:'patrol'},2);
-  (B.notifs||[]).forEach(n=>add({ic:'tasks',h:'blue',t:n.text,s:n.sub,go:'mywork',pv:n.id,hot:true},0));
+  (B.notifs||[]).forEach(n=>add({ic:'tasks',h:'blue',t:n.text,s:n.sub,go:/^LV/.test(n.ref||'')?'mysub':/^MOOD:/.test(n.ref||'')?'staff':'mywork',pv:n.id,hot:true},0));
   if(ME.isAdmin){const w=(B.inbox||[]).filter(x=>x.st==='wait').length;if(w)add({ic:'tasks',h:'amber',t:'งานเสนอ ผอ. รอตัดสินใจ '+w+' รายการ',s:'ตอบรับ / ปฏิเสธ / มอบหมายครูคนอื่นแทน',go:'tasks'},1)}
   return a.sort((x,y)=>x.p-y.p)}
 function needCheckIn(){return!B.my.in&&isWork()&&!(B.my.leaveToday&&B.my.leaveToday.part==='เต็มวัน')&&NOW_HM<=B.rules.general.out}
@@ -868,27 +926,28 @@ function badgeFor(t){
   return 0}
 
 /* ---------- ส่วนหัว เมนูล่าง เมนูข้าง ---------- */
+const avatarBtn=()=>`<button class="avbtn" data-sheet="1" aria-label="เมนูบัญชี">${avatar()}</button>`;
 function avatar(){return`<span class="avatar">${ME.picture?`<img src="${esc(ME.picture)}" alt="">`:esc((ME.name.replace(/^(นาย|นางสาว|นาง)/,'')||'?').charAt(0))}</span>`}
 function greet(){const h=toMin(clockNow())/60;return h<12?'สวัสดีตอนเช้า':h<17?'สวัสดีตอนบ่าย':'สวัสดีตอนเย็น'}
 const hubLink=cls=>`<a class="hublink ${cls||''}" href="${esc(CONFIG.HUB_URL)}">${svg('back')}กลับ Q-Kawa</a>`;
 function renderChrome(){
   const all=avail(),nav=navTabs(),p=pending().length+(needCheckIn()?1:0),home=st.tab==='home';
   $('#roles').innerHTML=`<span class="pill p-info">${esc(ROLE_LABEL[ME.role])}</span>${hubLink()}${avatar()}`;
-  const rest=all.filter(t=>!nav.includes(t));
+  const vs=visibleSlots(),inSlots=vs.reduce((a,s)=>a.concat(slotPages(s)),[]),rest=all.filter(t=>!inSlots.includes(t));
   const mi=t=>{const b=badgeFor(t);return`<button class="mi" data-tab="${t}" ${st.tab===t?'aria-current="page"':''}>${tile(PAGES[t][1],PAGES[t][2])}<span>${pageTitle(t)}</span>${b?`<span class="badge">${b}</span>`:''}</button>`};
-  $('#side').innerHTML=nav.map(mi).join('')+`<div class="mgrp">เพิ่มเติม</div>`+rest.map(mi).join('')+`<div class="credit">Q-Teacher ${esc(B.version)}<br>พัฒนาโดย <b>${DEV_NAME}</b></div>`;
-  $('#apptop').innerHTML=home?`<div class="row1"><div style="min-width:0"><div class="eyebrow">${greet()}${st.stale?' · กำลังอัปเดต…':st.offline?' · ออฟไลน์':''}</div><h1>${esc(ME.call)}</h1></div><div class="toprow"><button class="bell" data-bell="1" aria-label="รายการต้องดำเนินการ ${p} รายการ">${svg('bell')}${p?`<span class="badge">${p}</span>`:''}</button>${avatar()}</div></div>
+  $('#side').innerHTML=vs.map(s=>(s.id==='home'?'':`<div class="mgrp">${esc(s.label)}</div>`)+slotPages(s).map(mi).join('')).join('')+(rest.length?`<div class="mgrp">หน้าอื่น</div>`+rest.map(mi).join(''):'')+`<div class="credit">Q-Teacher ${esc(B.version)}<br>พัฒนาโดย <b>${DEV_NAME}</b></div>`;
+  $('#apptop').innerHTML=home?`<div class="row1"><div style="min-width:0"><div class="eyebrow">${greet()}${st.stale?' · กำลังอัปเดต…':st.offline?' · ออฟไลน์':''}</div><h1>${esc(ME.call)}</h1></div><div class="toprow"><button class="bell" data-bell="1" aria-label="รายการต้องดำเนินการ ${p} รายการ">${svg('bell')}${p?`<span class="badge">${p}</span>`:''}</button>${avatarBtn()}</div></div>
    <div class="mrole"><span class="pill p-info">${esc(ROLE_LABEL[ME.role])}</span>${hubLink()}</div>`
    :`<div class="row1 sub1"><button class="iconbtn" data-tab="home" aria-label="กลับหน้าหลัก">${svg('back')}</button><div style="min-width:0;flex:1"><div class="eyebrow">Q-TEACHER${st.stale?' · กำลังอัปเดต…':''}</div><h1>${esc(pageTitle(st.tab))}</h1></div>${avatar()}</div>`;
-  $('#bottom').innerHTML=`<div class="in" style="grid-template-columns:repeat(${nav.length+1},1fr)">${nav.map(t=>{const b=badgeFor(t);return`<button data-tab="${t}" ${st.tab===t?'aria-current="page"':''}>${svg(PAGES[t][1])}<span>${t==='home'?'หน้าหลัก':SHORT[t]||PAGES[t][0]}</span>${b?`<span class="badge">${b}</span>`:''}</button>`}).join('')}<button data-sheet="1" ${!nav.includes(st.tab)?'aria-current="page"':''}>${svg('grid')}<span>เพิ่มเติม</span>${rest.some(t=>badgeFor(t))?'<span class="badge dot"></span>':''}</button></div>`;
-  $('#sheetCard').innerHTML=`<div class="row between"><h2>เพิ่มเติม</h2><button class="btn sm" data-sheet="0">ปิด</button></div>
-   <div class="shortcuts">${rest.map(t=>{const b=badgeFor(t);return`<button class="sc" data-tab="${t}">${tile(PAGES[t][1],PAGES[t][2])}<span>${pageTitle(t)}${b?` <b class="bnum">${b}</b>`:''}</span></button>`}).join('')}</div>
+  $('#bottom').innerHTML=`<div class="in" style="grid-template-columns:repeat(${vs.length},1fr)">${vs.map(s=>{const cur=slotOf(st.tab)===s,b=slotBadge(s),pg=slotPages(s),last=(st.slotPg||{})[s.id],tgt=s.id==='home'?'home':(pg.includes(last)?last:pg[0]);return`<button data-tab="${tgt}" ${cur?'aria-current="page"':''}>${svg(s.icon)}<span>${esc(s.label)}</span>${b?`<span class="badge">${b}</span>`:''}</button>`}).join('')}</div>`;
+  $('#sheetCard').innerHTML=`<div class="row between"><h2>เมนูบัญชี</h2><button class="btn sm" data-sheet="0">ปิด</button></div>
+   ${rest.length?`<div class="sub">หน้าอื่นที่ใช้ได้</div><div class="shortcuts">${rest.map(t=>{const b=badgeFor(t);return`<button class="sc" data-tab="${t}">${tile(PAGES[t][1],PAGES[t][2])}<span>${pageTitle(t)}${b?` <b class="bnum">${b}</b>`:''}</span></button>`}).join('')}</div>`:''}
    <div class="row" style="justify-content:center">${hubLink('btn')}<button class="btn" data-refresh="1">โหลดข้อมูลใหม่</button></div>
    <p class="foot">Q-Teacher ${esc(B.version)} · ชุดแอป Q-Kawa · พัฒนาโดย ${DEV_NAME}<br><a href="../privacy.html">นโยบายความเป็นส่วนตัว</a></p>`;
   $('#sheet').classList.toggle('open',st.sheet);
 }
-function render(){if(!B)return;normalizeTab();renderChrome();const t0=performance.now();
-  $('#view').innerHTML=(isMobile()||st.tab==='home'?'':`<div class="ptitle"><h1>${esc(pageTitle(st.tab))}</h1></div>`)+(V[st.tab]||V.home)();after();
+function render(){if(!B)return;normalizeTab();{const s=slotOf(st.tab);if(s)(st.slotPg=st.slotPg||{})[s.id]=st.tab}renderChrome();const t0=performance.now();
+  $('#view').innerHTML=(isMobile()||st.tab==='home'?'':`<div class="ptitle"><h1>${esc(pageTitle(st.tab))}</h1></div>`)+slotBar()+(V[st.tab]||V.home)();after();
   st.renderMs=Math.round(performance.now()-t0)}
 function go(t,keep){t=ALIAS[t]||t;st.sheet=false;st.dirty=false;st.tab=t;st.open={};render();if(!keep)window.scrollTo({top:0});
   if(Date.now()-st.fetchedAt>180000&&!st.loading){st.loading=true;refresh(true).finally(()=>{st.loading=false})}}
@@ -928,7 +987,7 @@ async function sendCheck(data){
     st.bootSeq++;
     const j=await api('check',{data});const x=j.result;
     if(j.data){load(j.data);cacheSet(j.data);st.fetchedAt=Date.now()}SEC_AT.stats=0;st.dirty=false;render();
-    const how=x.method==='gps'?'GPS · ห่างจุดลงเวลา '+x.dist+' ม.'+(x.point?' · '+x.point:''):x.method==='qr'?'สแกน QR · '+x.point:'';
+    const how=x.method==='gps'?(x.dist===''?'GPS · '+x.point:'GPS · ห่างจุดลงเวลา '+x.dist+' ม.'+(x.point?' · '+x.point:'')):x.method==='qr'?'สแกน QR · '+x.point:'';
     modal(`<div style="text-align:center;display:grid;gap:8px"><span class="okc">${svg('check')}</span><h2>${x.kind==='in'?'บันทึกเวลาเข้าแล้ว':'บันทึกเวลาออกแล้ว'}</h2>
      <div class="clockbig num" style="color:var(--accent)">${esc(x.time)} น.</div><div>${stPill(x.status)}</div><p class="sub">${esc(how)} · เวลาจากเซิร์ฟเวอร์ (เวลาไทย)</p>
      ${x.status==='สายเกิน 09:00'?'<button class="btn pri wide" data-halfleave="1">ยื่นใบลาครึ่งวันเช้า</button>':''}<button class="btn wide" data-close="1">ปิด</button></div>`);
@@ -979,12 +1038,20 @@ const photoUrl=id=>id?(/^https:/.test(id)?id:'https://drive.google.com/thumbnail
 const photoLink=(id,label)=>id?`<a href="${esc(/^https:/.test(id)?id:'https://drive.google.com/file/d/'+id+'/view')}" target="_blank" rel="noopener"><img class="thumb" src="${esc(photoUrl(id))}" alt="${esc(label||'รูป')}" loading="lazy"></a>`:'';
 async function copyTxt(txt,what){try{await navigator.clipboard.writeText(txt);st.copied=true;toast('คัดลอก'+(what||'ข้อความ')+'แล้ว · ไปวางในไลน์กลุ่มเอง')}catch(e){modal(`<h2>คัดลอกข้อความ</h2><p class="sub">กดค้างที่ข้อความแล้วเลือก "คัดลอก"</p><textarea class="msgbox" readonly>${esc(txt)}</textarea><button class="btn wide" data-close="1">ปิด</button>`)}}
 /** ช่องแนบรูป: ถ่ายรูป / เลือกไฟล์ + ชื่อไฟล์ + สถานะ */
-const PICKED={};
-function fileField(id,label,note){const p=PICKED[id];return`<div class="fld"><span class="lbl">${esc(label)}</span><div class="filebtns"><label class="btn" for="${id}c">${svg('cam','i18')} ถ่ายรูป</label><label class="btn" for="${id}f">${svg('file','i18')} เลือกไฟล์</label>
-  <input type="file" id="${id}c" accept="image/*" capture="environment" data-pick="${id}" hidden><input type="file" id="${id}f" accept="image/*" data-pick="${id}" hidden></div>
-  <span class="sub" id="${id}s">${p?(p.err?'<span class="bad">'+esc(p.err)+'</span>':p.data?'พร้อมส่ง: '+esc(p.name)+` <button type="button" class="linkbtn" data-unpick="${id}">นำออก</button>`:'กำลังย่อรูป: '+esc(p.name)):esc(note||'รองรับไฟล์รูปภาพ')}</span></div>`}
-async function pickFile(id,f){PICKED[id]={name:f.name};const s=$('#'+id+'s');if(s)s.textContent='กำลังย่อรูป: '+f.name;
-  try{PICKED[id].data=await shrinkPhoto(f)}catch(e){PICKED[id].err=e.message}
+const PICKED={},PDF_OK={};
+function fileField(id,label,note,pdf){PDF_OK[id]=!!pdf;const p=PICKED[id];return`<div class="fld"><span class="lbl">${esc(label)}</span><div class="filebtns"><label class="btn" for="${id}c">${svg('cam','i18')} ถ่ายรูป</label><label class="btn" for="${id}f">${svg('file','i18')} เลือกไฟล์</label>
+  <input type="file" id="${id}c" accept="image/*" capture="environment" data-pick="${id}" hidden><input type="file" id="${id}f" accept="${pdf?'image/*,application/pdf':'image/*'}" data-pick="${id}" hidden></div>
+  <span class="sub" id="${id}s">${p?(p.err?'<span class="bad">'+esc(p.err)+'</span>':p.data?'พร้อมส่ง: '+esc(p.name)+` <button type="button" class="linkbtn" data-unpick="${id}">นำออก</button>`:'กำลังย่อรูป: '+esc(p.name)):esc(note||(pdf?'รองรับรูปภาพหรือ PDF (ไม่เกิน 5 MB)':'รองรับไฟล์รูปภาพ'))}</span></div>`}
+async function pickFile(id,f){PICKED[id]={name:f.name};const s=$('#'+id+'s');
+  const isPdf=f.type==='application/pdf'||/\.pdf$/i.test(f.name);
+  if(s)s.textContent=(isPdf?'กำลังอ่านไฟล์: ':'กำลังย่อรูป: ')+f.name;
+  try{
+    if(isPdf){
+      if(!PDF_OK[id])throw new Error('ช่องนี้รองรับเฉพาะรูปภาพ');
+      if(f.size>5*1024*1024)throw new Error('ไฟล์ PDF ต้องไม่เกิน 5 MB (ไฟล์นี้ '+(f.size/1048576).toFixed(1)+' MB)');
+      PICKED[id].data=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(new Error('อ่านไฟล์ไม่ได้'));r.readAsDataURL(f)});
+    }else PICKED[id].data=await shrinkPhoto(f);
+  }catch(e){PICKED[id].err=e.message}
   const s2=$('#'+id+'s');if(s2){s2.innerHTML=PICKED[id].err?'<span class="bad">'+esc(PICKED[id].err)+'</span>':'พร้อมส่ง: '+esc(f.name)+` <button type="button" class="linkbtn" data-unpick="${id}">นำออก</button>`}}
 
 /* ---------- ส่วนประกอบ ---------- */
@@ -1046,6 +1113,14 @@ function todayStrip(){
 
 /* ---------- ลงเวลาของฉัน ---------- */
 function nextPeriod(){const hm=clockNow();const p=PERIODS.find(x=>x[3]>hm&&MY_TT[x[0]]);return p?`คาบ ${p[0]} · ${MY_TT[p[0]]}`:(B.hasTT?'วันนี้ไม่มีคาบสอนแล้ว':'ยังไม่มีตารางสอนในระบบ')}
+const offsiteReq=()=>REQ.find(x=>x.who===me()&&x.kind==='gov'&&x.st==='approved'&&x.from<=TODAY_ISO&&TODAY_ISO<=x.to);
+async function offsiteCheck(id,kind){
+  if(CHECKING)return;
+  busyModal('กำลังตรวจตำแหน่ง…','เช็คอินนอกสถานที่ ใช้ตำแหน่งจริงของท่าน');
+  const data={kind,offsite:id};
+  try{Object.assign(data,await getPos())}catch(e){return modal(`<h2>ตรวจตำแหน่งไม่ได้</h2><p class="err">${esc(e.message)} · ยังไม่ได้บันทึก</p><button class="btn pri big wide" data-offsite="${esc(id)}:${kind}">ลองอีกครั้ง</button><button class="btn wide" data-close="1">ปิด</button>`)}
+  sendCheck(data);
+}
 function punchCard(){
   const my=B.my,R=B.rules;
   const box=(lab,x)=>`<div><span>${lab}</span><b class="num">${x?esc(x.time):'––:––'}</b>${x?`<span>${stPill(x.status)} ${x.method==='qr'?'QR':x.method==='admin'?'ลงแทน':'GPS'}${x.point?' · '+esc(x.point):''}</span>`:''}</div>`;
@@ -1056,6 +1131,7 @@ function punchCard(){
      <button class="btn big pri wide punchbtn" data-punch="in">${svg('pin')}ลงเวลาเข้า</button><button class="btn wide ghost" data-punchqr="in">${svg('qr','i18')} ใช้ QR แทน (เมื่อ GPS ไม่พร้อม)</button>`;
   else if(!my.out)btn=`<button class="btn big wide punchbtn navy" data-punch="out">${svg('out')}ลงเวลาออก</button><button class="btn wide ghost" data-punchqr="out">${svg('qr','i18')} ใช้ QR แทน</button>`;
   else btn=`<div class="callout c-good" style="text-align:center">ลงเวลาครบแล้ววันนี้</div>`;
+  if(!st.stale&&!my.out){const g=offsiteReq();if(g)btn+=`<button class="btn wide" data-offsite="${g.id}:${my.in?'out':'in'}">${svg('pin','i18')} ${my.in?'ลงเวลาออก':'เช็คอิน'}นอกสถานที่ (ไปราชการ: ${esc((g.place||g.why||'').slice(0,28))})</button><span class="sub">ใช้เมื่อมีคำขอไปราชการที่อนุมัติแล้วครอบคลุมวันนี้ · จับตำแหน่งจริง ไม่นับสาย</span>`}
   const duty=my.in?my.in.duty:st.duty,x=duty?R.duty:R.general;
   const stTxt=my.out?'ลงเวลาครบแล้ว':my.in?'มาแล้ว · ยังไม่ลงเวลาออก':B.today.holiday?esc(B.today.holiday):my.leaveToday&&my.leaveToday.part==='เต็มวัน'?'วันนี้มีใบ'+esc(my.leaveToday.type):'ยังไม่ลงเวลาเข้า';
   return`<section class="status" id="punch"><div class="row between"><h2>ลงเวลาของฉัน</h2><span class="sub">${esc(TODAY)}</span></div>
@@ -1069,7 +1145,6 @@ function punchCard(){
  *  v2.2: งานเสนอ ผอ. · แจ้งเตือนกระดิ่ง · รายการต้องทำประจำวันของครู (เช็คอิน · เช็คชื่อกิจกรรมเช้า · สแกนเข้าสอน · งานค้าง)
  *  ข้อมูลมาจากหลังบ้าน (boot: inbox, notifs, morning, scans) ผ่านคำสั่ง inbox.* notif.read morning.save scan.in admin.roomQr
  * ===================================================================== */
-const MORN_LABEL={read:'เช็คชื่อการอ่านภาษาไทย',iqra:'เช็คชื่ออิกเราะอ์'};
 let inboxAddOpen=false;
 /** งานเสนอ ผอ.: ธุรการเพิ่ม → ผอ. ตอบรับ / ปฏิเสธ / มอบหมายครูคนอื่นแทน → ครูที่ได้รับมอบหมายเห็นแจ้งเตือนที่กระดิ่ง */
 function inboxPanel(){
@@ -1093,32 +1168,15 @@ function inboxPanel(){
 /** รายการต้องทำวันนี้ (หน้าแรกของครู): เช็คอิน · เช็คชื่อกิจกรรมเช้า (จ–อ อ่านภาษาไทย / พ–พฤ อิกเราะอ์ / ศ ไม่มี) · สแกนเข้าสอนทุกคาบ · งานค้าง */
 function dailyList(){
   if(!ME.isTeacher)return'';
-  const M=B.morning||{kind:'',done:null},sc=B.scans||{},rows=[];
-  rows.push({k:'in',t:'เช็คอินมาโรงเรียน',s:B.my.in?'ลงเวลาแล้ว '+B.my.in.time+' น.':!isWork()?'วันนี้'+B.today.holiday+' · ไม่ต้องลงเวลา':'ยังไม่ได้ลงเวลา · แตะเพื่อไปที่ปุ่มลงเวลา',done:!!B.my.in||!isWork()});
-  if(M.kind&&isWork()&&(ME.rooms||[]).length)rows.push({k:'morn',t:MORN_LABEL[M.kind],s:M.done?'เช็คแล้ว '+M.done.present+'/'+M.done.total+' คน · '+M.done.at+' น.':'ชั้น '+(ME.cls||'-')+' · '+(M.kind==='read'?'เช็คชื่อนักเรียนที่เข้าชั่วโมงอ่านภาษาไทยตอนเช้า':'เช็คชื่อนักเรียนที่เข้าอิกเราะอ์ตอนเช้า'),done:!!M.done});
-  if(isWork())(B.myTT||[]).forEach(p=>{const t=sc[p.p],late=!t&&clockNow()>p.to;
-    rows.push({k:'scan:'+p.p,t:'สแกนเข้าสอน คาบ '+p.p+' · '+(p.cls||'')+' '+(p.subj||''),s:t?'สแกนแล้ว '+t+' น.':late?'เลยเวลา '+p.to+' ยังไม่ได้สแกน':p.from+'–'+p.to+' น. · สแกน QR หน้าห้อง '+(p.cls||''),done:!!t,warn:late})});
+  const rows=[];
+  rows.push({k:'in',t:'เช็คอินมาโรงเรียน',s:B.my.in?'ลงเวลาแล้ว '+B.my.in.time+' น.':!isWork()?'วันนี้'+B.today.holiday+' · ไม่ต้องลงเวลา':'ยังไม่ได้ลงเวลา · แตะเพื่อไปที่ปุ่มลงเวลา',done:!!B.my.in||!isWork()});;
   TASKS.filter(t=>t.own===me()&&['todo','doing','fix','sent'].includes(t.st)&&dayDiff(t.due)<=7).sort((a,b)=>dayDiff(a.due)-dayDiff(b.due)).forEach(t=>
     rows.push({k:'w:'+t.id,t:t.t,s:(t.st==='sent'?'ส่งแล้ว · รอตรวจ':dayDiff(t.due)<0?'เลยกำหนด '+(-dayDiff(t.due))+' วัน':dayDiff(t.due)===0?'ครบกำหนดวันนี้':'ครบกำหนด '+t.dueTx)+(t.self?'':' · มอบหมายโดย '+nm(t.by)),done:t.st==='sent'||t.st==='done'}));
   const n=rows.filter(r=>r.done).length;
   return`<section class="daily" aria-label="รายการประจำวัน"><div class="row between"><h2>รายการต้องทำวันนี้</h2><span class="count">${n}/${rows.length}</span></div>
    <div class="prog thin" aria-hidden="true"><i style="width:${Math.round(n/rows.length*100)}%"></i></div>
    <ul class="dl">${rows.map(r=>`<li class="${r.done?'done':''}"><button class="ptick ${r.done?'on':''}" data-qtick="${esc(r.k)}" aria-pressed="${r.done}" aria-label="${esc(r.t)}${r.done?' (เสร็จแล้ว)':''}">${r.done?TICK:''}</button><span class="main"><b>${esc(r.t)}</b><span class="sub ${r.warn?'bad':''}">${esc(r.s)}</span></span></li>`).join('')}</ul>
-   ${!M.kind&&isWork()?'<p class="sub">วันนี้ไม่มีเช็คชื่อกิจกรรมเช้า (จ–อ อ่านภาษาไทย · พ–พฤ อิกเราะอ์ · ศุกร์ไม่มี)</p>':''}</section>`}
-function morningForm(){
-  const M=B.morning||{},label=MORN_LABEL[M.kind]||'เช็คชื่อกิจกรรมเช้า';
-  const go=list=>{const mine=list.filter(s=>s.cls===ME.cls);
-    modal(`<div class="row between"><h2>${esc(label)} · ${esc(ME.cls||'')}</h2><button class="btn sm" data-close="1">ปิด</button></div>
-     <p class="sub">แตะชื่อที่ไม่มา · ค่าเริ่มต้น = มาครบ</p>
-     <div class="steplist" id="mornList">${mine.map(s=>`<button type="button" class="iq on" data-qiq="${esc(s.id)}"><span class="ptick on">${TICK}</span>${esc(s.no)}. ${esc(s.name)}</button>`).join('')||'<p class="empty">ยังไม่มีรายชื่อนักเรียนในชั้นนี้</p>'}</div>
-     ${mine.length?`<div class="row"><button class="btn pri big wide" data-qiqsave="1">บันทึกการเช็คชื่อ</button></div>`:''}`)};
-  api('sec',{name:'students'}).then(j=>go((j.sec&&j.sec.list)||[])).catch(e=>toast(e.message));
-}
-async function scanIn(p){
-  const x=(B.myTT||[]).find(q=>q.p===p);if(!x)return;
-  const code=await scanCode('หน้าห้อง '+(x.cls||''),'QKAWA-RM-');if(!code)return;
-  closeModal();act('scan.in',{data:{period:p,code}}).catch(()=>{});
-}
+   ${extLinks()}</section>`}
 function notifRead(id){B.notifs=(B.notifs||[]).filter(n=>n.id!==id);api('notif.read',{id}).catch(()=>{})}
 /** QR ห้องเรียน (หน้าตั้งค่า ผอ.): พิมพ์ติดหน้าห้อง ใช้สแกนเข้าสอน */
 function roomQrPanel(A){
@@ -1135,33 +1193,51 @@ const TQ={click(d,t){
     act('inbox.decide',{id,op,data},t).catch(()=>{});return true}
   if(d.qtick){const k=d.qtick;
     if(k==='in'){if(!B.my.in){const el=$('#punch');if(el)el.scrollIntoView({behavior:'smooth'})}return true}
-    if(k==='morn'){if(!(B.morning||{}).done)morningForm();return true}
-    if(k.indexOf('scan:')===0){const p=k.slice(5);if(!(B.scans||{})[p])scanIn(p);return true}
     if(k.indexOf('w:')===0){const wid=k.slice(2),w=TASKS.find(x=>x.id===wid);if(w&&!['sent','done'].includes(w.st))act('work.edit',{data:{wid,op:'pct',v:100}},t).catch(()=>{});return true}
     return true}
-  if(d.qiq){t.classList.toggle('on');const tk=t.querySelector('.ptick');tk.classList.toggle('on');tk.innerHTML=t.classList.contains('on')?TICK:'';return true}
-  if(d.qiqsave){const all=document.querySelectorAll('#mornList .iq'),on=document.querySelectorAll('#mornList .iq.on');
-    act('morning.save',{data:{present:on.length,total:all.length}},t).then(()=>closeModal()).catch(()=>{});return true}
   if(d.qroom){act('admin.roomQr',{},t).catch(()=>{});return true}
   if(d.pvread){notifRead(d.pvread);return false}
   return false}};
 
 /* ---------- หน้าหลัก ---------- */
+/** ปุ่มลัดเด่นบนหน้าแรกของทุกบทบาท: แจ้งซ่อม + เหตุฉุกเฉิน (ไม่ต้องเข้าผ่านรูปโปรไฟล์) */
+function urgentBar(){
+  return`<div class="urgent2"><button class="ub fix" data-go="fixreq">${svg('fix')}<span><b>แจ้งซ่อม</b><small>รายงานของเสียพร้อมรูป</small></span></button>
+   <button class="ub emg${EMG.on?' on':''}" data-go="count" data-gct="emg">${svg('sos')}<span><b>เหตุฉุกเฉิน</b><small>${EMG.on?'กำลังเกิดเหตุ · แตะเพื่อรายงาน':'ดูสถานะ / ซ้อมอพยพ'}</small></span></button>${ME.isDirector?'':`<button class="ub help" data-help="1">${svg('sos')}<span><b>ขอความช่วยเหลือ</b><small>ส่งเรื่องถึง ผอ. ทันที</small></span></button>`}</div>`}
+/** ดัชนีความสุขตอนเลิกงาน: แตะ 1 ครั้ง · ครูเห็นของตน · ผอ./ผู้ดูแลเห็นภาพรวม (ไม่แสดงชื่อ) */
+const MOODS=[[1,'😞','แย่'],[2,'😕','ไม่ค่อยดี'],[3,'😐','เฉยๆ'],[4,'🙂','ดี'],[5,'😄','ดีมาก']];
+function moodCard(){
+  const M=B.mood||{mine:0},A=M.all;
+  const row=`<div class="mood-row" role="group" aria-label="ดัชนีความสุขวันนี้">${MOODS.map(([v,e,l])=>`<button class="mo ${M.mine===v?'on':''}" data-mood="${v}" aria-pressed="${M.mine===v}" aria-label="${l}"><span>${e}</span><small>${l}</small></button>`).join('')}</div>`;
+  const ov=A?`<div class="mood-ov"><div class="sub">ภาพรวมวันนี้ (ผอ.เห็น ไม่แสดงชื่อ) · ตอบแล้ว <b class="num">${A.n}/${A.total}</b> คน</div>
+    ${A.show?`<div class="mood-bars">${MOODS.map(([v,e],i)=>`<div><span>${e}</span><i style="height:${A.n?Math.round(A.counts[i]/A.n*100):0}%"></i><b class="num">${A.counts[i]}</b></div>`).join('')}</div><div class="sub">เฉลี่ยวันนี้ ${A.avg}/5</div>`
+      :`<div class="callout c-info">ตอบน้อยกว่า ${A.min} คน จึงยังไม่แสดงรายละเอียดรายระดับ เพื่อไม่ให้เดาตัวตนได้</div>`}
+    <div class="sub">7 วันล่าสุด (ค่าเฉลี่ย · แสดงเมื่อมีผู้ตอบ ≥ ${A.min} คน): ${A.week.map(w=>w.avg!=null?w.avg:'–').join(' · ')}</div></div>`:'';
+  return`<section class="moodbox"><div class="row between"><h2>วันนี้เลิกงานแล้วรู้สึกอย่างไร</h2><span class="sub">${M.mine?'บันทึกแล้ว · แตะใหม่เพื่อเปลี่ยน':'แตะ 1 ครั้ง'}</span></div>${row}
+   <p class="sub moodnote">คำตอบไม่แสดงชื่อ ยกเว้นเลือกหน้าเศร้า 3 วันติดกัน ผอ. จะได้รับแจ้งเพื่อเข้ามาดูแล</p>${ov}</section>`;
+}
+function helpSheet(){
+  modal(`<div class="stack" style="gap:12px"><div class="row between"><h2>ขอความช่วยเหลือจาก ผอ.</h2><button class="btn sm" data-close="1">ปิด</button></div>
+   <p class="sub">ระบบสร้างงาน "ขอความช่วยเหลือ" ส่งถึง ผอ. (ขึ้นในงานของ ผอ. และหน้ากลาง) บอกสั้นๆ ว่าต้องการอะไร (ไม่ใส่ก็ได้)</p>
+   <div class="fld"><label for="hlp">เรื่องที่ต้องการ</label><textarea id="hlp" maxlength="200" placeholder="เช่น ขอคำปรึกษาเรื่องนักเรียนขาดเรียนต่อเนื่อง"></textarea></div>
+   <button class="btn pri big wide" data-helpsend="1">ส่งถึง ผอ.</button></div>`);
+}
 function quick(){const r=ME.role,Q={
-  dir:[['approve','รออนุมัติ','endorse','amber'],['sub','จัดสอนแทน','sub','violet'],['ops','อาคารสถานที่','ops','amber'],['dev','พัฒนา/นิเทศ','dev','green']],
+  dir:[['approve','รออนุมัติ','endorse','amber'],['sub','จัดสอนแทน','sub','violet'],['ops','อาคารสถานที่','ops','amber'],['dev','พัฒนาครู','dev','green']],
   head:[['myreq','ยื่นใบลา','leave','coral','data-kind="leave"'],['mywork','งานของฉัน','tasks','blue'],['mysub','สอนแทนของฉัน','sub','violet'],['dev','บันทึกการพัฒนา','dev','green']],
-  acad:[['myreq','ยื่นใบลา','leave','coral','data-kind="leave"'],['mysub','สอนแทนของฉัน','sub','violet'],['dev','พัฒนา/นิเทศ','dev','green'],['count','เช็คยอดนักเรียน','count','rose']],
-  tch:[['myreq','ยื่นใบลา','leave','coral','data-kind="leave"'],['myreq','ออกนอกบริเวณ','out','teal','data-kind="out"'],['mysub','สอนแทนของฉัน','sub','violet'],['count','เช็คยอดนักเรียน','count','rose']],
-  adm:[['visit','ผู้มาติดต่อ','visit','teal'],['tasks','มอบหมายงาน','tasks','blue','data-addtask="1"'],['fixreq','แจ้งซ่อม','fix','coral'],['myreq','ยื่นใบลา','leave','coral','data-kind="leave"']],
-  jan:[['jan','งานวันนี้','job','amber'],['fixreq','แจ้งซ่อม','fix','coral'],['myreq','ยื่นใบลา','leave','coral','data-kind="leave"']],
+  acad:[['myreq','ยื่นใบลา','leave','coral','data-kind="leave"'],['mysub','สอนแทนของฉัน','sub','violet'],['dev','พัฒนาครู','dev','green']],
+  tch:[['myreq','ยื่นใบลา','leave','coral','data-kind="leave"'],['myreq','ออกนอกบริเวณ','out','teal','data-kind="out"'],['mysub','สอนแทนของฉัน','sub','violet']],
+  adm:[['visit','ผู้มาติดต่อ','visit','teal'],['tasks','มอบหมายงาน','tasks','blue','data-addtask="1"'],['myreq','ยื่นใบลา','leave','coral','data-kind="leave"']],
+  jan:[['jan','งานวันนี้','job','amber'],['myreq','ยื่นใบลา','leave','coral','data-kind="leave"']],
   grd:[['patrol','สแกนจุดตรวจ','guard','slate'],['patrol','แจ้งเหตุผิดปกติ','sos','rose','data-inc="1"'],['visit','ผู้มาติดต่อ','visit','teal'],['myreq','ยื่นใบลา','leave','coral','data-kind="leave"']]}[r];
   return`<div class="shortcuts">${Q.filter(x=>avail().includes(x[0])).map(([go,l,ic,h,ex])=>`<button class="sc" data-go="${go}" ${ex||''}>${tile(ic,h)}<span>${l}</span></button>`).join('')}</div>`}
 V.home=()=>{
   const act=pending();
   return`${emgBanner()}
    ${punchCard()}
+   ${urgentBar()}
    ${dailyList()}
-   ${ME.isAdmin&&!EMG.on?`<button class="emgbtn" data-go="count" data-gct="emg">${svg('sos')}<span><b>เหตุฉุกเฉิน / ซ้อมอพยพ</b><small>เปิดหน้าตรวจประเภทเหตุและจุดรวมพลก่อนเริ่ม</small></span></button>`:''}
+   ${moodCard()}
    <div class="sec" id="actions"><h2>งานที่ต้องดำเนินการ</h2>${act.length?`<span class="count">${act.length}</span>`:''}</div>
    ${act.length?actionList(act,4):'<p class="empty ok">ไม่มีงานค้าง</p>'}
    <div class="sec"><h2>เมนูใช้บ่อย</h2></div>${quick()}
@@ -1180,8 +1256,8 @@ function mySummary(){
 /* ---------- บุคลากร (ผอ. / หัวหน้างานบุคคล) ---------- */
 V.staff=()=>{
   const t=st.staffTab;
-  return`${seg('staffTab',[['today','วันนี้'],['round','สถิติรอบนี้'],['rank','ดาวมาเช้า']],t)}
-   ${t==='today'?staffToday():t==='round'?secBox('stats',staffRound):secBox('stats',s=>rankPanel(s,true))}`};
+  return`${seg('staffTab',[['today','วันนี้'],['round','สถิติรอบนี้']].concat(ME.isDirector?[['load','ภาระงานรายคน']]:[]),t)}
+   ${t==='today'?staffToday():t==='load'&&ME.isDirector?(st.loadYm=st.loadYm||TODAY_ISO.slice(0,7),secBox('load:'+st.loadYm,loadPanel)):secBox('stats',staffRound)}`};
 function staffToday(){
   const c=dayCounts(),F=st.staffF,q=st.staffQ.trim();
   const list=REAL.filter(s=>{const x=staffState(s.id);return(F==='all'||(F==='in'&&(x.k==='in'||x.k==='late'))||(F==='out'?!!OUTNOW[s.id]:x.k===F))&&(!q||s.name.includes(q)||s.full.includes(q))});
@@ -1200,6 +1276,33 @@ function staffToday(){
   return`<section class="panel"><div class="ph"><h2>${esc(TODAY)}</h2><button class="btn sm ghost" data-copyatt="1">คัดลอกสรุป (ไปวางในไลน์กลุ่มเอง)</button></div>
    ${st.stale?'<div class="loadbox"><span class="spin sm"></span>กำลังโหลดสถานะล่าสุด ยังไม่สรุปผล</div>':`${filt}<div class="search">${svg('search')}<input type="search" id="staffQ" value="${esc(st.staffQ)}" placeholder="ค้นหาชื่อ" aria-label="ค้นหาชื่อบุคลากร"></div>${body}`}
    <p class="note">"ยังไม่ลงเวลา" ไม่ได้แปลว่าขาดงาน ระบบตรวจวันหยุด ใบลา และไปราชการก่อนแสดงสถานะ · ไม่นับบัญชีทดสอบ${STAFF.some(s=>s.test)?' ('+STAFF.filter(s=>s.test).map(s=>esc(s.name)).join(', ')+')':''}</p></section>`}
+const TH_MON=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const ymLabel=m=>TH_MON[Number(m.slice(5,7))-1]+' '+(Number(m.slice(0,4))+543);
+/** ภาระงานรายคน (ผอ.): ข้อมูลจากระบบเท่านั้น · เรียงเริ่มต้นตามงานเลยกำหนด (เท่ากัน → งานค้าง → ชื่อ) · กดหัวคอลัมน์เพื่อเรียง · ไฮไลต์ค่าที่สูงกว่าเฉลี่ยโรงเรียน */
+const LD_COLS=[['name','บุคลากร'],['open','งานค้าง'],['over','เลยกำหนด'],['subs','คาบสอนแทน'],['doc','ชั่วโมงงานเอกสาร'],['gov','วันไปราชการ'],['late','กลับหลัง 17:00 (วัน)']];
+function ldSorted(rows){
+  const s=st.loadSort||{k:'over',d:-1},k=s.k,d=s.d;
+  return rows.slice().sort((a,b)=>{
+    const c=k==='name'?(a.name<b.name?-1:a.name>b.name?1:0)*d:(a[k]-b[k])*d;
+    return c||b.over-a.over||b.open-a.open||(a.name<b.name?-1:1)});
+}
+function loadPanel(L){
+  const cur=L.ym===L.today.slice(0,7),S0=st.loadSort||{k:'over',d:-1};
+  const sel=`<div class="row"><label class="sub" for="loadYm">เดือน</label><select id="loadYm" aria-label="เลือกเดือน">${L.months.map(m=>`<option value="${m}" ${m===L.ym?'selected':''}>${ymLabel(m)}${m===L.months[0]?' (เดือนนี้)':''}</option>`).join('')}</select></div>`;
+  const A=L.avg,fmt=v=>Number.isInteger(v)?v:v.toFixed(1),rows=ldSorted(L.rows);
+  const arrow=k=>S0.k===k?(S0.d<0?' ▼':' ▲'):'';
+  const sortBar=!isMobile()?'':`<div class="seg" role="group" aria-label="เรียงตาม"><span class="sub" style="align-self:center">เรียงตาม</span>${LD_COLS.map(([k,l])=>`<button class="chip" data-lsort="${k}" aria-pressed="${S0.k===k}">${esc(l)}${arrow(k)}</button>`).join('')}</div>`;
+  const body=isMobile()?`<ul class="slist">${rows.map(p=>`<li class="ld"><b>${esc(p.name)}</b>
+      <div class="ldg">${LD_COLS.slice(1).map(([k,l])=>`<span class="${p.hi[k]?'hot':''}"><small>${esc(l)}</small><b class="num">${p[k]}</b></span>`).join('')}</div></li>`).join('')}
+     <li class="ld avg"><b>เฉลี่ยโรงเรียน</b><div class="ldg">${LD_COLS.slice(1).map(([k,l])=>`<span><small>${esc(l)}</small><b class="num">${fmt(A[k])}</b></span>`).join('')}</div></li></ul>`
+   :`<div class="scroll"><table class="ldt"><thead><tr>${LD_COLS.map(([k,l])=>`<th class="${k==='name'?'':'r'}" aria-sort="${S0.k===k?(S0.d<0?'descending':'ascending'):'none'}"><button class="thb" data-lsort="${k}">${esc(l)}${arrow(k)}</button></th>`).join('')}</tr></thead><tbody>
+     <tr class="avg"><td><b>เฉลี่ยโรงเรียน</b></td>${LD_COLS.slice(1).map(([k])=>`<td class="r num">${fmt(A[k])}</td>`).join('')}</tr>
+     ${rows.map(p=>`<tr><td>${esc(p.name)}</td>${LD_COLS.slice(1).map(([k])=>`<td class="r num ${p.hi[k]?'hot':''}">${p[k]}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  return`<section class="panel"><div class="ph"><h2>ภาระงานรายคน · ${ymLabel(L.ym)}</h2><span class="pill p-info">เห็นเฉพาะ ผอ.</span></div>${sel}${sortBar}
+   <div class="callout c-info"><b>ใช้ข้อมูลที่มีในระบบเท่านั้น</b>ไม่ต้องให้ครูกรอกเพิ่ม · ตัวเลขสีแดง = สูงกว่าค่าเฉลี่ยของโรงเรียน · เรียงเริ่มต้นตามงานเลยกำหนด (เท่ากันดูงานค้าง) กดหัวคอลัมน์เพื่อเรียงตามคอลัมน์นั้น</div>
+   ${body}
+   <p class="note">งานค้าง = งานที่ครบกำหนดใน${cur?'เดือนนี้':'เดือนที่เลือก'}และยังไม่เสร็จ ณ วันนี้ (เลยกำหนด = ในนั้นที่ครบกำหนดก่อนวันนี้) · คาบสอนแทน = ที่จัดแล้ว · ชั่วโมงงานเอกสาร = ที่ครูบันทึกเอง · วันไปราชการ = ใบที่อนุมัติแล้ว · กลับหลัง 17:00 = จำนวนวันที่ลงเวลาออกหลัง 17:00 น. · ค่าเฉลี่ยคิดจากบุคลากรทุกคนที่แสดง · ข้อมูลนี้ใช้ดูภาระงานเท่านั้น ไม่ใช่คะแนนประเมิน</p></section>`;
+}
 function staffRound(S){
   const rows=REAL.map(s=>{const l=S.leave[s.id]||{n:0,d:0};return{s,late:S.late[s.id]||0,yel:S.yellow[s.id]||0,n:l.n,d:l.d}});
   const sort=rows.slice().sort((a,b)=>b.late-a.late||b.d-a.d);
@@ -1212,12 +1315,6 @@ function staffRound(S){
    ${isMobile()?`<ul class="slist">${sort.map(r=>`<li><div class="srow static"><span class="main"><b>${esc(r.s.name)}</b><span class="sub">สาย <b class="num ${lateFlag(r)?'bad':''}">${r.late}</b> ครั้ง · ไฟเหลือง ${r.yel} · ลา <b class="num ${leaveFlag(r)?'bad':''}">${r.n}</b> ครั้ง ${r.d} วัน</span></span>${lateFlag(r)||leaveFlag(r)?'<span class="pill p-warn">ถึงเกณฑ์ติดตาม</span>':''}</div></li>`).join('')}</ul>`
    :`<div class="scroll"><table><thead><tr><th>บุคลากร</th><th class="r">มาสาย (ครั้ง)</th><th class="r">ไฟเหลือง</th><th class="r">ลา (ครั้ง)</th><th class="r">ลา (วัน)</th><th></th></tr></thead><tbody>${sort.map(r=>`<tr><td>${esc(r.s.name)}</td><td class="r num ${lateFlag(r)?'bad':''}">${r.late}</td><td class="r num">${r.yel}</td><td class="r num">${r.n}</td><td class="r num">${r.d}</td><td>${lateFlag(r)||leaveFlag(r)?'<span class="pill p-warn">ถึงเกณฑ์ติดตาม</span>':''}</td></tr>`).join('')}</tbody></table></div>`}
    <p class="note">นับจากสถานะที่บันทึกตอนลงเวลา (แก้เวลาในตั้งค่าภายหลังไม่คำนวณย้อนหลัง) · การลานับเฉพาะใบที่อนุมัติแล้ว</p></section>`}
-function rankPanel(S,full){const R=S.ranking;const list=(R[st.rank]||[]).filter(r=>!/ภารโรง|รปภ|รักษาความปลอดภัย/.test((SM[r[0]]||{}).pos||''));
-  return`<section class="panel"><div class="ph"><h2>ดาวมาเช้า</h2>${seg('rank',[['w','สัปดาห์นี้'],['m','เดือนนี้']],st.rank)}</div>
-   <p class="period">${esc(st.rank==='w'?R.wLabel:R.mLabel)}</p>
-   <div class="callout c-info"><b>ดาวมาเช้า นับเฉพาะครูและบุคลากรทั่วไป</b>ไม่รวมนักการภารโรงและ รปภ. เพราะสองตำแหน่งนี้เข้างานเป็นเวร/กะ เวลามาจึงเทียบกับคนอื่นไม่ได้ · ยิ่งมาก่อนเวลา "นับว่าสาย" มาก อันดับยิ่งสูง</div>
-   ${list.length?`<ol class="rank">${list.map(([id,min,n],i)=>`<li ${id===me()?'class="mine"':''}><span class="medal ${i<3?'m'+(i+1):''}">${R.full||i<3?i+1:'–'}</span><span>${esc(nm(id))}<small class="sub"> · ${n} วัน</small></span><span class="num" style="font-size:.84rem">${min} นาที</span></li>`).join('')}</ol>`:empty('ยังไม่มีข้อมูลลงเวลาในช่วงนี้')}
-   <p class="note">นาทีที่มาก่อน ${esc(R.base||B.rules.late)} น. โดยเฉลี่ย (เวลา "นับว่าสาย" จากค่าตั้งปัจจุบัน) · ข้อมูลชุดเดียวกันทุกหน้า · ไม่นับบัญชีทดสอบ${R.full?'':' · ครูเห็น 3 อันดับแรกและของตนเอง'}</p></section>`}
 function attText(){
   const L=f=>REAL.filter(s=>f(staffState(s.id),s)).map(s=>'- '+s.name+(ATT[s.id]?' '+ATT[s.id]:'')+(ONLEAVE[s.id]?' ('+staffState(s.id).label+')':'')).join('\n')||'- ไม่มี';const c=dayCounts();
   return`สรุปการมาปฏิบัติงาน ${TODAY} (ณ ${clockNow()} น.)\nลงเวลาแล้ว ${c.in}/${c.all} คน\n\nมาสาย:\n${L(x=>x.k==='late')}\n\nลา/ไปราชการ:\n${L(x=>x.k==='leave')}\n\nยังไม่ลงเวลา (ยังไม่ใช่การขาดงาน):\n${L(x=>x.k==='none')}\n\n(จาก Q-Teacher โรงเรียนบ้านกาวะ)`}
@@ -1238,10 +1335,11 @@ V.mytime=()=>secBox('stats',S=>{
    <div class="kv"><div><span>มาสาย</span><b class="num">${S.my.late} ครั้ง</b><small>เกณฑ์ติดตาม ${LATE_RULE} ครั้ง/รอบ</small></div><div><span>ไฟเหลือง</span><b class="num">${S.my.yellow} ครั้ง</b><small>หลัง ${esc(B.rules.general.on)} น.</small></div>
     <div><span>ลา (อนุมัติแล้ว)</span><b class="num">${S.my.leaveTimes} ครั้ง ${S.my.leaveDays} วัน</b><small>เกณฑ์ติดตาม ${RULE.n} ครั้ง / ${RULE.d} วัน${B.quota.sample?' (ค่าตัวอย่าง)':''}</small></div>${S.my.pendingDays?`<div><span>รอพิจารณา</span><b class="num">${S.my.pendingDays} วัน</b></div>`:''}</div>
    <p class="note">เกณฑ์ติดตามไม่ใช่สิทธิการลาหรือสิทธิมาสาย</p></section>
-  <section class="panel"><div class="ph"><h2>ลงเวลาย้อนหลัง</h2><p>ประมาณ 3 สัปดาห์</p></div>${H.length?`<ul class="list">${H.map(x=>`<li><div class="main"><b style="font-weight:500">${esc(DOW[d8(x.date).getDay()].slice(0,2))} ${esc(thD(x.date))}</b></div><span class="num" style="font-size:.9rem">${x.in?esc(x.in.time):'–'} – ${x.out?esc(x.out.time):'–'}</span>${x.in?stPill(x.in.status):''}</li>`).join('')}</ul>`:empty('ยังไม่มีประวัติ')}</section>
-  ${rankPanel(S,false)}`});
+  <section class="panel"><div class="ph"><h2>ลงเวลาย้อนหลัง</h2><p>ประมาณ 3 สัปดาห์</p></div>${H.length?`<ul class="list">${H.map(x=>`<li><div class="main"><b style="font-weight:500">${esc(DOW[d8(x.date).getDay()].slice(0,2))} ${esc(thD(x.date))}</b></div><span class="num" style="font-size:.9rem">${x.in?esc(x.in.time):'–'} – ${x.out?esc(x.out.time):'–'}</span>${x.in?stPill(x.in.status):''}</li>`).join('')}</ul>`:empty('ยังไม่มีประวัติ')}</section>`});
 
 /* ---------- พิจารณาคำขอ ---------- */
+/** เงื่อนไขที่ขึ้นกับอายุราชการ: ระบบไม่ตรวจ ผู้อนุมัติ (ผอ./หัวหน้างานบุคคล) ตรวจเองตอนพิจารณา */
+const TENURE_NOTE={'ลากิจส่วนตัว':'ปีแรกที่รับราชการลาได้ไม่เกิน 15 วันทำการ','ลาพักผ่อน':'ต้องรับราชการครบ 6 เดือนจึงมีสิทธิ','ลาอุปสมบท/ประกอบพิธีฮัจย์':'อุปสมบทต้องรับราชการมาแล้วไม่น้อยกว่า 1 ปี · ฮัจย์ไม่น้อยกว่า 4 ปีและลาได้ครั้งเดียว','ลาไปปฏิบัติงานในองค์การระหว่างประเทศ':'ต้องรับราชการมาแล้วไม่น้อยกว่า 1 ปี','ลาติดตามคู่สมรส':'ต้องรับราชการมาแล้วไม่น้อยกว่า 1 ปี'};
 function reqCard(r,actions){
   const s=SM[r.who]||{};
   return`<article class="card">
@@ -1254,6 +1352,7 @@ function reqCard(r,actions){
    ${r.kind==='out'&&!r.free?`<div class="callout c-info">คาบ ${esc(r.period)} มีสอน · ครูสอนแทน <b>${r.sub?esc(nm(r.sub)):'ยังไม่มี'}</b> ${r.subOk?'ตอบรับแล้ว':'ยังไม่ตอบรับ'}${r.work?'<br>งานที่ฝาก: '+esc(r.work):''}</div>`:''}
    ${r.kind==='gov'&&(r.proj||r.cost)?`<div class="callout c-info"><b>โครงการ</b>${esc(r.proj||'-')}${r.cost?` · ประมาณการ <span class="num">${Number(r.cost).toLocaleString()}</span> บาท`:''}</div>`:''}
    ${r.headNote?`<p class="sub">ความเห็นหัวหน้างานบุคคล: ${esc(r.headNote)}</p>`:''}${r.dirNote?`<p class="sub">${esc(r.dirNote)}</p>`:''}
+   ${r.kind==='leave'&&TENURE_NOTE[r.type]&&(ME.isAdmin||ME.isHR)?`<div class="callout c-info"><b>ตรวจอายุราชการด้วยตนเอง</b>ระบบไม่ได้ตรวจเงื่อนไขนี้ให้ · ${esc(TENURE_NOTE[r.type])}</div>`:''}
    ${stageView(r)}${actions||''}</article>`}
 const noteBox=(id,ph)=>`<div class="fld"><label for="nt${id}">ความเห็น (ถ้าไม่${ME.isAdmin?'อนุมัติ':'เห็นชอบ'} ต้องใส่เหตุผล)</label><input type="text" id="nt${id}" placeholder="${ph||'เช่น ตรวจหลักฐานแล้ว'}"></div>`;
 V.approve=()=>{
@@ -1269,17 +1368,19 @@ V.approve=()=>{
 };
 
 /* ---------- คำขอของฉัน (ใบลา / ออกนอกบริเวณ / ไปราชการ-อบรม) ---------- */
+const reqText=r=>[r.type,r.why,r.place||'',r.proj||'',r.id,thRange(r.from,r.to),(({approved:'อนุมัติแล้ว',rejected:'ไม่อนุมัติ',cancel:'ยกเลิก',head:'รอหัวหน้างานบุคคล',dir:'รอ ผอ.',sub:'รอครูสอนแทน',ext:'รอผู้มีอำนาจ'})[r.st]||'')].join(' ');
 V.myreq=()=>{
-  const m=me(),k=st.kind,my=REQ.filter(r=>r.who===m),asked=REQ.filter(r=>r.canSub);
+  const m=me(),k=st.kind,my0=REQ.filter(r=>r.who===m),rq=(st.reqQ||'').trim(),my=rq?my0.filter(r=>reqText(r).indexOf(rq)>=0):my0,asked=REQ.filter(r=>r.canSub);
   const mySubs=SUBS.filter(s=>s.for===m&&s.date>=TODAY_ISO);
-  const types=[['leave','ใบลา','ลาป่วย ลากิจ ลาพักผ่อน ฯลฯ','leave','coral'],['out','ออกนอกบริเวณ','ระหว่างวัน ภายในวันนี้','out','teal'],['gov','ไปราชการ / อบรม','ตามหนังสือเชิญหรือคำสั่ง','gov','violet']];
+  const types=[['leave','ใบลา','ลาป่วย ลากิจ ลาพักผ่อน ฯลฯ','leave','coral'],['out','ออกนอกบริเวณ','ระหว่างวัน ภายในวันนี้','out','teal'],['gov','ไปราชการ / อบรม','ตามหนังสือเชิญหรือคำสั่ง','gov','violet'],['doc','ชั่วโมงงานเอกสาร','งานเอกสารนอกเวลาสอน','file','teal']];
   return`${asked.length?`<div class="callout c-info"><b>มีคนขอให้ท่านสอนแทน ${asked.length} รายการ</b><div><button class="btn sm" data-go="mysub">ไปตอบรับ</button></div></div>`:''}
    <section class="panel"><div class="ph"><h2>ยื่นคำขอ</h2>${k?'<button class="btn sm ghost" data-kind="">เปลี่ยนประเภท</button>':''}</div>
     ${!k?`<p class="sub">เลือกประเภทก่อน ระบบจะแสดงเฉพาะช่องที่ต้องกรอก · ชื่อและตำแหน่งเติมจากบัญชีให้แล้ว</p><div class="typepick">${types.map(([v,t,s,ic,h])=>`<button class="action" data-kind="${v}">${tile(ic,h)}<span class="main"><b>${t}</b><span class="sub">${s}</span></span>${svg('chev','chev')}</button>`).join('')}</div>`
-      :`<div class="who1">${avatar()}<div><b>${esc(ME.name)}</b><div class="sub">${esc((SM[m]||{}).pos||ME.position)}</div></div></div>${k==='leave'?leaveForm():k==='out'?outForm():govForm()}`}
+      :`<div class="who1">${avatar()}<div><b>${esc(ME.name)}</b><div class="sub">${esc((SM[m]||{}).pos||ME.position)}</div></div></div>${k==='leave'?leaveForm():k==='out'?outForm():k==='doc'?docForm():govForm()}`}
    </section>
    ${mySubs.length?`<section class="panel"><div class="ph"><h2>ฝากงานให้ครูสอนแทน</h2><p>คาบที่ท่านไม่อยู่</p></div><ul class="list">${mySubs.map(s=>`<li style="flex-wrap:wrap"><div class="main">${thD(s.date)} · ${s.p==='ทั้งวัน'?'ทั้งวัน':'คาบ '+esc(s.p)} · ${esc(s.cls)}<div class="sub">ผู้สอนแทน: ${s.done?(s.pick?esc(nm(s.pick)):'รวมชั้น'):'รอฝ่ายวิชาการจัด'}</div></div><div class="row" style="flex:1 1 260px"><input type="text" id="wk${s.id}" value="${esc(s.work)}" placeholder="เช่น ใบงานหน้า 24" style="flex:1" aria-label="งานที่ฝาก"><button class="btn sm pri" data-subwork="${s.id}">บันทึก</button></div></li>`).join('')}</ul></section>`:''}
-   <section class="panel"><div class="ph"><h2>คำขอของฉัน</h2><span class="count">${my.length}</span></div>${my.length?`<div class="cards">${my.slice(0,30).map(r=>`<article class="card"><div class="row between">${reqKindPill(r)}${reqStatus(r)}</div><span>${thRange(r.from,r.to)}${r.time?' · '+r.time:''}${r.days?' · '+r.days+' วัน':''} · ${esc(r.why)}</span>${stageView(r)}${r.dirNote?`<p class="sub">${esc(r.dirNote)}</p>`:''}
+   <section class="panel"><div class="ph"><h2>คำขอของฉัน</h2><span class="count">${my.length}</span></div>
+   <input type="search" id="reqQ" class="search" placeholder="ค้นหาประวัติคำขอ (ประเภท เหตุผล วันที่)" value="${esc(st.reqQ||'')}" aria-label="ค้นหาประวัติคำขอ">${my.length?`<div class="cards">${my.slice(0,30).map(r=>`<article class="card"><div class="row between">${reqKindPill(r)}${reqStatus(r)}</div><span>${thRange(r.from,r.to)}${r.time?' · '+r.time:''}${r.days?' · '+r.days+' วัน':''} · ${esc(r.why)}</span>${stageView(r)}${r.dirNote?`<p class="sub">${esc(r.dirNote)}</p>`:''}
      ${r.canExt?`<div class="callout c-warn"><b>บันทึกผลจากผู้มีอำนาจ</b><div class="fld"><label for="ex${r.id}">ผู้อนุมัติ / เลขที่หนังสือ</label><input type="text" id="ex${r.id}" placeholder="เช่น ผอ.สพป.นราธิวาส เขต 2 หนังสือที่ ..."></div><div class="row"><button class="btn sm good" data-ext="${r.id}:ok">อนุมัติแล้ว</button><button class="btn sm danger" data-ext="${r.id}:no">ไม่อนุมัติ</button></div></div>`:''}
      <div class="row">${r.hasFile?`<button class="btn sm" data-evid="${r.id}">ดูหลักฐาน</button>`:''}${r.canBack?`<button class="btn sm good" data-back="${r.id}">กลับถึงโรงเรียนแล้ว</button>`:''}${r.kind==='gov'&&r.st==='approved'&&!r.report?`<button class="btn sm pri" data-report="${r.id}">เขียนรายงานหลังอบรม</button>`:''}${r.report?'<span class="pill p-good">ส่งรายงานแล้ว</span>':''}${r.canCancel?`<button class="btn sm danger" data-rcancel="${r.id}:${r.kind}">ยกเลิก</button>`:''}</div></article>`).join('')}</div>`:empty('ยังไม่มีคำขอ')}</section>`;
 };
@@ -1290,7 +1391,7 @@ function leaveForm(){
    <div class="fld" id="lpart"><label for="l5">ช่วงเวลา</label><select id="l5"><option>เต็มวัน</option><option>ครึ่งวันเช้า</option><option>ครึ่งวันบ่าย</option></select></div></div>
    <p class="calc" id="lDays" aria-live="polite"></p><div id="lSum" class="lvbox"></div>
    <div class="fld"><label for="l3">เหตุผล</label><textarea id="l3" required placeholder="เช่น ไข้หวัด แพทย์ให้พัก"></textarea></div>
-   ${fileField('l4','หลักฐาน (ถ้ามี) เช่น ใบรับรองแพทย์ บัตรนัด','เก็บแบบส่วนตัว เปิดได้เฉพาะท่าน หัวหน้างานบุคคล และ ผอ.')}
+   ${fileField('l4','หลักฐาน (ถ้ามี) เช่น ใบรับรองแพทย์ หนังสือเชิญ','รูปหรือ PDF ไม่เกิน 5 MB · เก็บแบบส่วนตัว เปิดได้เฉพาะท่าน หัวหน้างานบุคคล และ ผอ.',true)}
    ${lvExtraFields()}
    <div class="note">ในรอบนี้: ${followLine(me())}</div>
    <p class="note">${ME.isDirector?'ใบของ ผอ.: บันทึกเป็น "รอผู้มีอำนาจ" แล้ว ผอ. บันทึกผลภายหลัง (ระบบไม่อนุมัติให้อัตโนมัติ)':ME.isHR||!B.hasHR?'ส่งถึง ผอ. อนุมัติ':'ส่งถึงหัวหน้างานบุคคลเห็นชอบ แล้วถึง ผอ. อนุมัติ'} · ถ้าเกินเกณฑ์ติดตามยังยื่นได้ โดยแนบเหตุผลและหลักฐาน</p>
@@ -1316,6 +1417,7 @@ const LV_TYPES=[
  {k:'oth',n:'อื่น ๆ (นอกเหนือ 11 ประเภท)',be:'อื่น ๆ',pay:'ตามที่ผู้อนุมัติพิจารณา',rules:['ระบุเหตุผลให้ชัดเจน ผู้อนุมัติจะพิจารณาเป็นรายกรณี']}
 ];
 const lvT=k=>LV_TYPES.find(x=>x.k===k);
+LV_TYPES.forEach(t=>{if(!t.be)t.be=t.n});   // หลังบ้าน v2.3 รับครบทุกประเภท
 const lvSel=()=>lvT(($('#lt')||{}).value||'sick');
 const lvSupported=ty=>!!ty.be&&(B.leaveTypes||[]).includes(ty.be);
 const lvFmtN=n=>Number.isInteger(n)?String(n):n.toFixed(1);
@@ -1340,7 +1442,40 @@ function lvRaiseHtml(r){
   if(r.lvl==='near')return`<div class="callout c-bad"><b>⚠ ใกล้ถึงเกณฑ์เลื่อนเงินเดือน</b>${base} · เหลืออีก ${Math.max(0,RULE.d-r.dA)} วัน / ${Math.max(0,LV_MAXT-r.tA)} ครั้ง</div>`;
   return`<div class="callout c-good">ยังอยู่ในเกณฑ์เลื่อนเงินเดือน — ${base}</div>`}
 function lvTypeSelect(){return`<div class="fld"><label for="lt">ประเภทการลา (11 ประเภทตามระเบียบ)</label><select id="lt">${LV_TYPES.map((t,i)=>`<option value="${t.k}">${i<11?(i+1)+'. ':''}${esc(t.n)}</option>`).join('')}</select></div><div id="lInfo" aria-live="polite" class="lvbox"></div>`}
-function lvExtraFields(){return`<div class="fld"><label for="lSig">ลายเซ็นดิจิทัล (ใช้กับ Export PDF · เซ็นด้วยนิ้วหรือเมาส์)</label><canvas id="lSig" class="lvsig" width="600" height="260" aria-label="พื้นที่เซ็นชื่อ"></canvas><div class="row"><button class="btn sm" type="button" data-lvsig="clear">ล้างลายเซ็น</button></div></div>
+/** ลายเซ็นที่บันทึกไว้: ไฟล์รูป PNG ส่วนตัวใน Drive โรงเรียน · ชีตเก็บแค่รหัสไฟล์ · เรียกใช้ได้เฉพาะเจ้าของ */
+const SIG={state:'unknown',data:null};
+function typedSigData(){
+  const c=document.createElement('canvas');c.width=600;c.height=260;const g=c.getContext('2d');
+  const nm1=(ME.name||'').replace(/^(นางสาว|นาง|นาย)/,'').split(' ')[0]||ME.name;
+  g.fillStyle='#1B1F3B';g.font='italic 78px "Segoe Script","Bradley Hand","Noto Sans Thai",cursive';g.translate(40,170);g.rotate(-.05);g.fillText(nm1,0,0);
+  return c;
+}
+function sigNote(){const n=$('#sigNote');if(n)n.textContent=SIG.state==='has'?'มีลายเซ็นที่บันทึกไว้แล้ว (เก็บส่วนตัว ท่านเท่านั้นที่ใช้ได้) · กด "เปลี่ยน" เพื่อแทนที่ หรือ "ลบ" เพื่อเอาออก':SIG.state==='none'?'ยังไม่มีลายเซ็นที่บันทึกไว้ · เซ็นแล้วกด "บันทึกไว้ใช้ครั้งหน้า"':'กำลังตรวจลายเซ็นที่บันทึกไว้…'}
+async function sigLoad(force){
+  if(SIG.state==='loading'||(!force&&SIG.state!=='unknown'))return;
+  SIG.state='loading';
+  try{const j=await api('sig.get');SIG.data=j.has?j.dataUrl:null;SIG.state=j.has?'has':'none'}catch(e){SIG.state='unknown'}
+  sigNote();
+}
+async function sigAction(v){
+  const c=$('#lSig');if(!c)return;const g=c.getContext('2d');
+  if(v==='clear'){g.clearRect(0,0,c.width,c.height);return}
+  if(v==='typed'){g.clearRect(0,0,c.width,c.height);g.drawImage(typedSigData(),0,0);toast('พิมพ์ชื่อแทนลายเซ็นแล้ว');return}
+  if(v==='saved'){if(SIG.state!=='has'){toast('ยังไม่มีลายเซ็นที่บันทึกไว้');return}const im=new Image();im.onload=()=>{g.clearRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);toast('ใช้ลายเซ็นที่บันทึกไว้แล้ว')};im.src=SIG.data;return}
+  if(v==='save'){
+    if(lvSigBlank()){toast('เซ็นชื่อก่อน แล้วกดบันทึก');return}
+    const img=c.toDataURL('image/png');
+    try{const j=await api('sig.save',{nonce:nonce(),data:{img}});SIG.data=img;SIG.state='has';sigNote();toast(j.msg)}catch(e){toast(e.message)}
+    return}
+  if(v==='del'){
+    if(SIG.state!=='has'){toast('ยังไม่มีลายเซ็นที่บันทึกไว้');return}
+    if(!confirm('ลบลายเซ็นที่บันทึกไว้? (ไฟล์ในระบบจะถูกลบด้วย)'))return;
+    try{const j=await api('sig.del',{nonce:nonce()});SIG.data=null;SIG.state='none';sigNote();toast(j.msg)}catch(e){toast(e.message)}
+  }
+}
+function lvExtraFields(){setTimeout(sigNote,0);sigLoad();return`<div class="fld"><label for="lSig">ลายเซ็นดิจิทัล (ใช้กับการดาวน์โหลดใบลา · เซ็นด้วยนิ้วหรือเมาส์)</label><canvas id="lSig" class="lvsig" width="600" height="260" aria-label="พื้นที่เซ็นชื่อ"></canvas>
+   <div class="row"><button class="btn sm" type="button" data-lvsig="saved">ใช้ลายเซ็นที่บันทึกไว้</button><button class="btn sm" type="button" data-lvsig="typed">พิมพ์ชื่อแทน</button><button class="btn sm" type="button" data-lvsig="save">บันทึกไว้ใช้ครั้งหน้า / เปลี่ยน</button><button class="btn sm danger" type="button" data-lvsig="del">ลบที่บันทึกไว้</button><button class="btn sm ghost" type="button" data-lvsig="clear">ล้าง</button></div>
+   <small class="sub" id="sigNote"></small></div>
    <div><button class="btn" type="button" data-lvpdf="1">Export ใบลาเป็น PDF</button></div>`}
 function lvRefresh(){
   const ty=lvSel(),r=lvRemain(ty),box=$('#lInfo');if(!ty||!box)return;
@@ -1411,6 +1546,13 @@ ${r.ok&&r.num!=null?`<p class="ind">สิทธิคงเหลือก่�
   toast('กำลังเปิดหน้าต่างพิมพ์ · เลือก "บันทึกเป็น PDF"');
 }
 
+function docForm(){
+  const D=B.docs||{mine:[],monthHours:0};
+  return`<form class="f" id="fDoc"><div class="fgrid"><div class="fld"><label for="dc1">วันที่</label><input type="date" id="dc1" value="${TODAY_ISO}" max="${TODAY_ISO}"></div><div class="fld"><label for="dc2">ชั่วโมง</label><input type="number" id="dc2" min="0.5" max="12" step="0.5" value="1" inputmode="decimal"></div></div>
+   <div class="fld"><label for="dc3">งานเอกสารที่ทำ</label><input type="text" id="dc3" required maxlength="200" placeholder="เช่น จัดทำรายงาน SAR ด้านผู้เรียน"></div>
+   <p class="note">บันทึกชั่วโมงงานเอกสารนอกเวลาสอน (ย้อนหลังได้ไม่เกิน 60 วัน) · เดือนนี้ ${D.monthHours} ชั่วโมง</p><div><button class="btn pri big" type="submit">บันทึกชั่วโมง</button></div></form>
+   <h3>รายการของฉัน</h3>${D.mine.length?`<ul class="list">${D.mine.slice(0,20).map(x=>`<li><div class="main"><b style="font-weight:500">${esc(thD(x.d))}</b><div class="sub">${esc(x.what)}</div></div><span class="num pill p-mute">${x.h} ชม.</span><button class="btn sm danger" data-docdel="${x.id}">ลบ</button></li>`).join('')}</ul>`:empty('ยังไม่มีรายการ')}
+   ${D.all?`<h3>สรุปรายคน เดือนนี้ (ผอ./หัวหน้างานบุคคล)</h3>${D.all.length?`<ul class="list">${D.all.map(x=>`<li><div class="main">${esc(x.name)}</div><span class="num">${x.h} ชม.</span></li>`).join('')}</ul>`:empty('ยังไม่มีข้อมูล')}`:''}`}
 function outForm(){const P=PERIODS.filter(p=>p[0]!=='เช้า');return`<form class="f" id="fOut">
    <div class="fgrid"><div class="fld"><label for="o1">ออกช่วงคาบ (วันนี้)</label><select id="o1">${P.map(([p,t,f,to])=>`<option value="${esc(p)}" ${clockNow()<to&&clockNow()>=f?'selected':''}>คาบ ${esc(p)} · ${t}${B.hasTT?' · '+(MY_TT[p]?'มีสอน':'ว่าง'):''}</option>`).join('')}</select></div>
    <div class="fld"><label for="o2">ไปที่ไหน / ทำอะไร</label><input type="text" id="o2" required placeholder="เช่น ไปไปรษณีย์"></div></div>
@@ -1422,7 +1564,8 @@ function govForm(){
    <p class="calc" id="gDays" aria-live="polite"></p>
    <details class="more"><summary>ข้อมูลเพิ่มเติม (โครงการ ค่าใช้จ่าย หนังสือเชิญ)</summary><div class="f">
    <div class="fgrid"><div class="fld"><label for="g4">เบิกจากโครงการ (ถ้ามี)</label><input type="text" id="g4" list="projList" placeholder="เช่น โครงการพัฒนาบุคลากร"></div><div class="fld"><label for="g5">ประมาณการ (บาท)</label><input type="number" id="g5" min="0" inputmode="numeric" placeholder="0"></div></div>
-   <div class="fld"><label for="g7">ลิงก์หนังสือเชิญ (ถ้ามี)</label><input type="url" id="g7" placeholder="https://drive.google.com/…"></div></div></details>
+   ${fileField('g8','แนบหนังสือราชการ/หนังสือเชิญ (ถ้ามี)','รูปหรือ PDF ไม่เกิน 5 MB · เก็บแบบส่วนตัว เปิดได้เฉพาะท่าน หัวหน้างานบุคคล และ ผอ.',true)}
+   <div class="fld"><label for="g7">หรือแนบเป็นลิงก์หนังสือเชิญ (ถ้ามี)</label><input type="url" id="g7" placeholder="https://drive.google.com/…"></div></div></details>
    <p class="note">ชั่วโมงพัฒนาจะนับเมื่อส่งรายงานหลังอบรม (ไม่นับตอนอนุมัติ) · หลังอนุมัติ ระบบส่งฝ่ายวิชาการจัดครูสอนแทน</p>
    <div><button class="btn pri big" type="submit">ขออนุญาตไปราชการ</button></div></form>`}
 function reportForm(r){
@@ -1526,7 +1669,7 @@ function taskCard(t,mode){
     ${t.steps?`<div class="row"><input type="text" id="ns${t.id}" placeholder="เพิ่มขั้นตอน" style="flex:1 1 180px" aria-label="ขั้นตอนใหม่"><button class="btn sm" data-addstep="${t.id}">+ ขั้นตอน</button><button class="btn sm ghost" data-mode="${t.id}:ten">ใช้รายงาน %</button></div>`
      :`<div class="row"><span class="sub">รายงานความคืบหน้า:</span>${[25,50,75].map(v=>`<button class="chip" data-tset="${t.id}:${v}" aria-pressed="${t.pct===v}">${v}%</button>`).join('')}<button class="btn sm ghost" data-mode="${t.id}:steps">แบ่งเป็นขั้นตอน</button></div>`}
     <div class="row"><input type="text" id="lg${t.id}" placeholder="บันทึกสั้น ๆ ว่าทำถึงไหน" style="flex:1 1 160px" aria-label="บันทึกความคืบหน้า"><input type="url" id="lk${t.id}" placeholder="ลิงก์ไฟล์ (ถ้ามี)" style="flex:1 1 140px" aria-label="ลิงก์ไฟล์"><button class="btn sm" data-log="${t.id}">บันทึก</button></div>
-    <div class="row"><button class="btn good" data-tp="${t.id}:100">${t.self?'เสร็จแล้ว':'ส่งงาน'}</button>${t.self?`<button class="btn sm danger" data-wdel="${t.id}">ลบ</button>`:''}</div>`:''}
+    <div class="row"><button class="btn good" data-tp="${t.id}:100">${t.self?'เสร็จแล้ว':'ส่งงาน'}</button>${t.self&&(ME.isAdmin||ME.isClerk)?`<button class="btn sm danger" data-wdel="${t.id}">ลบ</button>`:''}</div>`:''}
    ${canRev?`<div class="callout c-info"><b>ตรวจรับงาน</b><div class="fld"><label for="rv${t.id}">สิ่งที่ต้องแก้ไข (ถ้าส่งกลับ)</label><input type="text" id="rv${t.id}" placeholder="เช่น แนบไฟล์ให้ครบ"></div><div class="row"><button class="btn sm good" data-rev="${t.id}:ok">ตรวจรับ เสร็จสิ้น</button><button class="btn sm danger" data-rev="${t.id}:no">ส่งกลับแก้ไข</button></div></div>`:''}
    ${mode==='all'&&(ME.isAdmin||ME.isClerk)&&t.self===false&&t.st!=='done'?`<div><button class="btn sm danger" data-wdel="${t.id}">ลบงาน</button></div>`:''}`:''}</article>`}
 const HOWTO=`<details class="howto"><summary>วิธีใช้งาน</summary><p>งานที่ได้รับมอบหมายแสดงทันที · เลือกวิธีติดตามได้ 2 แบบ: <b>แบ่งเป็นขั้นตอน</b> ติ๊กทีละขั้น ระบบคิด % ให้ หรือ <b>รายงาน %</b> กดครั้งเดียว 25/50/75% · งานสั้นกด "ส่งงาน" ได้เลย · งานที่มอบหมายจะ "เสร็จสิ้น" เมื่อผู้มอบหมายตรวจรับ · % เป็นค่าที่เจ้าของงานรายงานเอง</p></details>`;
@@ -1644,7 +1787,7 @@ V.visit=()=>`<section class="panel"><h2>ลงทะเบียนผู้ม�
  <section class="panel"><div class="ph"><h2>ผู้มาติดต่อวันนี้</h2><span class="count">${VISIT.length}</span></div>${visitList()}</section>`;
 
 /* ---------- เช็คยอดนักเรียน: เหตุฉุกเฉิน / กิจกรรมนอกสถานที่ ---------- */
-V.count=()=>`${seg('countTab',[['emg','เหตุฉุกเฉิน / ซ้อม'+(EMG.on?' •':'')],['trip','กิจกรรมนอกสถานที่']],st.countTab)}${st.countTab==='emg'?emgView():tripView()}`;
+V.count=()=>`${emgView()}<div class="sec"><h2>กิจกรรมนอกสถานที่</h2></div>${linkCard('student','เช็คยอดนักเรียนระหว่างกิจกรรมนอกสถานที่','ย้ายไป Q-Student แล้ว')}`;
 function emgView(){
   const isDir=ME.isAdmin,mine=ME.rooms||[];
   const chan='<p class="note">ช่องทางแจ้ง: แสดงในแอปเมื่อบุคลากรเปิด Q-Teacher หรือหน้ากลางเท่านั้น <b>ระบบไม่ได้ส่ง LINE ให้อัตโนมัติ</b> · ควรแจ้งในกลุ่มไลน์และใช้สัญญาณของโรงเรียนด้วย</p>';
@@ -1739,8 +1882,8 @@ function tripView(){
 V.dev=()=>{
   const over=ME.isAdmin||ME.isAcad||ME.isHR,mineOk=ME.isTeacher;
   const view=!mineOk?'all':!over?'mine':st.devView;
-  return`<div class="row topacts">${mineOk?`<button class="btn pri" data-devopen="1">${svg('plus','i16')} บันทึกการพัฒนา</button><button class="btn" data-plc="1">${svg('plc','i16')} บันทึก PLC</button>`:''}${ME.isAdmin||ME.isAcad?`<button class="btn" data-supopen="1">${svg('dev','i16')} นัดนิเทศ</button>`:''}</div>
-   ${st.devOpen?devForm():''}${st.plcOpen?plcForm():''}${st.supOpen?supForm():''}
+  return`<div class="row topacts">${mineOk?`<button class="btn pri" data-devopen="1">${svg('plus','i16')} บันทึกการพัฒนา</button><button class="btn" data-plc="1">${svg('plc','i16')} บันทึก PLC</button>`:''}</div>
+   ${st.devOpen?devForm():''}${st.plcOpen?plcForm():''}
    ${mineOk&&over?seg('devView',[['mine','ของฉัน'],['all','ภาพรวมครู']],view):''}
    ${secBox('dev',D=>view==='all'?devAll(D):devMine(D))}`};
 function hoursOf(d){return Math.round(((d.train||0)+(d.online||0)+(d.plc||0))*10)/10}
@@ -1750,11 +1893,11 @@ function devMine(D){
   const myHelpLog=D.myLog;
   return`<section class="panel"><div class="ph"><h2>ความก้าวหน้าของฉัน</h2><p>${devTargetTxt(D)}</p></div>
    <div class="bigtot"><b class="num">${tot}</b><span>/ ${D.target} ชั่วโมง</span></div><div class="prog"><i style="width:${clamp(tot/D.target*100,0,100)}%"></i></div>
-   <div class="kv"><div><span>อบรม/ไปราชการ</span><b class="num">${d.train} ชม.</b></div><div><span>อบรมออนไลน์</span><b class="num">${d.online} ชม.</b></div><div><span>PLC</span><b class="num">${d.plc} ชม.</b></div><div><span>รับการนิเทศ</span><b class="num">${d.sup} ครั้ง</b><small>ไม่รวมในชั่วโมง</small></div></div>
+   <div class="kv"><div><span>อบรม/ไปราชการ</span><b class="num">${d.train} ชม.</b></div><div><span>อบรมออนไลน์</span><b class="num">${d.online} ชม.</b></div><div><span>PLC</span><b class="num">${d.plc} ชม.</b></div></div>
    <p class="note">มีหลักฐานแล้ว ${d.ev} จาก ${tot} ชั่วโมง (เกียรติบัตร รายงานหลังอบรม หรือบันทึก PLC) · กิจกรรมเดียวกันไม่นับซ้ำ · ชั่วโมงจากไปราชการนับเมื่อส่งรายงาน ไม่ใช่ตอนอนุมัติ</p></section>
   <section class="panel"><div class="ph"><h2>บันทึกการอบรม</h2><span class="count">${myHelpLog.length}</span></div>
    ${myHelpLog.length?`<ul class="list">${myHelpLog.map(x=>`<li><span class="sw" style="background:${x.kind==='online'?'var(--c-teal)':'var(--c-blue)'}"></span><div class="main">${x.cert?`<a href="${esc(x.cert)}" target="_blank" rel="noopener">${esc(x.t)}</a>`:esc(x.t)}<div class="sub">${thDY(x.d)} · ${x.kind==='online'?'ออนไลน์':'อบรม/ไปราชการ'} · ${x.report?'มีรายงาน':x.cert?'มีเกียรติบัตร':'ยังไม่มีหลักฐาน'}</div></div><span class="num pill p-mute">${x.h} ชม.</span>${x.report||x.ref?'':`<button class="btn sm danger" data-devdel="${x.id}" aria-label="ลบ">ลบ</button>`}</li>`).join('')}</ul>`:empty('ยังไม่มีบันทึก','กด "บันทึกการพัฒนา" ด้านบน')}</section>
-  <section class="panel"><div class="ph"><h2>นิเทศ</h2></div>${supList(D.sup.filter(s=>s.who===me()),false)}</section>
+  ${linkCard('academic','นิเทศและผลนิเทศ','ย้ายไป Q-Academic แล้ว')}
   <section class="panel"><div class="ph"><h2>PLC ที่เข้าร่วม</h2></div>${plcList(D.plc)}</section>
   <section class="panel"><div class="ph"><h2>แผนพัฒนารายบุคคล (IDP)</h2><button class="btn sm" data-idpopen="1">${st.idpOpen?'ปิด':'+ เป้าหมาย'}</button></div>
     ${st.idpOpen?`<form class="f boxed" id="idpForm"><div class="fld"><label for="ip1">เป้าหมาย</label><input type="text" id="ip1" required placeholder="เช่น ใช้ Phonics ช่วยนักเรียน ป.1"></div><div class="fld"><label for="ip2">สมรรถนะ</label><select id="ip2">${D.compNames.map((c,i)=>`<option value="${i}">${esc(c)}</option>`).join('')}</select></div><div class="fld"><label for="ip3">วิธีพัฒนา</label><input type="text" id="ip3"></div><div class="fld"><label for="ip4">ตัวชี้วัด</label><input type="text" id="ip4"></div><div><button class="btn pri" type="submit">เพิ่ม</button></div></form>`:''}
@@ -1767,11 +1910,11 @@ function devAll(D){
   const T=REAL.filter(s=>s.teacher).map(s=>({s,d:D.totals.tot[s.id]||{train:0,online:0,plc:0,sup:0,ev:0}})).map(x=>Object.assign(x,{h:hoursOf(x.d)})).sort((a,b)=>b.h-a.h);
   const reach=T.filter(x=>x.h>=D.target).length,avg=T.length?Math.round(T.reduce((a,x)=>a+x.h,0)/T.length*10)/10:0;
   return`<section class="panel"><div class="ph"><h2>ชั่วโมงพัฒนารายบุคคล</h2><p>${devTargetTxt(D)}</p></div>
-   <div class="kv"><div><span>เฉลี่ยต่อคน</span><b class="num">${avg} ชม.</b></div><div><span>ถึงเป้าหมาย</span><b class="num">${reach}/${T.length} คน</b></div><div><span>นิเทศแล้ว</span><b class="num">${T.reduce((a,x)=>a+x.d.sup,0)} ครั้ง</b></div></div>
-   ${isMobile()?`<ul class="slist">${T.map(x=>{const open=st.open['d'+x.s.id];return`<li><button class="srow" data-open="d${x.s.id}" aria-expanded="${!!open}"><span class="main"><b>${esc(x.s.name)}</b><span class="prog thin"><i style="width:${clamp(x.h/D.target*100,0,100)}%"></i></span></span><span class="num t">${x.h}/${D.target}</span></button>${open?`<div class="sdet"><div>อบรม/ไปราชการ ${x.d.train} · ออนไลน์ ${x.d.online} · PLC ${x.d.plc} ชม.</div><div>มีหลักฐาน ${x.d.ev} ชม. · นิเทศ ${x.d.sup} ครั้ง</div></div>`:''}</li>`}).join('')}</ul>`
-   :`<div class="scroll"><table><thead><tr><th>ครู</th><th class="r">อบรม</th><th class="r">ออนไลน์</th><th class="r">PLC</th><th class="r">รวม (ชม.)</th><th class="r">มีหลักฐาน</th><th class="r">นิเทศ (ครั้ง)</th><th style="min-width:140px">เทียบเป้า</th></tr></thead><tbody>${T.map(x=>`<tr><td>${esc(x.s.name)}</td><td class="r num">${x.d.train}</td><td class="r num">${x.d.online}</td><td class="r num">${x.d.plc}</td><td class="r num"><b>${x.h}</b></td><td class="r num">${x.d.ev}</td><td class="r num">${x.d.sup}</td><td><div class="prog"><i style="width:${clamp(x.h/D.target*100,0,100)}%"></i></div></td></tr>`).join('')}</tbody></table></div>`}
+   <div class="kv"><div><span>เฉลี่ยต่อคน</span><b class="num">${avg} ชม.</b></div><div><span>ถึงเป้าหมาย</span><b class="num">${reach}/${T.length} คน</b></div></div>
+   ${isMobile()?`<ul class="slist">${T.map(x=>{const open=st.open['d'+x.s.id];return`<li><button class="srow" data-open="d${x.s.id}" aria-expanded="${!!open}"><span class="main"><b>${esc(x.s.name)}</b><span class="prog thin"><i style="width:${clamp(x.h/D.target*100,0,100)}%"></i></span></span><span class="num t">${x.h}/${D.target}</span></button>${open?`<div class="sdet"><div>อบรม/ไปราชการ ${x.d.train} · ออนไลน์ ${x.d.online} · PLC ${x.d.plc} ชม.</div><div>มีหลักฐาน ${x.d.ev} ชม.</div></div>`:''}</li>`}).join('')}</ul>`
+   :`<div class="scroll"><table><thead><tr><th>ครู</th><th class="r">อบรม</th><th class="r">ออนไลน์</th><th class="r">PLC</th><th class="r">รวม (ชม.)</th><th class="r">มีหลักฐาน</th><th style="min-width:140px">เทียบเป้า</th></tr></thead><tbody>${T.map(x=>`<tr><td>${esc(x.s.name)}</td><td class="r num">${x.d.train}</td><td class="r num">${x.d.online}</td><td class="r num">${x.d.plc}</td><td class="r num"><b>${x.h}</b></td><td class="r num">${x.d.ev}</td><td><div class="prog"><i style="width:${clamp(x.h/D.target*100,0,100)}%"></i></div></td></tr>`).join('')}</tbody></table></div>`}
    <p class="note">ชั่วโมงในปีงบประมาณ · อบรมที่ครูบันทึกเองนับตามที่รายงาน "มีหลักฐาน" = มีเกียรติบัตรหรือรายงาน · ไม่รวมบัญชีทดสอบ</p></section>
-  <section class="panel"><div class="ph"><h2>นิเทศชั้นเรียน</h2></div>${supList(D.sup,true)}</section>
+  ${linkCard('academic','นิเทศชั้นเรียน','ย้ายไป Q-Academic แล้ว')}
   <section class="panel"><div class="ph"><h2>PLC ล่าสุด</h2></div>${plcList(D.plc)}</section>`}
 function devForm(){return`<section class="panel"><div class="ph"><h2>บันทึกการพัฒนา</h2><button class="btn sm" data-devopen="1">ปิด</button></div><form class="f" id="devForm"><div class="fld"><label for="dv1">ชื่อการอบรม/กิจกรรม</label><input type="text" id="dv1" required></div><div class="fgrid"><div class="fld"><label for="dv2">วันที่</label><input type="date" id="dv2" value="${TODAY_ISO}" max="${TODAY_ISO}"></div><div class="fld"><label for="dv3">ชั่วโมงที่เข้าร่วมจริง</label><input type="number" id="dv3" min="0.5" step="0.5" inputmode="decimal" value="3"></div><div class="fld"><label for="dv4">ประเภท</label><select id="dv4"><option value="online">อบรมออนไลน์</option><option value="train">อบรม/ไปราชการ</option></select></div></div><div class="fld"><label for="dv5">ลิงก์เกียรติบัตร (ถ้ามี)</label><input type="url" id="dv5" placeholder="https://drive.google.com/…"></div><p class="note">ไปราชการที่ยื่นผ่าน "คำขอ" ให้ส่งรายงานหลังอบรมที่หน้าคำขอแทน เพื่อไม่นับซ้ำ</p><div><button class="btn pri" type="submit">บันทึก</button></div></form></section>`}
 function plcForm(){return`<section class="panel"><div class="ph"><h2>บันทึก PLC</h2><button class="btn sm" data-plc="1">ปิด</button></div><form class="f" id="plcForm"><div class="fgrid"><div class="fld"><label for="p1">วันที่</label><input type="date" id="p1" value="${TODAY_ISO}"></div><div class="fld"><label for="p2">ชั่วโมง</label><input type="number" id="p2" value="2" min="0.5" step="0.5" inputmode="decimal"></div><div class="fld"><label for="p6">กลุ่ม</label><input type="text" id="p6" placeholder="เช่น กลุ่มปฐมวัย–ป.3"></div></div>
@@ -1859,9 +2002,10 @@ function workDays(a,b,part){if(!a||!b||b<a)return 0;const hol=new Set(B.holidays
 const photoOf=id=>{const p=PICKED[id];if(p&&p.err)throw new Error(p.err);if(p&&!p.data)throw new Error('รอย่อรูปสักครู่');return p?p.data:''};
 const clearPick=(...ids)=>ids.forEach(id=>delete PICKED[id]);
 async function openEvidence(id){busyModal('กำลังเปิดหลักฐาน…');try{const j=await api('evidence',{id});if(j.url){closeModal();window.open(j.url,'_blank','noopener');return}
+  if(/^data:application\/pdf/.test(j.dataUrl||'')){const bl=await(await fetch(j.dataUrl)).blob(),u=URL.createObjectURL(bl);modal(`<div class="row between"><h2>หลักฐานที่แนบ (PDF)</h2><button class="btn sm" data-close="1">ปิด</button></div><a class="btn pri big wide" style="text-align:center" href="${u}" target="_blank" rel="noopener" download="หลักฐาน.pdf">เปิด / ดาวน์โหลดไฟล์ PDF</a><p class="note">ข้อมูลส่วนบุคคล เปิดได้เฉพาะเจ้าของคำขอและผู้พิจารณา</p>`);return}
   modal(`<div class="row between"><h2>หลักฐานที่แนบ</h2><button class="btn sm" data-close="1">ปิด</button></div><img src="${j.dataUrl}" alt="หลักฐาน" style="width:100%;border-radius:12px"><p class="note">ข้อมูลส่วนบุคคล เปิดได้เฉพาะเจ้าของคำขอและผู้พิจารณา</p>`)}catch(e){closeModal();toast(e.message)}}
 
-document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-lvpdf],[data-lvsig]');if(!t)return;if(t.dataset.lvpdf)lvExport();else{const c=$('#lSig');if(c)c.getContext('2d').clearRect(0,0,c.width,c.height)}});
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-lvpdf],[data-lvsig]');if(!t)return;if(t.dataset.lvpdf)lvExport();else sigAction(t.dataset.lvsig)});
 document.addEventListener('click',async e=>{
   if(e.target.id==='sheet'){st.sheet=false;renderChrome();return}
   const ov=e.target.closest('[data-ov]');if(ov&&e.target===ov){closeModal();return}
@@ -1872,6 +2016,13 @@ document.addEventListener('click',async e=>{
   if(d.sheet){st.sheet=d.sheet==='1';renderChrome();return}
   if(d.refresh){st.sheet=false;refresh(false);return}
   if(d.secretry){delete SEC_ERR[d.secretry];SEC_AT[d.secretry]=0;ensureSec(d.secretry);render();return}
+  if(d.xapp){extGo(d.xapp);return}
+  if(d.lsort){const k=d.lsort,s=st.loadSort||{k:'over',d:-1};st.loadSort=s.k===k?{k,d:-s.d}:{k,d:k==='name'?1:-1};render();return}
+  if(d.docdel){if(!confirm('ลบรายการนี้?'))return;act('doc.del',{id:d.docdel},t).catch(()=>{});return}
+  if(d.mood){act('mood.set',{data:{level:Number(d.mood)}},t).catch(()=>{});return}
+  if(d.help){helpSheet();return}
+  if(d.helpsend){act('help.ask',{data:{text:(($('#hlp')||{}).value||'').trim()}},t).then(closeModal).catch(()=>{});return}
+  if(d.offsite){const p=d.offsite.split(':');offsiteCheck(p[0],p[1]);return}
   if(d.tab){go(d.tab);return}
   if(d.bell){if(st.tab!=='home')go('home');st.allPend=true;render();setTimeout(()=>(needCheckIn()?$('#punch'):$('#actions'))?.scrollIntoView({behavior:'smooth'}),30);return}
   if(d.allpend){st.allPend=!st.allPend;render();return}
@@ -2010,8 +2161,9 @@ document.addEventListener('submit',async e=>{
   const v=s=>($(s)?.value||'').trim();
   try{
   if(f.id==='fLeave'){const lty=lvSel();if(lty.block||!lvSupported(lty)){toast(lty.block?LV_VAC_MSG:'ประเภทนี้ยังยื่นผ่านระบบไม่ได้');return}if(!workDays(v('#l1'),v('#l2'),$('#lpart').hidden?'เต็มวัน':v('#l5'))){toast('ช่วงที่เลือกเป็นวันหยุดทั้งหมด');return}const ph=photoOf('l4');await act('leave.create',{data:{type:lty.be,start:v('#l1'),end:v('#l2'),part:$('#lpart').hidden?'เต็มวัน':$('#l5').value,reason:v('#l3'),photo:ph}},btn);clearPick('l4');st.kind='';render()}
+  if(f.id==='fDoc'){await act('doc.add',{data:{date:v('#dc1'),hours:v('#dc2'),what:v('#dc3')}},btn);return}
   if(f.id==='fOut'){const teach=B.hasTT?!!MY_TT[v('#o1')]:!!st.outTeach;await act('out.create',{data:{period:v('#o1'),why:v('#o2'),teaching:teach,sub:teach?v('#o4'):'',work:teach?v('#o5'):''}},btn);st.outTeach=false;st.kind='';render()}
-  if(f.id==='fGov'){await act('leave.create',{data:{type:'ไปราชการ',start:v('#g3'),end:v('#g6')||v('#g3'),reason:v('#g1'),place:v('#g2'),proj:v('#g4'),cost:v('#g5'),attachment:v('#g7')}},btn);st.kind='';render()}
+  if(f.id==='fGov'){await act('leave.create',{data:{type:'ไปราชการ',start:v('#g3'),end:v('#g6')||v('#g3'),reason:v('#g1'),place:v('#g2'),proj:v('#g4'),cost:v('#g5'),attachment:v('#g7'),photo:photoOf('g8')}},btn);clearPick('g8');st.kind='';render()}
   if(f.id==='myTaskForm'){const steps=$('#mt4').value.trim();await act('work.addMine',{data:{title:v('#mt1'),to:v('#mt2'),due:v('#mt3'),mode:steps?'steps':'ten',steps}},btn);st.addTask=false;render()}
   if(f.id==='taskForm'){await act('work.add',{data:{title:v('#tk1'),to:v('#tk2'),owner:v('#tk3'),due:v('#tk4'),steps:$('#tk6').value,proj:v('#tk5')}},btn);st.addTask=false;render()}
   if(f.id==='cpForm'){if(!v('#cp1')){toast('พิมพ์ชื่อจุดตรวจ');return}await act('cp.add',{name:v('#cp1')},btn)}
@@ -2044,6 +2196,8 @@ setInterval(()=>{const c=$('#clk');if(c)c.textContent=clockNow()},15000);
 /** ตรวจข้อมูลใหม่อัตโนมัติเฉพาะตอนมีเหตุฉุกเฉินและเปิดหน้าเช็คยอดอยู่ (ทุก 30 วินาที) */
 setInterval(()=>{if(B&&EMG.on&&st.tab==='count'&&st.countTab==='emg'&&!document.hidden&&!st.dirty)refresh(true)},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&B&&Date.now()-st.fetchedAt>180000)refresh(true)});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='loadYm'){st.loadYm=e.target.value;render()}});
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='reqQ'){st.reqQ=e.target.value;const pos=e.target.selectionStart;render();const el=$('#reqQ');if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}}});
 boot();
 })();
 
