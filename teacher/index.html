@@ -20,6 +20,36 @@ const CONFIG = {
   HUB_URL: '../'                     // กลับหน้ากลาง Q-Kawa
 };
 </script>
+<script>
+/* ตัวเฝ้าหน้า: ถ้าค้างที่หน้า "กำลังเปิด…" เกิน 15 วินาที หรือมี error ก่อนหน้าแรกวาดเสร็จ ให้ขึ้นข้อความบอกสาเหตุ + ปุ่มลองใหม่ (ไม่ขึ้นกับสคริปต์หลัก) */
+(function(){
+  var W=window;W.__qkStage='script';W.__qkErr='';var T0=Date.now();
+  var WHY={script:'ไฟล์หน้าเว็บโหลดไม่ครบ หรือสคริปต์ยังไม่เริ่มทำงาน (เน็ตช้า หรือไฟล์ที่ต้องใช้โหลดไม่ได้)',
+    liff:'เชื่อมต่อ LINE (LIFF) ไม่สำเร็จหรือช้ามาก',login:'กำลังพาไปล็อกอิน LINE ไม่สำเร็จ',
+    cache:'แสดงข้อมูลที่จำไว้ในเครื่องไม่ได้ (แคชเก่าไม่เข้ากับหน้าใหม่)',
+    api:'รอหลังบ้าน (Google Apps Script) ตอบ ใช้เวลานานผิดปกติ อาจเป็นเน็ตช้า หรือหลังบ้านกำลังเริ่มทำงาน',
+    render:'วาดหน้าจอไม่สำเร็จ (ข้อมูลที่ได้มาวาดไม่ได้)'};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function splash(){var b=document.getElementById('boot');return !!(b&&!b.hidden&&b.querySelector('.spin'))}
+  W.qkClear=function(){try{var k=[],i;for(i=0;i<localStorage.length;i++){var n=localStorage.key(i);if(n.indexOf('qt21_')===0||n.indexOf('qt2_')===0)k.push(n)}k.forEach(function(n){localStorage.removeItem(n)})}catch(e){}try{sessionStorage.clear()}catch(e){}location.reload()};
+  W.qkFail=function(stage,err,wait){
+    var st=stage||W.__qkStage,em=err&&err.message?err.message:(err?String(err):W.__qkErr);
+    if(em)W.__qkErr=em;
+    var host=document.getElementById('boot');if(!host)return;
+    host.hidden=false;try{document.body.classList.add('plain')}catch(e){}
+    host.innerHTML='<div class="center" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px"><div style="max-width:420px;width:100%;background:#fff;color:#1B1F3B;border-radius:22px;padding:22px 20px;box-shadow:0 10px 30px rgba(44,48,110,.15);font-family:IBM Plex Sans Thai,Tahoma,sans-serif;text-align:center">'
+     +'<div style="font-size:2rem">⚠️</div><h2 style="margin:6px 0;font-size:1.15rem">'+(wait?'Q-Teacher เปิดช้ากว่าปกติ':'Q-Teacher เปิดไม่สำเร็จ')+'</h2>'
+     +'<p style="margin:6px 0 10px;color:#5E6385;font-size:.92rem">'+esc(WHY[st]||WHY.script)+'</p>'
+     +'<p style="margin:0 0 14px;color:#8A8FAE;font-size:.76rem">ขั้นที่ค้าง: '+esc(st)+' · ผ่านมา '+Math.round((Date.now()-T0)/1000)+' วินาที'+(em?'<br>'+esc(em).slice(0,160):'')+'</p>'
+     +'<button onclick="location.reload()" style="width:100%;border:0;border-radius:14px;padding:13px;background:#5B5BF0;color:#fff;font:600 1rem inherit;cursor:pointer;margin-bottom:8px">ลองใหม่</button>'
+     +'<button onclick="qkClear()" style="width:100%;border:1.5px solid #E7E9F3;border-radius:14px;padding:11px;background:#fff;color:#1B1F3B;font:500 .9rem inherit;cursor:pointer">ล้างข้อมูลที่จำไว้ในเครื่อง แล้วลองใหม่</button>'
+     +(wait?'<p style="margin:10px 0 0;color:#8A8FAE;font-size:.76rem">ถ้ารอได้ ปล่อยไว้สักครู่ หน้าจะเปิดเองเมื่อข้อมูลมาถึง</p>':'')+'</div></div>';
+  };
+  W.addEventListener('error',function(e){W.__qkErr=(e&&e.message)||'error';if(splash())W.qkFail(W.__qkStage,e&&e.error?e.error:{message:e.message},false)});
+  W.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;W.__qkErr=(r&&r.message)||String(r||'rejection');if(splash())W.qkFail(W.__qkStage,r,false)});
+  setTimeout(function(){if(splash())W.qkFail(W.__qkStage,null,true)},15000);
+})();
+</script>
 <style>
 /* Layout: Q-Kawa suite. Phone + iPad (<1000px) = app shell: greeting header, cards, icon shortcuts, fixed bottom bar + menu sheet.
    Computer (>=1000px) = header + left sidebar + content grid (same as v.2). */
@@ -768,8 +798,8 @@ const nonce=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,10);
 /** เรียกหลังบ้าน + จับเวลาแยกส่วน (รอเซิร์ฟเวอร์ / รับข้อมูล) สำหรับหน้าวินิจฉัยของผู้ดูแล */
 async function api(action,payload){
   let r;busyBar(true);const t0=performance.now();
-  try{r=await fetch(CONFIG.API_URL,{method:'POST',body:JSON.stringify(Object.assign({action,idToken:liff.getIDToken()},payload||{}))});}
-  catch(e){busyBar(false);const er=new Error('เชื่อมต่อไม่ได้ ตรวจสัญญาณอินเทอร์เน็ตแล้วลองใหม่');er.code='NETWORK';throw er}
+  try{r=await Promise.race([fetch(CONFIG.API_URL,{method:'POST',body:JSON.stringify(Object.assign({action,idToken:liff.getIDToken()},payload||{}))}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),40000))]);}
+  catch(e){busyBar(false);const to=e&&e.message==='TIMEOUT';const er=new Error(to?'หลังบ้านไม่ตอบภายใน 40 วินาที ลองใหม่อีกครั้ง':'เชื่อมต่อไม่ได้ ตรวจสัญญาณอินเทอร์เน็ตแล้วลองใหม่');er.code=to?'TIMEOUT':'NETWORK';throw er}
   const t1=performance.now();let txt='',j;
   try{txt=await r.text();j=JSON.parse(txt)}catch(e){busyBar(false);const er=new Error('หลังบ้านตอบกลับไม่ถูกต้อง (ตรวจการ Deploy)');er.code='BAD_RESPONSE';throw er}
   busyBar(false);
@@ -826,13 +856,25 @@ function secBox(name,fn,maxAge){
   return`<div class="loadbox" role="status"><span class="spin sm"></span>กำลังโหลดข้อมูล…</div>`;
 }
 
-function screen(html){document.body.classList.add('plain');$('#view').innerHTML='';$('#boot').innerHTML=`<div class="center"><section class="panel" style="gap:14px"><div class="mark" style="width:56px;height:56px;font-size:1.5rem;margin:0 auto">T</div>${html}<p class="foot">Q-Teacher · ผู้พัฒนา ${DEV_NAME}</p></section></div>`;$('#boot').hidden=false}
+function screen(html){document.body.classList.add('plain');$('#view').innerHTML='';$('#boot').hidden=false;$('#boot').innerHTML=`<div class="center"><section class="panel" style="gap:14px"><div class="mark" style="width:56px;height:56px;font-size:1.5rem;margin:0 auto">T</div>${html}<p class="foot">Q-Teacher · ผู้พัฒนา ${DEV_NAME}</p></section></div>`;$('#boot').hidden=false}
 async function boot(){
+  window.__qkStage='liff';
   if(!CONFIG.API_URL)return screen('<h2>ยังไม่ได้ตั้งค่า API_URL</h2>');
   try{await liff.init({liffId:CONFIG.LIFF_ID})}catch(e){return screen(`<h2>เปิดการเข้าสู่ระบบ LINE ไม่สำเร็จ</h2><p class="err">${esc(e.message)}</p>`)}
+  window.__qkStage='login';
   if(!liff.isLoggedIn()){liff.login({redirectUri:location.href});return}
-  const c=cacheGet();
-  if(c){load(c);SRV={hm:'',t:0};st.stale=true;start()}
+  window.__qkStage='cache';
+  let c=cacheGet();
+  if(c){
+    try{load(c);SRV={hm:'',t:0};st.stale=true;start()}
+    catch(e){ /* แคชเก่าวาดไม่ได้: ล้างแล้วโหลดใหม่ 1 ครั้ง (กันวนซ้ำด้วยตัวนับ) */
+      window.__qkErr='cache: '+(e&&e.message);try{cacheClear()}catch(x){}
+      let n=0;try{n=Number(sessionStorage.getItem('qt_cachefix')||0);sessionStorage.setItem('qt_cachefix',String(n+1))}catch(x){}
+      if(n<1){location.reload();return}
+      if(window.qkFail){qkFail('cache',e);return}
+    }
+  }
+  window.__qkStage='api';
   const my=++st.bootSeq;
   try{const j=await api('boot');if(my!==st.bootSeq)return;load(j);cacheSet(j);st.fetchedAt=Date.now();st.stale=false;try{sessionStorage.removeItem('qt_relogin')}catch(e){}if(!c)start();else if(st.dirty)renderChrome();else render();openHash()}
   catch(e){
@@ -2664,7 +2706,7 @@ document.addEventListener('input',e=>{if(e.target&&e.target.id==='reqQ'){st.reqQ
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='paFy'){st.paFy=Number(e.target.value);render()}});
 document.addEventListener('change',e=>{const id=e.target&&e.target.id;if(id==='evRound'){st.evRound=e.target.value;st.evStaff=st.evStaff||'';render()}if(id==='evStaff'){st.evStaff=e.target.value;render()}});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='evaRound'){st.evaRound=e.target.value;render()}});
-boot();
+boot().catch(e=>{ if(window.qkFail)qkFail(window.__qkStage,e); });
 })();
 
 </script>
