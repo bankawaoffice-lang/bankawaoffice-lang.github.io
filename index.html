@@ -17,9 +17,19 @@
 const CONFIG = {
   LIFF_ID: '2012013981-CUuRUfnG',   // ได้จากขั้นสร้าง LIFF เช่น 2012013981-AbCdEfGh
   API_URL: 'https://script.google.com/macros/s/AKfycbyLw2XbIIA-6JJpssSqhtwP8MvAYW5GvJ5zIyB0mXHNVly7tlHtiFOwfhS3c3ljEW3X/exec',   // Deploy เวอร์ชัน 1 · 14 ต.ค. 2569
-  APP_URLS: { teacher: 'teacher/', budget: '', student: '', parent: '', academic: '' },  // ลิงก์แอปอื่น
+  APP_URLS: { teacher: 'teacher/', budget: '', student: '', parent: '', academic: '', director: '' },  // ลิงก์แอปอื่น
   TEACHER_API: 'https://script.google.com/macros/s/AKfycbzF6I2oQGbhtf42zxyaWDvX3labWdWJW1zBMSkWiS2dLKeqyJ5eoDwQhaBm5mivPsfQGg/exec'  // Q-Teacher (ดึงงานมารวม)
 };
+/* ===== ลิงก์กลาง (แก้ที่นี่ที่เดียว) =====
+   1) ลิงก์แอป = CONFIG.APP_URLS ด้านบน (ว่าง = "ยังไม่เปิดใช้งาน")
+   2) ปุ่มทางลัด = แอป + ส่วนท้ายลิงก์ (#tab=…) ใน DLY ด้านล่าง
+   ใส่ลิงก์จริงของแอปแล้วทุกปุ่ม/ทุกไอคอนในกริดทำงานทันที ไม่ต้องแก้หน้าจอ */
+const DLY={clock:['teacher','#tab=home'],leave:['teacher','#tab=myreq'],read:['student',''],scan:['academic',''],emg:['teacher','#tab=count'],staff:['teacher','#tab=staff']};
+/* แอปที่แต่ละบทบาทเห็นในกริด (ผอ./ผู้ดูแลระบบเห็นทั้งหมดเสมอ) */
+/* สำรองเท่านั้น: ใช้เมื่อหลังบ้านไม่ส่ง home.cfg · ค่าจริงอยู่ในแท็บ settings ของ QK-Hub (cfg_apps_*) แก้ที่ Admin Panel → ค่าตั้งหน้าแรก */
+const CFG_ROLES_FB=['ครู','ธุรการ','หัวหน้างานบุคคล','หัวหน้าวิชาการ','รองหัวหน้าวิชาการ','ภารโรง','รปภ.'];
+const APP_ROLES={teacher:CFG_ROLES_FB,academic:['ครู','หัวหน้าวิชาการ','รองหัวหน้าวิชาการ'],student:['ครู','ธุรการ'],budget:['ธุรการ','หัวหน้างานบุคคล'],parent:[],director:[]};
+
 </script>
 <script>
 /* ตัวเฝ้าหน้า: ถ้าค้างที่หน้า "กำลังเปิด…" เกิน 15 วินาที หรือมี error ก่อนหน้าแรกวาดเสร็จ ให้ขึ้นข้อความบอกสาเหตุ + ปุ่มลองใหม่ (ไม่ขึ้นกับสคริปต์หลัก) */
@@ -31,7 +41,7 @@ const CONFIG = {
     api:'รอหลังบ้าน (Google Apps Script) ตอบ ใช้เวลานานผิดปกติ อาจเป็นเน็ตช้า หรือหลังบ้านกำลังเริ่มทำงาน',
     render:'วาดหน้าจอไม่สำเร็จ (ข้อมูลที่ได้มาวาดไม่ได้)'};
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-  function splash(){return !!document.getElementById('qkSplash')}
+  function splash(){return !!document.getElementById('qkSplash')||!W.__qkReady}
   W.qkClear=function(){try{var k=[],i;for(i=0;i<localStorage.length;i++){var n=localStorage.key(i);if(n.indexOf('qk_home_')===0)k.push(n)}k.forEach(function(n){localStorage.removeItem(n)})}catch(e){}try{sessionStorage.clear()}catch(e){}location.reload()};
   W.qkFail=function(stage,err,wait){
     var st=stage||W.__qkStage,em=err&&err.message?err.message:(err?String(err):W.__qkErr);
@@ -379,6 +389,47 @@ details.more summary{cursor:pointer;color:var(--pri);font-weight:500;font-size:1
 .tfs{margin-bottom:2px}
 .chip small{font-variant-numeric:tabular-nums;opacity:.8;margin-left:4px}
 
+
+/* ---------- หน้าแรกแบบคลีน ---------- */
+.dly{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:0;background:var(--card);box-shadow:var(--shadow);border-radius:20px;padding:14px;text-align:left;color:var(--ink);min-width:0;min-height:128px;height:100%;position:relative}
+.dbtn .ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:25px;margin-bottom:6px;background:var(--g);box-shadow:0 6px 14px var(--sh),inset 0 2px 2px rgba(255,255,255,.4)}
+.dbtn .k{font-size:12.5px;color:var(--muted)}
+.dbtn b{font:600 19px/1.2 var(--fh);overflow-wrap:anywhere}
+.dbtn .s{font-size:13px;color:var(--muted);margin-top:auto;padding-top:4px}
+.dbtn.done{box-shadow:0 0 0 2px var(--ok),var(--shadow)}.dbtn.done .s{color:var(--ok);font-weight:500}
+.dbtn.warn .s{color:var(--warn);font-weight:500}
+.dbtn.off{background:var(--soft);box-shadow:none;color:var(--muted)}.dbtn.off .ic{filter:grayscale(1);opacity:.5;box-shadow:none}.dbtn.off b{color:var(--muted)}
+.nbox{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);box-shadow:var(--shadow);border-radius:20px;overflow:hidden}
+.nbox>*{border:0;background:none;color:var(--ink);padding:12px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
+.nbox>*+*{border-left:1px solid var(--line)}
+.nbox b{font:600 26px/1.15 var(--fh);font-variant-numeric:tabular-nums}.nbox span{font-size:12.5px;color:var(--muted)}
+.nbox .z b{color:var(--muted);opacity:.55}.nbox .hot b{color:var(--bad)}.nbox .some b{color:var(--pri)}
+.nhint{font-size:12px;color:var(--muted);margin:6px 4px 0}
+.pr1{display:flex;align-items:center;gap:8px;background:var(--card);box-shadow:var(--shadow);border-radius:14px;padding:10px 14px;font-size:14px;color:var(--muted)}
+.pr1 b{color:var(--ink);font-weight:600}.pr1 .e{font-size:18px}
+.emgb{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--bad);background:var(--bad-bg);color:var(--bad);border-radius:999px;padding:8px 16px;font:600 14px var(--f)}
+.dirrow,.roomb{display:flex;align-items:center;gap:10px;width:100%;border:0;background:var(--card);box-shadow:var(--shadow);border-radius:16px;padding:12px 14px;text-align:left;color:var(--ink)}
+.dirrow .e,.roomb .e{font-size:22px}.dirrow .tx,.roomb .tx{flex:1;min-width:0;font-size:14px}.dirrow .tx small,.roomb .tx small{display:block;color:var(--muted);font-size:12.5px}
+.dirrow .num{font-variant-numeric:tabular-nums;font-weight:600;font-size:14.5px;white-space:nowrap}
+.roomb.off .tx b{color:var(--muted)}
+.soonbox{text-align:center;padding:36px 20px}.soonbox .big{font-size:44px;filter:grayscale(.4)}.soonbox h2{font:600 18px var(--fh);margin:8px 0 4px}.soonbox p{color:var(--muted);font-size:14px;margin:0}
+@media (min-width:1000px){.dly{grid-template-columns:repeat(4,1fr)}.dly+*{max-width:none}}
+
+.dbtn .ic.svg{background:var(--pri-soft);color:var(--pri);box-shadow:none}
+.dbtn .ic.svg svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dly>:last-child:nth-child(odd){grid-column:1/-1;min-height:96px}
+.appg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px}
+.appg button{border:0;background:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 0;min-width:0}
+.appg .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:23px;background:var(--g);box-shadow:0 5px 12px var(--sh),inset 0 2px 2px rgba(255,255,255,.4)}
+.appg small{font-size:12px;line-height:1.25;text-align:center;overflow-wrap:anywhere}
+@media (min-width:1000px){.appg{grid-template-columns:repeat(6,1fr)}.dly>:last-child:nth-child(odd){grid-column:auto}}
+
+.cfgwrap{overflow-x:auto;margin:0 -4px}.cfgt{border-collapse:collapse;width:100%;font-size:13px}
+.cfgt th,.cfgt td{padding:7px 1px;text-align:center;border-top:1px solid var(--line)}.cfgt thead th{border-top:0;font-weight:500;color:var(--muted)}
+.cfgt tbody th{text-align:left;font-weight:500;padding-right:4px;width:76px;font-size:12px;line-height:1.25}.cfgt small{display:block;font-size:10.5px}
+.cfgt input{width:18px;height:18px;accent-color:var(--pri)}
+.cfgap{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--g);font-size:15px}
 </style>
 </head>
 <body>
@@ -432,9 +483,10 @@ const APPS=[
  {key:'academic',name:'Q-Academic',c:'h',icon:'book',sub:'งานวิชาการ',e:'📚',g:'linear-gradient(145deg,#7CC4FF,#2C8CE6 60%,#1D6FC4)',sh:'rgba(44,140,230,.4)'},
  {key:'student',name:'Q-Student',c:'s',icon:'cap',sub:'ดูแลนักเรียน',e:'🎓',g:'linear-gradient(145deg,#5EE6C8,#11A188 60%,#0B7F6B)',sh:'rgba(17,161,136,.4)'},
  {key:'budget',name:'Q-Budget',c:'b',icon:'coin',sub:'งบประมาณ โครงการ',e:'💰',g:'linear-gradient(145deg,#FFC066,#E9820C 60%,#C46A00)',sh:'rgba(233,130,12,.4)'},
+ {key:'director',name:'Q-Director',c:'h',icon:'badge',sub:'ศูนย์ข้อมูลผู้บริหาร',e:'🧭',g:'linear-gradient(145deg,#8FA3C8,#3F5A8A 60%,#2A4170)',sh:'rgba(63,90,138,.4)'},
  {key:'parent',name:'Q-Parent',c:'p',icon:'fam',sub:'ช่องทางผู้ปกครอง',e:'👨‍👩‍👧',g:'linear-gradient(145deg,#FF8FC2,#E0498D 60%,#B8286B)',sh:'rgba(224,73,141,.4)'}
 ];
-const APP_NAMES={hub:'หน้ากลาง',teacher:'Q-Teacher',budget:'Q-Budget',student:'Q-Student',parent:'Q-Parent',academic:'Q-Academic'};
+const APP_NAMES={hub:'หน้ากลาง',teacher:'Q-Teacher',budget:'Q-Budget',student:'Q-Student',parent:'Q-Parent',academic:'Q-Academic',director:'Q-Director'};
 const SRC={ack:'ประกาศ',approve:'ประกาศ',pending:'ประกาศ',link:'ตั้งค่า'};
 const ERR={
  CODE_NOT_FOUND:'ไม่พบรหัสนี้ หรือรหัสถูกใช้ไปแล้ว ตรวจตัวเลขอีกครั้ง',
@@ -471,6 +523,7 @@ function relogin(){
 
 /* ---------- เริ่มต้น ---------- */
 async function boot(){
+  try{ render(); }catch(e){}   // ปุ่มขึ้นทันที ไม่รอ LIFF/หลังบ้าน
   window.__qkStage='liff';
   if(!CONFIG.LIFF_ID||!CONFIG.API_URL) return screen(`<div class="intro" style="min-height:auto;padding:0"><div class="logo">Q</div></div><h2>Q-Kawa Hub</h2><p class="note">ยังไม่ได้ตั้งค่า LIFF_ID หรือ API_URL ในไฟล์ index.html</p>`);
   try{ await liff.init({liffId:CONFIG.LIFF_ID}); }
@@ -500,7 +553,7 @@ function cacheKey(){ try{ return 'qk_home_'+((liff.getDecodedIDToken()||{}).sub|
 function cacheGet(){ try{ const k=cacheKey(); if(!k) return null; const v=JSON.parse(localStorage.getItem(k)||'null'); return v&&v.me?v:null; }catch(e){ return null; } }
 function cacheSet(v){ try{ const k=cacheKey(); if(k) localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
 function cacheClear(){ try{ const k=cacheKey(); if(k) localStorage.removeItem(k); }catch(e){} }
-function screen(html){ document.getElementById('app').innerHTML=`<div class="center"><div class="card stack" style="gap:14px">${html}<p class="credit">ผู้พัฒนา: นายฮาฟีซี อูมา</p></div></div>`; }
+function screen(html){ window.__qkReady=true; document.getElementById('app').innerHTML=`<div class="center"><div class="card stack" style="gap:14px">${html}<p class="credit">ผู้พัฒนา: นายฮาฟีซี อูมา</p></div></div>`; }
 function errBox(t,m){ return `<h2 style="text-align:center">${esc(t)}</h2><p class="err">${esc(m)}</p><button class="btn pri block" data-act="reload">ลองใหม่</button><button class="btn block" onclick="qkClear()">ล้างข้อมูลที่จำไว้ในเครื่อง แล้วลองใหม่</button>`; }
 
 function introArt(){
@@ -518,6 +571,7 @@ function introArt(){
   </svg>`;
 }
 function renderLink(msg){
+  window.__qkReady=true;
   let name=''; try{ name=(liff.getDecodedIDToken()||{}).name||''; }catch(e){}
   document.getElementById('app').innerHTML=`<div class="intro">
     <div class="logo">Q</div>
@@ -551,7 +605,7 @@ async function loadHome(){
   if(my!==S.seq) return;          // คำขอเก่าตอบช้า ไม่ให้ทับข้อมูลใหม่
   applyHome(r);
   loadExt();
-  loadPraise();
+  loadBoard();
 }
 /** ดึงงานจาก Q-Teacher มารวมใน "งานของฉัน" · โหลดไม่ได้ก็ไม่กระทบหน้ากลาง */
 async function loadExt(force){
@@ -561,13 +615,25 @@ async function loadExt(force){
   try{
     const r=await fetch(CONFIG.TEACHER_API,{method:'POST',body:JSON.stringify({action:'tasks',idToken:liff.getIDToken()})});
     const j=await r.json();
-    if(j.ok){ S.ext=j.tasks; S.extAt=Date.now(); S.extState='ok'; S.home.tasks=S.home.tasks.filter(t=>t.app!=='teacher').concat(j.tasks); cacheSet(S.home); }
+    if(j.ok){ S.ext=j.tasks; S.tToday=j.today||null; S.extAt=Date.now(); S.extState='ok'; S.home.tasks=S.home.tasks.filter(t=>t.app!=='teacher').concat(j.tasks); cacheSet(S.home); }
     else S.extState='err';
   }catch(e){ S.extState='err'; }
   S.extLoading=false;
   try{ render(); }
   catch(e){ window.__qkErr='render(ext): '+(e&&e.message); S.ext=null; S.extState='err'; S.home.tasks=S.home.tasks.filter(t=>t.app!=='teacher'); cacheSet(S.home);
     try{ render(); }catch(e2){ if(window.qkFail)qkFail('render',e2); } }
+}
+/** สรุปบุคลากรวันนี้ (ผอ.) จาก Q-Teacher action board · โหลดตามหลัง ไม่บล็อกหน้าแรก */
+async function loadBoard(force){
+  if(!S.home||!isDir()||!appReady('teacher')||!CONFIG.TEACHER_API||S.boardLoading) return;
+  if(!force&&S.board&&Date.now()-(S.boardAt||0)<60000) return;
+  S.boardLoading=true;
+  try{
+    const r=await fetch(CONFIG.TEACHER_API,{method:'POST',body:JSON.stringify({action:'board',date:S.home.today.date,idToken:liff.getIDToken()})});
+    const j=await r.json();
+    if(j.ok&&j.board){ S.board=j.board; S.boardAt=Date.now(); S.boardState='ok'; } else S.boardState='err';
+  }catch(e){ S.boardState='err'; }
+  S.boardLoading=false; render();
 }
 /** คำชมครูจากระบบ + ดาวจากผู้ปกครอง: ดึงจาก Q-Teacher (ครูที่ทำได้ตามเป้า · ดาวล่าสุด · ดาวสะสมของฉัน) */
 let PR=null,PRAT=0,PRLOAD=false;
@@ -621,14 +687,14 @@ function levelStrip(ts){
 function isDir(){ return !!(S.me&&S.me.roles&&S.me.roles.includes('ผอ.')); }
 function setupTasks(){ return S.home.tasks.filter(t=>t.type==='link'); }
 function render(){
-  if(!S.home) return;
-  const body=pageBody();
+  if(S.home) window.__qkReady=true;
+  const body=S.home?pageBody():pageHome();   // ยังไม่มีข้อมูลจากหลังบ้าน → วาดปุ่มทางลัดก่อนทันที
   const el=document.getElementById('app');
-  const n=myTasks().length;
+  const n=S.home?myTasks().length:0;
   if(wide.matches){
     const items=[{id:'home',label:'หน้าแรก',icon:'home'},{id:'tasks',label:'งานของฉัน',icon:'list',badge:n},{id:'ann',label:'ประกาศ',icon:'mega'},{id:'cal',label:'ปฏิทิน',icon:'cal'},{id:'menu',label:'บัญชี',icon:'user'}];
     const nav=items.map(i=>`<button class="nv" data-go="${i.id}"${S.page===i.id?' aria-current="page"':''}><span class="sq">${ic(i.icon)}</span>${i.label}${i.badge?`<span class="n">${i.badge}</span>`:''}</button>`).join('');
-    const appsNav=APPS.map(a=>`<button class="nv" data-app="${a.key}"><span class="sq c-${a.c}">${ic(a.icon)}</span>${a.name}${appReady(a.key)?'':`<span class="pill" style="margin-left:auto">${appState(a.key)}</span>`}</button>`).join('');
+    const appsNav=visibleApps().map(a=>`<button class="nv" data-app="${a.key}"><span class="sq c-${a.c}">${ic(a.icon)}</span>${a.name}${appReady(a.key)?'':`<span class="pill" style="margin-left:auto">${appState(a.key)}</span>`}</button>`).join('');
     const adm=adminItems().map(i=>`<button class="nv" data-go="${i.id}"${S.page===i.id?' aria-current="page"':''}><span class="sq c-${i.c}">${ic(i.icon)}</span>${i.label}</button>`).join('');
     el.innerHTML=`<div class="d-shell"><nav class="side" aria-label="เมนูหลัก">
       <div class="brand"><div class="lg">Q</div><div><b>Q-Kawa</b><small>โรงเรียนบ้านกาวะ</small></div></div>
@@ -644,8 +710,19 @@ function render(){
 }
 function avatar(){ const m=S.me; return `<div class="avatar">${m.picture?`<img src="${esc(m.picture)}" alt="">`:esc((m.name.replace(/^(นาย|นางสาว|นาง)/,'')||'?').charAt(0))}</div>`; }
 function rolesText(){ const r=S.me.roles.filter(x=>x!=='ครู'); return r.length?r.join(' · '):(S.me.roles[0]||S.me.position||''); }
-function appReady(k){ return !!(S.home.apps[k]&&CONFIG.APP_URLS[k]); }
-function appState(k){ return appReady(k)?'พร้อมใช้งาน':(CONFIG.APP_URLS[k]&&S.home.apps[k]===false)?'ปิดชั่วคราว':'เร็ว ๆ นี้'; }
+function appReady(k){ return !!(CONFIG.APP_URLS[k]&&(!S.home||S.home.apps[k]!==false)); }
+function cfgOf(){ return (S.home&&S.home.cfg)||null; }
+function appRoles(k){ const c=cfgOf(); return (c&&c.apps&&c.apps[k])||(c?[]:(APP_ROLES[k]||[])); }
+function canSeeApp(k){ const m=S.me; if(!m) return k==='teacher'; if(isDir()||m.isAdmin) return true; return appRoles(k).some(x=>(m.roles||[]).includes(x)); }
+/* เวลาตัดปุ่มลงเวลา: ค่า cfg_clock_cutoff จากชีต (ค่าเริ่มต้น 12:00) */
+function bkkMin(){ try{ const p=new Date().toLocaleString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false}).split(':'); return (parseInt(p[0],10)%24)*60+parseInt(p[1],10); }catch(e){ const d=new Date(); return d.getHours()*60+d.getMinutes(); } }
+function afterCutoff(){ const c=cfgOf(), v=(c&&c.clockCutoff)||'12:00', p=v.split(':'); return bkkMin()>=(+p[0]*60+ +p[1]); }
+function visibleApps(){ return APPS.filter(a=>canSeeApp(a.key)); }
+function soonSheet(k){
+  const off=!!(CONFIG.APP_URLS[k]&&S.home&&S.home.apps[k]===false);
+  modal(`<div class="stack" style="gap:14px;text-align:center"><div style="font-size:40px" aria-hidden="true">🕊️</div><h2>ยังไม่เปิดใช้งาน</h2><p class="note">${esc(APP_NAMES[k]||'ฟังก์ชันนี้')} ${off?'ปิดใช้งานชั่วคราวในขณะนี้':'ยังไม่เปิดให้ใช้งาน'} ขออภัยในความไม่สะดวก เมื่อพร้อมแล้วจะแจ้งให้ทราบครับ</p><button class="btn block" data-act="close">รับทราบ</button></div>`);
+}
+function appState(k){ return appReady(k)?'พร้อมใช้งาน':(CONFIG.APP_URLS[k]&&S.home&&S.home.apps[k]===false)?'ปิดชั่วคราว':'เร็ว ๆ นี้'; }
 function pageBody(){
   switch(S.page){
     case 'tasks': return pageTasks();
@@ -767,7 +844,7 @@ function eventForm(ev){
   });
 }
 /* ---------- ตัวช่วยเพิ่มเติม (ปรับ UI) ---------- */
-const TH_APP={teacher:'งานครู',academic:'งานวิชาการ',student:'ดูแลนักเรียน',budget:'งบประมาณ',parent:'ผู้ปกครอง'};
+const TH_APP={teacher:'งานครู',academic:'งานวิชาการ',student:'ดูแลนักเรียน',budget:'งบประมาณ',parent:'ผู้ปกครอง',director:'ศูนย์ผู้บริหาร'};
 /** บันทึกว่าครูเปิดอ่านประกาศแล้ว (ผอ. เห็นว่าอ่านตอนไหน กี่คน) */
 function markSeen(a){
   if(!a||a.seenByMe||a.mine||a.status!=='เผยแพร่'||!(a.audience==='staff'||a.audience==='all')) return;
@@ -838,33 +915,84 @@ function prayerCard(){
    <p class="nxl">ถัดไป: <b>${P[ni][0]}${tom?' (พรุ่งนี้)':''}</b> ${hhmm(P[ni][1])} น. · อีก ${lh?lh+' ชม. ':''}${lm} นาที</p>
    <div class="pray-g">${P.map((p,i)=>`<div class="${i===ni?'nx':(tom||i<ni)?'ps':''}">${p[0]}<b>${hhmm(p[1])}</b></div>`).join('')}</div></section>`;
 }
+/* ---------- หน้าแรก (คลีน): ทางลัดไปแอปเจ้าของ · ไม่เก็บข้อมูลใน Hub ---------- */
+const APP_BY=Object.fromEntries(APPS.map(a=>[a.key,a]));
+const APPROVE_TYPES=['approve','pending','leave.hr','leave.dir','out.dir'];
+function bkkHour(){ try{ return parseInt(new Date().toLocaleString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',hour12:false}),10)%24; }catch(e){ return new Date().getHours(); } }
+function todayDow(){ return S.home?d8(S.home.today.date).getDay():new Date().getDay(); }
+function offDay(){ return !!S.home&&(!!S.home.today.holiday||[0,6].includes(todayDow())); }
+function clockStatus(){
+  if(!S.home) return {t:'',c:''};
+  if(offDay()) return {t:'วันนี้วันหยุด',c:''};
+  const T=S.tToday;
+  if(!T) return {t:S.extState==='err'?'ตรวจสถานะไม่ได้':S.extState==='ok'?'แตะเพื่อลงเวลา':'กำลังตรวจสถานะ…',c:''};
+  if(T.in&&T.out) return {t:'ออกแล้ว '+T.out+' น.',c:'done'};
+  if(T.in) return {t:'มา '+T.in+' น.'+(afterCutoff()?' · ยังไม่ลงเวลากลับ':''),c:afterCutoff()?'warn':'done'};
+  return {t:'ยังไม่ได้ลงเวลา',c:'warn'};
+}
+function readInfo(){ const d=todayDow(); return d===1||d===2?['อ่านไทย','จ–อ อ่านภาษาไทย','thai']:d===3||d===4?['อิกเราะห์','พ–พฤ อิกเราะห์','iqra']:['เช็คชื่อ','ศุกร์ เช็คชื่ออย่างเดียว','check']; }
+/* ไอคอนแนวอิสลาม เส้นเดียวกันทั้งชุด สีตามธีม (currentColor) · ไม่มีตัวอักษรอาหรับ ใช้ลวดลายเรขาคณิต */
+const READ_SVG={
+ check:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21v-9a7 7 0 0 1 3.2-5.9L12 3l3.8 3.1A7 7 0 0 1 19 12v9M3 21h18"/><path d="M8.6 14.6l2.4 2.4 4.4-4.8"/></svg>',
+ thai:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.5C9.8 5 6.5 4.5 3 5v13.5c3.5-.5 6.800 0 9 1.500 2.200-1.500 5.500-2 9-1.500V5c-3.500-.5-6.800 0-9 1.500z"/><path d="M12 6.5v3M12 15.500v4"/><path d="M9.900 10.400h4.200v4.200H9.900zM12 9.500l3 3-3 3-3-3z"/></svg>',
+ iqra:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.500C10.200 3.300 7.800 3 5 3.300V12c2.800-.3 5.200 0 7 1.200 1.800-1.200 4.200-1.500 7-1.200V3.300C16.200 3 13.800 3.300 12 4.500z"/><path d="M12 4.500v8.700"/><path d="M6.500 21L16.500 14M17.500 21L7.500 14M5 21h14"/></svg>'};
+function dBtn(key,app,kicker,title,status,cls,svg){
+  const A=APP_BY[app], ready=appReady(app);
+  const st=status;
+  return `<button class="dbtn${cls?' '+cls:''}" data-dly="${key}">${svg?`<span class="ic svg" aria-hidden="true">${READ_SVG[svg]}</span>`:`<span class="ic" style="--g:${A.g};--sh:${A.sh}" aria-hidden="true">${A.e}</span>`}<span class="k">${kicker}</span><b>${title}</b><span class="s">${st}</span></button>`;
+}
+function notifBox(){
+  if(!S.home) return `<div class="nbox" aria-label="แจ้งเตือน (กำลังโหลด)">${['งาน','ประกาศ','นัดวันนี้','รออนุมัติ'].map(l=>`<div class="z"><b>–</b><span>${l}</span></div>`).join('')}</div>`;
+  const ts=myTasks(), td=S.home.today.date;
+  const nAnn=ts.filter(t=>t.type==='ack').length, nAp=ts.filter(t=>APPROVE_TYPES.includes(t.type)).length, nWork=ts.length-nAnn-nAp;
+  const nCal=(S.cal||S.home.calendar||[]).filter(c=>c.date===td&&c.kind!=='holiday').length;
+  const cell=(go,n,l,hot)=>`<button class="${n?(hot?'hot':'some'):'z'}" data-go="${go}" aria-label="${l} ${n} รายการ"><b>${n}</b><span>${l}</span></button>`;
+  const hint=S.extState==='loading'?'<p class="nhint">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="nhint">โหลดงานจาก Q-Teacher ไม่สำเร็จ · <button class="lnk" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
+  return `<div class="nbox">${cell('tasks',nWork,'งาน',false)}${cell('ann',nAnn,'ประกาศ',false)}${cell('cal',nCal,'นัดวันนี้',false)}${cell('tasks',nAp,'รออนุมัติ',true)}</div>${hint}`;
+}
+function prayerLine(){
+  const sc=S.home&&S.home.school;
+  if(!sc) return S.home?`<div class="pr1" aria-label="เวลาละหมาด"><span class="e" aria-hidden="true">🕌</span><span>เวลาละหมาด: <b>ยังไม่มีข้อมูล</b>${isDir()?' · ตั้งพิกัดโรงเรียนใน Q-Teacher':''}</span></div>`:'';
+  const now=new Date(), cur=now.getHours()*60+now.getMinutes();
+  const P=prayerTimes(now,sc.lat,sc.lng);
+  const nx=P.findIndex(p=>p[1]>cur), tom=nx<0, ni=tom?0:nx;
+  const left=P[ni][1]+(tom?1440:0)-cur, lh=Math.floor(left/60), lm=left%60;
+  return `<div class="pr1" aria-label="เวลาละหมาดถัดไป"><span class="e" aria-hidden="true">🕌</span><span>ถัดไป <b>${P[ni][0]}${tom?' (พรุ่งนี้)':''} ${hhmm(P[ni][1])} น.</b> · อีก ${lh?lh+' ชม. ':''}${lm} นาที</span></div>`;
+}
+function dirRow(){
+  if(!S.home||!isDir()) return '';
+  let num='กำลังโหลด…';
+  if(offDay()) num='วันนี้วันหยุด';
+  else if(S.board&&S.board.count){ const c=S.board.count; num=`มา ${c.came} · ลา ${c.leave} · สาย ${c.late}`; }
+  else if(S.boardState==='err') num='โหลดไม่สำเร็จ';
+  return `<button class="dirrow" data-dly="staff"><span class="e" aria-hidden="true">👥</span><span class="tx">บุคลากรวันนี้<small>กดดูรายคนใน Q-Teacher</small></span><span class="num">${num}</span></button>`;
+}
+function appGrid(){
+  if(!S.me) return '';
+  const vs=visibleApps(); if(!vs.length) return '';
+  return `<section aria-label="แอปของโรงเรียน"><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="appg">${vs.map(a=>`<button data-app="${a.key}"><span class="ic" style="--g:${a.g};--sh:${a.sh}" aria-hidden="true">${a.e}</span><small>${a.name}</small></button>`).join('')}</div></section>`;
+}
 function pageHome(){
-  const h=S.home, m=S.me, t=h.today;
-  const tasks=myTasks();
-  const bell=`<button class="bell" data-go="tasks" aria-label="งานของฉัน ${tasks.length} รายการ">${ic('bell')}${tasks.length?`<span class="dot">${tasks.length}</span>`:''}</button>`;
-  const top=`<header class="hdr"><div style="flex:1;min-width:0"><p class="hi">${greet()}${S.stale?' · <span class="upd">กำลังอัปเดต…</span>':''}</p><h1>${esc(m.call)}</h1><p class="role">${esc(rolesText())}</p></div>${bell}<button class="avbtn" data-go="menu" aria-label="บัญชีของฉัน">${avatar()}</button></header>`;
-  const extNote=S.extState==='loading'?'<p class="linkline">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="linkline">โหลดงานจาก Q-Teacher ไม่สำเร็จ · <button class="lnk" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
-  const todo=`<section><div class="sec"><h3>ต้องดำเนินการ${tasks.length?` <span class="cnt">${tasks.length}</span>`:''}</h3>${tasks.length>3?'<button data-go="tasks">ดูทั้งหมด</button>':''}</div>
-    ${levelStrip(tasks)}<div class="list">${tasks.length?tasks.slice(0,3).map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการตอนนี้</p>`)}</div>${extNote}</section>`;
-  const apps=`<section><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps2">${APPS.map(a=>`<button class="appc${appReady(a.key)?'':' off'}" data-app="${a.key}"><span class="ic e3d" style="--g:${a.g};--sh:${a.sh}" aria-hidden="true">${a.e}</span><span class="tx"><b class="th">${TH_APP[a.key]||a.name}</b><small class="en">${a.name} · ${esc(a.sub)}</small><span class="st ${appReady(a.key)?'on':''}">${appState(a.key)}</span></span></button>`).join('')}</div></section>`;
-  let strip='';
-  if(t.holiday) strip=`วันนี้วันหยุด · ${esc(t.holiday)}`;
-  else if(t.term.next){ const left=Math.max(0,daysBetween(t.date,t.term.next)); strip=`${esc(t.term.label.replace('ปิดภาคเรียน · ','').replace('เปิดภาคเรียนที่','เปิดเทอม'))} · ${esc(thDate(t.term.next,{day:'numeric',month:'short'}))} · อีก ${left} วัน`; }
-  else strip=esc(t.term.label);
-  const ups=(h.calendar||[]).slice(0,3);
-  const nextHol=(S.cal||[]).find(c=>c.kind==='holiday');
-  const cal=`<section><div class="sec"><h3>กำหนดการใกล้ถึง</h3><button data-go="cal">ดูปฏิทิน</button></div>
-    <div class="strip">${ic('cal',18)}<span>${strip}</span></div>
-    <div class="list">${ups.length?ups.map(evRow).join(''):'<p class="okline">ไม่มีกิจกรรมใน 45 วันข้างหน้า</p>'}</div>
-    ${nextHol&&!ups.some(c=>c.kind==='holiday')?`<p class="linkline">วันหยุดถัดไป: ${esc(nextHol.title)} · ${esc(thDate(nextHol.date,{day:'numeric',month:'short'}))}</p>`:''}</section>`;
-  const anns=(S.annOn||m.isAdmin)?`<section><div class="sec"><h3>ประกาศล่าสุด</h3><button data-go="ann">ดูทั้งหมด</button></div><div class="list">${annOffNote()}
-    ${h.announcements.length?h.announcements.slice(0,3).map(annCard).join(''):'<p class="okline">ยังไม่มีประกาศ</p>'}</div></section>`:'';
-  if(wide.matches) return `${top}<div class="d-grid"><div class="stack">${todo}${prayerCard()}${winCard()}${praiseBoard()}${anns}</div><div class="stack">${apps}${cal}</div></div>`;
-  return `${top}<div class="stack">${todo}${prayerCard()}${winCard()}${praiseBoard()}${apps}${cal}${anns}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  const m=S.me, h=S.home, tasks=h?myTasks():[];
+  const bell=h?`<button class="bell" data-go="tasks" aria-label="งานของฉัน ${tasks.length} รายการ">${ic('bell')}${tasks.length?`<span class="dot">${tasks.length}</span>`:''}</button>`:'';
+  const top=`<header class="hdr"><div style="flex:1;min-width:0"><p class="hi">${greet()}${S.stale?' · <span class="upd">กำลังอัปเดต…</span>':''}</p><h1>${m?esc(m.call):'Q-Kawa'}</h1><p class="role">${m?esc(rolesText()):'โรงเรียนบ้านกาวะ'}</p></div>${bell}${m?`<button class="avbtn" data-go="menu" aria-label="บัญชีของฉัน">${avatar()}</button>`:''}</header>`;
+  const cs=clockStatus(), rd=readInfo();
+  const out=afterCutoff();
+  const daily=`<section aria-label="ทำงานประจำวัน"><div class="dly">
+    ${dBtn('clock','teacher','ลงเวลา',out?'เช็คเอาท์':'เช็คอิน',esc(cs.t),cs.c)}
+    ${offDay()?'':dBtn('read','student','เช็คอ่านเช้า',rd[0],esc(rd[1]),'',rd[2])}
+    ${dBtn('scan','academic','Q-Academic','สแกนเข้าสอน','สแกน QR ห้องเรียนทุกคาบ')}
+    ${dBtn('leave','teacher','Q-Teacher','ขอลา','ยื่นใบลา · ดูสถานะ')}
+  </div></section>`;
+  const rooms=`<button class="roomb" data-dly="rooms"><span class="e" aria-hidden="true">🏫</span><span class="tx"><b>ห้อง/วิชาของฉัน</b><small>เร็วๆ นี้ · จะสรุปห้องและวิชาที่รับผิดชอบเมื่อ Student/Academic เปิดใช้</small></span><span class="chev">${ic('chev',16)}</span></button>`;
+  return `${top}<div class="stack" style="gap:14px">${daily}${notifBox()}${prayerLine()}<button class="emgb" data-dly="emg">🚨 เหตุฉุกเฉิน</button>${dirRow()}${rooms}${appGrid()}<p class="credit">Q-Kawa Hub · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
 }
 /* ---------- งานของฉัน ---------- */
 const TF=[['all','ทั้งหมด'],['teacher','Teacher'],['academic','Academic'],['student','Student'],['budget','Budget']];
+function ttabs(){ const t=S.taskTab||'list'; return `<div class="chips" role="tablist" aria-label="หมวดงานของฉัน"><button class="chip" role="tab" data-ttab="list" aria-pressed="${t==='list'}">งานทั้งหมด</button><button class="chip" role="tab" data-ttab="rooms" aria-pressed="${t==='rooms'}">ห้อง/วิชาของฉัน</button></div>`; }
+function roomsSoon(){ return `<div class="card soonbox"><div class="big" aria-hidden="true">🏫</div><h2>เร็วๆ นี้</h2><p>หน้านี้จะแสดงห้องและวิชาที่ฉันรับผิดชอบ (อ่านอย่างเดียว)<br>ข้อมูลจะมาจาก Q-Academic เมื่อเปิดใช้งาน</p></div>`; }
 function pageTasks(){
+  if(S.taskTab==='rooms') return head('งานของฉัน','กล่องงานกลางจากทุกแอป')+`<div class="stack">${ttabs()}${roomsSoon()}</div>`;
   const all=myTasks(), st=setupTasks(), f=S.taskApp||'all';
   const pick=a=>f==='all'?a:a.filter(x=>x.app===f);
   const t=pick(all);
@@ -872,7 +1000,7 @@ function pageTasks(){
   const cnt=k=>k==='all'?all.length:all.filter(x=>x.app===k).length;
   const chips=`<div class="chips tfs" role="tablist" aria-label="กรองตามแอป">${TF.map(([k,l])=>`<button class="chip" data-tf="${k}" aria-pressed="${f===k}">${l}<small>${cnt(k)}</small></button>`).join('')}</div>`;
   const ext=S.extState==='loading'?'<p class="note">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="note warn">โหลดงานจาก Q-Teacher ไม่สำเร็จ <button class="btn sm" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
-  return head('งานของฉัน','กล่องงานกลางจากทุกแอป')+`<div class="stack">${chips}${levelStrip(t)}<div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการ${f==='all'?'ตอนนี้':'ในแอปนี้'}</p>`)}</div>${ext}
+  return head('งานของฉัน','กล่องงานกลางจากทุกแอป')+`<div class="stack">${ttabs()}${chips}${levelStrip(t)}<div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการ${f==='all'?'ตอนนี้':'ในแอปนี้'}</p>`)}</div>${ext}
   ${st.length&&f==='all'?`<section><div class="sec"><h3>งานตั้งค่าระบบ</h3></div><div class="list">${st.map(taskRow).join('')}</div></section>`:''}
   ${done.length?`<section><div class="sec"><h3>ทำเสร็จแล้ว</h3></div><div class="list">${done.map(taskRow).join('')}</div></section>`:''}
   <p class="note tlegend"><span><i class="tl b"></i>น้ำเงิน = งานใหม่/ยังไม่ถึงกำหนด</span><span><i class="tl p"></i>ม่วง = รอผู้อื่น</span><span><i class="tl g"></i>เขียว = เสร็จแล้ว</span><span><i class="tl y"></i>เหลือง = ใกล้ครบกำหนด (≤3 วัน)</span><span><i class="tl r"></i>แดง = ด่วน/เกินกำหนด</span></p>
@@ -1013,7 +1141,7 @@ function pageMenu(){
   const m=S.me;
   const row=(attr,icon,c,label,extra)=>`<button class="mrow" ${attr}><span class="ic c-${c}">${ic(icon,18)}</span><span class="tx">${label}</span>${extra||''}<span class="chev">${ic('chev',16)}</span></button>`;
   const notLinked=setupTasks().length?setupTasks()[0].sub:'';
-  const adm=isDir()?row('data-go="admin"','gear','h','Admin Panel <small style="display:block;font-size:12px;color:var(--muted)">บุคลากร · รหัสผูกบัญชี · เปิด–ปิดแอป · แจ้งเตือน LINE</small>',notLinked?`<span class="pill warn">${esc(notLinked)}</span>`:''):'';
+  const adm=isDir()?row('data-go="admin"','gear','h','Admin Panel <small style="display:block;font-size:12px;color:var(--muted)">บุคลากร · รหัสผูกบัญชี · เปิด–ปิดแอป · แจ้งเตือน LINE · สุขภาพระบบ</small>',notLinked?`<span class="pill warn">${esc(notLinked)}</span>`:''):'';
   return head('บัญชี')+`<div class="stack" style="gap:16px">
   <div class="card pcard"><div style="display:flex;align-items:center;gap:14px">${avatar()}<div style="min-width:0"><h2 style="font-size:18px">${esc(m.name)}</h2><p class="t2">${esc(rolesText())}</p><p class="t2">รหัสบุคลากร ${esc(m.staff_id)}${m.rooms.length?' · ครูประจำชั้น '+esc(m.rooms.map(r=>r.grade).join(', ')):''}</p></div></div>
     <p class="okline" style="margin-top:10px">${ic('checkc',18)} ผูกกับ LINE แล้ว${m.lineName?' ('+esc(m.lineName)+')':''}</p>${starProfile()}</div>
@@ -1031,6 +1159,32 @@ function adminStaff(){
   const linked=S.staff.filter(s=>s.linked).length;
   return `<p class="note">บุคลากร ${S.staff.length} คน · ผูกบัญชีแล้ว ${linked} คน</p><div class="card" style="padding:4px 16px">${S.staff.map(s=>`<div class="row"><div class="tx"><b style="font-weight:500">${esc(s.name)}</b><div class="t2">${esc(s.staff_id)} · ${esc(s.roles.filter(r=>r!=='ครู').join(' · ')||s.roles[0]||s.position)}</div></div><span class="pill ${s.linked?'ok':'warn'}">${s.linked?'ผูกแล้ว':'ยังไม่ผูก'}</span></div>`).join('')}</div>`;
 }
+function adminCfg(){
+  const c=cfgOf()||{clockCutoff:'12:00',apps:{},roles:CFG_ROLES_FB};
+  const roles=c.roles||CFG_ROLES_FB;
+  const head=APPS.map(a=>`<th><span class="cfgap" style="--g:${a.g}" aria-hidden="true">${a.e}</span><small>${a.name.replace('Q-','')}</small></th>`).join('');
+  const body=roles.map(r=>`<tr><th scope="row">${esc(r)}</th>${APPS.map(a=>`<td><input type="checkbox" data-cfgapp="${a.key}" data-role="${esc(r)}" aria-label="${esc(r)} เห็น ${a.name}" ${((c.apps||{})[a.key]||[]).includes(r)?'checked':''}></td>`).join('')}</tr>`).join('');
+  const hols=(S.cal||[]).filter(x=>x.kind==='holiday'&&x.date>=S.home.today.date).slice(0,3);
+  return `<div class="stack" style="gap:16px">
+  <section class="card"><div class="sec"><h3>ใครเห็นแอปไหน</h3></div><p class="note" style="margin:0 0 10px">ติ๊กแล้วบันทึกทันที มีผลกับหน้าแรกของบุคลากรในการเปิดครั้งถัดไป · ผอ./ผู้ดูแลระบบเห็นทุกแอปเสมอ</p>
+   <div class="cfgwrap"><table class="cfgt"><thead><tr><th></th>${head}</tr></thead><tbody>${body}</tbody></table></div></section>
+  <section class="card"><div class="sec"><h3>เวลาตัดปุ่มลงเวลา</h3></div><p class="note" style="margin:0 0 10px">ก่อนเวลานี้ปุ่มเป็น "เช็คอิน" ตั้งแต่เวลานี้เป็นต้นไปเป็น "เช็คเอาท์"</p>
+   <div style="display:flex;gap:8px;align-items:center"><input type="time" id="cfgClock" value="${esc(c.clockCutoff||'12:00')}" style="font:inherit;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink)"><button class="btn" data-act="cfgClock">บันทึก</button></div></section>
+  <section class="card"><div class="sec"><h3>วันหยุด (ซ่อนปุ่มเช็คอ่านเช้า)</h3></div>
+   <p class="note" style="margin:0 0 8px">อ่านจากปฏิทินวันหยุดของโรงเรียน (แท็บ holidays ใน QK-Core) เสาร์–อาทิตย์ซ่อนอัตโนมัติ · เพิ่มวันหยุดในแท็บนั้น ปุ่มเปลี่ยนเองโดยไม่ต้องแก้แอป</p>
+   <p class="okline">${S.home.today.holiday?'วันนี้เป็นวันหยุด · '+esc(S.home.today.holiday):'วันนี้ไม่ใช่วันหยุดตามปฏิทิน'}</p>
+   ${hols.length?`<ul class="achv" style="margin-top:6px">${hols.map(x=>`<li><span class="ai" aria-hidden="true">🗓️</span><span>${esc(thDate(x.date,{day:'numeric',month:'short',year:'2-digit'}))} · ${esc(x.title)}</span></li>`).join('')}</ul>`:'<p class="t2">ไม่มีวันหยุดใน 90 วันข้างหน้า</p>'}</section>
+  <p class="note">ค่าทั้งหมดเก็บเป็นแถว <b>cfg_*</b> ในแท็บ settings ของ QK-Hub (แอป = hub)</p></div>`;
+}
+async function saveCfg(key,value,okMsg){
+  try{ const r=await api('admin.setConfig',{key,value}); applyHome(r.home); toast(okMsg||'บันทึกแล้ว · มีผลทันที'); }
+  catch(e){ toast(e.message); render(); }
+}
+document.addEventListener('change',ev=>{
+  const t=ev.target; if(!t||!t.dataset||!t.dataset.cfgapp) return;
+  const k=t.dataset.cfgapp, list=[...document.querySelectorAll('input[data-cfgapp="'+k+'"]')].filter(x=>x.checked).map(x=>x.dataset.role);
+  saveCfg('cfg_apps_'+k,list.join(','));
+});
 function adminLine(){
   if(!S.line){ api('admin.settings').then(r=>{S.settings=r.settings;S.line=r.line;render();}).catch(e=>toast(e.message)); return '<div class="spin"></div>'; }
   return `<p class="note warn">ตอนนี้ระบบ "บันทึกค่า" ไว้ในชีต QK-Hub เท่านั้น ยังไม่ได้ส่งข้อความผ่าน LINE OA จริง (ต้องต่อ LINE Messaging API ที่หลังบ้านก่อน)</p>
@@ -1039,9 +1193,9 @@ function adminLine(){
 }
 function pageAdmin(){
   const tab=S.adminTab||'staff';
-  const TABS=[['staff','บุคลากร'],['code','ออกรหัส'],['sw','เปิด–ปิดแอป'],['line','แจ้งเตือน LINE']];
+  const TABS=[['staff','บุคลากร'],['code','ออกรหัส'],['sw','เปิด–ปิดแอป'],['cfg','ค่าตั้งหน้าแรก'],['line','แจ้งเตือน LINE'],['health','สุขภาพระบบ']];
   const tabs=`<div class="chips" role="tablist">${TABS.map(([k,l])=>`<button class="chip" role="tab" data-atab="${k}" aria-pressed="${tab===k}">${l}</button>`).join('')}</div>`;
-  const body=tab==='staff'?adminStaff():tab==='code'?pageLinkAdmin(true):tab==='sw'?pageSwitch(true):adminLine();
+  const body=tab==='staff'?adminStaff():tab==='code'?pageLinkAdmin(true):tab==='sw'?pageSwitch(true):tab==='cfg'?adminCfg():tab==='health'?`<div class="card soonbox"><div class="big" aria-hidden="true">🩺</div><h2>สุขภาพการใช้งานระบบ · เร็วๆ นี้</h2><p>จะแสดงสถานะหลังบ้านแต่ละแอป ความเร็วตอบสนอง ข้อผิดพลาดล่าสุด และจำนวนผู้ใช้ที่ผูกบัญชี</p></div>`:adminLine();
   return head('Admin Panel','เห็นเฉพาะ ผอ.','','menu')+`<div class="stack" style="gap:16px">${tabs}${body}</div>`;
 }
 /* ---------- ผูกบัญชีบุคลากร (ผอ.) ---------- */
@@ -1081,20 +1235,32 @@ function toast(t){ const el=document.getElementById('toast'); el.textContent=t; 
 function modal(html){ const m=document.getElementById('modal'); m.hidden=false; m.innerHTML=`<div class="overlay" data-act="overlay"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; }
 function closeModal(){ const m=document.getElementById('modal'); m.hidden=true; m.innerHTML=''; }
 async function refresh(){ S.staff=null; S.settings=null; S.line=null; try{ await loadHome(); }catch(e){ toast(e.message); } }
-function go(p){
+function go(p,keep){
+  if(!S.home) return;
+  if(p==='tasks'&&!keep) S.taskTab='list';
   if(p==='cal'&&S.page!=='cal'){ S.calWin=0; }
   S.page=p; S.detail=null; render(); window.scrollTo(0,0);
   // เปิดหน้าทันทีจากข้อมูลที่มี แล้วค่อยอัปเดตเงียบๆ ถ้าข้อมูลเก่ากว่า 1 นาที
   if(['home','ann','cal','tasks'].includes(p) && Date.now()-(S.fetchedAt||0)>60000 && !S.loading){
     S.loading=true; loadHome().catch(()=>{}).finally(()=>{S.loading=false;});
-  } else if(p==='home'||p==='tasks'){ loadExt(); loadPraise();
+  } else if(p==='home'||p==='tasks'){ loadExt(); loadBoard();
   } else if(p==='menu'){ loadPraise();
   }
 }
 
+function dailyGo(k){
+  if(k==='rooms'){ S.taskTab='rooms'; go('tasks',true); return; }
+  const d=DLY[k]; if(!d) return;
+  const app=d[0];
+  if(!appReady(app)){ soonSheet(app); return; }
+  const u=CONFIG.APP_URLS[app];
+  location.href=u+d[1];
+}
 document.addEventListener('click',async ev=>{
-  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-tf],[data-atab],[data-lcfg],[data-day],[data-ev],[data-win]');
+  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-tf],[data-atab],[data-lcfg],[data-day],[data-ev],[data-win],[data-ttab],[data-dly]');
   if(!t) return;
+  if(t.dataset.ttab){ S.taskTab=t.dataset.ttab; render(); return; }
+  if(t.dataset.dly){ dailyGo(t.dataset.dly); return; }
   if(t.dataset.tf){ S.taskApp=t.dataset.tf; render(); return; }
   if(t.dataset.atab){ S.adminTab=t.dataset.atab; render(); return; }
   if(t.dataset.lcfg){
@@ -1109,7 +1275,7 @@ document.addEventListener('click',async ev=>{
   if(t.dataset.day!==undefined){ S.calDay=(t.dataset.day&&S.calDay!==t.dataset.day)?t.dataset.day:null; render(); return; }
   if(t.dataset.filter){ S.annFilter=t.dataset.filter; render(); return; }
   if(t.dataset.ann){ S.page='ann'; S.detail=t.dataset.ann; if(!S.anns) await loadAnns(); render(); window.scrollTo(0,0); return; }
-  if(t.dataset.app){ const k=t.dataset.app; if(appReady(k)) location.href=CONFIG.APP_URLS[k]; else toast(APP_NAMES[k]+' · '+appState(k)); return; }
+  if(t.dataset.app){ const k=t.dataset.app; if(appReady(k)) location.href=CONFIG.APP_URLS[k]; else soonSheet(k); return; }
   if(t.dataset.task){
     const ty=t.dataset.task, id=t.dataset.id;
     if(t.dataset.tapp==='teacher'){ const TAB={'leave.hr':'endorse','leave.dir':'req','out.dir':'req','out.sub':'mysub',mysub:'mysub',sub:'sub',jan:'jan',rate:'fixreq',emg:'count',work:'mytasks',sup:'mydev','leave.wait':'myreq',notif:'mywork',inbox:'tasks',pa:'pachal',eval:'eval'}; location.href=CONFIG.APP_URLS.teacher+(TAB[ty]?'#tab='+TAB[ty]:''); return; }
@@ -1128,6 +1294,7 @@ document.addEventListener('click',async ev=>{
   if(act==='overlay'){ if(ev.target===t) closeModal(); return; }
   if(act==='close'){ closeModal(); return; }
   if(act==='reload'){ location.reload(); return; }
+  if(act==='cfgClock'){ const v=(document.getElementById('cfgClock')||{}).value||''; saveCfg('cfg_clock_cutoff',v,'บันทึกเวลาตัดแล้ว · '+v+' น.'); return; }
   if(act==='extRetry'){ loadExt(true); return; }
   if(act==='refresh'){ await refresh(); toast('โหลดข้อมูลใหม่แล้ว'); return; }
   if(act==='logout'){ logoutSheet(); return; }
