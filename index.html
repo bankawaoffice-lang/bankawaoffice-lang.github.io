@@ -483,6 +483,43 @@ details.more summary{cursor:pointer;color:var(--pri);font-weight:500;font-size:1
 .dbtn .ic.svg svg{width:34px;height:34px;stroke-width:2}
 
 .dbtn .aicw{width:48px;height:48px;border-radius:15px;margin-bottom:6px;box-shadow:0 6px 12px var(--sh)}
+
+/* ===== ภาษาดีไซน์ปุ่มชุดเดียว: ปุ่มประจำวัน · แคปซูลแจ้งเตือน · กริดแอป · ปรับที่ตัวแปร --bt-* ชุดนี้ที่เดียว ===== */
+:root{--bt-grad:linear-gradient(180deg,var(--card) 0%,var(--card) 38%,var(--pri-soft) 210%);--bt-shadow:0 8px 20px -8px rgba(30,35,65,.30),0 2px 5px rgba(30,35,65,.07);--bt-shadow-down:0 3px 8px -4px rgba(30,35,65,.30),0 1px 2px rgba(30,35,65,.08);--bt-radius:22px;--bt-min:44px}
+.dbtn,.appc.big{background:var(--bt-grad);box-shadow:var(--bt-shadow);border-radius:var(--bt-radius);min-height:var(--bt-min);-webkit-tap-highlight-color:transparent;transition:transform .12s ease,box-shadow .12s ease}
+.dbtn{min-height:128px}
+.cap{height:var(--bt-min);min-height:var(--bt-min);box-shadow:var(--bt-shadow);-webkit-tap-highlight-color:transparent;transition:transform .12s ease,box-shadow .12s ease}
+.dbtn:active,.appc.big:active,.cap:active{transform:scale(.97);box-shadow:var(--bt-shadow-down)}
+.dbtn.done{box-shadow:0 0 0 2px var(--ok),var(--bt-shadow)}
+.dbtn.off{background:var(--soft);box-shadow:none}
+.dbtn.off:active{transform:none}
+@media (prefers-reduced-motion:reduce){.dbtn,.appc.big,.cap{transition:none}.dbtn:active,.appc.big:active,.cap:active{transform:none}}
+
+/* ===== หัวหน้าจอย่อย "งานของฉัน"/"ประกาศ" (.pgh) · ปรับที่ตัวแปร --bt-* ด้านบน ===== */
+.pgh{gap:12px;padding:2px 0 14px;align-items:center}
+.pgh .back{width:44px;height:44px;border-radius:14px;background:var(--bt-grad);box-shadow:var(--bt-shadow);-webkit-tap-highlight-color:transparent}
+.pgh .back:active{transform:scale(.97)}
+.pgh h1{font-size:22px;font-weight:600;line-height:1.2}
+.pgh p{font-size:13px!important;line-height:1.35;margin-top:2px!important}
+.pgh>.btn{flex:none;min-height:44px;padding:0 16px;border-radius:999px;white-space:nowrap;box-shadow:var(--bt-shadow)}
+.pgh~.stack .search{min-height:44px;border-radius:999px;padding:0 18px}
+.pgh~.stack .chip{min-height:44px;display:inline-flex;align-items:center;flex:none}
+/* สีตัวอักษรบนปุ่ม/ป้าย: ความคมชัด ≥ 4.5 ในโหมดปกติ · โหมดมืดใช้สีเดิม · ปรับที่ตัวแปร --*-ink */
+:root{--pri-ink:#4343D4;--ok-ink:#0A6F45;--warn-ink:#8A5300;--badge-bg:#C4262F}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pri-ink:var(--pri);--ok-ink:var(--ok);--warn-ink:var(--warn)}}
+:root[data-theme="dark"]{--pri-ink:var(--pri);--ok-ink:var(--ok);--warn-ink:var(--warn)}
+.dot{background:var(--badge-bg)}
+.dbtn.done .s{color:var(--ok-ink)}
+.dbtn.warn .s{color:var(--warn-ink)}
+/* เมนูล่างที่ยังไม่เลือก: ใช้สีรอง แทนสีจาง */
+.m-nav button{color:var(--muted)}
+.m-nav button[aria-current="page"]{color:var(--pri-ink)}
+@media (max-width:999.98px){
+  .pgh~.stack .chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:2px 16px 6px;scroll-snap-type:x proximity;scroll-padding-inline:16px;-webkit-overflow-scrolling:touch}
+  .pgh~.stack .chips .chip{scroll-snap-align:start}
+  .pgh~.stack .lvstrip{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px 8px;padding:0 16px 4px}
+  .pgh~.stack .lvstrip span{flex:none}
+}
 </style>
 </head>
 <body>
@@ -834,8 +871,8 @@ function pageBody(){
     default: return pageHome();
   }
 }
-function head(title,sub,extra,backTo){
-  return `<div class="${wide.matches?'d-head':'m-top'}">${backTo?`<button class="back" data-go="${backTo}" aria-label="ย้อนกลับ">${ic('left')}</button>`:''}${S.page!=='home'?`<button class="back homeb" data-go="home" aria-label="กลับหน้าแรก">${ic('home')}</button>`:''}<div style="flex:1;min-width:0"><h1>${title}</h1>${sub?`<p style="color:var(--muted);font-size:14px;margin-top:2px">${sub}</p>`:''}</div>${extra||''}</div>`;
+function head(title,sub,extra,backTo,cls){
+  return `<div class="${wide.matches?'d-head':'m-top'}${cls?' '+cls:''}">${backTo?`<button class="back" data-go="${backTo}" aria-label="ย้อนกลับ">${ic('left')}</button>`:''}${S.page!=='home'?`<button class="back homeb" data-go="home" aria-label="กลับหน้าแรก">${ic('home')}</button>`:''}<div style="flex:1;min-width:0"><h1>${title}</h1>${sub?`<p style="color:var(--muted);font-size:14px;margin-top:2px">${sub}</p>`:''}</div>${extra||''}</div>`;
 }
 
 /* ---------- วันที่ ---------- */
@@ -1140,7 +1177,7 @@ const TF=[['all','ทั้งหมด'],['teacher','Teacher'],['academic','Aca
 function ttabs(){ const t=S.taskTab||'list'; return `<div class="chips" role="tablist" aria-label="หมวดงานของฉัน"><button class="chip" role="tab" data-ttab="list" aria-pressed="${t==='list'}">งานทั้งหมด</button><button class="chip" role="tab" data-ttab="rooms" aria-pressed="${t==='rooms'}">ห้อง/วิชาของฉัน</button></div>`; }
 function roomsSoon(){ return `<div class="card soonbox"><div class="big" aria-hidden="true">🏫</div><h2>เร็วๆ นี้</h2><p>หน้านี้จะแสดงห้องและวิชาที่ฉันรับผิดชอบ (อ่านอย่างเดียว)<br>ข้อมูลจะมาจาก Q-Academic เมื่อเปิดใช้งาน</p></div>`; }
 function pageTasks(){
-  if(S.taskTab==='rooms') return head('งานของฉัน','กล่องงานกลางจากทุกแอป')+`<div class="stack">${ttabs()}${roomsSoon()}</div>`;
+  if(S.taskTab==='rooms') return head('งานของฉัน','กล่องงานกลางจากทุกแอป',null,null,'pgh')+`<div class="stack">${ttabs()}${roomsSoon()}</div>`;
   const all=myTasks(), st=setupTasks(), f=S.taskApp||'all';
   const pick=a=>f==='all'?a:a.filter(x=>x.app===f);
   const t=pick(all);
@@ -1148,7 +1185,7 @@ function pageTasks(){
   const cnt=k=>k==='all'?all.length:all.filter(x=>x.app===k).length;
   const chips=`<div class="chips tfs" role="tablist" aria-label="กรองตามแอป">${TF.map(([k,l])=>`<button class="chip" data-tf="${k}" aria-pressed="${f===k}">${l}<small>${cnt(k)}</small></button>`).join('')}</div>`;
   const ext=S.extState==='loading'?'<p class="note">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="note warn">โหลดงานจาก Q-Teacher ไม่สำเร็จ <button class="btn sm" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
-  return head('งานของฉัน','กล่องงานกลางจากทุกแอป')+`<div class="stack">${ttabs()}${chips}${levelStrip(t)}<div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการ${f==='all'?'ตอนนี้':'ในแอปนี้'}</p>`)}</div>${ext}
+  return head('งานของฉัน','กล่องงานกลางจากทุกแอป',null,null,'pgh')+`<div class="stack">${ttabs()}${chips}${levelStrip(t)}<div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการ${f==='all'?'ตอนนี้':'ในแอปนี้'}</p>`)}</div>${ext}
   ${st.length&&f==='all'?`<section><div class="sec"><h3>งานตั้งค่าระบบ</h3></div><div class="list">${st.map(taskRow).join('')}</div></section>`:''}
   ${done.length?`<section><div class="sec"><h3>ทำเสร็จแล้ว</h3></div><div class="list">${done.map(taskRow).join('')}</div></section>`:''}
   <p class="note tlegend"><span><i class="tl b"></i>น้ำเงิน = งานใหม่/ยังไม่ถึงกำหนด</span><span><i class="tl p"></i>ม่วง = รอผู้อื่น</span><span><i class="tl g"></i>เขียว = เสร็จแล้ว</span><span><i class="tl y"></i>เหลือง = ใกล้ครบกำหนด (≤3 วัน)</span><span><i class="tl r"></i>แดง = ด่วน/เกินกำหนด</span></p>
@@ -1156,7 +1193,7 @@ function pageTasks(){
 }
 /* ---------- ประกาศ ---------- */
 function pageAnn(){
-  if(!S.anns){ loadAnns(); return head('ประกาศ')+'<div class="spin"></div>'; }
+  if(!S.anns){ loadAnns(); return head('ประกาศ',null,null,null,'pgh')+'<div class="spin"></div>'; }
   const m=S.me, f=S.annFilter, q=(S.annQ||'').trim();
   const anyPending=S.anns.some(a=>a.status==='รออนุมัติ'&&(m.isAdmin||a.mine));
   const chips=[['all','ทั้งหมด'],['unread','ยังไม่รับทราบ']];
@@ -1165,7 +1202,7 @@ function pageAnn(){
   let list=S.anns.filter(a=>f==='all'?a.status==='เผยแพร่'||a.mine||m.isAdmin:f==='unread'?(a.canAck&&!a.acked):f==='pending'?a.status==='รออนุมัติ':a.mine);
   if(q) list=list.filter(a=>(a.title+' '+a.body_th).indexOf(q)>=0);
   const btn=canWrite()&&m.canPublishSchool?`<button class="btn pri sm" data-act="compose">${ic('plus',16)} เขียนประกาศ</button>`:'';
-  return head('ประกาศ','ประกาศกลางของโรงเรียน',btn)+`<div class="stack" style="gap:14px">${annOffNote()}
+  return head('ประกาศ','ประกาศกลางของโรงเรียน',btn,null,'pgh')+`<div class="stack" style="gap:14px">${annOffNote()}
     ${!S.annOn&&!m.isAdmin?'<p class="note">ระบบประกาศยังไม่เปิดใช้</p>':''}
     <input type="search" class="search" id="annQ" placeholder="ค้นหาประกาศ" value="${esc(q)}" aria-label="ค้นหาประกาศ">
     <div class="chips" role="group" aria-label="กรองประกาศ">${chips.map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${f===k}">${l}</button>`).join('')}</div>
