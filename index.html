@@ -26,7 +26,7 @@ const CONFIG = {
    ใส่ลิงก์จริงของแอปแล้วทุกปุ่ม/ทุกไอคอนในกริดทำงานทันที ไม่ต้องแก้หน้าจอ */
 const VA_WRITE=['cfgBrand','compose','ack','addEv','cancelAnn','edit','issue','unlink','approve','reject','cfgClock','cfgWin','logoutYes','thanks'];
 function vaBlocked(t){ const d=t.dataset; return (d.act&&VA_WRITE.indexOf(d.act)>=0)||d.sw!==undefined||d.lcfg!==undefined||d.ev!==undefined; }
-const DLY={clock:['teacher','#tab=home'],leave:['teacher','#tab=myreq'],read:['student',''],scan:['academic',''],emg:['teacher','#tab=count'],staff:['teacher','#tab=staff']};
+const DLY={clock:['teacher','#tab=home'],leave:['teacher','#tab=myreq&kind=leave'],read:['student',''],scan:['academic',''],emg:['teacher','#tab=count'],staff:['teacher','#tab=staff']};
 /* แอปที่แต่ละบทบาทเห็นในกริด (ผอ./ผู้ดูแลระบบเห็นทั้งหมดเสมอ) */
 /* สำรองเท่านั้น: ใช้เมื่อหลังบ้านไม่ส่ง home.cfg · ค่าจริงอยู่ในแท็บ settings ของ QK-Hub (cfg_apps_*) แก้ที่ Admin Panel → ค่าตั้งหน้าแรก */
 const CFG_ROLES_FB=['ครู','ธุรการ','หัวหน้างานบุคคล','หัวหน้าวิชาการ','รองหัวหน้าวิชาการ','ภารโรง','รปภ.'];
