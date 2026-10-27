@@ -662,6 +662,47 @@ details.more>.f{margin-top:8px}
 #bottom .in>button[aria-current="page"]{background:var(--nv,#1e2341)!important;color:#fff!important;font-weight:700;box-shadow:inset 0 3px 0 #7fc4ff}
 #bottom .in>button[aria-current="page"] svg{stroke:#fff!important;stroke-width:2.6}
 #bottom .in>button[aria-current="page"] span{color:#fff!important}
+
+/* ===== หัว Q-Teacher: หน้าแรก = หัวม่วงไล่เฉดเดียวกับหัว Hub (.ah) · หน้าอื่น = หัวเรียบจัดระเบียบ (.as) · ปรับที่ตัวแปร --hdr-* / --hp-* ที่เดียว ===== */
+:root{--hdr-bg:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);--hdr-ink:#fff;--hdr-ink2:rgba(255,255,255,.78);--hdr-shadow:0 12px 28px rgba(30,35,65,.22);--hdr-radius:28px;--hdr-btn-bg:rgba(255,255,255,.16);--hdr-btn-bd:rgba(255,255,255,.32);--hdr-btn-ink:#fff;--hp-bg:var(--surface);--hp-shadow:0 6px 18px -10px rgba(30,35,65,.30);--hp-radius:22px;--hp-btn-bg:var(--accent-soft);--hp-btn-ink:var(--ink)}
+@media (max-width:999.98px){
+  .app-top.ah{max-width:none;margin:0 0 14px;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,calc((100% - 728px)/2)) 20px;background:var(--hdr-bg);color:var(--hdr-ink);border-radius:0 0 var(--hdr-radius) var(--hdr-radius);box-shadow:var(--hdr-shadow)}
+  .app-top.ah .eyebrow{color:var(--hdr-ink2)}
+  .app-top.ah h1{color:var(--hdr-ink)}
+  .app-top.ah .bell{box-shadow:none;width:44px;height:44px}
+  .app-top.ah .avatar{border:2px solid var(--hdr-btn-bd)}
+  .app-top.ah .mrole .pill.p-info{background:var(--hdr-btn-bg);color:var(--hdr-ink)}
+  .app-top.ah .hublink{min-height:44px;background:var(--hdr-btn-bg)!important;color:var(--hdr-btn-ink)!important;border:1px solid var(--hdr-btn-bd);box-shadow:none}
+  .app-top.ah .hublink svg{stroke:currentColor}
+  .app-top.as{max-width:none;margin:0 0 12px;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,calc((100% - 728px)/2)) 12px;background:var(--hp-bg);border-radius:0 0 var(--hp-radius) var(--hp-radius);box-shadow:var(--hp-shadow)}
+  .app-top.as .sub1{gap:10px;min-height:44px}
+  .app-top.as .iconbtn{width:44px;height:44px;border-radius:14px;background:var(--hp-btn-bg);box-shadow:none}
+  .app-top.as .iconbtn svg{stroke:var(--hp-btn-ink)}
+  .app-top.as h1{font-size:1.2rem;line-height:1.25}
+  .app-top.as .homebtn{min-height:44px}
+  .app-top.as .hubrow{justify-content:flex-start;margin:8px 0 0}
+  .app-top.as .hublink{min-height:44px;padding:0 14px 0 10px;border-radius:14px;background:var(--hp-btn-bg)!important;color:var(--hp-btn-ink)!important;box-shadow:none}
+  .app-top.as .hublink svg{stroke:currentColor}
+}
+@media (min-width:1000px){
+  html.on-home header.top{background:var(--hdr-bg);color:var(--hdr-ink);border-radius:0 0 var(--hdr-radius) var(--hdr-radius);box-shadow:var(--hdr-shadow)}
+  html.on-home header.top h1{color:var(--hdr-ink)}
+  html.on-home header.top .brand small,html.on-home header.top .roles>span{color:var(--hdr-ink2)}
+  html.on-home header.top .mark{box-shadow:0 0 0 2px var(--hdr-btn-bd)}
+  html.on-home header.top .avatar{border:2px solid var(--hdr-btn-bd)}
+  html.on-home header.top .pill.p-info{background:var(--hdr-btn-bg);color:var(--hdr-ink)}
+  html.on-home header.top .hublink{min-height:44px;background:var(--hdr-btn-bg)!important;color:var(--hdr-btn-ink)!important;border:1px solid var(--hdr-btn-bd);box-shadow:none}
+  html.on-home header.top .hublink svg{stroke:currentColor}
+}
+/* ป้ายตัวเลขแจ้งเตือน: ขาวบนแดงเข้ม ≥ 4.5 ทั้งโหมดปกติและมืด */
+:root{--badge-bg:#C4262F}
+.badge{background:var(--badge-bg)}
+.app-top .avatar,header.top .avatar{color:var(--ink)}
+@media (min-width:1000px){
+  html.on-home header.top .roles>.avatar{color:var(--ink)}
+  html:not(.on-home) header.top .hublink{min-height:44px;background:var(--hp-btn-bg)!important;color:var(--hp-btn-ink)!important;box-shadow:none}
+  html:not(.on-home) header.top .hublink svg{stroke:currentColor}
+}
 </style>
 </head>
 <body class="plain">
@@ -1010,6 +1051,7 @@ function renderChrome(){
   const vs=visibleSlots(),inSlots=vs.reduce((a,s)=>a.concat(slotPages(s)),[]),rest=all.filter(t=>!inSlots.includes(t));
   const mi=t=>{const b=badgeFor(t);return`<button class="mi" data-tab="${t}" ${st.tab===t?'aria-current="page"':''}>${tile(PAGES[t][1],PAGES[t][2])}<span>${pageTitle(t)}</span>${b?`<span class="badge">${b}</span>`:''}</button>`};
   $('#side').innerHTML=`<div class="hubrow">${hubLink('hubbig')}</div>`+vs.map(s=>(s.id==='home'?'':`<div class="mgrp">${esc(s.label)}</div>`)+slotPages(s).map(mi).join('')).join('')+(rest.length?`<div class="mgrp">หน้าอื่น</div>`+rest.map(mi).join(''):'')+`<div class="credit">Q-Teacher ${esc(B.version)}<br>พัฒนาโดย <b>${DEV_NAME}</b></div>`;
+  $('#apptop').className='app-top '+(home?'ah':'as');document.documentElement.classList.toggle('on-home',home);
   $('#apptop').innerHTML=home?`<div class="row1"><div style="min-width:0"><div class="eyebrow">${greet()}${st.stale?' · กำลังอัปเดต…':st.offline?' · ออฟไลน์':''}</div><h1>${esc(ME.call)}</h1></div><div class="toprow"><button class="bell" data-bell="1" aria-label="รายการต้องดำเนินการ ${p} รายการ">${svg('bell')}${p?`<span class="badge">${p}</span>`:''}</button>${avatarBtn()}</div></div>
    <div class="mrole"><span class="pill p-info">${esc(ROLE_LABEL[ME.role])}</span>${hubLink()}</div>`
    :`<div class="row1 sub1"><button class="iconbtn" data-tab="home" aria-label="กลับหน้าหลัก">${svg('back')}</button><div style="min-width:0;flex:1"><div class="eyebrow">Q-TEACHER${st.stale?' · กำลังอัปเดต…':''}</div><h1>${esc(pageTitle(st.tab))}</h1></div>${avatar()}</div>`;
