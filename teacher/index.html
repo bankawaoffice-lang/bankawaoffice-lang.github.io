@@ -679,8 +679,8 @@ details.more>.f{margin-top:8px}
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="เมนูทั้งหมด"><div class="card" id="sheetCard"></div></div>
 <div id="modal" hidden></div>
 <div class="toast" id="toast" role="status" hidden></div>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 'use strict';
 (function(){
@@ -887,12 +887,14 @@ async function boot(){
 function start(){$('#boot').hidden=true;document.body.classList.remove('plain');render()}
 /** ลิงก์จากหน้ากลาง: #tab=req / #leave=LV69-0001 (รองรับชื่อแท็บเดิมทั้งหมด) */
 function openHash(){
-  const h=decodeURIComponent(location.hash||'');if(!h)return;
+  let h=decodeURIComponent(location.hash||'');if(!h)return;
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  /* #tab=myreq&kind=leave → เปิดฟอร์มประเภทนั้นเลย (leave|out|gov|doc) · ไม่มี &kind = เหมือนเดิม */
+  let kind='';const km=/&kind=(\w*)$/.exec(h);if(km){if(['leave','out','gov','doc'].includes(km[1]))kind=km[1];h=h.slice(0,km.index)}
   const m=/^#(\w+)(?:=(.+))?$/.exec(h);if(!m)return;
   let t=m[1]==='tab'?m[2]:m[1]==='leave'?(REQ.some(r=>r.id===m[2]&&(r.canDir||r.canHR))?'approve':'myreq'):'';
   t=ALIAS[t]||t;
-  if(t&&avail().includes(t))go(t);
+  if(t&&avail().includes(t)){if(kind&&t==='myreq')st.kind=kind;go(t)}
 }
 
 /* ---------- หน้า / เมนู ตามบทบาท ---------- */
