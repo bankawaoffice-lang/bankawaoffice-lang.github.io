@@ -18,7 +18,7 @@ const CONFIG = {
   LIFF_ID: '2012013981-CUuRUfnG',   // LIFF เดียวกับหน้ากลางและ Q-Teacher
   API_URL: 'https://script.google.com/macros/s/AKfycbzHRiBLdnenGFU02RBgwb3TKjHVo6rqIsPPLVYpKIVuAAMlWLbtmQc9G7MIT-1-qu-wXQ/exec',   // URL หลังบ้าน Q-Student ที่ Deploy แล้ว (แก้ที่นี่ที่เดียว)
   HUB_URL: '../',                   // กลับหน้ากลาง Q-Kawa
-  WEB_VERSION: 'หน้าเว็บ รอบแรก v1 · 28 ต.ค. 2569 14:11 น.'
+  WEB_VERSION: 'หน้าเว็บ รอบ 3 v3 · 28 ต.ค. 2569 20:03 น.'
 };
 </script>
 <script>
@@ -101,6 +101,42 @@ h1,h2,h3{font-family:var(--fh);margin:0;line-height:1.25}h1{font-size:22px;font-
 .spin{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto}@keyframes sp{to{transform:rotate(360deg)}}
 #boot .center{min-height:60vh;display:grid;place-items:center;text-align:center;gap:12px;padding:20px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.spin{animation:none}}
+.stu.sc{gap:10px}.who{display:flex;gap:10px;align-items:center;min-width:0}.who>span{min-width:0}
+svg.av{flex:none;width:44px;height:44px;border-radius:50%}
+.rd2{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
+.rd2 select{min-height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:0 10px;width:100%}
+.rd2 .pre select,.rd2 .pre .pgv{border-style:dashed}
+.bk2{display:grid;grid-template-columns:1fr 1.25fr;gap:8px;align-items:center}
+.stp{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center}.stp .opt{padding:0}
+.pgv{min-height:44px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--line);border-radius:12px;font-weight:600}
+.lvs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.lv{min-height:44px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;font-weight:500;font-size:14px}
+.lv[aria-pressed="true"].l-ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.lv[aria-pressed="true"].l-warn{background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
+.lv[aria-pressed="true"].l-bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.seg .opt{min-height:48px;font-size:16px}
+.wchips{display:flex;flex-wrap:wrap;gap:6px}.wchip{background:var(--pri-soft);color:var(--pri-ink);border-radius:12px;padding:6px 12px;font:600 18px/1.3 var(--fh)}
+.wset{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;display:grid;gap:8px}
+textarea{font:inherit;color:inherit;border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:10px 12px;width:100%;min-height:150px}
+.quote{display:flex;gap:12px;align-items:center;background:var(--pri-soft);border:1px solid var(--line);border-radius:20px;padding:12px 14px;margin-bottom:12px;width:100%;text-align:left;min-height:64px}
+.quote .qs{flex:none;width:34px;height:34px}.quote b{display:block;font:600 18px/1.45 var(--fh);color:var(--pri-ink)}.quote span.src{display:block;font-size:13px;color:var(--muted)}
+.quote .nx{margin-left:auto;font-size:12.5px;color:var(--muted);flex:none}
+body.iq{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' fill='none' stroke='%235B5BF0' stroke-opacity='.10' stroke-width='1'%3E%3Cpath d='M30 5l6 12 12-6-6 12 12 6-12 6 6 12-12-6-6 12-6-12-12 6 6-12-12-6 12-6-6-12 12 6z'/%3E%3Ccircle cx='30' cy='30' r='5'/%3E%3C/svg%3E");background-size:60px 60px}
+body.iq .hdr{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' fill='none' stroke='%23ffffff' stroke-opacity='.10' stroke-width='1'%3E%3Cpath d='M30 5l6 12 12-6-6 12 12 6-12 6 6 12-12-6-6 12-6-12-12 6 6-12-12-6 12-6-6-12 12 6z'/%3E%3Ccircle cx='30' cy='30' r='5'/%3E%3C/svg%3E"),linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%)}
+body.iq .bar{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' fill='none' stroke='%235B5BF0' stroke-opacity='.10' stroke-width='1'%3E%3Cpath d='M30 5l6 12 12-6-6 12 12 6-12 6 6 12-12-6-6 12-6-12-12 6 6-12-12-6 12-6-6-12 12 6z'/%3E%3Ccircle cx='30' cy='30' r='5'/%3E%3C/svg%3E");background-size:60px 60px}
+body.iq .nav button[aria-current="page"]{box-shadow:inset 0 -3px 0 var(--pri-ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.iq{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' fill='none' stroke='%238C8CFF' stroke-opacity='.12' stroke-width='1'%3E%3Cpath d='M30 5l6 12 12-6-6 12 12 6-12 6 6 12-12-6-6 12-6-12-12 6 6-12-12-6 12-6-6-12 12 6z'/%3E%3Ccircle cx='30' cy='30' r='5'/%3E%3C/svg%3E")}:root:not([data-theme="light"]) body.iq .bar{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' fill='none' stroke='%238C8CFF' stroke-opacity='.12' stroke-width='1'%3E%3Cpath d='M30 5l6 12 12-6-6 12 12 6-12 6 6 12-12-6-6 12-6-12-12 6 6-12-12-6 12-6-6-12 12 6z'/%3E%3Ccircle cx='30' cy='30' r='5'/%3E%3C/svg%3E")}}
+.donutw{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.donut{width:132px;height:132px;flex:none}.donut .dn{font:600 8px var(--fh);fill:var(--ink)}.donut .ds{font-size:3.4px;fill:var(--muted)}
+.crow{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;margin-top:8px;font-size:13px}.crow .cl{font-weight:600}.cb{border-radius:8px;overflow:hidden;height:16px;background:var(--soft)}.cb svg{display:block;width:100%;height:16px}
+.crow .cn{color:var(--muted);text-align:right;white-space:nowrap}
+.lgd{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pbtn{width:100%;display:flex;justify-content:space-between;gap:8px;align-items:center;min-height:44px;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:6px 12px;text-align:left}
+.qk{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.qlb{min-width:34px;font-size:13px;color:var(--muted)}
+.chp{min-width:56px;min-height:44px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;font:600 17px var(--fh);padding:0 10px}
+.chp[aria-pressed="true"]{border-color:var(--pri-ink);background:var(--pri-soft);color:var(--pri-ink)}.chp.man{font:500 14px var(--f);margin-left:auto}
+:root{--org:#D9730D}@media all{:root[data-theme="dark"]{--org:#F5A04B}}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--org:#F5A04B}}
+.rk{margin-top:10px}.rkt{display:flex;justify-content:space-between;gap:8px;font-size:14px}.rkb{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:2px}.rkb .cb{height:16px}
+.rkh{display:flex;align-items:center;gap:8px;margin-top:12px}.rkh i{width:12px;height:12px;border-radius:3px;display:inline-block}
 </style>
 </head>
 <body>
@@ -121,6 +157,7 @@ const IC={
  task:'<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 3-3.5M8 16h8"/></svg>',
  list:'<svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>',
  chart:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+ book:'<svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 004 21.5z"/><path d="M4 21.5V5.5"/><path d="M9 8h7M9 12h5"/></svg>',
  users:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.6M18 14.3c1.9.8 3 2.9 3 5.7"/></svg>'
 };
 const DAYN=['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์'];
@@ -134,7 +171,7 @@ const isFollow=a=>ABS(a.st)&&(!a.reason||a.reason===UNKNOWN||a.reason===LOST);
 let B=null,SRV={hm:'',t:0},ME=null;
 const S={tab:'',scope:'',sheet:null,viewAs:'',ov:null,rev:null,adm:null,audit:null,trash:null,q:'',rf:'',offline:false,flagLoading:false};
 let RD={};let busyN=0;
-const cfg=()=>(B&&B.cfg)||{remind:'08:45',cutoff:'09:00',pass:7,books:6};
+const cfg=()=>(B&&B.cfg)||{remind:'08:45',cutoff:'09:00',pass:7,books:6,pages:0,rank_min:5};
 const isDir=()=>!!(ME&&ME.isAdmin&&!S.viewAs);
 const RO=()=>!!S.viewAs;
 function clockNow(){if(!SRV.hm)return '00:00';const p=SRV.hm.split(':').map(Number),m=p[0]*60+p[1]+Math.floor((Date.now()-SRV.t)/60000);return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
@@ -157,7 +194,7 @@ const vaX=()=>S.viewAs?{viewAs:S.viewAs}:{};
 const Q={items:[]};let flushing=false,flushT=null;
 const qKey=()=>'qs1_q_'+(ME?ME.staff_id:'x')+'_'+(B?B.today.date:'');
 function qSave(){try{localStorage.setItem(qKey(),JSON.stringify(Q.items))}catch(e){}}
-function qLoad(){try{const v=JSON.parse(localStorage.getItem(qKey())||'[]');Q.items=Array.isArray(v)?v.filter(i=>i&&i.key&&i.id&&(i.t==='att'||i.t==='read')).map(i=>Object.assign(i,{state:'pending'})):[]}catch(e){Q.items=[]}}
+function qLoad(){try{const v=JSON.parse(localStorage.getItem(qKey())||'[]');Q.items=Array.isArray(v)?v.filter(i=>i&&i.key&&i.id&&(i.t==='att'||(i.t==='read'&&(i.kind==='thai'?!!i.set:(i.book&&i.page))))).map(i=>Object.assign(i,{state:'pending'})):[]}catch(e){Q.items=[]}}
 function qPush(it){
   Q.items=Q.items.filter(x=>!(x.t===it.t&&x.key===it.key&&x.id===it.id&&(x.state==='queued'||x.state==='pending'||x.state==='failed')));
   Q.items.push(Object.assign({ts:Date.now(),at:clockNow(),state:'queued',batch:''},it));qSave();scheduleFlush(600);
@@ -173,14 +210,14 @@ async function flush(byUser){
         Q.items.filter(i=>i.t===t&&i.key===key&&i.state!=='saving').forEach(i=>{if(!i.batch)i.batch='';(batches[i.batch]=batches[i.batch]||[]).push(i)});
         for(const bid of Object.keys(batches)){
           const its=batches[bid],nc=bid||nonce();its.forEach(i=>{i.batch=nc;i.state='saving'});qSave();render();
-          const payload=its.map(i=>t==='att'?{id:i.id,st:i.st,reason:i.reason||'',text:i.text||'',ts:i.ts}:(i.kind==='thai'?{id:i.id,words:i.words,level:i.level,ts:i.ts}:{id:i.id,book:i.book,page:i.page,res:i.res,level:i.level,ts:i.ts}));
+          const payload=its.map(i=>t==='att'?{id:i.id,st:i.st,reason:i.reason||'',text:i.text||'',ts:i.ts}:(i.kind==='thai'?{id:i.id,set:i.set,level:i.level||'',ts:i.ts}:{id:i.id,book:i.book,page:i.page,level:i.level||'',ts:i.ts}));
           try{
             const j=await api(t==='att'?'att.set':'read.save',{key:key,items:payload},{nonce:nc});
             const bad=[];
             if(!j.dup)(j.results||[]).forEach(r=>{if(!r.ok&&r.code!=='STALE')bad.push(r)});
             Q.items=Q.items.filter(i=>its.indexOf(i)<0);
             if(j.scope)mergeScope(j.scope);
-            bad.forEach(r=>toast(r.code==='ABSENT'?'บันทึกผลอ่านไม่ได้ เพราะนักเรียนถูกทำเครื่องหมาย "'+r.status+'"':'บันทึกบางรายการไม่ได้ ('+(r.code||'')+')'));
+            bad.forEach(r=>toast(r.code==='BAD_SET'?'ชุดคำนี้ถูกลบหรือไม่ใช่ของชั้นนี้ · เลือกชุดคำใหม่':r.code==='ABSENT'?'บันทึกผลอ่านไม่ได้ เพราะนักเรียนถูกทำเครื่องหมาย "'+r.status+'"':'บันทึกบางรายการไม่ได้ ('+(r.code||'')+')'));
           }catch(e){
             if(e.net||e.code==='BUSY'){its.forEach(i=>{i.state=byUser?'failed':'pending'})}
             else{Q.items=Q.items.filter(i=>its.indexOf(i)<0);toast(e.message);refreshQuiet()}
@@ -204,7 +241,7 @@ function view(sc){
     items.filter(i=>i.id===s.id).sort((a,b)=>a.ts-b.ts).forEach(i=>{
       if(!sync||rank[i.state]>rank[sync])sync=i.state;
       if(i.t==='att'){s.att={st:i.st,reason:ABS(i.st)?(i.reason||''):'',text:i.text||'',src:RO()?'director':(ME&&ME.isAdmin?'director':'teacher'),at:i.at,by:ME.staff_id};if(s.read&&ABS(i.st))s.read.flag=true}
-      else{s.read=i.kind==='thai'?{words:i.words,pass:i.words>=cfg().pass,level:i.level,flag:false,at:i.at}:{book:i.book,page:i.page,res:i.res,level:i.level,flag:false,seed:false,at:i.at};if(!s.att.st)s.att={st:'มา',reason:'',text:'',src:'auto_reading',at:i.at,by:ME.staff_id}}
+      else{s.read=i.kind==='thai'?{set:i.set,level:i.level,flag:false,at:i.at}:{book:i.book,page:i.page,level:i.level,flag:false,seed:false,at:i.at};if(!s.att.st)s.att={st:'มา',reason:'',text:'',src:'auto_reading',at:i.at,by:ME.staff_id}}
     });
     s.sync=sync;s.follow=!!(s.att.st&&isFollow(s.att));
   });
@@ -227,9 +264,9 @@ function header(title,sub,back){
 const roBar=()=>RO()?'<div class="ro" role="status"><span>กำลังดูในมุมมองของ '+esc(S.viewAsName||'')+' (ดูอย่างเดียว)</span><button data-act="viewas" data-v="">กลับมุมมอง ผอ.</button></div>':'';
 function renderOff(){const el=$('#offbar');if(el)el.hidden=!S.offline}
 function nav(){
-  const items=isDir()?[['overview','ภาพรวมเช้า',IC.chart],['review','ตรวจรายชื่อ',IC.list],['students','นักเรียน',IC.users]]:[['today','งานวันนี้',IC.task],['review','ตรวจรายชื่อ',IC.list]];
-  const pend=(S.rev||[]).filter(r=>!r.done).length||(S.rev?0:(B&&B.review?B.review.pending:0));
-  return '<nav class="nav" style="--n:'+items.length+'" aria-label="เมนูหลัก">'+items.map(i=>'<button data-act="tab" data-v="'+i[0]+'" '+(S.tab===i[0]&&!S.scope?'aria-current="page"':'')+'>'+i[2]+'<span>'+i[1]+'</span>'+(i[0]==='review'&&pend?'<span class="badge">'+pend+'</span>':'')+'</button>').join('')+'</nav>';
+  const items=isDir()?[['overview','ภาพรวมเช้า',IC.chart],['reading','การอ่าน',IC.book],['review','ตรวจรายชื่อ',IC.list],['students','นักเรียน',IC.users]]:[['today','งานวันนี้',IC.task],['reading','การอ่าน',IC.book],['review','ตรวจรายชื่อ',IC.list]];
+  const pend=(S.rev||[]).filter(r=>!r.done).length||(S.rev?0:(B&&B.review?B.review.pending:0)),cur=S.tab==='words'?'reading':S.tab;
+  return '<nav class="nav" style="--n:'+items.length+'" aria-label="เมนูหลัก">'+items.map(i=>'<button data-act="tab" data-v="'+i[0]+'" '+(cur===i[0]&&!S.scope?'aria-current="page"':'')+'>'+i[2]+'<span>'+i[1]+'</span>'+(i[0]==='review'&&pend?'<span class="badge">'+pend+'</span>':'')+'</button>').join('')+'</nav>';
 }
 const CK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function statusChip(sc){
@@ -246,14 +283,14 @@ function followBox(scopes){
 }
 /* ---------- หน้า: งานวันนี้ ---------- */
 function today(){
-  const scopes=scopesV(),t=B.today,dow=DAYN[t.dow-1]||'';
+  const scopes=scopesV().filter(s=>!s.extra),t=B.today,dow=DAYN[t.dow-1]||'';
   let h=header('งานวันนี้',(t.closed?'':'วัน'+dow+' · ')+(RO()?(S.viewAsName||''):ME.name))+roBar(),b='<div class="wrap">';
   if(t.closed){b+='<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(t.holiday||'วันหยุด')+' · ไม่มีงานเช็คชื่อ</p></div>';return h+b+'</div>'}
   const late=clockNow()>=cfg().remind&&scopes.some(s=>!s.sent);
   if(late)b+='<div class="banner '+(clockNow()>cfg().cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>cfg().cutoff?'เลย '+esc(cfg().cutoff)+' น. แล้ว ยังมีงานเช็คชื่อที่ยังไม่ส่ง':'ใกล้ '+esc(cfg().cutoff)+' น. · เคลียร์คนที่ยังไม่ยืนยัน แล้วกดส่ง')+'</b><span>ต้องรู้ข้อมูลการมาเรียนก่อน '+esc(cfg().cutoff)+' น. (เตือนในแอปเท่านั้น)</span></div>';
   if(!scopes.length)b+='<div class="card"><h2>วัน'+dow+'ไม่มีงานเช็คชื่อของท่าน</h2><p class="sub">'+(t.dow<=2?'จันทร์–อังคาร ครูประจำชั้นเช็คชื่อและฟังอ่านไทย':t.dow<=4?'พุธ–พฤหัส ครูประจำกลุ่มเช็คชื่อและฟังอิกเราะห์ · ครูประจำชั้นเช็คชื่อเด็กที่ไม่อยู่กลุ่ม':'ศุกร์ ครูประจำชั้นเช็คชื่ออย่างเดียว')+'</p></div>';
-  scopes.forEach(sc=>{const c=sc.counts,n=sc.students.length,done=n-c[''],o=(sc.co||[])[0],rd=sc.kind==='att'?'':'<span class="chip c-pri">ประเมินอ่านแล้ว '+sc.students.filter(s=>s.read).length+'/'+n+'</span>';
-    b+='<button class="task" data-act="open" data-v="'+esc(sc.key)+'"><div class="t"><b>'+esc(sc.title)+'</b>'+statusChip(sc)+'</div><div class="prog" aria-hidden="true"><i style="width:'+(n?Math.round(done/n*100):0)+'%"></i></div><div class="line"><span class="chip c-ok">มา '+c['มา']+'</span><span class="chip c-bad">ขาด '+c['ขาด']+'</span><span class="chip c-lv">ลา '+c['ลา']+'</span><span class="chip c-act">กิจกรรม '+c['กิจกรรม']+'</span><span class="chip '+(c['']?'c-warn':'')+'">ยังไม่ยืนยัน '+c['']+'</span>'+rd+'</div>'+(o?'<span class="hint">ห้องนี้มีครูร่วม: '+esc(o.name)+' · ใครส่งก่อนถือเป็นผลของห้อง</span>':'')+'</button>'});
+  scopes.forEach(sc=>{const c=sc.counts,n=sc.students.length,done=n-c[''],rd=sc.kind==='att'?'':'<span class="chip c-pri">ประเมินอ่านแล้ว '+sc.students.filter(s=>s.read).length+'/'+n+'</span>';
+    b+='<button class="task" data-act="open" data-v="'+esc(sc.key)+'"><div class="t"><b>'+esc(sc.title)+'</b>'+statusChip(sc)+'</div><div class="prog" aria-hidden="true"><i style="width:'+(n?Math.round(done/n*100):0)+'%"></i></div><div class="line"><span class="chip c-ok">มา '+c['มา']+'</span><span class="chip c-bad">ขาด '+c['ขาด']+'</span><span class="chip c-lv">ลา '+c['ลา']+'</span><span class="chip c-act">กิจกรรม '+c['กิจกรรม']+'</span><span class="chip '+(c['']?'c-warn':'')+'">ยังไม่ยืนยัน '+c['']+'</span>'+rd+'</div>'+(((sc.co||[])[0])?'<span class="hint">ครูร่วม: '+esc(sc.co[0].name)+'</span>':'')+'</button>'});
   b+=followBox(scopes);
   const rv=B.review?B.review.pending:0;
   if(rv)b+='<button class="task" data-act="tab" data-v="review"><div class="t"><b>ตรวจรายชื่อ</b><span class="chip c-warn">รอตรวจ '+rv+' แถว</span></div><span class="sub">ชื่อที่ยังต้องยืนยันหรือจับคู่กับทะเบียน</span></button>';
@@ -262,55 +299,61 @@ function today(){
 /* ---------- หน้า: เช็คชื่อ + บันทึกอ่าน ---------- */
 function openScope(){
   const sc=scopeByKey(S.scope);if(!sc){S.scope='';return today()}
-  const c=sc.counts,n=sc.students.length,mk=n-c[''],bad=sc.students.filter(s=>s.sync==='pending'||s.sync==='failed'),sv=sc.students.filter(s=>s.sync==='saving'||s.sync==='queued'),fl=sc.students.filter(s=>s.read&&s.read.flag),o=(sc.co||[])[0];
+  const c=sc.counts,n=sc.students.length,mk=n-c[''],bad=sc.students.filter(s=>s.sync==='pending'||s.sync==='failed'),sv=sc.students.filter(s=>s.sync==='saving'||s.sync==='queued'),fl=sc.students.filter(s=>s.read&&s.read.flag),o=(sc.co||[])[0],ex=!!sc.extra;
   let h=header(sc.title,'วัน'+(DAYN[B.today.dow-1]||''),true)+roBar(),b='<div class="wrap">';
-  if(clockNow()>=cfg().remind&&!sc.sent)b+='<div class="banner '+(clockNow()>cfg().cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>cfg().cutoff?'เลย '+esc(cfg().cutoff)+' น. แล้ว':'ใกล้ '+esc(cfg().cutoff)+' น.')+' · เคลียร์ "ยังไม่ยืนยัน" แล้วกดส่ง</b></div>';
-  if(o)b+='<div class="banner c-pri"><b>ห้องนี้มีครูร่วม: '+esc(o.name)+'</b><span>ใครส่งก่อนถือเป็นผลของห้อง อีกคนเห็นว่าส่งแล้วและแก้ได้ ระบบเก็บประวัติว่าใครแก้</span></div>';
+  if(sc.kind==='iqra')b+=quoteCard();
+  if(sc.kind==='thai')b+=dayWords(sc);
+  if(!ex&&clockNow()>=cfg().remind&&!sc.sent)b+='<div class="banner '+(clockNow()>cfg().cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>cfg().cutoff?'เลย '+esc(cfg().cutoff)+' น. แล้ว':'ใกล้ '+esc(cfg().cutoff)+' น.')+' · เคลียร์ "ยังไม่ยืนยัน" แล้วกดส่ง</b></div>';
+  if(o&&!ex)b+='<div class="banner c-pri"><b>ห้องนี้มีครูร่วม: '+esc(o.name)+'</b><span>ใครส่งก่อนถือเป็นผลของห้อง อีกคนเห็นว่าส่งแล้วและแก้ได้ ระบบเก็บประวัติว่าใครแก้</span></div>';
   if(S.offline)b+='<div class="banner c-warn" role="status"><b>สัญญาณหลุด</b><span>ที่แตะไว้เก็บเป็นร่างในเครื่อง ส่งซ้ำได้ ไม่เกิดรายการซ้ำ</span></div>';
   if(fl.length)b+='<div class="banner c-warn"><b>มีผลอ่านที่บันทึกไว้ของคนที่ถูกเปลี่ยนเป็น ขาด/ลา '+fl.length+' คน</b><span>ผลอ่านยังอยู่ ไม่ถูกลบ · กรุณาตรวจ</span></div>';
-  b+='<div class="rowf" style="margin-bottom:10px"><button class="bn'+(sc.fri?' good':'')+'" data-act="bulk">'+(sc.fri?CK.replace('14','18').replace('14','18')+' ทุกคนมา':'ที่เหลือมาทั้งหมด')+'</button>';
-  if(c[''])b+='<button class="bn" data-act="sheet" data-v="clear">เคลียร์ที่ยังไม่ยืนยัน ('+c['']+')</button>';
-  b+='</div>'+sc.students.map((s,i)=>studentRow(s,sc,i)).join('');
-  const snt=sc.sent;
-  const bar='<div class="bar"><div class="in"><div class="rowf between"><span><b class="num">บันทึกแล้ว '+mk+'/'+n+'</b> · ยังไม่ยืนยัน <b class="num">'+c['']+'</b></span>'+statusChip(sc)+'</div>'
-   +(sv.length?'<div class="hint">กำลังบันทึก '+sv.length+' รายการ…</div>':'')
-   +(bad.length?'<div class="warnrow">ยังไม่ได้ส่ง '+bad.length+' รายการ'+(bad.some(s=>s.sync==='failed')?' · ส่งไม่สำเร็จ ลองใหม่':'')+'</div>':'')
-   +'<button class="bn pri wide" data-act="send">'+(snt?(!snt.mine&&!isDir()?'บันทึกการแก้ไข (ห้องส่งโดย '+esc(snt.first_name)+')':'ส่งอีกครั้ง (มีการแก้ไข)'):bad.length?'ส่งซ้ำ':'ส่งเช็คชื่อ')+'</button></div></div>';
+  if(!ex){
+    b+='<div class="rowf" style="margin-bottom:10px"><button class="bn'+(sc.fri?' good':'')+'" data-act="bulk">'+(sc.fri?CK.replace('14','18').replace('14','18')+' ทุกคนมา':'ที่เหลือมาทั้งหมด')+'</button>';
+    if(c[''])b+='<button class="bn" data-act="sheet" data-v="clear">เคลียร์ที่ยังไม่ยืนยัน ('+c['']+')</button>';
+    b+='</div>';
+  }
+  b+=sc.students.map((s,i)=>studentRow(s,sc,i)).join('');
+  const warn=(sv.length?'<div class="hint">กำลังบันทึก '+sv.length+' รายการ…</div>':'')+(bad.length?'<div class="warnrow">ยังไม่ได้ส่ง '+bad.length+' รายการ'+(bad.some(s=>s.sync==='failed')?' · ส่งไม่สำเร็จ ลองใหม่':'')+'</div>':'');
+  let bar;
+  if(ex){const rd=sc.students.filter(s=>s.read).length;bar='<div class="bar"><div class="in"><div class="rowf between"><span><b class="num">ประเมินอ่านแล้ว '+rd+'/'+n+'</b></span><span class="hint">เช็คชื่อทำที่ "งานวันนี้"</span></div>'+warn+'<button class="bn pri wide" data-act="back">เสร็จแล้ว กลับ</button></div></div>'}
+  else{const snt=sc.sent;bar='<div class="bar"><div class="in"><div class="rowf between"><span><b class="num">บันทึกแล้ว '+mk+'/'+n+'</b> · ยังไม่ยืนยัน <b class="num">'+c['']+'</b></span>'+statusChip(sc)+'</div>'+warn
+   +'<button class="bn pri wide" data-act="send">'+(snt?(!snt.mine&&!isDir()?'บันทึกการแก้ไข (ห้องส่งโดย '+esc(snt.first_name)+')':'ส่งอีกครั้ง (มีการแก้ไข)'):bad.length?'ส่งซ้ำ':'ส่งเช็คชื่อ')+'</button></div></div>'}
   return h+b+'</div>'+bar;
 }
 function studentRow(s,sc,i){
-  const r=s.att,rd=s.read,pr=s.prev,abs=ABS(r.st);
+  const r=s.att,abs=ABS(r.st),ex=!!sc.extra,rd=s.read,rdk=sc.kind==='thai'||sc.kind==='iqra';
   const bt=[['มา','s-m',IC.check],['ขาด','s-a',IC.x],['ลา','s-l',''],['กิจกรรม','s-g','']];
-  let sum='';if(sc.kind!=='att')sum=rd?(sc.kind==='thai'?'อ่านไทย '+rd.words+'/10'+(rd.words>=cfg().pass?' (ผ่าน)':' (ยังไม่ผ่าน)'):'อิกเราะห์ เล่ม '+rd.book+' หน้า '+rd.page+' · '+rd.res):'ยังไม่ประเมินอ่าน';
-  const syn=(s.sync==='saving'||s.sync==='queued')?'<div class="hint">● กำลังบันทึก…</div>':s.sync==='pending'?'<div class="hint">● ยังไม่ได้ส่ง (เก็บร่างในเครื่อง)</div>':s.sync==='failed'?'<div class="hint" style="color:var(--bad)">● ส่งไม่สำเร็จ</div>':(r.st?'<div class="hint">✓ บันทึกสำเร็จ '+esc(r.at)+' น.'+(r.by&&ME&&r.by!==ME.staff_id&&!isDir()?' · โดย '+esc(nameOf(sc,r.by)):'')+'</div>':'');
-  return '<div class="stu"><div class="nm"><span><span class="no">'+(i+1)+'</span> <b>'+esc(s.name)+'</b></span>'+(r.st?(s.follow?'<span class="chip c-bad">ต้องติดตาม</span>':''):'<span class="chip c-warn">ยังไม่ยืนยัน</span>')+'</div>'
-  +'<div class="sts" role="group" aria-label="สถานะ '+esc(s.name)+'">'+bt.map(x=>'<button class="'+x[1]+'" data-act="st" data-id="'+esc(s.id)+'" data-v="'+x[0]+'" aria-pressed="'+(r.st===x[0])+'">'+x[2]+x[0]+'</button>').join('')+'</div>'
-  +(r.src==='auto_reading'?'<div class="line"><span class="chip c-pri">อัตโนมัติจากผลอ่าน '+esc(r.at)+' น.</span><span class="hint">แตะสถานะอื่นเพื่อแก้</span></div>':'')
-  +(abs?'<div class="line"><button class="bn" data-act="reason" data-id="'+esc(s.id)+'">สาเหตุ: '+esc(r.reason||'เลือกสาเหตุ')+(r.text?' ('+esc(r.text)+')':'')+'</button></div>':'')
-  +(sc.kind!=='att'?'<div class="line"><button class="bn" data-act="read" data-id="'+esc(s.id)+'" '+(abs?'disabled':'')+'>'+IC.doc.replace('<svg','<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"')+' '+(rd?'แก้ผลอ่าน':'บันทึกอ่าน')+'</button><span class="'+(rd?'':'sub')+'">'+esc(abs?(rd?'ผลอ่านที่บันทึกไว้: '+sum:'ไม่บันทึกผลอ่าน (ขาด/ลา)'):sum)+'</span>'+(rd&&rd.level?'<span class="chip '+LVC[rd.level]+'">'+esc(rd.level)+'</span>':'')+'</div>':'')
-  +(rd&&rd.flag?'<div class="warnrow">มีผลอ่านที่บันทึกไว้ แต่ตอนนี้เป็น "'+esc(r.st)+'" · ตรวจอีกครั้ง <button class="bn" style="margin-left:6px" data-act="flagok" data-id="'+esc(s.id)+'">ตรวจแล้ว</button></div>':'')
-  +(pr&&!rd?'<div class="hint">ครั้งก่อน: '+(sc.kind==='thai'?pr.words+'/10 · '+esc(pr.level):'เล่ม '+pr.book+' หน้า '+pr.page+(pr.level?' · '+esc(pr.level):''))+'</div>':(sc.kind==='iqra'&&!pr&&!rd?'<div class="hint">ยังไม่มีเล่ม/หน้าปัจจุบัน — ครั้งแรกกรอกให้ครบ</div>':''))+syn+'</div>';
+  const syn=(s.sync==='saving'||s.sync==='queued')?'<div class="hint">● กำลังบันทึก…</div>':s.sync==='pending'?'<div class="hint">● ยังไม่ได้ส่ง (เก็บร่างในเครื่อง)</div>':s.sync==='failed'?'<div class="hint" style="color:var(--bad)">● ส่งไม่สำเร็จ</div>':((r.st&&!ex)||(rd&&ex)?'<div class="hint">✓ บันทึกสำเร็จ '+esc((ex&&rd?rd.at:r.at))+' น.'+(r.by&&ME&&r.by!==ME.staff_id&&!isDir()&&!ex?' · โดย '+esc(nameOf(sc,r.by)):'')+'</div>':'');
+  let h='<div class="stu sc"><div class="nm"><span class="who">'+avatar(s.g)+'<span><span class="no">'+(i+1)+'</span> <b>'+esc(s.name)+'</b></span></span>'+(r.st?(s.follow?'<span class="chip c-bad">ต้องติดตาม</span>':''):'<span class="chip c-warn">ยังไม่ยืนยัน</span>')+'</div>';
+  if(ex)h+='<div class="line"><span class="chip '+(r.st==='มา'?'c-ok':r.st==='ขาด'?'c-bad':r.st==='ลา'?'c-lv':r.st?'c-act':'c-warn')+'">เช็คชื่อ: '+esc(r.st||'ยังไม่ยืนยัน')+'</span><span class="hint">เช็คชื่อที่ "งานวันนี้"</span></div>';
+  else h+='<div class="sts" role="group" aria-label="สถานะ '+esc(s.name)+'">'+bt.map(x=>'<button class="'+x[1]+'" data-act="st" data-id="'+esc(s.id)+'" data-v="'+x[0]+'" aria-pressed="'+(r.st===x[0])+'">'+x[2]+x[0]+'</button>').join('')+'</div>'
+   +(r.src==='auto_reading'?'<div class="line"><span class="chip c-pri">อัตโนมัติจากผลอ่าน '+esc(r.at)+' น.</span><span class="hint">แตะสถานะอื่นเพื่อแก้</span></div>':'')
+   +(abs?'<div class="line"><button class="bn" data-act="reason" data-id="'+esc(s.id)+'">สาเหตุ: '+esc(r.reason||'เลือกสาเหตุ')+(r.text?' ('+esc(r.text)+')':'')+'</button></div>':'');
+  if(rdk&&!abs){
+    const lv=(e)=>'<div class="lvs" role="group" aria-label="ความคล่อง '+esc(s.name)+'">'+LEVELS.map(x=>'<button class="lv '+LVK[x]+'" data-act="lv" data-id="'+esc(s.id)+'" data-v="'+x+'" aria-pressed="'+(e.saved&&e.level===x)+'">'+x+'</button>').join('')+'</div>';
+    if(sc.kind==='thai'){const e=effThai(s,sc),pre=!e.saved&&!!e.set;
+      h+='<div class="rd2"><div class="'+(pre?'pre':'')+'"><select data-act="tset" data-id="'+esc(s.id)+'" aria-label="ชุดคำของ '+esc(s.name)+'"><option value="">เลือกชุดคำ…</option>'+sc.sets.map(x=>'<option value="'+esc(x.id)+'" '+(x.id===e.set?'selected':'')+'>'+esc(x.name)+(x.status!=='เผยแพร่'?' (ร่าง)':'')+'</option>').join('')+'</select></div>'+(pre?'<div class="hint">เริ่มจากชุดคำครั้งก่อน/ชุดของวัน · แตะความคล่องเพื่อบันทึก</div>':'')+(!sc.sets.length?'<div class="hint">ชั้นนี้ยังไม่มีชุดคำ · ไปที่ "จัดการชุดคำ"</div>':'')+lv(e)+'</div>'}
+    else{const e=effIqra(s),pre=!e.saved&&e.book>0,has=!!s.prev&&e.book>0&&e.page>0,man=!has||!!(S.man&&S.man[s.id]),bmax=cfg().books,pmax=cfg().pages>0?cfg().pages:999;
+      if(!man){const bs=[e.book,e.book+1,e.book+2].filter(x=>x<=bmax),ps=[e.page,e.page+1,e.page+2].filter(x=>x<=pmax),chp=(a,v,on,lb)=>'<button class="chp" data-act="'+a+'" data-id="'+esc(s.id)+'" data-v="'+v+'" aria-pressed="'+on+'" aria-label="'+lb+' '+v+'">'+v+'</button>';
+        h+='<div class="rd2"><div class="qk"><span class="qlb">เล่ม</span>'+bs.map(x=>chp('qb',x,e.saved&&x===e.book,'เล่ม')).join('')+'</div><div class="qk"><span class="qlb">หน้า</span>'+ps.map(x=>chp('qp',x,e.saved&&x===e.page,'หน้า')).join('')+'<button class="chp man" data-act="manual" data-id="'+esc(s.id)+'">เลือกเอง</button></div>'+(pre?'<div class="hint">เริ่มจากเล่ม/หน้าครั้งก่อน · แตะเลขเพื่อบันทึก</div>':'')+lv(e)+'</div>'}
+      else
+      h+='<div class="rd2"><div class="bk2'+(pre?' pre':'')+'"><select data-act="bset" data-id="'+esc(s.id)+'" aria-label="เล่มของ '+esc(s.name)+'"><option value="">เล่ม…</option>'+Array.from({length:cfg().books},(_,k)=>'<option value="'+(k+1)+'" '+(e.book===k+1?'selected':'')+'>เล่ม '+(k+1)+'</option>').join('')+'</select><div class="stp"><button class="opt" data-act="pg" data-id="'+esc(s.id)+'" data-v="-1" aria-label="ลดหน้า" '+(e.book?'':'disabled')+'>−</button><span class="pgv num">'+(e.page?'หน้า '+e.page:'หน้า –')+'</span><button class="opt" data-act="pg" data-id="'+esc(s.id)+'" data-v="1" aria-label="เพิ่มหน้า" '+(e.book?'':'disabled')+'>+</button></div></div>'+(has?'<div class="line"><button class="bn" data-act="manual" data-id="'+esc(s.id)+'">กลับไปตัวเลือกเร็ว</button></div>':'')+(!s.prev&&!rd?'<div class="hint">ครั้งแรก: เลือกเล่มและหน้าปัจจุบันของนักเรียนเอง</div>':'')+lv(e)+'</div>'}
+    if(rd&&!(s.sync==='saving'||s.sync==='queued'||s.sync==='pending'||s.sync==='failed')&&!RO())h+='<div class="line"><button class="bn danger" data-act="rdelask" data-id="'+esc(s.id)+'">ลบผลอ่านนี้</button></div>';
+  }else if(rdk&&abs){
+    h+='<div class="line"><span class="sub">'+(rd?'ผลอ่านที่บันทึกไว้ยังอยู่ ('+(sc.kind==='thai'?'ชุดคำ '+esc((sc.sets.find(x=>x.id===rd.set)||{}).name||'-'):'เล่ม '+rd.book+' หน้า '+rd.page)+(rd.level?' · '+esc(rd.level):'')+')':'ไม่บันทึกผลอ่าน (ขาด/ลา)')+'</span></div>';
+  }
+  if(rd&&rd.flag)h+='<div class="warnrow">มีผลอ่านที่บันทึกไว้ แต่ตอนนี้เป็น "'+esc(r.st)+'" · ตรวจอีกครั้ง <button class="bn" style="margin-left:6px" data-act="flagok" data-id="'+esc(s.id)+'">ตรวจแล้ว</button></div>';
+  return h+syn+'</div>';
 }
 /* ---------- แผ่นล่าง ---------- */
 function sheet(){
   const sh=S.sheet;if(!sh)return '';
+  const x2=sheet2();if(x2!==null)return x2;
   const wrap=h=>'<div class="ov" data-act="ovclose"><div class="sheet" role="dialog" aria-modal="true">'+h+'</div></div>',close='<button class="bn wide" data-act="close">ปิด</button>';
   if(sh.t==='notif'){const l=B.notifs||[];return wrap('<h2>การแจ้งเตือน</h2>'+(l.length?'<div class="stack">'+l.slice(0,12).map(n=>'<div class="card" style="margin:0"><b>'+esc(n.text)+'</b><div class="hint">'+esc(String(n.at||'').slice(11,16))+' น.</div></div>').join('')+'</div>':'<p class="sub">ยังไม่มีการแจ้งเตือน</p>')+close)}
   if(sh.t==='leave')return wrap('<h2>ยังมีรายการที่ยังไม่เห็น "บันทึกสำเร็จ"</h2><p>เหลือ <b class="num">'+sh.n+'</b> รายการ ถ้าออกจากหน้านี้ตอนนี้ ระบบเก็บร่างไว้ในเครื่อง และส่งต่อเมื่อกลับมาเปิดแอป</p><button class="bn pri wide" data-act="close">อยู่ต่อ รอให้บันทึกสำเร็จ</button><button class="bn wide" data-act="leaveok">ออกจากหน้านี้</button>');
   if(sh.t==='clear'){const sc=scopeByKey(S.scope);return wrap('<h2>เคลียร์คนที่ยังไม่ยืนยัน ('+sc.counts['']+' คน)</h2><p class="sub">เลือกให้ทุกคนที่ยังไม่ยืนยัน แก้รายคนทีหลังได้</p><div class="grid3"><button class="opt" data-act="clearto" data-v="ลา">ลา</button><button class="opt" data-act="clearto" data-v="ขาด">ขาด</button><button class="opt" data-act="clearto" data-v="ไม่ทราบ">ยังไม่ทราบสาเหตุ</button></div><p class="hint">ขาด/ลา ที่ยังไม่เลือกสาเหตุ และ "ยังไม่ทราบสาเหตุ" นับเป็นไม่มา และขึ้นรายการ "ต้องติดตาม" ของครูและ ผอ. จนกว่าจะเลือกสาเหตุ</p>'+close)}
   if(sh.t==='reason'){const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===sh.id),r=s.att;return wrap('<h2>สาเหตุ'+(r.st==='ลา'?'การลา':'การขาด')+'</h2><div class="stack">'+REASONS.map(x=>'<button class="opt" data-act="setreason" data-id="'+esc(sh.id)+'" data-v="'+esc(x)+'" aria-pressed="'+(r.reason===x)+'">'+esc(x)+((x===UNKNOWN||x===LOST)?' (ขึ้นต้องติดตาม)':'')+'</button>').join('')+'</div><div class="fld"><label for="rtx">ถ้าเลือก "อื่นๆ" พิมพ์สาเหตุ</label><input id="rtx" maxlength="80" value="'+esc(r.text||'')+'"></div><button class="bn pri wide" data-act="reasontext" data-id="'+esc(sh.id)+'">บันทึกสาเหตุ</button>'+close)}
-  if(sh.t==='read'){
-    const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===sh.id),pr=s.prev;
-    if(!RD.id||RD.id!==sh.id){const ex=s.read;RD=ex?(sc.kind==='thai'?{id:sh.id,words:ex.words,level:ex.level}:{id:sh.id,book:ex.book,page:ex.page,res:ex.res,level:ex.level}):(sc.kind==='thai'?{id:sh.id,words:null,level:''}:(pr?{id:sh.id,book:pr.book,page:pr.page,res:'',level:''}:{id:sh.id,book:null,page:null,res:'',level:'',first:true}))}
-    let h='<h2>'+esc(s.name)+'</h2>'+(pr?'<div class="banner c-pri"><b>ครั้งก่อน: '+(sc.kind==='thai'?pr.words+'/10 คำ · '+esc(pr.level):'เล่ม '+pr.book+' หน้า '+pr.page+(pr.level?' · '+esc(pr.level):''))+'</b><span>อ่านต่อจากตรงนี้ได้ทันที</span></div>':(sc.kind==='iqra'?'<div class="banner c-warn"><b>ครั้งแรก: กรอกเล่มและหน้าปัจจุบันของนักเรียน</b></div>':''));
-    if(sc.kind==='thai')h+='<div class="fld"><label>อ่านได้กี่คำจาก 10 คำ (ผ่านตั้งแต่ '+cfg().pass+' คำ)</label><div class="grid4" style="grid-template-columns:repeat(6,1fr)">'+[0,1,2,3,4,5,6,7,8,9,10].map(n=>'<button class="opt num" data-act="rdw" data-v="'+n+'" aria-pressed="'+(RD.words===n)+'">'+n+'</button>').join('')+'</div></div>';
-    else h+='<div class="fld"><label>เล่ม (มี '+cfg().books+' เล่ม)</label><div class="grid3" style="grid-template-columns:repeat('+Math.min(cfg().books,6)+',1fr)">'+Array.from({length:cfg().books},(_,i)=>'<button class="opt num" data-act="rdb" data-v="'+(i+1)+'" aria-pressed="'+(RD.book===i+1)+'">'+(i+1)+'</button>').join('')+'</div></div>'
-      +'<div class="fld"><label>อ่านถึงหน้า</label><div class="rowf"><button class="opt" style="width:56px" data-act="rdp" data-v="-1" aria-label="ลดหน้า">−</button><b class="num" style="min-width:48px;text-align:center;font-size:22px">'+(RD.page==null?'–':RD.page)+'</b><button class="opt" style="width:56px" data-act="rdp" data-v="1" aria-label="เพิ่มหน้า">+</button></div></div>'
-      +'<div class="fld"><label>ผลหน้านี้</label><div class="grid2">'+['ผ่านหน้า','ซ้ำ'].map(x=>'<button class="opt" data-act="rdr" data-v="'+x+'" aria-pressed="'+(RD.res===x)+'">'+x+'</button>').join('')+'</div></div>';
-    h+='<div class="fld"><label>ระดับความคล่อง (ครูที่ฟังเลือก)</label><div class="grid3">'+LEVELS.map(x=>'<button class="opt" data-act="rdl" data-v="'+x+'" aria-pressed="'+(RD.level===x)+'">'+x+'</button>').join('')+'</div><span class="hint">คล่อง = อ่านต่อเนื่อง ไม่ติด · พอใช้ = ติดบ้าง ต้องช่วยบางคำ · ต้องฝึก = ติดมากหรือช่วยเกือบทุกคำ</span></div>';
-    const ok=sc.kind==='thai'?RD.words!=null&&RD.level:(RD.book&&RD.page!=null&&RD.res&&RD.level);
-    const canDel=s.read&&!Q.items.some(i=>i.key===sc.key&&i.id===s.id&&i.t==='read');
-    return wrap(h+'<button class="bn pri wide" data-act="rdsave" '+(ok?'':'disabled')+'>บันทึกและไปคนถัดไป</button>'+(canDel?'<button class="bn danger wide" data-act="readdel" data-id="'+esc(sh.id)+'">ลบผลอ่านนี้ (ไปถังขยะ ผอ. กู้คืนได้)</button>':'')+close)}
   if(sh.t==='stu'){const s=(S.adm&&S.adm.students||[]).find(x=>x.id===sh.id);if(!s)return '';const rooms=(S.adm&&S.adm.rooms)||[],groups=(S.adm&&S.adm.groups)||[];
     return wrap('<h2>ย้าย/แก้นักเรียน</h2><p class="sub">ทุกครั้งที่แก้ ระบบเก็บประวัติ (ใคร ทำอะไร เมื่อใด) · ย้ายห้อง/ย้ายกลุ่มเป็นสิทธิ์ ผอ. คนเดียว</p>'
      +'<div class="grid2"><div class="fld"><label for="f1">คำนำหน้า</label><select id="f1">'+PREFIXES.map(x=>'<option '+(x===s.prefix?'selected':'')+'>'+esc(x)+'</option>').join('')+(PREFIXES.indexOf(s.prefix)<0?'<option selected>'+esc(s.prefix)+'</option>':'')+'</select></div><div class="fld"><label for="f4">รหัสนักเรียน</label><input id="f4" value="'+esc(s.code)+'"></div></div>'
@@ -340,17 +383,21 @@ function review(){
 function overview(){
   const o=S.ov;let h=header('ภาพรวมเช้า',o?('วัน'+(DAYN[o.dow-1]||'')+' · ตอนนี้ '+esc(o.hm)+' น. · นักเรียน '+o.total+' คน'):'กำลังโหลด…'),b='<div class="wrap">';
   if(!o)return h+b+'<div class="card"><div class="spin"></div></div></div>';
-  if(o.closed)return h+b+'<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(o.holiday)+'</p></div></div>';
+  if(o.closed)b+='<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(o.holiday)+'</p></div>';
   const c=o.tiles,unsent=o.scopes.filter(s=>!s.sent),short=s=>esc(s.title.replace(/^เช็คชื่อ( \+ [^·]+| อย่างเดียว)? · /,''));
+  if(!o.closed){
   if(unsent.length&&clockNow()>=o.cfg.remind)b+='<div class="banner '+(clockNow()>o.cfg.cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>o.cfg.cutoff?'เลย '+esc(o.cfg.cutoff)+' น.':'ใกล้ '+esc(o.cfg.cutoff)+' น.')+' · ยังไม่ส่ง '+unsent.length+' ห้อง/กลุ่ม</b><span>'+unsent.slice(0,6).map(short).join(' · ')+(unsent.length>6?' …':'')+'</span></div>';
   b+='<div class="tiles"><div class="tile c-ok"><b class="num">'+c['มา']+'</b><span>มา</span></div><div class="tile c-lv"><b class="num">'+c['ลา']+'</b><span>ลา</span></div><div class="tile c-bad"><b class="num">'+c['ขาด']+'</b><span>ขาด</span></div><div class="tile c-act"><b class="num">'+c['กิจกรรม']+'</b><span>กิจกรรมโรงเรียน</span></div><div class="tile c-warn"><b class="num">'+c['']+'</b><span>ยังไม่ยืนยัน</span></div><div class="tile c-bad"><b class="num">'+c.follow+'</b><span>ต้องติดตาม</span></div></div>';
-  b+='<div class="card" style="margin-top:12px"><div class="rowf between"><h3>ห้อง / กลุ่ม ที่ส่งแล้วและยังไม่ส่ง</h3>'+(o.lateSends?'<span class="chip c-warn">ส่งหลังเวลา '+o.lateSends+'</span>':'')+'</div><table class="tbl"><thead><tr><th>ห้อง/กลุ่ม</th><th>มา</th><th>ลา</th><th>ขาด</th><th>ยัง</th><th>ส่ง</th></tr></thead><tbody>'+o.scopes.map(s=>{const k=s.counts,sd=s.sent;return '<tr><td><button class="rb" data-act="open" data-v="'+esc(s.key)+'">'+short(s)+(s.noOwner?' <span class="chip c-bad">ยังไม่มีครู</span>':'')+'</button></td><td class="num">'+k['มา']+'</td><td class="num">'+k['ลา']+'</td><td class="num">'+k['ขาด']+'</td><td class="num">'+k['']+'</td><td>'+(sd?'<span class="chip '+(sd.late?'c-warn':'c-ok')+'">'+esc(sd.first_at)+(sd.late?' · หลังเวลา':'')+'</span>':'<span class="chip c-bad">ยังไม่ส่ง</span>')+'</td></tr>'}).join('')+'</tbody></table><p class="hint">แตะชื่อห้อง/กลุ่มเพื่อดูรายคนและแก้ไข (แตะชื่อนักเรียนเพื่อย้าย/แก้)</p></div>';
-  if(o.follow.length)b+='<div class="card"><div class="rowf between"><h3>ต้องติดตาม</h3><span class="chip c-bad">'+c.follow+' คน</span></div><p class="sub">ไม่มาและยังไม่ได้เลือกสาเหตุ / ยังไม่ทราบสาเหตุ / ติดตามไม่ได้ (ที่รู้สาเหตุแล้วไม่ขึ้น)</p>'+o.follow.slice(0,8).map(s=>'<div class="line" style="margin-top:4px"><span>'+esc(s.name)+'</span><span class="chip c-bad">'+esc(s.st)+'</span></div>').join('')+(o.follow.length>8?'<p class="hint">…และอีก '+(o.follow.length-8)+' คน</p>':'')+'</div>';
-  const thai=o.dow<=2,iq=o.dow>=3&&o.dow<=4;
-  b+='<div class="card"><h3>ประเมินการอ่านวันนี้</h3><div class="line">'+(thai?'<span class="chip c-pri">ประเมินอ่านไทยแล้ว '+o.thaiRead+' คน</span>':iq?'<span class="chip c-pri">ประเมินอิกเราะห์แล้ว '+o.iqraRead+' คน</span>':'<span class="chip">ศุกร์ไม่มีประเมินอ่าน</span>')+'</div>'+(iq?'<div class="line">'+(Object.keys(o.iqraBooks).length?Object.keys(o.iqraBooks).sort().map(k=>'<span class="chip">เล่ม '+esc(k)+': '+o.iqraBooks[k]+' คน</span>').join(''):'<span class="hint">ยังไม่มีผลอิกเราะห์วันนี้</span>')+'</div>':'')+'</div>';
+  }
+  b+='<div style="margin-top:12px"></div>'+chartsHtml(o)+rankCard();
+  if(!o.closed){
+  b+='<div class="card" style="margin-top:12px"><div class="rowf between"><h3>ห้อง / กลุ่ม ที่ส่งแล้วและยังไม่ส่ง</h3>'+(o.lateSends?'<span class="chip c-warn">ส่งหลังเวลา '+o.lateSends+'</span>':'')+'</div><table class="tbl"><thead><tr><th>ห้อง/กลุ่ม</th><th>มา</th><th>ลา</th><th>ขาด</th><th>ยัง</th><th>ส่ง</th></tr></thead><tbody>'+o.scopes.map(s=>{const k=s.counts,sd=s.sent;return '<tr><td><button class="rb" data-act="open" data-v="'+esc(s.key)+'">'+short(s)+(s.noOwner?' <span class="chip c-bad">ยังไม่มีครู</span>':'')+'</button></td><td class="num">'+k['มา']+'</td><td class="num">'+k['ลา']+'</td><td class="num">'+k['ขาด']+'</td><td class="num">'+k['']+'</td><td>'+(sd?'<span class="chip '+(sd.late?'c-warn':'c-ok')+'">'+esc(sd.first_at)+(sd.late?' หลังเวลา':'')+'</span>':'<span class="chip c-bad">ยัง</span>')+'</td></tr>'}).join('')+'</tbody></table></div>';
+  if(o.follow.length)b+='<div class="card"><div class="rowf between"><h3>ต้องติดตาม</h3><span class="chip c-bad">'+c.follow+' คน</span></div><p class="sub">ไม่มาและยังไม่ได้เลือกสาเหตุ / ยังไม่ทราบสาเหตุ / ติดตามไม่ได้ (ที่รู้สาเหตุแล้วไม่ขึ้น) · แตะชื่อดูประวัติ</p>'+o.follow.slice(0,8).map(s=>'<button class="pbtn" style="margin-top:6px" data-act="hist" data-id="'+esc(s.id)+'"><span>'+esc(s.name)+'</span><span class="chip c-bad">'+esc(s.st)+'</span></button>').join('')+(o.follow.length>8?'<p class="hint">…และอีก '+(o.follow.length-8)+' คน</p>':'')+'</div>';
+  }
   b+='<div class="card"><div class="rowf between"><h3>ตรวจรายชื่อ</h3><span class="chip '+(o.review.pending?'c-warn':'c-ok')+'">เหลือ '+o.review.pending+' / '+o.review.total+'</span></div></div>';
   b+='<div class="card"><h3>ดูในมุมมองของครู</h3><p class="sub">ดูอย่างเดียว บันทึกไม่ได้ (ระบบไม่เก็บประวัติการเปิดดู)</p><div class="fld"><label for="va">เลือกครู</label><select id="va" data-act="viewas-sel"><option value="">— เลือก —</option>'+o.teachers.map(t=>'<option value="'+esc(t.id)+'">'+esc(t.name)+'</option>').join('')+'</select></div></div>';
-  b+='<div class="card"><h3>ค่าตั้ง (ผอ. แก้ได้)</h3><div class="grid2"><div class="fld"><label for="c1">จำนวนเล่มอิกเราะห์</label><input id="c1" type="number" min="1" max="12" value="'+o.cfg.books+'"></div><div class="fld"><label for="c2">ผ่านอ่านไทย (คำจาก 10)</label><input id="c2" type="number" min="1" max="10" value="'+o.cfg.pass+'"></div><div class="fld"><label for="c3">เวลาเตือนในแอป</label><input id="c3" type="time" value="'+esc(o.cfg.remind)+'"></div><div class="fld"><label for="c4">เวลาที่ต้องรู้ข้อมูล</label><input id="c4" type="time" value="'+esc(o.cfg.cutoff)+'"></div></div><button class="bn pri wide" style="margin-top:10px" data-act="cfgsave">บันทึกค่าตั้ง</button><p class="hint">ส่งหลังเวลาที่ตั้ง ยังบันทึกได้ แต่ติดป้าย "ส่งหลังเวลา" ให้ ผอ. เห็น · เตือนในแอปอย่างเดียว ไม่ส่ง LINE</p></div>';
+  b+=quotesCard();
+  b+='<div class="card"><h3>ค่าตั้ง (ผอ. แก้ได้)</h3><div class="grid2"><div class="fld"><label for="c1">จำนวนเล่มอิกเราะห์</label><input id="c1" type="number" min="1" max="12" value="'+o.cfg.books+'"></div><div class="fld"><label for="c5">จำนวนหน้าต่อเล่ม (0 = ไม่จำกัด)</label><input id="c5" type="number" min="0" max="999" value="'+(o.cfg.pages||0)+'"></div><div class="fld"><label for="c6">เด็กขั้นต่ำต่อกลุ่ม/ชั้น เพื่อจัดอันดับ</label><input id="c6" type="number" min="1" max="50" value="'+(o.cfg.rank_min||5)+'"></div><div class="fld"><label for="c3">เวลาเตือนในแอป</label><input id="c3" type="time" value="'+esc(o.cfg.remind)+'"></div><div class="fld"><label for="c4">เวลาที่ต้องรู้ข้อมูล</label><input id="c4" type="time" value="'+esc(o.cfg.cutoff)+'"></div></div><button class="bn pri wide" style="margin-top:10px" data-act="cfgsave">บันทึกค่าตั้ง</button></div>';
   b+='<div class="card"><div class="rowf between"><h3>ประวัติการแก้ไข</h3><button class="bn" data-act="audit">'+(S.audit?'โหลดใหม่':'ดูประวัติ')+'</button></div>'+(S.audit?(S.audit.length?'<ul style="margin:6px 0 0;padding-left:18px">'+S.audit.slice(0,10).map(a=>'<li class="sub">'+esc(String(a.at).slice(11,16))+' น. · '+esc(a.by)+' · '+esc(a.action)+(a.key?' · '+esc(a.key):'')+'</li>').join('')+'</ul>':'<p class="sub">ยังไม่มีการแก้ไข</p>'):'')+'</div></div>';
   return h+b;
 }
@@ -366,29 +413,160 @@ function students(){
   const tr=S.trash||[];h+='<div class="card"><div class="rowf between"><h3>ถังขยะ (กู้คืนได้)</h3><span class="chip">'+tr.length+'</span></div>'+(tr.length?tr.map(t=>'<div class="line" style="margin-top:6px"><span>'+esc(t.name||t.tab+' '+t.key)+'</span><span class="hint">ลบโดย '+esc(t.by)+' '+esc(String(t.at).slice(11,16))+' น.</span><button class="bn" data-act="strest" data-id="'+esc(t.id)+'">กู้คืน</button></div>').join(''):'<p class="sub">ถังขยะว่าง</p>')+'</div></div>';
   return h;
 }
+/* ---------- รูปนักเรียน (การ์ตูน SVG วาดเอง ไม่ใช่รูปจริง · ใช้เพศจากคำนำหน้าในทะเบียน) ---------- */
+function avatar(g){
+  const eyes='<circle cx="20.6" cy="21.5" r="1.3" fill="#2A2118"/><circle cx="27.4" cy="21.5" r="1.3" fill="#2A2118"/><path d="M21 25.4q3 2.6 6 0" fill="none" stroke="#A8544A" stroke-width="1.4" stroke-linecap="round"/><circle cx="17.8" cy="24.4" r="1.6" fill="#F2A7A0" opacity=".6"/><circle cx="30.2" cy="24.4" r="1.6" fill="#F2A7A0" opacity=".6"/>';
+  const face='<ellipse cx="24" cy="21" rx="8.5" ry="9" fill="#F4CBA0"/>',shirt='<path d="M7 48c0-8 7-11 17-11s17 3 17 11z" fill="#fff" stroke="#C9CCE8" stroke-width="1"/>';
+  if(g==='f')return '<svg class="av" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#FBE3EE"/>'+shirt+'<path d="M24 5.5c-8.8 0-14.5 6.2-14.5 15 0 5.2 1.7 8.8 3.7 11.8L10.5 41c3.3 2.8 8.4 4.2 13.5 4.2s10.2-1.4 13.5-4.2l-2.7-8.7c2-3 3.7-6.6 3.7-11.8 0-8.8-5.7-15-14.5-15z" fill="#46A486"/>'+face+eyes+'</svg>';
+  return '<svg class="av" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#DCE8FF"/>'+shirt+'<path d="M19 37.5l5 4.5 5-4.5" fill="none" stroke="#3E6FD0" stroke-width="2.2" stroke-linejoin="round"/>'+face+(g==='m'?'<path d="M15.2 19.8c-.5-7.2 4.1-11.8 8.8-11.8s9.3 4.6 8.8 11.8c-2.4-3.3-5.6-4.5-8.8-4.5s-6.4 1.2-8.8 4.5z" fill="#2A2118"/>':'')+eyes+'</svg>';
+}
+const LVK={'คล่อง':'l-ok','พอใช้':'l-warn','ต้องฝึก':'l-bad'};
+const curMode=()=>S.rmode||(B&&B.today&&B.today.dow>=3&&B.today.dow<=4?'iqra':'thai');
+/* ---------- คำคมหน้าอิกเราะห์ (คลังคำคมที่ ผอ. แก้ได้ · หมุนตามวัน + แตะดูข้อถัดไป) ---------- */
+function quoteCard(){
+  const q=(B&&B.quotes)||[];if(!q.length)return '';
+  const d=B.today.date.split('-').map(Number),doy=Math.floor((Date.UTC(d[0],d[1]-1,d[2])-Date.UTC(d[0],0,0))/864e5),x=q[((doy+(S.qi||0))%q.length+q.length)%q.length];
+  const star='<svg class="qs" viewBox="0 0 60 60" aria-hidden="true" fill="none" stroke="var(--pri-ink)" stroke-width="2.4" stroke-linejoin="round"><path d="M30 5l6 12 12-6-6 12 12 6-12 6 6 12-12-6-6 12-6-12-12 6 6-12-12-6 12-6-6-12 12 6z"/><circle cx="30" cy="30" r="5"/></svg>';
+  return '<'+(q.length>1?'button data-act="qnext" aria-label="ดูคำคมข้อถัดไป"':'div')+' class="quote">'+star+'<span><b>'+esc(x.text)+'</b>'+(x.source?'<span class="src">'+esc(x.source)+'</span>':'')+'</span>'+(q.length>1?'<span class="nx">ข้อถัดไป ›</span>':'')+'</'+(q.length>1?'button':'div')+'>';
+}
+/* ---------- ค่าที่แสดงในการ์ด: ของวันนี้ ถ้ายังไม่มี = เริ่มจากค่าครั้งก่อน ---------- */
+function effThai(s,sc){const r=s.read,p=s.prev;return{set:(r&&r.set)||(p&&p.set)||sc.daySet||'',level:r?r.level:'',saved:!!r}}
+function effIqra(s){const r=s.read,p=s.prev;return{book:r?r.book:(p?p.book:0),page:r?r.page:(p?p.page:0),level:r?r.level:'',saved:!!r}}
+function saveRead(sc,s,patch){
+  if(blockRO()){render();return}
+  if(ABS(s.att.st)){toast('บันทึกผลอ่านไม่ได้ เพราะนักเรียนถูกทำเครื่องหมาย "'+s.att.st+'"');render();return}
+  if(sc.kind==='thai'){const e=effThai(s,sc),set=patch.set!=null?patch.set:e.set;if(!set){toast('เลือกชุดคำก่อน');render();return}
+    qPush({t:'read',key:sc.key,id:s.id,kind:'thai',set:set,level:patch.level!=null?patch.level:e.level})}
+  else{const e=effIqra(s),book=patch.book!=null?patch.book:e.book;let page=patch.page!=null?patch.page:e.page;if(book&&!page)page=1;if(!book||!page){toast('เลือกเล่มและหน้าก่อน');render();return}
+    qPush({t:'read',key:sc.key,id:s.id,kind:'iqra',book:book,page:Math.min(999,Math.max(1,page)),level:patch.level!=null?patch.level:e.level})}
+  render();
+}
+function dayWords(sc){
+  const set=sc.sets.find(x=>x.id===sc.daySet);
+  return '<div class="card"><div class="rowf between"><h3>คำที่ใช้วันนี้</h3>'+(B.canWords&&!RO()?'<button class="bn" data-act="tab" data-v="words">จัดการชุดคำ</button>':'')+'</div>'
+   +'<div class="fld"><label for="dayset">ชุดคำของวันนี้ (ชั้น '+esc(sc.grade)+')</label><select id="dayset" data-act="dayset" '+(RO()?'disabled':'')+'><option value="">— ยังไม่เลือก —</option>'+sc.sets.map(x=>'<option value="'+esc(x.id)+'" '+(x.id===sc.daySet?'selected':'')+'>'+esc(x.name)+(x.status!=='เผยแพร่'?' (ร่าง)':'')+'</option>').join('')+'</select></div>'
+   +(set?'<div class="wchips" style="margin-top:8px">'+set.words.map(w=>'<span class="wchip">'+esc(w)+'</span>').join('')+'</div>':(sc.sets.length?'<p class="sub">เลือกชุดคำของวันนี้ คำจะแสดงที่นี่ให้ทุกคนในห้องดู</p>':'<p class="sub">ชั้นนี้ยังไม่มีชุดคำ · กด "จัดการชุดคำ" เพื่อสร้าง</p>'))+'</div>';
+}
+/* ---------- หน้า: การอ่าน (สลับ อ่านไทย / อิกเราะห์) ---------- */
+function readingPage(){
+  const t=B.today,mode=curMode(),scopes=scopesV().filter(s=>s.kind===mode);
+  let h=header('การอ่าน','วัน'+(DAYN[t.dow-1]||'')+' · '+(mode==='iqra'?'อิกเราะห์':'อ่านภาษาไทย'))+roBar(),b='<div class="wrap">';
+  b+='<div class="seg" role="group" aria-label="เลือกประเภทการอ่าน"><button class="opt" data-act="rmode" data-v="thai" aria-pressed="'+(mode==='thai')+'">อ่านไทย</button><button class="opt" data-act="rmode" data-v="iqra" aria-pressed="'+(mode==='iqra')+'">อิกเราะห์</button></div>';
+  if(mode==='iqra')b+=quoteCard();
+  if(t.closed)b+='<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(t.holiday||'วันหยุด')+'</p></div>';
+  else if(t.dow===5)b+='<div class="card"><h2>วันศุกร์ไม่มีการอ่าน</h2><p class="sub">วันศุกร์เช็คชื่ออย่างเดียว ไปที่ "งานวันนี้"</p></div>';
+  else if(!scopes.length)b+='<div class="card"><h2>ไม่มีงาน'+(mode==='iqra'?'อิกเราะห์':'อ่านไทย')+'ของท่าน</h2><p class="sub">'+(mode==='iqra'?'ครูประจำกลุ่มอิกเราะห์เห็นกลุ่มของตนที่นี่':'ครูประจำชั้นเห็นห้องของตนที่นี่')+'</p></div>';
+  scopes.forEach(sc=>{const n=sc.students.length,rd=sc.students.filter(s=>s.read).length;
+    b+='<button class="task" data-act="open" data-v="'+esc(sc.key)+'"><div class="t"><b>'+esc(sc.title.replace(/^เช็คชื่อ \+ /,''))+'</b><span class="chip c-pri">ประเมินอ่านแล้ว '+rd+'/'+n+'</span></div><div class="prog" aria-hidden="true"><i style="width:'+(n?Math.round(rd/n*100):0)+'%"></i></div></button>'});
+  if(mode==='thai'&&B.canWords&&!RO())b+='<button class="bn wide" data-act="tab" data-v="words">จัดการชุดคำอ่านไทย</button>';
+  return h+b+'</div>';
+}
+/* ---------- หน้า: ชุดคำอ่านไทย (ครูของชั้น / ผอ.) · ต่อ Q-Parent ได้: ผู้ปกครองเห็นเฉพาะชุดที่เผยแพร่ ---------- */
+function wordsPage(){
+  let h=header('ชุดคำอ่านไทย','ครูกำหนดเองตามชั้น',true)+roBar(),b='<div class="wrap">';
+  if(RO())return h+b+'<div class="card"><p class="sub">โหมดดูอย่างเดียว · ไม่แสดงหน้านี้</p></div></div>';
+  const wl=S.wl;if(!wl)return h+b+'<div class="card"><div class="spin"></div></div></div>';
+  b+='<p class="hint" style="margin:0 0 10px">ผู้ปกครองจะเห็นเฉพาะชุดที่กด "เผยแพร่" (เมื่อ Q-Parent พร้อมใช้) · ครูแก้ได้เฉพาะชั้นของตน ผอ. แก้ได้ทุกชั้น · ลบแล้ว ผอ. กู้คืนได้</p>';
+  if(!wl.grades.length)b+='<div class="card"><p class="sub">ไม่พบชั้นที่ท่านเป็นครูประจำชั้น</p></div>';
+  wl.grades.forEach(g=>{const l=wl.sets.filter(x=>x.grade===g);
+    b+='<div class="card"><div class="rowf between"><h3>ชั้น '+esc(g)+'</h3><button class="bn pri" data-act="wnew" data-v="'+esc(g)+'">+ สร้างชุดคำ</button></div>'+(l.length?l.map(x=>'<div class="wset"><div class="rowf between"><b>'+esc(x.name)+'</b><span class="chip '+(x.status==='เผยแพร่'?'c-ok':'c-warn')+'">'+esc(x.status)+'</span></div><div class="wchips">'+x.words.map(w=>'<span class="wchip">'+esc(w)+'</span>').join('')+'</div><div class="rowf"><button class="bn" data-act="wedit" data-id="'+esc(x.id)+'">แก้ไข</button><button class="bn '+(x.status==='เผยแพร่'?'':'good')+'" data-act="wpub" data-id="'+esc(x.id)+'" data-v="'+(x.status==='เผยแพร่'?'0':'1')+'">'+(x.status==='เผยแพร่'?'ยกเลิกเผยแพร่':'เผยแพร่')+'</button><button class="bn danger" data-act="wdel" data-id="'+esc(x.id)+'">ลบ</button></div></div>').join(''):'<p class="sub">ยังไม่มีชุดคำของชั้นนี้</p>')+'</div>'});
+  return h+b+'</div>';
+}
+/* ---------- แผ่นล่างของฟีเจอร์ใหม่ ---------- */
+function sheet2(){
+  const sh=S.sheet;if(!sh)return null;
+  const wrap=h=>'<div class="ov" data-act="ovclose"><div class="sheet" role="dialog" aria-modal="true">'+h+'</div></div>',close='<button class="bn wide" data-act="close">ปิด</button>';
+  if(sh.t==='wset'){const x=sh.id?((S.wl&&S.wl.sets)||[]).find(y=>y.id===sh.id):null;
+    return wrap('<h2>'+(x?'แก้ชุดคำ':'สร้างชุดคำ ชั้น '+esc(sh.grade))+'</h2><div class="fld"><label for="wn">ชื่อชุด (เช่น ชุดที่ 1)</label><input id="wn" maxlength="40" value="'+esc(x?x.name:'')+'"></div><div class="fld"><label for="ww">คำ (พิมพ์ทีละบรรทัด หรือคั่นด้วยจุลภาค)</label><textarea id="ww" rows="8">'+esc(x?x.words.join('\n'):'')+'</textarea><span class="hint">ไม่เกิน 40 คำ · คำละไม่เกิน 30 ตัวอักษร · สร้างแล้วเป็น "ร่าง" กด "เผยแพร่" เมื่อพร้อม</span></div><button class="bn pri wide" data-act="wsave" data-id="'+esc(sh.id||'')+'" data-v="'+esc(sh.grade||'')+'">บันทึก</button>'+close)}
+  if(sh.t==='wdel'){const x=((S.wl&&S.wl.sets)||[]).find(y=>y.id===sh.id);return wrap('<h2>ลบชุดคำ "'+esc(x?x.name:'')+'"?</h2><p>ย้ายไปถังขยะ ซ่อนจากการเลือก ผลอ่านที่เคยบันทึกยังอยู่ ผอ. กู้คืนได้ที่หน้า "นักเรียน"</p><button class="bn danger wide" data-act="wdelok" data-id="'+esc(sh.id)+'">ย้ายไปถังขยะ</button>'+close)}
+  if(sh.t==='rdel'){return wrap('<h2>ลบผลอ่านของ '+esc(sh.name)+'?</h2><p>ย้ายไปถังขยะ ผอ. กู้คืนได้ และเก็บประวัติไว้</p><button class="bn danger wide" data-act="readdel" data-id="'+esc(sh.id)+'">ลบผลอ่านนี้</button>'+close)}
+  if(sh.t==='quote'){const x=sh.id?((S.quotes&&S.quotes.quotes)||[]).find(y=>y.id===sh.id):null;
+    return wrap('<h2>'+(x?'แก้คำคม':'เพิ่มคำคม')+'</h2><div class="fld"><label for="qt">ข้อความ (ไม่เกิน 200 ตัวอักษร)</label><textarea id="qt" rows="4" maxlength="200">'+esc(x?x.text:'')+'</textarea></div><div class="fld"><label for="qs">ที่มา (ไม่บังคับ)</label><input id="qs" maxlength="80" value="'+esc(x?x.source:'')+'"></div><p class="hint">ใส่ข้อความที่ถูกต้องและตรวจที่มาแล้วเท่านั้น ระบบไม่เติมข้อความให้</p><button class="bn pri wide" data-act="qsave" data-id="'+esc(sh.id||'')+'">บันทึก</button>'+close)}
+  if(sh.t==='qdel'){return wrap('<h2>ลบคำคมนี้?</h2><p>ย้ายไปถังขยะ กู้คืนได้ ถ้าลบหมด ระบบกลับไปใช้ข้อความเริ่มต้น</p><button class="bn danger wide" data-act="qdelok" data-id="'+esc(sh.id)+'">ย้ายไปถังขยะ</button>'+close)}
+  if(sh.t==='hist'){const x=sh.data;if(!x)return wrap('<div class="spin"></div>'+close);const c=x.counts;
+    return wrap('<h2>ประวัติ '+esc(x.name)+'</h2><div class="rowf"><span class="chip c-ok">มา '+c['มา']+'</span><span class="chip c-bad">ขาด '+c['ขาด']+'</span><span class="chip c-lv">ลา '+c['ลา']+'</span><span class="chip c-act">กิจกรรม '+c['กิจกรรม']+'</span></div><p class="hint">นับจากเช็คชื่อ '+x.att.length+' ครั้งล่าสุดที่มีข้อมูล</p>'
+     +'<h3>เช็คชื่อล่าสุด</h3>'+(x.att.length?'<div class="lgd">'+x.att.slice(0,20).map(a=>'<span class="chip '+(a.st==='มา'?'c-ok':a.st==='ขาด'?'c-bad':a.st==='ลา'?'c-lv':'c-act')+'">'+esc(a.date.slice(5))+' '+esc(a.st||'-')+'</span>').join('')+'</div>':'<p class="sub">ยังไม่มีข้อมูล</p>')
+     +'<h3>อ่านไทย</h3>'+(x.thai.length?x.thai.slice(0,8).map(a=>'<div class="line"><span>'+esc(a.date.slice(5))+'</span><span>'+esc(a.set||'-')+'</span>'+(a.level?'<span class="chip '+LVC[a.level]+'">'+esc(a.level)+'</span>':'')+'</div>').join(''):'<p class="sub">ยังไม่มีข้อมูล</p>')
+     +'<h3>อิกเราะห์</h3>'+(x.iqra.length?x.iqra.slice(0,8).map(a=>'<div class="line"><span>'+esc(a.date.slice(5))+'</span><span>เล่ม '+a.book+' หน้า '+a.page+'</span>'+(a.level?'<span class="chip '+LVC[a.level]+'">'+esc(a.level)+'</span>':'')+'</div>').join(''):'<p class="sub">ยังไม่มีข้อมูล</p>')+close)}
+  return null;
+}
+/* ---------- กราฟภาพรวม (SVG เอง เบา ไม่ใช้ไลบรารี · ตัวเลขทุกตัวมาจากข้อมูลจริง) ---------- */
+const CSEG=[['มา','var(--ok)','มา'],['ขาด','var(--bad)','ขาด'],['ลา','var(--lv)','ลา'],['กิจกรรม','var(--act)','กิจกรรม'],['','var(--warn)','ยังไม่ยืนยัน']];
+function donut(c,total){
+  if(!total)return '<p class="sub">ยังไม่มีข้อมูล</p>';
+  let off=0,segs='';CSEG.forEach(x=>{const v=c[x[0]]||0;if(!v)return;const p=v/total*100;segs+='<circle cx="21" cy="21" r="15.9155" fill="none" style="stroke:'+x[1]+'" stroke-width="6" stroke-dasharray="'+p.toFixed(2)+' '+(100-p).toFixed(2)+'" stroke-dashoffset="'+(25-off).toFixed(2)+'"/>';off+=p});
+  return '<div class="donutw"><svg class="donut" viewBox="0 0 42 42" role="img" aria-label="สัดส่วนการมาเรียนทั้งโรงเรียน '+total+' คน"><circle cx="21" cy="21" r="15.9155" fill="none" style="stroke:var(--soft)" stroke-width="6"/>'+segs+'<text x="21" y="22.2" text-anchor="middle" class="dn">'+total+'</text><text x="21" y="27" text-anchor="middle" class="dn ds">คน</text></svg><div class="lgd" style="flex:1;min-width:150px">'+CSEG.map(x=>'<span class="chip" style="background:none;border:1.5px solid '+x[1]+';color:var(--ink)"><b class="num">'+(c[x[0]]||0)+'</b> '+x[2]+' <span class="hint">('+Math.round((c[x[0]]||0)/total*100)+'%)</span></span>').join('')+'</div></div>';
+}
+function stackBar(segs,total){
+  let x=0,r='';segs.forEach(s=>{if(!s.v)return;const w=s.v/total*100;r+='<rect x="'+x.toFixed(2)+'" y="0" width="'+w.toFixed(2)+'" height="16" style="fill:'+s.col+(s.op?';fill-opacity:'+s.op:'')+'"/>';x+=w});
+  return '<div class="cb"><svg viewBox="0 0 100 16" preserveAspectRatio="none" aria-hidden="true">'+r+'</svg></div>';
+}
+function chartsHtml(o){
+  let b='';
+  const tot=o.closed?0:o.total;
+  b+='<div class="card"><h3>ทั้งโรงเรียนวันนี้</h3>'+(o.closed?'<p class="sub">วันนี้ปิดเรียน · ยังไม่มีข้อมูล</p>':donut(o.tiles,o.total))+'</div>';
+  b+='<div class="card"><h3>รายห้อง</h3>'+(o.closed||!o.byRoom.some(r=>r.n)?'<p class="sub">ยังไม่มีข้อมูล</p>':o.byRoom.map(r=>r.n?'<div class="crow"><span class="cl">'+esc(r.grade)+'</span>'+stackBar(CSEG.map(x=>({v:r.counts[x[0]]||0,col:x[1]})),r.n)+'<span class="cn num">มา '+r.counts['มา']+'/'+r.n+'</span></div>':'<div class="crow"><span class="cl">'+esc(r.grade)+'</span><span class="sub">ไม่มีนักเรียน</span><span></span></div>').join('')+'<div class="lgd">'+CSEG.map(x=>'<span class="chip"><i style="width:10px;height:10px;border-radius:3px;background:'+x[1]+';display:inline-block"></i> '+x[2]+'</span>').join('')+'</div>')+'</div>';
+  const bk=cfg().books;
+  b+='<div class="card"><h3>ความก้าวหน้ากลุ่มอิกเราะห์ (เล่มปัจจุบันของสมาชิก)</h3>'+(!o.byGroup.length||!o.byGroup.some(g=>g.n)?'<p class="sub">ยังไม่มีข้อมูล</p>':o.byGroup.map(g=>{
+    if(!g.n)return '<div class="crow"><span class="cl">'+esc(g.name.replace(/^กลุ่ม /,''))+'</span><span class="sub">ไม่มีสมาชิก</span><span></span></div>';
+    const segs=[];for(let i=1;i<=bk;i++)segs.push({v:g.books[i]||0,col:'var(--pri)',op:(0.25+0.75*i/bk).toFixed(2)});segs.push({v:g.nopos,col:'var(--line)'});
+    const txt=Object.keys(g.books).sort((a,c)=>a-c).map(k=>'เล่ม '+k+': '+g.books[k]).join(' · ');
+    return '<div class="crow"><span class="cl">'+esc(g.name.replace(/^กลุ่ม /,''))+'</span>'+stackBar(segs,g.n)+'<span class="cn num">'+g.n+' คน</span></div><div class="hint" style="margin-left:60px">'+(txt||'')+(g.nopos?(txt?' · ':'')+'ยังไม่มีข้อมูล '+g.nopos:'')+'</div>'}).join('')+'<p class="hint">สีเข้มขึ้น = เล่มสูงขึ้น · สีเทา = ยังไม่มีข้อมูลเล่ม/หน้า</p>')+'</div>';
+  const tl=o.thaiLv,tt=tl.total;
+  b+='<div class="card"><h3>อ่านไทย: ระดับความคล่องล่าสุดของเด็กแต่ละคน</h3>'+(!tt||tl.none===tt?'<p class="sub">ยังไม่มีข้อมูล</p>':[['คล่อง','var(--ok)'],['พอใช้','var(--warn)'],['ต้องฝึก','var(--bad)'],['none','var(--line)']].map(x=>'<div class="crow"><span class="cl" style="width:70px;margin-right:-18px">'+(x[0]==='none'?'ยังไม่ประเมิน':x[0])+'</span>'+stackBar([{v:tl[x[0]],col:x[1]}],tt)+'<span class="cn num">'+tl[x[0]]+' คน</span></div>').join(''))+'</div>';
+  b+='<div class="card"><h3>ประวัติรายคน</h3><div class="fld"><label for="hq">ค้นหาชื่อนักเรียน</label><input id="hq" placeholder="พิมพ์ชื่อหรือรหัส" autocomplete="off"></div><div id="hres" class="stack" style="margin-top:8px"></div></div>';
+  return b;
+}
+function rankRows(l,col,unit,mx){
+  return l.map(x=>'<div class="rk"><div class="rkt"><b>'+esc(x.name)+'</b><span class="hint">'+esc(x.room)+' · '+esc(x.from)+' → '+esc(x.to)+'</span></div><div class="rkb">'+stackBar([{v:Math.max(x.rate,0),col:col}],mx)+'<span class="num"><b>'+x.rate+'</b> <span class="hint">'+esc(unit)+'</span></span></div></div>').join('');
+}
+function rankCard(){
+  const rk=S.rank,k=S.rkind||'iqra';let b='<div class="card"><h3>ความก้าวหน้าจากจุดเริ่มของเด็กแต่ละคน</h3><p class="hint" style="margin:2px 0 8px">วัดที่ขยับไปจากบันทึกแรกของเด็กเอง ต่อสัปดาห์ (ไม่ใช่เล่ม/ระดับที่อ่านถึงตอนนี้) · นับเฉพาะเด็กที่มีบันทึกต่อเนื่องอย่างน้อย 14 วัน · ใช้ดูว่าใครควรได้รับการช่วย · เห็นเฉพาะ ผอ.</p>'
+   +'<div class="seg" role="group" aria-label="เลือกประเภท"><button class="opt" data-act="rkind" data-v="iqra" aria-pressed="'+(k==='iqra')+'">อิกเราะห์</button><button class="opt" data-act="rkind" data-v="thai" aria-pressed="'+(k==='thai')+'">อ่านไทย</button></div>';
+  if(!rk)return b+'<div class="spin"></div></div>';
+  const d=rk[k],unit=d.unit;
+  if(k==='iqra'&&d.approx)b+='<div class="banner c-warn"><b>ยังไม่ได้ตั้งจำนวนหน้าต่อเล่ม</b><span>ระบบประมาณว่าเล่มละ '+d.pp+' หน้า (หน้าสูงสุดที่เคยบันทึก) ตัวเลขที่ข้ามเล่มจึงเป็นค่าประมาณ · ตั้งได้ที่ "ค่าตั้ง" ด้านล่าง</span></div>';
+  if(k==='thai')b+='<p class="hint">1 คะแนน = ขยับ 1 ชุดคำ · ระดับความคล่องที่เพิ่ม 1 ขั้นนับครึ่งคะแนน · ลำดับชุดคำตามที่ครูสร้างในชั้นนั้น</p>';
+  if(!d.top.length)return b+'<p class="sub"><b>ยังไม่แสดงอันดับ</b> · ยังไม่มีข้อมูล<br>'+esc(d.reason||'ยังมีเด็กที่มีข้อมูลต่อเนื่องไม่ถึง 2 คน')+'</p></div>';
+  const mx=Math.max.apply(null,d.top.concat(d.help).map(x=>x.rate).concat([0.01]));
+  b+='<div class="rkh"><i style="background:var(--ok)"></i><h3>ก้าวหน้ามากที่สุด '+d.top.length+' อันดับ</h3></div>'+rankRows(d.top,'var(--ok)',unit,mx)
+   +'<div class="rkh"><i style="background:var(--org)"></i><h3>ควรช่วย '+d.help.length+' คน (ก้าวหน้าน้อยหรือค้าง)</h3></div>'+rankRows(d.help,'var(--org)',unit,mx)
+   +'<p class="hint">จากเด็กที่นับได้ '+d.eligible+' คน</p>';
+  const gl=k==='iqra'?d.groups:d.grades,gm=gl.filter(x=>x.enough).reduce((m,x)=>Math.max(m,x.avg),0.01);
+  b+='<div class="rkh"><i style="background:var(--pri)"></i><h3>ความก้าวหน้าของ'+(k==='iqra'?'กลุ่ม':'ชั้น')+'</h3></div><p class="hint">เฉลี่ยของเด็กใน'+(k==='iqra'?'กลุ่ม':'ชั้น')+' · ใช้ดูว่า'+(k==='iqra'?'กลุ่ม':'ชั้น')+'ไหนควรสนับสนุน (ไม่ใช่การจัดอันดับครู)</p>'
+   +gl.map(x=>x.enough?'<div class="rk"><div class="rkt"><b>'+esc(String(x.name).replace(/^กลุ่ม /,''))+'</b><span class="hint">ใช้ข้อมูลเด็ก '+x.n+' จาก '+x.total+' คน</span></div><div class="rkb">'+stackBar([{v:x.avg,col:'var(--pri)'}],gm)+'<span class="num"><b>'+x.avg+'</b> <span class="hint">'+esc(unit)+'</span></span></div></div>':'<div class="rk"><div class="rkt"><b>'+esc(String(x.name).replace(/^กลุ่ม /,''))+'</b><span class="chip c-warn">ข้อมูลยังไม่พอ</span></div><div class="hint">มีข้อมูล '+x.n+' จาก '+x.total+' คน · ต้องมีอย่างน้อย '+rk.minN+' คน</div></div>').join('');
+  return b+'</div>';
+}
+function quotesCard(){
+  const q=S.quotes;let b='<div class="card"><div class="rowf between"><h3>คำคมหน้าอิกเราะห์</h3><button class="bn" data-act="qnew">+ เพิ่มคำคม</button></div>';
+  if(!q)return b+'<div class="spin"></div></div>';
+  if(q.isDefault)b+='<p class="sub">ตอนนี้ใช้ข้อความเริ่มต้น: "'+esc(q.defaults[0].text)+'"'+(q.defaults[0].source?' ('+esc(q.defaults[0].source)+')':'')+' · เพิ่มคำคมของ ผอ. และใส่ที่มาได้ เมื่อพร้อม</p>';
+  b+=q.quotes.map(x=>'<div class="wset"><b>'+esc(x.text)+'</b>'+(x.source?'<span class="sub">'+esc(x.source)+'</span>':'')+'<div class="rowf"><button class="bn" data-act="qedit" data-id="'+esc(x.id)+'">แก้ไข</button><button class="bn danger" data-act="qdel" data-id="'+esc(x.id)+'">ลบ</button></div></div>').join('');
+  return b+'</div>';
+}
 /* ---------- วาดหน้า ---------- */
 function render(){
   if(!B)return;
   let html;
-  if(S.scope)html=openScope();else if(S.tab==='review')html=review();else if(S.tab==='overview'&&isDir())html=overview();else if(S.tab==='students'&&isDir())html=students();else html=today();
-  const keepSq=document.activeElement&&document.activeElement.id==='sq';const sqv=keepSq?document.activeElement.value:'';
+  if(S.scope)html=openScope();else if(S.tab==='review')html=review();else if(S.tab==='reading')html=readingPage();else if(S.tab==='words')html=wordsPage();else if(S.tab==='overview'&&isDir())html=overview();else if(S.tab==='students'&&isDir())html=students();else html=today();
+  const sc0=S.scope?scopeByKey(S.scope):null;document.body.classList.toggle('iq',sc0?sc0.kind==='iqra':(S.tab==='reading'&&curMode()==='iqra'));
+  const ae=document.activeElement,keepId=ae&&(ae.id==='sq'||ae.id==='hq')?ae.id:'',keepV=keepId?ae.value:'';
   $('#app').innerHTML='<div id="offbar" class="offbar" role="status" '+(S.offline?'':'hidden')+'>สัญญาณหลุด · เก็บร่างไว้ในเครื่อง จะส่งให้เองเมื่อสัญญาณกลับมา</div>'+html+'<div class="ver">Q-Student '+esc(B.version)+' · '+esc(CONFIG.WEB_VERSION)+'</div>'+(S.scope?'':'<div class="bar"><div class="in">'+nav()+'</div></div>')+sheet();
-  if(keepSq){const e=$('#sq');if(e){e.focus();e.setSelectionRange(sqv.length,sqv.length)}}
+  if(keepId){const e=$('#'+keepId);if(e){e.value=keepV;e.focus();e.setSelectionRange(keepV.length,keepV.length)}}
 }
 /* ---------- โหลดข้อมูล ---------- */
 async function loadBoot(){const j=await api('boot',{},vaX());B=j;ME=j.me;SRV={hm:j.today.hm,t:Date.now()};return j}
 async function refreshQuiet(){try{await loadBoot();qLoadKeep();render()}catch(e){}}
 function qLoadKeep(){}
 async function loadReview(){try{const j=await api('review.list',{},vaX());S.rev=j.review;render()}catch(e){toast(e.message)}}
-async function loadOverview(){try{const j=await api('admin.overview',{});S.ov=j.overview;render()}catch(e){toast(e.message)}}
+async function loadOverview(){try{const j=await api('admin.overview',{});S.ov=j.overview;render()}catch(e){toast(e.message)}try{S.quotes=await api('quotes.list',{});render()}catch(e){}try{S.rank=(await api('admin.rank',{})).rank;render()}catch(e){}}
+async function loadWords(){try{S.wl=await api('words.list',{});render()}catch(e){toast(e.message)}}
 async function loadStudents(){try{const j=await api('admin.students',{q:S.q,room_id:S.rf});S.adm=j;const t=await api('admin.trash',{});S.trash=t.trash;render()}catch(e){toast(e.message)}}
 let sqT=null;
-function goTab(t){S.tab=t;S.scope='';render();window.scrollTo(0,0);if(t==='review')loadReview();if(t==='overview')loadOverview();if(t==='students')loadStudents()}
-/* ---------- การกระทำ ---------- */
+function goTab(t){S.tab=t;S.scope='';S.sheet=null;render();window.scrollTo(0,0);if(t==='review')loadReview();if(t==='overview')loadOverview();if(t==='students')loadStudents();if(t==='words')loadWords()}/* ---------- การกระทำ ---------- */
 function setStatus(sc,id,st,reason,text){if(blockRO())return;qPush({t:'att',key:sc.key,id:id,st:st,reason:reason||'',text:text||''});render()}
 function guardLeave(go){const n=unsafeN();if(n>0&&!S.sheet){S.sheet={t:'leave',n:n,go:go};render();return false}return true}
-function goBack(){S.scope='';render();window.scrollTo(0,0);if(S.tab==='overview'&&isDir())loadOverview();if(S.tab==='review')loadReview()}
-async function doSend(){
+function goBack(){if(S.scope){S.scope=''}else if(S.tab==='words'){S.tab='reading'}render();window.scrollTo(0,0);if(S.tab==='overview'&&isDir())loadOverview();if(S.tab==='review')loadReview()}async function doSend(){
   if(blockRO())return;const sc=scopeByKey(S.scope);
   if(sc.counts['']>0&&!S.sheet&&clockNow()>=cfg().remind&&!S.sendWarned){S.sendWarned=1;S.sheet={t:'clear'};toast('ยังมีคนที่ยังไม่ยืนยัน · เคลียร์ก่อนส่ง หรือกดส่งอีกครั้งเพื่อส่งทั้งที่ยังไม่ยืนยัน');render();return}
   S.sendWarned=0;
@@ -399,8 +577,12 @@ async function doSend(){
     toast(sd&&!sd.mine?'บันทึกแล้ว · ผลของห้องถือเป็นของ '+sd.first_name+' ที่ส่งก่อน · เก็บประวัติว่าท่านแก้':'ส่งเช็คชื่อแล้ว เวลา '+clockNow()+' น.'+(sd&&sd.late?' · ติดป้าย "ส่งหลังเวลา" ให้ ผอ. เห็น':' · ทันก่อน '+cfg().cutoff+' น.'));
   }catch(e){toast(e.net?'ส่งไม่สำเร็จ · ลองใหม่เมื่อสัญญาณกลับมา':e.message)}
 }
-document.addEventListener('change',e=>{const t=e.target;if(!t.dataset)return;if(t.dataset.act==='viewas-sel'&&t.value){const o=S.ov&&S.ov.teachers.find(x=>x.id===t.value);startViewAs(t.value,o?o.name:t.value)}if(t.dataset.act==='sfilter'){S.rf=t.value;loadStudents()}});
-document.addEventListener('input',e=>{if(e.target.id==='sq'){S.q=e.target.value;clearTimeout(sqT);sqT=setTimeout(async()=>{try{const j=await api('admin.students',{q:S.q,room_id:S.rf});S.adm=j;const l=$('#slist');if(l)l.innerHTML=studentListHtml()}catch(er){toast(er.message)}},350)}});
+document.addEventListener('change',e=>{const t=e.target;if(!t.dataset)return;if(t.dataset.act==='viewas-sel'&&t.value){const o=S.ov&&S.ov.teachers.find(x=>x.id===t.value);startViewAs(t.value,o?o.name:t.value)}if(t.dataset.act==='sfilter'){S.rf=t.value;loadStudents()}
+  if(t.dataset.act==='tset'||t.dataset.act==='bset'){const sc=scopeByKey(S.scope);if(!sc)return;const st=sc.students.find(x=>x.id===t.dataset.id);if(!st)return;if(!t.value){render();return}saveRead(sc,st,t.dataset.act==='tset'?{set:t.value}:{book:+t.value});return}
+  if(t.dataset.act==='dayset'){if(blockRO()){render();return}(async()=>{try{const j=await api('words.day',{key:S.scope,set_id:t.value},{nonce:nonce()});mergeScope(j.scope);render();toast(t.value?'เลือกชุดคำของวันนี้แล้ว':'ล้างชุดคำของวันนี้แล้ว')}catch(er){toast(er.message);render()}})()}});
+let hqT=null;
+document.addEventListener('input',e=>{if(e.target.id==='hq'){const q=e.target.value.trim();clearTimeout(hqT);hqT=setTimeout(async()=>{const l=$('#hres');if(!l)return;if(!q){l.innerHTML='';return}try{const j=await api('admin.students',{q:q,room_id:''});l.innerHTML=j.students.slice(0,8).map(s=>'<button class="pbtn" data-act="hist" data-id="'+esc(s.id)+'"><span>'+esc(s.name)+'</span><span class="hint">'+esc(s.code)+'</span></button>').join('')||'<p class="sub">ไม่พบนักเรียน</p>'}catch(er){toast(er.message)}},350)}
+  if(e.target.id==='sq'){S.q=e.target.value;clearTimeout(sqT);sqT=setTimeout(async()=>{try{const j=await api('admin.students',{q:S.q,room_id:S.rf});S.adm=j;const l=$('#slist');if(l)l.innerHTML=studentListHtml()}catch(er){toast(er.message)}},350)}});
 async function startViewAs(id,name){S.viewAs=id;S.viewAsName=name;S.tab='today';S.scope='';try{await loadBoot();S.rev=null;render()}catch(e){S.viewAs='';toast(e.message)}}
 async function endViewAs(){S.viewAs='';S.viewAsName='';S.tab='overview';S.scope='';await loadBoot();S.rev=null;render();loadOverview()}
 const val=id=>(($('#'+id)||{}).value||'');
@@ -422,15 +604,27 @@ document.addEventListener('click',async e=>{
   if(a==='reason'){if(blockRO())return;S.sheet={t:'reason',id:d.id};render();return}
   if(a==='setreason'){if(blockRO())return;const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===d.id);qPush({t:'att',key:sc.key,id:d.id,st:s.att.st,reason:v,text:v==='อื่นๆ'?s.att.text:''});if(v!=='อื่นๆ')S.sheet=null;render();return}
   if(a==='reasontext'){if(blockRO())return;const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===d.id),x=val('rtx').trim();qPush({t:'att',key:sc.key,id:d.id,st:s.att.st,reason:x?'อื่นๆ':s.att.reason,text:x});S.sheet=null;render();return}
-  if(a==='read'){if(blockRO())return;RD={};S.sheet={t:'read',id:d.id};render();return}
-  if(a==='rdw'){RD.words=+v;render();return}if(a==='rdb'){RD.book=+v;render();return}if(a==='rdr'){RD.res=v;render();return}if(a==='rdl'){RD.level=v;render();return}
-  if(a==='rdp'){RD.page=Math.max(1,(RD.page==null?(RD.first?0:1):RD.page)+(+v));render();return}
-  if(a==='rdsave'){const sc=scopeByKey(S.scope),id=S.sheet.id,s=sc.students.find(x=>x.id===id);
-    if(ABS(s.att.st)){toast('บันทึกผลอ่านไม่ได้ เพราะนักเรียนถูกทำเครื่องหมาย "'+s.att.st+'"');return}
-    const it=sc.kind==='thai'?{t:'read',key:sc.key,id:id,kind:'thai',words:RD.words,level:RD.level}:{t:'read',key:sc.key,id:id,kind:'iqra',book:RD.book,page:RD.page,res:RD.res,level:RD.level};
-    qPush(it);
-    toast('บันทึกแล้ว · '+s.name+' · '+(sc.kind==='thai'?'อ่านไทย '+RD.words+'/10 · '+RD.level:'อิกเราะห์ เล่ม '+RD.book+' หน้า '+RD.page+' · '+RD.res+' · '+RD.level)+(!s.att.st?' · ตั้ง "มา" อัตโนมัติ':''));
-    const nx=sc.students.slice(sc.students.indexOf(s)+1).find(x=>!x.read&&!ABS(x.att.st));RD={};S.sheet=nx?{t:'read',id:nx.id}:null;if(!nx)toast('ประเมินอ่านครบทุกคนที่มาแล้ว');render();return}
+  if(a==='rmode'){S.rmode=v;render();return}
+  if(a==='rkind'){S.rkind=v;render();return}
+  if(a==='manual'){S.man=S.man||{};S.man[d.id]=!S.man[d.id];render();return}
+  if(a==='qb'){const sc=scopeByKey(S.scope),st=sc.students.find(x=>x.id===d.id),e=effIqra(st);saveRead(sc,st,{book:+v,page:(+v===e.book?e.page:1)});return}
+  if(a==='qp'){const sc=scopeByKey(S.scope),st=sc.students.find(x=>x.id===d.id);saveRead(sc,st,{page:+v});return}
+  if(a==='qnext'){S.qi=(S.qi||0)+1;render();return}
+  if(a==='lv'){const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===d.id);saveRead(sc,s,{level:v});return}
+  if(a==='pg'){const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===d.id),e=effIqra(s);saveRead(sc,s,{page:(e.page||0)+(+v)});return}
+  if(a==='rdelask'){if(blockRO())return;const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===d.id);S.sheet={t:'rdel',id:d.id,name:s?s.name:''};render();return}
+  if(a==='wnew'){S.sheet={t:'wset',grade:v,id:''};render();return}
+  if(a==='wedit'){S.sheet={t:'wset',id:d.id};render();return}
+  if(a==='wsave'){try{const j=await api('words.save',{id:d.id,grade:v,name:val('wn'),words:val('ww')},{nonce:nonce()});S.wl=j;S.sheet=null;toast('บันทึกชุดคำแล้ว · เก็บประวัติแล้ว');refreshQuiet();render()}catch(er){toast(er.message)}return}
+  if(a==='wpub'){try{const j=await api('words.publish',{id:d.id,publish:v==='1'},{nonce:nonce()});S.wl=j;toast(v==='1'?'เผยแพร่ชุดคำแล้ว':'ยกเลิกการเผยแพร่แล้ว (กลับเป็นร่าง)');refreshQuiet();render()}catch(er){toast(er.message)}return}
+  if(a==='wdel'){S.sheet={t:'wdel',id:d.id};render();return}
+  if(a==='wdelok'){try{const j=await api('words.del',{id:d.id},{nonce:nonce()});S.wl=j;S.sheet=null;toast('ย้ายชุดคำไปถังขยะแล้ว · ผอ. กู้คืนได้');refreshQuiet();render()}catch(er){toast(er.message)}return}
+  if(a==='qnew'){S.sheet={t:'quote',id:''};render();return}
+  if(a==='qedit'){S.sheet={t:'quote',id:d.id};render();return}
+  if(a==='qsave'){try{const j=await api('quotes.save',{id:d.id,text:val('qt'),source:val('qs')},{nonce:nonce()});S.quotes=j;S.sheet=null;toast('บันทึกคำคมแล้ว');refreshQuiet();render()}catch(er){toast(er.message)}return}
+  if(a==='qdel'){S.sheet={t:'qdel',id:d.id};render();return}
+  if(a==='qdelok'){try{const j=await api('quotes.del',{id:d.id},{nonce:nonce()});S.quotes=j;S.sheet=null;toast('ย้ายคำคมไปถังขยะแล้ว');refreshQuiet();render()}catch(er){toast(er.message)}return}
+  if(a==='hist'){S.sheet={t:'hist',data:null};render();try{const j=await api('admin.student.history',{id:d.id});S.sheet={t:'hist',data:j};render()}catch(er){S.sheet=null;toast(er.message);render()}return}
   if(a==='readdel'){if(blockRO())return;try{const j=await api('read.del',{key:S.scope,id:d.id},{nonce:nonce()});mergeScope(j.scope);S.sheet=null;RD={};render();toast('ลบผลอ่านแล้ว · อยู่ในถังขยะ ผอ. กู้คืนได้')}catch(er){toast(er.message)}return}
   if(a==='flagok'){if(blockRO())return;try{const j=await api('read.flagok',{key:S.scope,id:d.id},{nonce:nonce()});mergeScope(j.scope);render()}catch(er){toast(er.message)}return}
   if(a==='send'){doSend();return}
@@ -440,7 +634,7 @@ document.addEventListener('click',async e=>{
     try{const j=await api('review.decide',{key:d.key,act:'edit',sid:sid,raw:raw},{nonce:nonce()});S.rev=j.review;B.review.pending=j.review.filter(r=>!r.done).length;S.sheet=null;toast('บันทึกแล้ว');render()}catch(er){toast(er.message);S.sheet=null;loadReview()}return}
   if(a==='revnone'){try{const j=await api('review.decide',{key:d.key,act:'none'},{nonce:nonce()});S.rev=j.review;B.review.pending=j.review.filter(r=>!r.done).length;S.sheet=null;toast('บันทึกว่าไม่พบในทะเบียน');render()}catch(er){toast(er.message);S.sheet=null;loadReview()}return}
   if(a==='audit'){try{const j=await api('admin.audit',{});S.audit=j.audit;render()}catch(er){toast(er.message)}return}
-  if(a==='cfgsave'){try{const j=await api('admin.cfg.save',{books:+val('c1'),pass:+val('c2'),remind:val('c3'),cutoff:val('c4')},{nonce:nonce()});B.cfg=j.cfg;if(S.ov)S.ov.cfg=j.cfg;toast('บันทึกค่าตั้งแล้ว');render()}catch(er){toast(er.message)}return}
+  if(a==='cfgsave'){try{const j=await api('admin.cfg.save',{books:+val('c1'),pages:+val('c5'),rank_min:+val('c6'),remind:val('c3'),cutoff:val('c4')},{nonce:nonce()});B.cfg=j.cfg;if(S.ov)S.ov.cfg=j.cfg;toast('บันทึกค่าตั้งแล้ว');render()}catch(er){toast(er.message)}return}
   if(a==='stuedit'){S.sheet={t:'stu',id:d.id};render();return}
   if(a==='stusave'){try{const j=await api('admin.student.update',{id:d.id,prefix:val('f1'),first:val('f2'),last:val('f3'),code:val('f4'),room_id:val('f5'),gid:val('f6'),status:val('f7')},{nonce:nonce()});S.adm.students=j.students;S.sheet=null;toast(j.changed&&j.changed.length?'บันทึกแล้ว · เก็บประวัติแล้ว ('+j.changed.join(' · ')+')':'ไม่มีการเปลี่ยนแปลง');render();refreshQuiet()}catch(er){toast(er.message)}return}
   if(a==='studel'){S.sheet={t:'delc',id:d.id};render();return}
@@ -463,7 +657,7 @@ async function start(){
   }
   if(S.viewAs&&B.viewAs)S.viewAsName=B.viewAs.name;
   window.__qsStage='render';
-  qLoad();S.tab=isDir()?'overview':'today';
+  qLoad();S.tab=isDir()?'overview':'today';S.rmode=(B.today.dow>=3&&B.today.dow<=4)?'iqra':'thai';
   $('#boot').hidden=true;$('#app').hidden=false;render();
   if(isDir())loadOverview();
   if(Q.items.length)flush(false);
