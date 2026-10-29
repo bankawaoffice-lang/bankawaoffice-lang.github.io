@@ -704,6 +704,51 @@ details.more>.f{margin-top:8px}
   html:not(.on-home) header.top .hublink svg{stroke:currentColor}
 }
 </style>
+<style>
+:root{--nv:#1F3A5F;--nv-soft:#E3ECF7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nv:#4A86D0;--nv-soft:#1B2B44}}
+.lvhero{background:var(--nv-soft);border-radius:16px;padding:12px 16px;display:grid;gap:2px}
+.lvbignum{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.lvbignum b{font-size:3rem;line-height:1;color:var(--ink);font-family:var(--f-display)}
+.lvbignum.txt b{font-size:1.15rem;color:var(--bad)}
+.lvmore{border:1px solid var(--line);border-radius:12px;padding:8px 12px}.lvmore summary{cursor:pointer;font-weight:600;color:var(--nv)}
+.lvbox .callout{display:block}.lvbox .callout>b:first-child{display:block;margin-bottom:2px}
+.lvsum .ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}.lvrange{margin:-4px 0 10px;font-size:.74rem;line-height:1.4;color:var(--muted)}.lvrange b{color:var(--ink)}
+.lvgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.lvcell.tot{grid-column:1/-1}
+.lvcell{background:var(--sunk);border-radius:14px;padding:10px 8px;display:grid;gap:2px;align-content:start;min-width:0}
+.lvst{font-weight:600;font-size:.86rem;color:var(--ink)}
+.lvsn{font-size:1.05rem;color:var(--ink);line-height:1.25}.lvsn b{font-size:1.45rem;font-family:var(--f-display)}
+.lvsm{font-size:.95rem;color:var(--ink)}.lvsm b{font-size:1.15rem;font-family:var(--f-display)}
+.lvss{font-size:.74rem;color:var(--muted);line-height:1.35;overflow-wrap:anywhere}.lvss b{color:var(--ink)}
+.lvnd{font-size:.82rem;color:var(--muted)}
+.lvwarn{margin-top:8px;border-radius:12px;padding:8px 12px;background:var(--warn-soft);color:var(--ink);font-size:.9rem}.lvwarn.bad{background:var(--bad-soft)}
+.lvlate{margin-top:8px;border-radius:14px;padding:10px 12px;background:var(--sunk);display:grid;gap:2px;font-size:.92rem}
+.lvlate.warn{background:var(--warn-soft)}.lvlate.bad{background:var(--bad-soft)}
+.lvlate.warn,.lvlate.bad{color:var(--ink)}.lvlate.warn .lvss,.lvlate.bad .lvss{color:var(--ink)}
+.lvpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lvtb{min-height:56px;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;font-family:var(--f-display);font-size:1.08rem;font-weight:600;padding:0 10px}
+.lvtb[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.lvol{display:block;margin:12px 0 4px;font-size:.84rem;color:var(--muted)}
+.lvother{width:100%;min-height:46px;border:1.5px dashed var(--faint);background:var(--sunk);color:var(--muted);border-radius:12px;font-size:.95rem;padding:0 10px}
+.lvfold{border:1px solid var(--line);border-radius:14px;padding:0 12px;background:var(--surface)}
+.lvfold>summary{min-height:48px;display:flex;align-items:center;cursor:pointer;font-weight:500;color:var(--ink)}
+.lvfin{display:grid;gap:12px;padding:4px 0 12px}
+.lvhint{margin:0}
+.lvcert{display:grid;gap:6px;margin-top:8px;padding:8px 10px;border-radius:12px;background:var(--sunk)}
+.btn.lvsubmit{width:100%;min-height:56px;font-size:1.12rem;justify-content:center}
+#fLeave .btn,#fLeave .btn.sm{min-height:44px;min-width:44px}#fLeave .lvmore>summary{min-height:44px;display:flex;align-items:center;cursor:pointer}#sfTerm .btn,.lvcert .btn,.lvfold .btn.sm{min-height:44px;min-width:44px}
+#fLeave .btn.danger{color:#B4232C}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #fLeave .btn.danger{color:#FF8A8F}}
+.lvhero .lvbignum b,.lvbig b{color:var(--ink)}
+.lvsn2{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 5px;line-height:1.05}
+.lvn{font-family:var(--f-display);font-weight:600;font-size:1.9rem;color:var(--ink)}
+.lvcell.tot .lvn,.lvlate .lvn{font-size:2.4rem}
+.lvu,.lvw{font-size:.8rem;color:var(--ink)}
+.lvlate2{font-size:1rem;color:var(--ink)}.lvlate2 b{font-size:1.15rem;font-family:var(--f-display)}
+.lvlate .lvss{margin-top:2px}
+.reqtypes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.reqtb{min-height:48px;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;font-family:var(--f-body);font-size:.98rem;font-weight:600;padding:0 8px}
+.reqtb[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (min-width:480px){.reqtypes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
 </head>
 <body class="plain">
 <div id="boot"><div class="center" style="flex-direction:column;gap:14px"><div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#5B5BF0,#8B6CF7);color:#fff;display:flex;align-items:center;justify-content:center;font:600 28px Kanit,sans-serif;box-shadow:0 10px 24px rgba(91,91,240,.35)">T</div><div class="spin" role="status" aria-label="กำลังโหลด" style="margin:0"></div><p style="color:#6B7092;font-size:14px;text-align:center">กำลังเปิด Q-Teacher…</p></div></div>
@@ -1763,7 +1808,7 @@ function mySummary(){
   if(r==='jan')return`<div class="strip">${it('งานประจำวันนี้',`<span class="num">${ROUTINE.filter(j=>j.done).length}/${ROUTINE.length}</span>`,'jan')}${it('งานรอรับ/กำลังทำ',`<span class="num">${JOBS.filter(j=>j.st<2).length}</span>`,'jan')}</div>`;
   if(r==='grd'){const done=TONIGHT.map(row=>row.filter(v=>typeof v==='string').length).reduce((a,b)=>a+b,0);return`<div class="strip">${it('สแกนคืนนี้',`<span class="num">${done}/${CPS.length*ROUNDS.length}</span>`,'patrol')}${it('ผู้มาติดต่อวันนี้',`<span class="num">${VISIT.length}</span>`,'visit')}</div>`}
   const mine=TASKS.filter(t=>t.own===me()&&!['done','sent'].includes(t.st)).length;
-  return`<div class="strip">${ME.isTeacher?it('คาบถัดไป',`<span class="small">${esc(nextPeriod())}</span>`):''}${it('งานค้างของฉัน',`<span class="num">${mine}</span>`,'mywork')}${it('ลาในรอบนี้',`<span class="num">${B.myStats.leaveTimes} ครั้ง ${B.myStats.leaveDays} วัน</span>`,'mytime')}</div>`}
+  return`<div class="strip">${ME.isTeacher?it('คาบถัดไป',`<span class="small">${esc(nextPeriod())}</span>`):''}${it('งานค้างของฉัน',`<span class="num">${mine}</span>`,'mywork')}${it('ลาในภาคเรียนนี้',`<span class="num">${lvTermTxt()}</span>`,'myreq')}</div>${B.quota&&B.quota.homeLate?`<section class="panel">${lateBlock(true)}</section>`:''}`}
 
 /* ---------- บุคลากร (ผอ. / หัวหน้างานบุคคล) ---------- */
 V.staff=()=>{
@@ -1845,7 +1890,7 @@ V.mytime=()=>secBox('stats',S=>{
   const H=S.history||[];
   return`<section class="panel"><div class="ph"><h2>${esc(S.round.label)}</h2></div>
    <div class="kv"><div><span>มาสาย</span><b class="num">${S.my.late} ครั้ง</b><small>เกณฑ์ติดตาม ${LATE_RULE} ครั้ง/รอบ</small></div><div><span>ไฟเหลือง</span><b class="num">${S.my.yellow} ครั้ง</b><small>หลัง ${esc(B.rules.general.on)} น.</small></div>
-    <div><span>ลา (อนุมัติแล้ว)</span><b class="num">${S.my.leaveTimes} ครั้ง ${S.my.leaveDays} วัน</b><small>เกณฑ์ติดตาม ${RULE.n} ครั้ง / ${RULE.d} วัน${B.quota.sample?' (ค่าตัวอย่าง)':''}</small></div>${S.my.pendingDays?`<div><span>รอพิจารณา</span><b class="num">${S.my.pendingDays} วัน</b></div>`:''}</div>
+    <div><span>ลา (ภาคเรียนนี้ · นับโควตา)</span><b class="num">${lvTermTxt()}</b><small>${lvQ()?'เกณฑ์ '+lvQ().t+' ครั้ง / '+lvQ().d+' วัน (ลากิจ + ลาป่วยไม่มีใบรับรอง)'+(lvQ().sample?' · ค่าตัวอย่าง':''):'ยังไม่มีข้อมูลเกณฑ์'}</small></div>${lvTermUse()&&lvTermUse().totPe.d?`<div><span>รอพิจารณา</span><b class="num">${lvFmtN(lvTermUse().totPe.d)} วัน</b></div>`:''}</div>
    <p class="note">เกณฑ์ติดตามไม่ใช่สิทธิการลาหรือสิทธิมาสาย</p></section>
   <section class="panel"><div class="ph"><h2>ลงเวลาย้อนหลัง</h2><p>ประมาณ 3 สัปดาห์</p></div>${H.length?`<ul class="list">${H.map(x=>`<li><div class="main"><b style="font-weight:500">${esc(DOW[d8(x.date).getDay()].slice(0,2))} ${esc(thD(x.date))}</b></div><span class="num" style="font-size:.9rem">${x.in?esc(x.in.time):'–'} – ${x.out?esc(x.out.time):'–'}</span>${x.in?stPill(x.in.status):''}</li>`).join('')}</ul>`:empty('ยังไม่มีประวัติ')}</section>`});
 
@@ -1872,10 +1917,10 @@ V.approve=()=>{
   const list=st.reqF==='todo'?todo:st.reqF==='wait'?wait:done;
   return`${seg('reqF',[['todo','รอฉันพิจารณา',todo.length],['wait','รอขั้นอื่น',wait.length],['done','พิจารณาแล้ว']],st.reqF)}
    <details class="howto"><summary>ขั้นตอนการพิจารณา</summary><p>ใบลาและไปราชการ: ผู้ยื่น → หัวหน้างานบุคคลเห็นชอบ → ผอ. อนุมัติ${B.hasHR?'':' (ยังไม่มีหัวหน้างานบุคคล จึงส่งถึง ผอ. โดยตรง)'} · ออกนอกบริเวณช่วงมีสอน: ผู้ยื่น → ครูสอนแทนตอบรับ → ผอ. อนุมัติ · คำขอของ ผอ. เอง: รอผู้มีอำนาจพิจารณา แล้ว ผอ. บันทึกผลพร้อมเลขที่หนังสือ (ผอ. ไม่อนุมัติคำขอของตนเอง)</p></details>
-   ${list.length?`<div class="g2">${list.map(r=>reqCard(r,
+   ${list.length?`<div class="g2">${list.map(r=>reqCard(r,lvCertBox(r)+(
      r.canDir?`${noteBox(r.id)}<div class="row"><button class="btn good" data-ap="${r.id}:ok:${r.kind}">อนุมัติ</button><button class="btn danger" data-ap="${r.id}:no:${r.kind}">ไม่อนุมัติ</button></div>${r.st==='head'?'<p class="note">ยังไม่ผ่านหัวหน้างานบุคคล · ผอ. อนุมัติได้เลยถ้าจำเป็น</p>':''}`
      :r.canHR?`${noteBox(r.id)}<div class="row"><button class="btn good" data-hd="${r.id}:ok">เห็นชอบ ส่งต่อ ผอ.</button><button class="btn danger" data-hd="${r.id}:no">ไม่เห็นชอบ</button></div>`
-     :r.canCancel&&r.st==='approved'&&ME.isAdmin?`<button class="btn sm danger" data-rcancel="${r.id}:${r.kind}">ยกเลิกคำขอนี้ (รายการสอนแทนที่เชื่อมกันจะยกเลิกด้วย)</button>`:'')).join('')}</div>`
+     :r.canCancel&&r.st==='approved'&&ME.isAdmin?`<button class="btn sm danger" data-rcancel="${r.id}:${r.kind}">ยกเลิกคำขอนี้ (รายการสอนแทนที่เชื่อมกันจะยกเลิกด้วย)</button>`:''))).join('')}</div>`
      :empty(st.reqF==='todo'?'ไม่มีคำขอรอพิจารณา':'ไม่มีรายการ')}`;
 };
 
@@ -1885,34 +1930,36 @@ V.myreq=()=>{
   const m=me(),k=st.kind,my0=REQ.filter(r=>r.who===m),rq=(st.reqQ||'').trim(),my=rq?my0.filter(r=>reqText(r).indexOf(rq)>=0):my0,asked=REQ.filter(r=>r.canSub);
   const mySubs=SUBS.filter(s=>s.for===m&&s.date>=TODAY_ISO);
   const types=[['leave','ใบลา','ลาป่วย ลากิจ ลาพักผ่อน ฯลฯ','leave','coral'],['out','ออกนอกบริเวณ','ระหว่างวัน ภายในวันนี้','out','teal'],['gov','ไปราชการ / อบรม','ตามหนังสือเชิญหรือคำสั่ง','gov','violet'],['doc','ชั่วโมงงานเอกสาร','งานเอกสารนอกเวลาสอน','file','teal']];
-  return`${asked.length?`<div class="callout c-info"><b>มีคนขอให้ท่านสอนแทน ${asked.length} รายการ</b><div><button class="btn sm" data-go="mysub">ไปตอบรับ</button></div></div>`:''}
+  return`${reqTypeBar(k)}${k==='leave'?leaveSummary():''}${asked.length?`<div class="callout c-info"><b>มีคนขอให้ท่านสอนแทน ${asked.length} รายการ</b><div><button class="btn sm" data-go="mysub">ไปตอบรับ</button></div></div>`:''}
    <section class="panel"><div class="ph"><h2>ยื่นคำขอ</h2>${k?'<button class="btn sm ghost" data-kind="">เปลี่ยนประเภท</button>':''}</div>
     ${!k?`<p class="sub">เลือกประเภทก่อน ระบบจะแสดงเฉพาะช่องที่ต้องกรอก · ชื่อและตำแหน่งเติมจากบัญชีให้แล้ว</p><div class="typepick">${types.map(([v,t,s,ic,h])=>`<button class="action" data-kind="${v}">${tile(ic,h)}<span class="main"><b>${t}</b><span class="sub">${s}</span></span>${svg('chev','chev')}</button>`).join('')}</div>`
       :`<div class="who1">${avatar()}<div><b>${esc(ME.name)}</b><div class="sub">${esc((SM[m]||{}).pos||ME.position)}</div></div></div>${k==='leave'?leaveForm():k==='out'?outForm():k==='doc'?docForm():govForm()}`}
    </section>
    ${mySubs.length?`<section class="panel"><div class="ph"><h2>ฝากงานให้ครูสอนแทน</h2><p>คาบที่ท่านไม่อยู่</p></div><ul class="list">${mySubs.map(s=>`<li style="flex-wrap:wrap"><div class="main">${thD(s.date)} · ${s.p==='ทั้งวัน'?'ทั้งวัน':'คาบ '+esc(s.p)} · ${esc(s.cls)}<div class="sub">ผู้สอนแทน: ${s.done?(s.pick?esc(nm(s.pick)):'รวมชั้น'):'รอฝ่ายวิชาการจัด'}</div></div><div class="row" style="flex:1 1 260px"><input type="text" id="wk${s.id}" value="${esc(s.work)}" placeholder="เช่น ใบงานหน้า 24" style="flex:1" aria-label="งานที่ฝาก"><button class="btn sm pri" data-subwork="${s.id}">บันทึก</button></div></li>`).join('')}</ul></section>`:''}
    <section class="panel"><div class="ph"><h2>คำขอของฉัน</h2><span class="count">${my.length}</span></div>
-   <input type="search" id="reqQ" class="search" placeholder="ค้นหาประวัติคำขอ (ประเภท เหตุผล วันที่)" value="${esc(st.reqQ||'')}" aria-label="ค้นหาประวัติคำขอ">${my.length?`<div class="cards">${my.slice(0,30).map(r=>`<article class="card"><div class="row between">${reqKindPill(r)}${reqStatus(r)}</div><span>${thRange(r.from,r.to)}${r.time?' · '+r.time:''}${r.days?' · '+r.days+' วัน':''} · ${esc(r.why)}</span>${stageView(r)}${r.dirNote?`<p class="sub">${esc(r.dirNote)}</p>`:''}
+   <input type="search" id="reqQ" class="search" placeholder="ค้นหาประวัติคำขอ (ประเภท เหตุผล วันที่)" value="${esc(st.reqQ||'')}" aria-label="ค้นหาประวัติคำขอ">${my.length?`<div class="cards">${my.slice(0,30).map(r=>`<article class="card"><div class="row between">${reqKindPill(r)}${reqStatus(r)}</div>${lvCertPill(r)?`<div>${lvCertPill(r)}</div>`:''}<span>${thRange(r.from,r.to)}${r.time?' · '+r.time:''}${r.days?' · '+r.days+' วัน':''} · ${esc(r.why)}</span>${stageView(r)}${r.dirNote?`<p class="sub">${esc(r.dirNote)}</p>`:''}
      ${r.canExt?`<div class="callout c-warn"><b>บันทึกผลจากผู้มีอำนาจ</b><div class="fld"><label for="ex${r.id}">ผู้อนุมัติ / เลขที่หนังสือ</label><input type="text" id="ex${r.id}" placeholder="เช่น ผอ.สพป.นราธิวาส เขต 2 หนังสือที่ ..."></div><div class="row"><button class="btn sm good" data-ext="${r.id}:ok">อนุมัติแล้ว</button><button class="btn sm danger" data-ext="${r.id}:no">ไม่อนุมัติ</button></div></div>`:''}
+     ${lvAttachBox(r)}
      <div class="row">${r.hasFile?`<button class="btn sm" data-evid="${r.id}">ดูหลักฐาน</button>`:''}${r.canBack?`<button class="btn sm good" data-back="${r.id}">กลับถึงโรงเรียนแล้ว</button>`:''}${r.kind==='gov'&&r.st==='approved'&&!r.report?`<button class="btn sm pri" data-report="${r.id}">เขียนรายงานหลังอบรม</button>`:''}${r.report?'<span class="pill p-good">ส่งรายงานแล้ว</span>':''}${r.canCancel?`<button class="btn sm danger" data-rcancel="${r.id}:${r.kind}">ยกเลิก</button>`:''}</div></article>`).join('')}</div>`:empty('ยังไม่มีคำขอ')}</section>`;
 };
 function leaveForm(){
   return`<form class="f" id="fLeave">
    ${lvTypeSelect()}
-   <div class="fgrid"><div class="fld"><label for="l1">ตั้งแต่</label><input type="date" id="l1" value="${TODAY_ISO}"></div><div class="fld"><label for="l2">ถึง</label><input type="date" id="l2" value="${TODAY_ISO}"></div>
-   <div class="fld" id="lpart"><label for="l5">ช่วงเวลา</label><select id="l5"><option>เต็มวัน</option><option>ครึ่งวันเช้า</option><option>ครึ่งวันบ่าย</option></select></div></div>
+   <div class="fgrid"><div class="fld"><label for="l1">ตั้งแต่</label><input type="date" id="l1" value="${TODAY_ISO}"></div><div class="fld"><label for="l2">ถึง</label><input type="date" id="l2" value="${TODAY_ISO}"></div></div>
    <p class="calc" id="lDays" aria-live="polite"></p><div id="lSum" class="lvbox"></div>
-   <div class="fld"><label for="l3">เหตุผล</label><textarea id="l3" required placeholder="เช่น ไข้หวัด แพทย์ให้พัก"></textarea></div>
-   ${fileField('l4','หลักฐาน (ถ้ามี) เช่น ใบรับรองแพทย์ หนังสือเชิญ','รูปหรือ PDF ไม่เกิน 5 MB · เก็บแบบส่วนตัว เปิดได้เฉพาะท่าน หัวหน้างานบุคคล และ ผอ.',true)}
-   ${lvExtraFields()}
-   <div class="note">ในรอบนี้: ${followLine(me())}</div>
+   <div class="fld"><label for="l3">เหตุผล</label><textarea id="l3" rows="2" required placeholder="เช่น ไข้หวัด แพทย์ให้พัก"></textarea></div>
+   <details class="lvfold" id="lFold"><summary>รายละเอียดเพิ่มเติม (ช่วงเวลา หลักฐาน ลายเซ็น)</summary><div class="lvfin">
+    <div class="fld" id="lpart"><label for="l5">ช่วงเวลา</label><select id="l5"><option>เต็มวัน</option><option>ครึ่งวันเช้า</option><option>ครึ่งวันบ่าย</option></select></div>
+    ${fileField('l4','หลักฐาน (ถ้ามี) เช่น ใบรับรองแพทย์ หนังสือเชิญ','รูปหรือ PDF ไม่เกิน 5 MB · เก็บแบบส่วนตัว เปิดได้เฉพาะท่าน หัวหน้างานบุคคล และ ผอ.',true)}
+    ${lvExtraFields()}
+    <div class="note">${lvTermLine()}</div>
+   </div></details>
    <p class="note">${ME.isDirector?'ใบของ ผอ.: บันทึกเป็น "รอผู้มีอำนาจ" แล้ว ผอ. บันทึกผลภายหลัง (ระบบไม่อนุมัติให้อัตโนมัติ)':ME.isHR||!B.hasHR?'ส่งถึง ผอ. อนุมัติ':'ส่งถึงหัวหน้างานบุคคลเห็นชอบ แล้วถึง ผอ. อนุมัติ'} · ถ้าเกินเกณฑ์ติดตามยังยื่นได้ โดยแนบเหตุผลและหลักฐาน</p>
-   <div><button class="btn pri big" type="submit">ตรวจแล้ว ยื่นใบลา</button></div></form>`}
+   <div><button class="btn pri big lvsubmit" type="submit">ตรวจแล้ว ยื่นใบลา</button></div></form>`}
 /* =====================================================================
  *  ระบบลา 11 ประเภทตามระเบียบ (อยู่ในฟอร์มใบลา) — สรุประเบียบเพื่อช่วยตรวจทานเบื้องต้น
  *  ประเภทที่หลังบ้านยังไม่รองรับ (be ว่าง) ดู/คำนวณ/Export PDF ได้ แต่ยื่นผ่านระบบยังไม่ได้
  * ===================================================================== */
-const LV_MAXT=6, LV_NEAR_D=3;   // เกณฑ์เลื่อนเงินเดือน: ป่วย+กิจ ไม่เกิน RULE.d วัน (ตั้งค่าในแอป) และไม่เกิน 6 ครั้งต่อครึ่งปี
 const LV_VAC_MSG='ครูที่ได้หยุดภาคเรียนเกินสิทธิแล้ว ไม่มีสิทธิใช้การลาประเภทนี้';
 const LV_TYPES=[
  {k:'sick',n:'ลาป่วย',be:'ลาป่วย',cnt:true,pay:'ได้รับเงินเดือน',doc:30,rules:['ลาได้ตามความจำเป็น ยื่นใบลาตามระเบียบ','ป่วยตั้งแต่ 30 วันขึ้นไป ต้องแนบใบรับรองแพทย์','ลาไม่ทันยื่นล่วงหน้า ให้ยื่นในวันแรกที่มาปฏิบัติงาน','นับเฉพาะวันทำการ']},
@@ -1939,21 +1986,92 @@ function lvFY(){const y=Number(TODAY_ISO.slice(0,4)),m=Number(TODAY_ISO.slice(5,
 const lvMine=()=>REQ.filter(r=>r.who===me()&&r.kind==='leave'&&['approved','head','dir','ext'].includes(r.st));
 function lvUsed(ty,range){return lvMine().filter(r=>r.type===ty.be&&(!range||(r.from>=range.start&&r.from<=range.end))).reduce((s,r)=>s+(Number(r.days)||0),0)}
 /** ป่วย+กิจ ในรอบเลื่อนเงินเดือนนี้ */
-function lvRound(){const R=B.round||{start:'0000-01-01',end:'9999-12-31'};const l=lvMine().filter(r=>(r.type==='ลาป่วย'||r.type==='ลากิจส่วนตัว')&&r.to>=R.start&&r.from<=R.end);return{days:l.reduce((s,r)=>s+(Number(r.days)||0),0),times:l.length}}
+const LV_FIRST=['sick','per'];
+const lvOrdered=()=>{const rest=LV_TYPES.filter(t=>!LV_FIRST.includes(t.k)&&t.k!=='oth');return LV_FIRST.map(lvT).concat(rest,[lvT('oth')])};   // ลาป่วยและลากิจส่วนตัวอยู่บนสุด
+/** เกณฑ์ลาต่อภาคเรียนจากหลังบ้าน (ค่าตั้งที่ ผอ. แก้ได้) · ถ้าหลังบ้านรุ่นเก่าไม่ส่ง = null → หน้าจอขึ้น "ยังไม่มีข้อมูล" ไม่เดา */
+const lvQ=()=>{const q=B.quota||{};return(q.termDays!=null&&q.termTimes!=null&&q.pTermDays!=null&&q.pTermTimes!=null&&q.fyDays!=null&&q.nearDays!=null)?{d:q.termDays,t:q.termTimes,pd:q.pTermDays,pt:q.pTermTimes,fy:q.fyDays,cert:q.certDays,near:q.nearDays,nearT:q.nearTimes,fyNear:q.fyNear,sample:!!q.termSample,yel:!!q.yellowCounts,home:!!q.homeLate}:null};
+/** ตัวเลขนับตามภาคเรียนจากหลังบ้าน (myStats.termUse): ap = อนุมัติแล้ว · pe = รอพิจารณา · ลากิจ + ลาป่วยไม่มีใบรับรองนับรวมกัน · ลาป่วยมีใบรับรองไม่นับ · ช่วงว่างระหว่างภาคนับรวมภาคถัดไป */
+function lvTermUse(){
+  const q=lvQ(),tu=B.myStats&&B.myStats.termUse;if(!q||!tu||!tu.term||!tu.ap||!tu.pe||!tu.fyPer)return null;
+  const u={ap:tu.ap,pe:tu.pe,fy:tu.fyPer.ap,fyPe:tu.fyPer.pe,T:tu.term,q:q},tot=g=>({d:g.per.d+g.sickNo.d,t:g.per.t+g.sickNo.t});
+  u.tot=tot(u.ap);u.totPe=tot(u.pe);u.remD=Math.max(0,q.d-u.tot.d);u.remT=Math.max(0,q.t-u.tot.t);return u}
+function lvRound(){const u=lvTermUse();return u?{days:u.tot.d+u.totPe.d,times:u.tot.t+u.totPe.t}:{days:0,times:0}}
 function lvRemain(ty){
   if(ty.block)return{text:LV_VAC_MSG,short:'ไม่มีสิทธิ',ok:false};
-  if(ty.k==='sick'){return{num:Math.max(0,RULE.d-lvRound().days),unit:'วัน ก่อนถึงเกณฑ์เลื่อนเงินเดือนรอบนี้',ok:true}}
+  if(ty.k==='sick'||ty.k==='per'){const u=lvTermUse();if(!u)return{text:'ยังไม่มีข้อมูล',short:'ยังไม่มีข้อมูล',ok:true};
+    const all=u.tot.d+u.totPe.d;
+    if(ty.k==='sick')return{num:Math.max(0,u.q.d-all),unit:'วันต่อภาคเรียน (ถ้าไม่มีใบรับรองแพทย์ นับรวมกับลากิจ)',ok:true};
+    return{num:Math.max(0,Math.min(u.q.pd-(u.ap.per.d+u.pe.per.d),u.q.d-all,u.q.fy-(u.fy+u.fyPe))),unit:'วัน (ต่อภาคเรียน · ปีงบประมาณไม่เกิน '+u.q.fy+')',ok:true}}
   if(ty.cap){const used=lvUsed(ty,ty.fy?lvFY():null);return{num:Math.max(0,ty.cap-used),unit:ty.unit+(ty.fy?' (ปีงบประมาณนี้ · ปีแรกรับราชการเพดาน 15)':''),ok:true,cap:ty.cap}}
   return{text:'ตามที่ได้รับอนุมัติ',ok:true}
 }
-function lvRaise(days){const u=lvRound(),dA=u.days+days,tA=u.times+1,overD=dA>RULE.d,overT=tA>LV_MAXT;
-  const lvl=(overD||overT)?'over':(dA>=RULE.d-LV_NEAR_D||tA>=LV_MAXT)?'near':'ok';return{dA,tA,overD,overT,lvl}}
+/** ถ้ายื่นใบนี้ จะเกินเกณฑ์ไหม · ลาป่วยที่แนบไฟล์ (ใบรับรองชั่วคราว) ไม่นับ · "ใกล้" = เหลือ ≤ ค่าตั้ง (วัน/ครั้ง/ปีงบประมาณ) */
+function lvRaise(days,k){
+  const u=lvTermUse();if(!u)return null;const q=u.q,cert=k==='sick'&&!!PICKED.l4,counts=!cert,isP=k==='per';
+  const dA=u.tot.d+u.totPe.d+(counts?days:0),tA=u.tot.t+u.totPe.t+(counts?1:0);
+  const pdA=u.ap.per.d+u.pe.per.d+(isP?days:0),ptA=u.ap.per.t+u.pe.per.t+(isP?1:0),fyA=u.fy+u.fyPe+(isP?days:0);
+  const overD=dA>q.d,overT=tA>q.t,overPD=isP&&pdA>q.pd,overPT=isP&&ptA>q.pt,overFY=isP&&fyA>q.fy,over=overD||overT||overPD||overPT||overFY;
+  const near=!over&&counts&&(q.d-dA<=q.near||q.t-tA<=q.nearT||(isP&&(q.pd-pdA<=q.near||q.pt-ptA<=q.nearT||q.fy-fyA<=q.fyNear)));
+  return{dA,tA,fyA,cert,q,overD,overT,overPD,overPT,overFY,lvl:over?'over':near?'near':'ok',k}}
 function lvRaiseHtml(r){
-  const base=`รอบนี้ลาป่วย+ลากิจรวม <b>${lvFmtN(r.dA)}</b> วัน (เกณฑ์ไม่เกิน ${RULE.d}) · <b>${r.tA}</b> ครั้ง (เกณฑ์ไม่เกิน ${LV_MAXT} ครั้งต่อครึ่งปี)`;
-  if(r.lvl==='over')return`<div class="callout c-bad"><b>⚠ เกินเกณฑ์เลื่อนเงินเดือน</b>${base}${r.overD?' · เกินจำนวนวัน':''}${r.overT?' · เกินจำนวนครั้ง':''}</div>`;
-  if(r.lvl==='near')return`<div class="callout c-bad"><b>⚠ ใกล้ถึงเกณฑ์เลื่อนเงินเดือน</b>${base} · เหลืออีก ${Math.max(0,RULE.d-r.dA)} วัน / ${Math.max(0,LV_MAXT-r.tA)} ครั้ง</div>`;
-  return`<div class="callout c-good">ยังอยู่ในเกณฑ์เลื่อนเงินเดือน — ${base}</div>`}
-function lvTypeSelect(){return`<div class="fld"><label for="lt">ประเภทการลา (11 ประเภทตามระเบียบ)</label><select id="lt">${LV_TYPES.map((t,i)=>`<option value="${t.k}">${i<11?(i+1)+'. ':''}${esc(t.n)}</option>`).join('')}</select></div><div id="lInfo" aria-live="polite" class="lvbox"></div>`}
+  if(!r)return'<div class="callout c-warn"><b>ยังไม่มีข้อมูลเกณฑ์ภาคเรียน</b><span>ผู้ดูแลยังไม่ได้ตั้งค่า หรือหลังบ้านยังไม่ส่งข้อมูลภาคเรียน</span></div>';
+  if(r.cert)return'<div class="callout c-good"><span>ลาป่วยที่แนบใบรับรองแพทย์ <b>ไม่นับในโควตา</b> (ผอ. หรือหัวหน้างานบุคคลอาจตรวจใบรับรองทีหลัง)</span></div>';
+  const q=r.q,base=`ภาคเรียนนี้ ลากิจ + ลาป่วยไม่มีใบรับรอง รวม <b>${lvFmtN(r.dA)}</b> วัน (เกณฑ์ไม่เกิน ${q.d}) · <b>${r.tA}</b> ครั้ง (เกณฑ์ไม่เกิน ${q.t})`,fy=r.k==='per'?` · ลากิจปีงบประมาณนี้รวม <b>${lvFmtN(r.fyA)}</b> วัน (ไม่เกิน ${q.fy})`:'';
+  const ex=[r.overD&&'เกินจำนวนวัน',r.overT&&'เกินจำนวนครั้ง',r.overPD&&'ลากิจเกินวันต่อภาคเรียน',r.overPT&&'ลากิจเกินครั้งต่อภาคเรียน',r.overFY&&'ลากิจเกิน '+q.fy+' วันต่อปีงบประมาณ'].filter(Boolean);
+  if(r.lvl==='over')return`<div class="callout c-bad"><b>⚠ เกินเกณฑ์</b><span>${base}${fy}${ex.length?' · '+ex.join(' · '):''}</span></div>`;
+  if(r.lvl==='near')return`<div class="callout c-bad"><b>⚠ ใกล้ถึงเกณฑ์</b><span>${base}${fy} · เหลืออีก ${Math.max(0,q.d-r.dA)} วัน / ${Math.max(0,q.t-r.tA)} ครั้ง</span></div>`;
+  return`<div class="callout c-good"><span>ยังอยู่ในเกณฑ์ — ${base}${fy}</span></div>`}
+const lvSickHint=()=>{const q=lvQ();return q?`<p class="sub lvhint">ลาป่วยที่แนบใบรับรองแพทย์ไม่นับในโควตา · ไม่มีใบรับรองนับรวมกับลากิจ (${q.t} ครั้ง / ${q.d} วัน ต่อภาคเรียน)</p>`:''};
+function lvTermLine(){const u=lvTermUse();if(!u)return'<span class="lvnd">ยังไม่มีข้อมูล</span>';return`<span class="num">ภาคเรียนนี้ใช้ไป ${u.tot.t} ครั้ง ${lvFmtN(u.tot.d)} วัน</span> <span class="sub">· เกณฑ์ ${u.q.t} ครั้ง / ${u.q.d} วันต่อภาคเรียน${u.q.sample?' (ค่าตั้งตัวอย่าง ยังไม่ยืนยัน)':''}</span>`}
+const lvTermTxt=()=>{const u=lvTermUse();return u?u.tot.t+' ครั้ง '+lvFmtN(u.tot.d)+' วัน':'ยังไม่มีข้อมูล'};
+/** ป้ายใบรับรองในรายการคำขอของฉัน (certOk มาจากหลังบ้าน: ยืนยันแล้ว หรือแนบไฟล์และยังไม่ถูกตีกลับ/ขอแนบใหม่) */
+const lvCertPill=r=>r.kind==='leave'&&r.type==='ลาป่วย'&&r.certOk!=null?(r.certOk?'<span class="pill p-info">มีใบรับรอง · ไม่นับโควตา</span>':'<span class="pill p-warn">ไม่มีใบรับรอง · นับรวมกับลากิจ</span>'):'';
+/** ครู: แนบใบรับรองหลังยื่น / เมื่อถูกขอ / เมื่อถูกตีกลับ */
+function lvAttachBox(r){
+  if(!r.canAttach||!(r.askCert||r.cert==='no'||!r.hasFile))return'';
+  const msg=r.askCert?'<div class="callout c-warn"><b>ขอให้แนบใบรับรองแพทย์</b><span>แนบรูปหรือ PDF แล้วกดส่ง · ใบนี้อนุมัติไม่ได้จนกว่าจะแนบ</span></div>':r.cert==='no'?'<div class="callout c-bad"><b>ใบรับรองไม่ผ่านการตรวจ</b><span>ใบนี้นับเข้าโควตา · แนบใบรับรองใหม่ได้</span></div>':'';
+  return'<details class="lvfold" '+(r.askCert||r.cert==='no'?'open':'')+'><summary>'+(r.hasFile?'แนบใบรับรองแพทย์ใหม่':'แนบใบรับรองแพทย์ (ไม่นับโควตา)')+'</summary><div class="lvfin">'+msg+fileField('at_'+r.id,'ใบรับรองแพทย์','รูปหรือ PDF ไม่เกิน 5 MB · เก็บแบบส่วนตัว เปิดได้เฉพาะท่าน หัวหน้างานบุคคล และ ผอ.',true)+'<div><button class="btn sm pri" data-attach="'+r.id+'">ส่งใบรับรอง</button></div></div></details>'}
+/** ผอ./หัวหน้างานบุคคล: ยืนยัน · ตีกลับ · ขอให้แนบ (ใบลาป่วยทุกใบ) */
+function lvCertBox(r){
+  if(!r.canCert)return'';
+  const st=r.certOk&&r.cert==='ok'?'ยืนยันแล้ว (ไม่นับโควตา)':r.askCert?'ขอให้ครูแนบแล้ว · รอครูแนบ':r.cert==='no'?'ตีกลับแล้ว (นับเข้าโควตา)':r.certOk?'แนบไฟล์แล้ว · ถือว่ามีใบรับรองชั่วคราว (ไม่นับโควตา) · รอท่านยืนยัน':'ยังไม่มีใบรับรอง (นับรวมกับลากิจ)';
+  return'<div class="lvcert"><div class="sub"><b>ใบรับรองแพทย์:</b> '+st+'</div><div class="row">'+(r.hasFile?'<button class="btn sm" data-evid="'+r.id+'">ดูไฟล์</button>':'')+(r.cert!=='ok'?'<button class="btn sm good" data-cert="'+r.id+':ok">ยืนยันใบรับรอง</button>':'')+((r.hasFile||r.cert==='ok')&&r.cert!=='no'?'<button class="btn sm danger" data-cert="'+r.id+':no">ตีกลับ (นับเข้าโควตา)</button>':'')+(!r.askCert?'<button class="btn sm" data-cert="'+r.id+':ask">ขอให้แนบใบรับรอง</button>':'')+'</div></div>'}
+/** ตัวเลือกประเภทคำขอ มองเห็นชัดเสมอบนหน้า "คำขอ" เมื่อเปิดฟอร์มอยู่ (ใบลา · ออกนอกบริเวณ · ไปราชการ · เอกสาร) */
+const REQ_TYPES=[['leave','ใบลา'],['out','ออกนอกบริเวณ'],['gov','ไปราชการ'],['doc','เอกสาร']];
+const reqTypeBar=k=>k?'<div class="reqtypes" role="group" aria-label="ประเภทคำขอ">'+REQ_TYPES.map(([v,t])=>'<button type="button" class="reqtb" data-kind="'+v+'" aria-pressed="'+(k===v)+'">'+t+'</button>').join('')+'</div>':'';
+const lvLong=s=>s?d8(s).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
+const lvTermHead=T=>{const m=/ภาคเรียนที่ (\d+)\/(\d+)/.exec((T&&T.label)||'');return m?'ภาคเรียนที่ '+m[1]+' ปีการศึกษา '+m[2]:((T&&T.label)||'')};
+/** ตัวเลขใหญ่ + หน่วย/คำอธิบายตัวเล็ก (เน้นสิ่งที่ครูต้องรู้: เหลือกี่วัน กี่ครั้ง / มาสายกี่ครั้ง) */
+const lvBig=(pre,a,ua,b,ub)=>'<div class="lvsn2">'+(pre?'<span class="lvw">'+pre+'</span>':'')+'<span class="lvn">'+lvFmtN(a)+'</span><span class="lvu">'+ua+'</span>'+(b!=null?'<span class="lvn">'+lvFmtN(b)+'</span><span class="lvu">'+ub+'</span>':'')+'</div>';
+function lateBlock(withRange){
+  const M=B.myStats,Q=B.quota,N='<span class="lvnd">ยังไม่มีข้อมูล</span>',tu=M&&M.termUse&&M.termUse.term;
+  if(!(M&&Q&&M.late!=null))return'<div class="lvlate"><b>มาสาย</b> '+N+'</div>';
+  const y=M.yellow||0,eff=M.late+(Q.yellowCounts?y:0),left=Math.max(0,Q.late-eff),lvl=eff>=Q.late?'bad':left<=2?'warn':'ok';
+  return'<div class="lvlate '+lvl+'">'+lvBig('มาสาย',eff,'ครั้ง')+'<div class="lvlate2">สายได้อีก <b>'+left+'</b> ครั้ง</div>'
+   +'<div class="lvss">โควตา '+Q.late+' ครั้ง · ไฟเหลือง '+y+' ครั้ง ('+(Q.yellowCounts?'นับเป็นสายตามค่าตั้ง':'มาหลัง '+B.rules.general.on+' น. ไม่เกิน '+B.rules.late+' น. · ยังไม่นับเป็นสาย')+')'+(Q.sample?' · <b>ค่าตั้งตัวอย่าง ยังไม่ยืนยัน</b>':'')+(withRange&&tu?' · นับตั้งแต่ '+lvLong(tu.termStart||tu.start)+' ถึง '+lvLong(tu.end):'')+'</div></div>'}
+/** สรุปการลา + มาสาย: แสดงเฉพาะเมื่อครูเปิดฟอร์ม "ใบลา" (st.kind==='leave') · ภาคเรียนจากแท็บ years ของ QK-Core */
+function leaveSummary(){
+  const u=lvTermUse(),N='<span class="lvnd">ยังไม่มีข้อมูล</span>',w=x=>x?' · รอพิจารณา '+lvFmtN(x)+' วัน':'';
+  const box=(c,t,main,sub,note)=>'<div class="lvcell '+c+'"><div class="lvst">'+t+'</div>'+main+(sub?'<div class="lvss">'+sub+'</div>':'')+(note?'<div class="lvss">'+note+'</div>':'')+'</div>';
+  let tot,per,sick,warn='',head='',range='';
+  if(u){const q=u.q,pa=u.ap.per,sa=u.ap.sickNo.d+u.ap.sickCert.d,fyAll=u.fy+u.fyPe,T=u.T;
+    head=' · '+esc(lvTermHead(T));
+    range='นับตั้งแต่ '+lvLong(T.termStart||T.start)+' ถึง '+lvLong(T.end)+(q.sample?' · <b>ค่าตั้งตัวอย่าง ยังไม่ยืนยัน</b>':'');
+    const remPD=Math.max(0,Math.min(q.pd-pa.d,u.remD,q.fy-u.fy)),remPT=Math.max(0,Math.min(q.pt-pa.t,u.remT));
+    tot=box('tot','รวม',lvBig('เหลือ',u.remD,'วัน',u.remT,'ครั้ง'),'ใช้ไป <b>'+lvFmtN(u.tot.d)+'</b> วัน ('+u.tot.t+' ครั้ง)'+w(u.totPe.d));
+    if(u.remD<=q.near||u.remT<=q.nearT)warn+='<div class="lvwarn'+(u.remD<=0||u.remT<=0?' bad':'')+'">⚠ ใกล้ถึงเกณฑ์ · เหลือ '+lvFmtN(u.remD)+' วัน / '+u.remT+' ครั้ง</div>';
+    warn+=fyAll>q.fy?'<div class="lvwarn bad">⚠ ลากิจปีงบประมาณรวม '+lvFmtN(fyAll)+' วัน เกิน '+q.fy+' วัน</div>':fyAll>=q.fy-q.fyNear?'<div class="lvwarn">⚠ ลากิจปีงบประมาณรวม '+lvFmtN(fyAll)+' วัน ใกล้ครบ '+q.fy+' วัน</div>':'';
+    per=box('','ลากิจ',lvBig('เหลือ',remPD,'วัน',remPT,'ครั้ง'),'ใช้ไป <b>'+lvFmtN(pa.d)+'</b> วัน ('+pa.t+' ครั้ง)'+w(u.pe.per.d));
+    sick=box('','ลาป่วย',lvBig('ลาไปแล้ว',sa,'วัน'),'ไม่มีโควตาแยก',u.ap.sickCert.d?'มีใบรับรอง '+lvFmtN(u.ap.sickCert.d)+' วัน (ไม่นับโควตา)':w(u.pe.sickNo.d+u.pe.sickCert.d).replace(/^ · /,''))}
+  else{tot=box('tot','รวม',N);per=box('','ลากิจ',N);sick=box('','ลาป่วย',N)}
+  return'<section class="panel lvsum" aria-label="สรุปการลาและการมาสาย"><div class="ph"><h2>สรุปการลาและการมาสาย'+head+'</h2></div>'+(range?'<p class="lvrange">'+range+'</p>':'')+'<div class="lvgrid">'+tot+per+sick+'</div>'+warn+lateBlock()+'</section>'}
+function lvTypeSelect(){
+  const o=lvOrdered(),opt=(t,i)=>'<option value="'+t.k+'">'+(i<11?(i+1)+'. ':'')+esc(t.n)+'</option>';
+  return'<div class="fld"><label id="ltL">ประเภทการลา (11 ประเภทตามระเบียบ)</label>'
+   +'<select id="lt" hidden aria-hidden="true" tabindex="-1">'+o.map(opt).join('')+'</select>'
+   +'<div class="lvpick" role="group" aria-labelledby="ltL">'+o.slice(0,2).map((t,i)=>'<button type="button" class="lvtb" data-lvt="'+t.k+'" aria-pressed="'+(i===0)+'">'+esc(t.n)+'</button>').join('')+'</div>'
+   +'<label for="ltOther" class="lvol">ประเภทอื่น ๆ (ใช้เฉพาะผู้ที่จำเป็น)</label>'
+   +'<select id="ltOther" class="lvother"><option value="">เลือกประเภทอื่น…</option>'+o.slice(2).map((t,i)=>opt(t,i+2)).join('')+'</select></div><div id="lInfo" aria-live="polite" class="lvbox"></div>'}
 /** ลายเซ็นที่บันทึกไว้: ไฟล์รูป PNG ส่วนตัวใน Drive โรงเรียน · ชีตเก็บแค่รหัสไฟล์ · เรียกใช้ได้เฉพาะเจ้าของ */
 const SIG={state:'unknown',data:null};
 function typedSigData(){
@@ -1995,13 +2113,14 @@ function lvRefresh(){
   const nWork=workDays(a,b,part),nCal=(a&&b&&b>=a)?Math.round((d8(b)-d8(a))/864e5)+1:0,n=ty.cal?nCal:nWork;
   const big=r.ok&&r.num!=null?`<div class="lvbig"><b>${lvFmtN(r.num)}</b> <span class="sub">${esc(r.unit||'วัน')}</span></div>`:`<div class="lvbig"><b style="font-size:1.05rem;color:${r.ok?'var(--accent)':'var(--bad)'}">${esc(r.short||r.text)}</b></div>`;
   let raise='';
-  if(ty.cnt)raise=lvRaiseHtml(lvRaise(n));else if(ty.block)raise=`<div class="callout c-bad"><b>${esc(LV_VAC_MSG)}</b></div>`;else raise=`<div class="callout c-good">ประเภทนี้ไม่นับรวมเกณฑ์ลาป่วย+ลากิจ ในการเลื่อนเงินเดือน</div>`;
-  box.innerHTML=`<div><span class="sub">เหลือสิทธิ</span>${big}<span class="sub">${esc(ty.pay||'')} · ${ty.cal?'นับรวมวันหยุดราชการ':'นับเฉพาะวันทำการ'}</span></div>
-   <div><b style="font-size:.9rem">เงื่อนไขสำคัญ</b><ul class="lvrules">${ty.rules.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>${raise}`;
+  if(ty.cnt)raise=lvRaiseHtml(lvRaise(n,ty.k));else if(ty.block)raise=`<div class="callout c-bad"><b>${esc(LV_VAC_MSG)}</b></div>`;else raise=`<div class="callout c-good">ประเภทนี้ไม่นับรวมเกณฑ์ลาป่วย+ลากิจ ในการเลื่อนเงินเดือน</div>`;
+  const hero=r.ok&&r.num!=null?`<div class="lvhero"><span class="sub">เหลือสิทธิ์</span><div class="lvbignum"><b>${lvFmtN(r.num)}</b><span>${esc(r.unit||'วัน')}</span></div></div>`:`<div class="lvhero"><span class="sub">สิทธิ์</span><div class="lvbignum txt"><b>${esc(r.short||r.text)}</b></div></div>`;
+  const alerts=(ty.cnt||ty.block)?raise:'';
+  box.innerHTML=`${hero}${ty.k==='sick'?lvSickHint():''}${alerts}<details class="lvmore"><summary>ดูเพิ่มเติม (เงื่อนไขและรายละเอียด)</summary><p class="sub" style="margin-top:8px">${esc(ty.pay||'')} · ${ty.cal?'นับรวมวันหยุดราชการ':'นับเฉพาะวันทำการ'}</p><ul class="lvrules">${ty.rules.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${(ty.cnt||ty.block)?'':raise}</details>`;
   // สรุปวันที่ + คำเตือนตามช่วงที่เลือก
   const out=[];
   if(a&&b&&b>=a){
-    let back=a;do{const d=d8(back);d.setDate(d.getDate()+1);back=ymd(d)}while(workDays(back,back,'เต็มวัน')===0&&back<'2100');
+    let back=b;do{const d=d8(back);d.setDate(d.getDate()+1);back=ymd(d)}while(workDays(back,back,'เต็มวัน')===0&&back<'2100');
     const left=r.ok&&r.num!=null&&ty.k!=='sick'?r.num-n:null;
     out.push(`<div class="calc"><b>ลา ${lvFmtN(n)} ${ty.cal?'วัน (นับรวมวันหยุด)':'วันทำการ'}</b> · สิ้นสุดการลา ${esc(lvFull(b))} · กลับมาปฏิบัติงาน ${esc(lvFull(back))}${left!=null&&left>=0?` · เหลือสิทธิหลังลา ${lvFmtN(left)} ${esc(ty.unit||'วัน')}`:''}</div>`);
     if(ty.cal&&nCal!==nWork)out.push(`<p class="sub">ระบบหลังบ้านบันทึกเป็นวันทำการ (${lvFmtN(nWork)} วัน) ส่วนระเบียบนับรวมวันหยุด (${nCal} วัน)</p>`);
@@ -2011,6 +2130,8 @@ function lvRefresh(){
   }
   let sum=$('#lSum');if(!sum){sum=document.createElement('div');sum.id='lSum';sum.className='lvbox';$('#lDays').after(sum)}
   sum.innerHTML=out.join('');
+  const tv=$('#lt').value;document.querySelectorAll('[data-lvt]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lvt===tv)));const oo=$('#ltOther');if(oo)oo.value=(tv==='sick'||tv==='per')?'':tv;
+  const fold=$('#lFold');if(fold&&(ty.k==='sick'?(a&&b&&b>=a&&n>=ty.doc):ty.rules.some(x=>/แนบ/.test(x))))fold.open=true;
   // ปุ่มยื่นลา: ลาพักผ่อน / ประเภทที่หลังบ้านยังไม่รองรับ = สีเทากดไม่ได้
   const sb=$('#fLeave button[type=submit]'),why=ty.block?LV_VAC_MSG:(!lvSupported(ty)?'ประเภทนี้ยังยื่นผ่านระบบไม่ได้ (หลังบ้านยังไม่รองรับ) · ใช้ Export PDF ส่งใบลาแทน':'');
   if(sb){sb.disabled=!!why;sb.classList.toggle('lvgrey',!!why);sb.title=why;sb.textContent=why?'ยื่นใบลาไม่ได้':'ตรวจแล้ว ยื่นใบลา';
@@ -2020,6 +2141,9 @@ function lvSigBlank(){const c=$('#lSig');if(!c)return true;const d=c.getContext(
 function lvBind(){
   if(!$('#lt'))return;
   ['#lt','#l1','#l2','#l5'].forEach(s=>{const el=$(s);if(el)el.addEventListener('change',lvRefresh)});
+  document.querySelectorAll('[data-lvt]').forEach(b=>b.addEventListener('click',()=>{const sel=$('#lt');sel.value=b.dataset.lvt;sel.dispatchEvent(new Event('change'))}));
+  ['#l4c','#l4f'].forEach(q=>{const el=$(q);if(el)el.addEventListener('change',()=>setTimeout(lvRefresh,0))});
+  const oth=$('#ltOther');if(oth)oth.addEventListener('change',()=>{if(!oth.value)return;const sel=$('#lt');sel.value=oth.value;sel.dispatchEvent(new Event('change'))});
   const c=$('#lSig');
   if(c&&!c._ok){c._ok=true;const g=c.getContext('2d');g.lineWidth=3.5;g.lineCap='round';g.lineJoin='round';g.strokeStyle='#1B1F3B';let dr=false;
     const pos=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
@@ -2048,7 +2172,7 @@ function lvExport(){
 <p class="ind">ตั้งแต่วันที่ ${esc(lvFull(a))} ถึงวันที่ ${esc(lvFull(b))} มีกำหนด <b>${lvFmtN(n)}</b> ${ty.cal?'วัน (นับรวมวันหยุดราชการ)':'วันทำการ'}</p>
 ${r.ok&&r.num!=null?`<p class="ind">สิทธิคงเหลือก่อนลาครั้งนี้ ${lvFmtN(r.num)} ${esc(r.unit||'วัน')}</p>`:''}
 <table><thead><tr><th>สถิติการลาปีงบประมาณนี้ (ตามที่บันทึกในระบบ)</th><th>ลามาแล้ว (วัน)</th><th>ลาครั้งนี้ (วัน)</th><th>รวม (วัน)</th></tr></thead><tbody>${rows}</tbody></table>
-<p style="font-size:13px">ลาป่วย+ลากิจในรอบเลื่อนเงินเดือนนี้ ${lvFmtN(rd.days)} วัน ${rd.times} ครั้ง (ก่อนใบนี้)</p>
+<p style="font-size:13px">ลากิจ+ลาป่วยที่ไม่มีใบรับรองในภาคเรียนนี้ ${lvFmtN(rd.days)} วัน ${rd.times} ครั้ง (ก่อนใบนี้)</p>
 <div class="sig"><img src="${sig}" alt="ลายเซ็น"><div>(${esc(ME.name)})</div><div>${esc(pos)}</div><div class="stamp">ลงลายมือชื่ออิเล็กทรอนิกส์เมื่อ ${esc(stamp)}<br>รหัสตรวจสอบ ${esc(ref)}</div></div>
 <div class="box"><b>ความเห็นผู้บังคับบัญชา / คำสั่ง</b><br>☐ อนุญาต &nbsp; ☐ ไม่อนุญาต<br><br>ลงชื่อ ................................................. ผู้อำนวยการโรงเรียน<br>วันที่ ........../........../..........</div></body></html>`;
   const old=$('#lvPrintFrame');if(old)old.remove();
@@ -2460,6 +2584,16 @@ V.set=()=>secBox('admin',A=>{const R=B.rules,Q=B.quota;
     ${unitIn('s8','เกณฑ์ติดตามการมาสาย',Q.late,'ครั้ง/รอบ','type="number" inputmode="numeric" min="0" max="100"')}${unitIn('s4','เกณฑ์ติดตามการลา (จำนวนครั้ง)',Q.times,'ครั้ง/รอบ','type="number" inputmode="numeric" min="0" max="100"')}${unitIn('s5','เกณฑ์ติดตามการลา (จำนวนวัน)',Q.days,'วัน/รอบ','type="number" inputmode="numeric" min="0" max="365" step="0.5"')}</div>
     <p class="note">รอบสรุป: ${esc(B.round.label)} (จากปีการศึกษาในทะเบียนกลาง) · นับเฉพาะลาป่วยและลากิจที่อนุมัติแล้ว · ใช้เพื่อติดตามดูแล ไม่ใช่สิทธิการลา และไม่ได้กำหนดระเบียบใหม่${Q.sample?' · <b>ตอนนี้เป็นค่าตัวอย่าง ตรวจกับระเบียบที่ใช้จริงก่อนบันทึก</b>':''}</p>${metaNote(A,'late_quota')}
     <div><button class="btn pri" type="submit">บันทึกหมวดนี้</button></div></form>`)}
+  ${setSec('term','เกณฑ์การลาต่อภาคเรียน','ลากิจ ลาป่วยไม่มีใบรับรอง ใบรับรองแพทย์ คำเตือน',`<form class="f" id="sfTerm" data-sec="term"><div class="fgrid">
+    ${unitIn('t1','รวม (ลากิจ + ลาป่วยไม่มีใบรับรอง): จำนวนวัน',Q.termDays,'วัน/ภาคเรียน','type="number" inputmode="decimal" min="0" max="365" step="0.5"')}${unitIn('t2','รวม: จำนวนครั้ง',Q.termTimes,'ครั้ง/ภาคเรียน','type="number" inputmode="numeric" min="0" max="100"')}
+    ${unitIn('t3','ลากิจ: จำนวนวัน',Q.pTermDays,'วัน/ภาคเรียน','type="number" inputmode="decimal" min="0" max="365" step="0.5"')}${unitIn('t4','ลากิจ: จำนวนครั้ง',Q.pTermTimes,'ครั้ง/ภาคเรียน','type="number" inputmode="numeric" min="0" max="100"')}
+    ${unitIn('t5','ลากิจ: เพดานต่อปีงบประมาณ',Q.fyDays,'วัน/ปีงบประมาณ','type="number" inputmode="decimal" min="0" max="365" step="0.5"')}${unitIn('t6','ลาป่วยต้องแนบใบรับรองแพทย์ตั้งแต่',Q.certDays,'วัน','type="number" inputmode="numeric" min="1" max="365"')}
+    ${unitIn('t9','เตือน "ใกล้ถึงเกณฑ์" เมื่อเหลือไม่เกิน (วัน)',Q.nearDays,'วัน','type="number" inputmode="decimal" min="0" max="365" step="0.5"')}${unitIn('t10','เตือน "ใกล้ถึงเกณฑ์" เมื่อเหลือไม่เกิน (ครั้ง)',Q.nearTimes,'ครั้ง','type="number" inputmode="numeric" min="0" max="100"')}
+    ${unitIn('t11','เตือน "ใกล้ครบ" ลากิจปีงบประมาณเมื่อเหลือไม่เกิน',Q.fyNear,'วัน','type="number" inputmode="decimal" min="0" max="365" step="0.5"')}</div>
+    <div class="fgrid"><div class="fld"><label for="t7">ไฟเหลือง (มาหลัง ${esc(R.general.on)} น. ไม่เกิน ${esc(R.late)} น.)</label><select id="t7"><option value="0" ${Q.yellowCounts?'':'selected'}>ไม่นับเป็นสาย (ค่าเริ่มต้น)</option><option value="1" ${Q.yellowCounts?'selected':''}>นับเป็นสาย</option></select></div>
+    <div class="fld"><label for="t8">สรุปมาสายที่หน้าแรก</label><select id="t8"><option value="0" ${Q.homeLate?'':'selected'}>ปิด (แสดงเฉพาะหน้าคำขอ)</option><option value="1" ${Q.homeLate?'selected':''}>เปิด</option></select></div></div>
+    <p class="note">ภาคเรียน: ${(()=>{const u=lvTermUse();return u?esc(u.T.label)+' · '+thD(u.T.start)+' – '+thD(u.T.end):'ยังไม่มีข้อมูล'})()} (จากทะเบียนกลาง แท็บ years) · ลาป่วยที่มีใบรับรองแพทย์ไม่นับโควตา · ไม่มีใบรับรองนับรวมกับลากิจ · มาสายนับตามรอบเลื่อนเงินเดือน (ตั้งที่หมวด "เกณฑ์ติดตาม")${Q.termSample?' · <b>ตอนนี้เป็นค่าตัวอย่าง ยังไม่ยืนยัน</b>':''}</p>${metaNote(A,'leave_term_days')}
+    <div><button class="btn pri" type="submit">บันทึกหมวดนี้</button></div></form>`)}
   ${setSec('dev','เป้าหมายพัฒนาครู','ชั่วโมงต่อปีงบประมาณ',`<form class="f" id="sfDev" data-sec="dev">${unitIn('s6','เป้าหมายชั่วโมงพัฒนา',DEV_TARGET,'ชั่วโมง/ปีงบประมาณ','type="number" inputmode="numeric" min="0" max="500"')}
     <p class="note">ตั้งตามที่โรงเรียนหรือหน่วยงานต้นสังกัดกำหนดจริง</p>${metaNote(A,'dev_hours_target')}<div><button class="btn pri" type="submit">บันทึกหมวดนี้</button></div></form>`)}
   ${setSec('loc','จุดลงเวลา GPS และ QR สำรอง','พิกัด รัศมี จุดชั่วคราว พิมพ์ QR',`<ul class="list">${A.locations.map(l=>`<li><span class="sw" style="background:${l.kind==='ถาวร'?'var(--c-blue)':'var(--c-teal)'}"></span><div class="main">${esc(l.n)}<div class="sub">รัศมี ${l.r} เมตร · ${esc(l.kind)}${l.from?' '+thD(l.from)+'–'+thD(l.to):''}${l.main?' · จุดหลัก':''}${l.on?'':' · ไม่ใช้งาน'}</div></div>${l.lat?`<a class="btn sm" href="https://www.google.com/maps?q=${l.lat},${l.lng}" target="_blank" rel="noopener">แผนที่</a>`:''}${l.main?`<button class="btn sm" data-gpsmain="1">แก้</button>`:`<button class="btn sm ${l.active?'danger':''}" data-loctoggle="${l.id}">${l.active?'ปิด':'เปิด'}</button>`}</li>`).join('')}</ul>
@@ -2586,11 +2720,13 @@ document.addEventListener('click',async e=>{
   if(d.copy){copyTxt($('#'+d.copy).value,'ข้อความสอนแทน');return}
   if(d.print){const c=document.getElementById(d.print);if(!c)return;c.classList.add('printme');window.print();setTimeout(()=>c.classList.remove('printme'),600);return}
   if(d.evid){openEvidence(d.evid);return}
-  if(d.unpick){delete PICKED[d.unpick];const s=$('#'+d.unpick+'s');if(s)s.textContent='นำรูปออกแล้ว';return}
+  if(d.unpick){delete PICKED[d.unpick];const s=$('#'+d.unpick+'s');if(s)s.textContent='นำรูปออกแล้ว';if($('#fLeave'))lvRefresh();return}
   /* คำขอ */
   if(d.ap){const[id,a,kind]=d.ap.split(':');const note=($('#nt'+id)?.value||'').trim();if(a==='no'&&!note){toast('กรุณาใส่เหตุผลในช่องความเห็น');$('#nt'+id)?.focus();return}
     act(kind==='out'?'out.dir':'leave.dir',{id,approve:a==='ok',note},t).catch(()=>{});return}
   if(d.hd){const[id,a]=d.hd.split(':');const note=($('#nt'+id)?.value||'').trim();if(a==='no'&&!note){toast('กรุณาใส่เหตุผลในช่องความเห็น');$('#nt'+id)?.focus();return}act('leave.hr',{id,approve:a==='ok',note},t).catch(()=>{});return}
+  if(d.cert){const[id,v]=d.cert.split(':');if(v==='no'&&!confirm('ตีกลับใบรับรองแพทย์? ใบนี้จะนับเข้าโควตาลาและแจ้งครู'))return;if(v==='ask'&&!confirm('ขอให้ครูแนบใบรับรองแพทย์? ใบนี้จะอนุมัติไม่ได้จนกว่าครูจะแนบ และแจ้งเตือนครู'))return;act('leave.cert',{id,v},t).catch(()=>{});return}
+  if(d.attach){let ph;try{ph=photoOf('at_'+d.attach)}catch(er){toast(er.message);return}if(!ph){toast('เลือกรูปหรือไฟล์ PDF ก่อน');return}act('leave.attach',{id:d.attach,data:{photo:ph}},t).then(()=>clearPick('at_'+d.attach)).catch(()=>{});return}
   if(d.ext){const[id,a]=d.ext.split(':');const note=($('#ex'+id)?.value||'').trim();if(!note){toast('ระบุผู้อนุมัติหรือเลขที่หนังสือ');$('#ex'+id)?.focus();return}
     if(!confirm('บันทึกผล "'+(a==='ok'?'อนุมัติแล้ว':'ไม่อนุมัติ')+'" ตามที่ผู้มีอำนาจพิจารณา?'))return;act('leave.ext',{id,approve:a==='ok',note},t).catch(()=>{});return}
   if(d.sa){const[id,a]=d.sa.split(':');act('out.sub',{id,approve:a==='ok'},t).catch(()=>{});return}
@@ -2734,6 +2870,8 @@ document.addEventListener('submit',async e=>{
     if(Object.values(o).some(x=>!/^\d{2}:\d{2}$/.test(x))){toast('กรอกเวลาให้ครบ');return}const er=checkTimes(o);if(er){toast(er);return}await act('admin.rules',{data:o},btn)}
   if(f.id==='sfFollow'){const o={late_quota:v('#s8'),leave_quota_times:v('#s4'),leave_quota_days:v('#s5')};if(Object.values(o).some(x=>x===''||+x<0)){toast('กรอกตัวเลขตั้งแต่ 0 ขึ้นไป');return}
     if(!confirm('บันทึกเกณฑ์ติดตาม? มีผลกับการแสดงผลตั้งแต่ตอนนี้ (ไม่แก้ข้อมูลเดิม)'))return;await act('admin.rules',{data:o},btn)}
+  if(f.id==='sfTerm'){const o={leave_term_days:v('#t1'),leave_term_times:v('#t2'),leave_personal_term_days:v('#t3'),leave_personal_term_times:v('#t4'),leave_personal_fy_days:v('#t5'),med_cert_days:v('#t6'),late_yellow_counts:v('#t7'),home_late_summary:v('#t8'),leave_near_days:v('#t9'),leave_near_times:v('#t10'),leave_fy_near_days:v('#t11')};if(Object.values(o).some(x=>x===''||+x<0)){toast('กรอกตัวเลขตั้งแต่ 0 ขึ้นไป');return}
+    if(!confirm('บันทึกเกณฑ์การลาต่อภาคเรียน? มีผลกับการแสดงผลและการตรวจใบลาใหม่ตั้งแต่ตอนนี้ (ไม่แก้ข้อมูลเดิม)'))return;await act('admin.rules',{data:o},btn)}
   if(f.id==='sfDev'){if(!(+v('#s6')>=0)){toast('กรอกชั่วโมงให้ถูกต้อง');return}await act('admin.rules',{data:{dev_hours_target:v('#s6')}},btn)}
   if(f.id==='sfRounds'){const r=v('#s7').split(/[,\s]+/).filter(Boolean);if(!r.length||!r.every(x=>/^([01]\d|2[0-3]):[0-5]\d$/.test(x))){toast('รูปแบบเวลาไม่ถูกต้อง เช่น 20:00, 23:00, 02:00');return}await act('admin.rules',{data:{patrol_rounds:r.join(',')}},btn)}
   if(f.id==='locForm'){await act('loc.add',{data:{name:v('#lc1'),lat:v('#lc2'),lng:v('#lc3'),radius:v('#lc4'),kind:$('input[name="lk"]:checked').value,from:v('#lc5'),to:v('#lc6')}},btn);st.locOpen=false;render()}
