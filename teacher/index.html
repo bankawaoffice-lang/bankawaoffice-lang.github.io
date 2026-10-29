@@ -290,6 +290,20 @@ textarea{min-height:70px;resize:vertical}
 .task{border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;background:var(--surface)}
 .task .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
 .task b.t{font-size:1rem;line-height:1.4}
+:root{--lt-rb:#FDE7E8;--lt-rf:#9B111E;--lt-yb:#FFEFC2;--lt-yf:#6B4200;--lt-gb:#DDF4E7;--lt-gf:#0A6035;--lt-db:#E9EBF2;--lt-df:#3B4157;--lt-rk:#D62839;--lt-yk:#E0A100;--lt-gk:#1E9E66;--lt-dk:#8A90A8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--lt-rb:#4A1B20;--lt-rf:#FFC2C6;--lt-yb:#3F3010;--lt-yf:#F8D58A;--lt-gb:#153A2B;--lt-gf:#9BE6C0;--lt-db:#2A2E4A;--lt-df:#C9CDE6}}
+.lt{display:inline-block;font-size:.8125rem;font-weight:600;padding:2px 10px;border-radius:999px;line-height:1.4}
+.lt-r{background:var(--lt-rb);color:var(--lt-rf)}.lt-y{background:var(--lt-yb);color:var(--lt-yf)}.lt-g{background:var(--lt-gb);color:var(--lt-gf)}.lt-d{background:var(--lt-db);color:var(--lt-df)}
+.task.l-r{box-shadow:inset 5px 0 0 var(--lt-rk),var(--shadow)}.task.l-y{box-shadow:inset 5px 0 0 var(--lt-yk),var(--shadow)}.task.l-g{box-shadow:inset 5px 0 0 var(--lt-gk),var(--shadow)}.task.l-d{box-shadow:inset 5px 0 0 var(--lt-dk),var(--shadow)}
+.ltsum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ltc{min-height:64px;border:2px solid transparent;border-radius:14px;padding:8px 4px;text-align:center;font:inherit;cursor:pointer;display:grid;gap:2px;align-content:center}
+.ltc b.num{font-size:1.5rem;line-height:1}.ltc span{font-size:.8125rem;font-weight:600}.ltc[aria-pressed=true]{border-color:currentColor}
+.ltc.lt-r{color:var(--lt-rf)}.ltc.lt-y{color:var(--lt-yf)}.ltc.lt-g{color:var(--lt-gf)}
+.wfs{min-width:0}.slotbar .chip{min-height:44px}.wfs .chip,.ltf .chip{min-height:44px}.tasks .trow{min-height:44px}#sfWork .btn{min-height:44px}.btn.danger{color:#B4232C}.ph .btn.sm[data-addtask],.ph .btn.sm.pri{min-height:44px;padding:6px 14px}
+.btn.good{background:#16794D;border-color:#16794D}.p-warn{color:#7A4B00}.p-info{color:#4343D4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.good{background:var(--good);border-color:var(--good);color:#0E1022!important}:root:not([data-theme="light"]) .btn.danger{color:var(--bad)}:root:not([data-theme="light"]) .p-warn{color:var(--warn)}:root:not([data-theme="light"]) .p-info{color:var(--accent)}}
+.ltf{display:flex;gap:8px;flex-wrap:wrap}.ltf>select,.ltf>.search{flex:1 1 150px;min-width:0}.ltf select,.ltf input{min-height:44px;width:100%}
+
 .bigbar{position:relative;height:30px;border-radius:10px;background:var(--sunk);overflow:hidden}
 .bigbar i{position:absolute;inset:0 auto 0 0;border-radius:10px}
 .bigbar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;padding-inline:12px;font-family:var(--f-data);font-weight:600;font-size:.92rem}
@@ -1056,8 +1070,9 @@ function pending(){
   REQ.filter(x=>x.who===m&&x.kind==='gov'&&x.st==='approved'&&!x.report&&x.to<=TODAY_ISO).forEach(x=>add({ic:'gov',h:'violet',t:'เขียนรายงานหลังไปราชการ/อบรม',s:x.why,go:'myreq'},3));
   TASKS.filter(t=>t.own===m&&['todo','doing','fix'].includes(t.st)).sort((x,y)=>(x.st==='fix'?-1:0)-(y.st==='fix'?-1:0)||dayDiff(x.due)-dayDiff(y.due)).forEach(t=>{const d=dayDiff(t.due);
     add({ic:'tasks',h:t.st==='fix'?'rose':d<0?'rose':'blue',t:(t.st==='fix'?'ต้องแก้ไข: ':'')+t.t,s:(d<0?'เลยกำหนด '+(-d)+' วัน':d===0?'ครบกำหนดวันนี้':'ครบกำหนด '+t.dueTx)+(t.self?'':' · มอบหมายโดย '+nm(t.by)),go:'mywork',hot:d<=3},d<=3||t.st==='fix'?1:4)});
+  {const L=ME.isAdmin&&B.workLights;if(L&&(L.r||L.y))add({ic:'tasks',h:L.r?'rose':'amber',t:'ติดตามงาน · แดง '+L.r+' · เหลือง '+L.y,s:'แตะเพื่อดูรายการงาน',go:'tasks',wf:L.r?'red':'yellow',hot:L.r>0},L.r?0:2)}
   if(ME.isAdmin||ME.isClerk){const r=TASKS.filter(t=>t.st==='sent'&&(ME.isAdmin||t.by===m));if(r.length)add({ic:'tasks',h:'green',t:'ตรวจรับงานที่ส่งแล้ว '+r.length+' งาน',s:r.slice(0,2).map(x=>x.t).join(', '),go:'tasks',wf:'sent'},2);
-    const late=TASKS.filter(t=>t.own!==m&&['todo','doing','fix'].includes(t.st)&&dayDiff(t.due)<0);if(late.length)add({ic:'tasks',h:'rose',t:'งานเลยกำหนด '+late.length+' งาน',s:late.slice(0,2).map(x=>nm(x.own)).join(', '),go:'tasks',wf:'late'},2)}
+    const late=ME.isAdmin&&B.workLights?[]:TASKS.filter(t=>t.own!==m&&['todo','doing','fix'].includes(t.st)&&dayDiff(t.due)<0);if(late.length)add({ic:'tasks',h:'rose',t:'งานเลยกำหนด '+late.length+' งาน',s:late.slice(0,2).map(x=>nm(x.own)).join(', '),go:'tasks',wf:'late'},2)}
   if(ME.isAdmin){JOBS.filter(j=>j.st===0&&j.prio==='ด่วน').forEach(j=>add({ic:'fix',h:'coral',t:'แจ้งซ่อมด่วน: '+j.t,s:j.where+' · รอภารโรงรับงาน',go:'ops',ot:'jobs'},1));
     const r=JOBS.filter(j=>j.st===2&&!j.rDir);if(r.length)add({ic:'job',h:'amber',t:'ให้คะแนนงานภารโรงที่เสร็จ '+r.length+' งาน',s:r[0].t,go:'ops',ot:'jobs'},4);
     INCIDENTS.filter(x=>x.st==='แจ้ง ผอ. แล้ว').forEach(x=>add({ic:'sos',h:'rose',t:'รปภ. แจ้งเหตุ: '+x.what,s:x.where+' · '+thD(x.d)+' '+x.t+' น.',go:'ops',ot:'guard'},1))}
@@ -2291,16 +2306,31 @@ V.mysub=()=>{const m=me(),asked=REQ.filter(r=>r.canSub),mine=SUBS.filter(s=>s.do
 /* ---------- งาน: สถานะและการ์ด ---------- */
 const WST={todo:['ยังไม่เริ่ม','p-mute'],doing:['กำลังทำ','p-info'],sent:['ส่งแล้ว · รอตรวจ','p-calm'],fix:['ต้องแก้ไข','p-bad'],done:['เสร็จสิ้น','p-good']};
 function dueTag(t){if(t.st==='done'||t.st==='sent')return'';const d=dayDiff(t.due);return d<0?`<span class="pill p-bad">เลยกำหนด ${-d} วัน</span>`:d<=3?`<span class="pill p-warn">${d===0?'ครบกำหนดวันนี้':'อีก '+d+' วัน'}</span>`:''}
+const HAS_TL=()=>!!(B&&B.quota&&B.quota.workSoon!=null),SOON=()=>HAS_TL()?B.quota.workSoon:3;
+const LTC={red:'r',yellow:'y',green:'g',done:'d'};
+function ltBadge(t){const c=LTC[t.light];return c?`<span class="lt lt-${c}">${c==='d'?'✓ ':''}${esc(t.ltx||'')}</span>`:''}
+function workPick(list){const p=st.wp,q=(st.wq||'').trim().toLowerCase();return list.filter(t=>(!p||t.own===p)&&(!q||(t.t+' '+nm(t.own)).toLowerCase().includes(q)))}
+function ltSummary(list){if(!TASKS.some(t=>t.light))return'';const o=list.filter(t=>t.st!=='done'),n=c=>o.filter(t=>t.light===c).length;
+  return`<div class="ltsum" role="group" aria-label="สรุปไฟจราจรงาน">${[['red','r','แดง · เลยกำหนด/ด่วน'],['yellow','y','เหลือง · ใกล้ส่ง'],['green','g','เขียว · ปกติ']].map(([k,c,l])=>`<button class="ltc lt-${c}" data-ltf="${k}" aria-pressed="${st.wf===k}"><b class="num">${n(k)}</b><span>${l}</span></button>`).join('')}</div>`}
+function workBar(){if(!(ME.isAdmin||ME.isClerk))return'';const ids=[...new Set(TASKS.map(t=>t.own))].sort((a,b)=>nm(a).localeCompare(nm(b),'th'));
+  return`<div class="ltf"><select id="wp" aria-label="กรองตามผู้รับผิดชอบ"><option value="">ทุกคน</option>${ids.map(i=>`<option value="${i}" ${st.wp===i?'selected':''}>${esc(nm(i))}</option>`).join('')}</select><div class="search">${svg('search')}<input type="search" id="wq" value="${esc(st.wq||'')}" placeholder="ค้นหางาน/คน" aria-label="ค้นหางาน"></div></div>`}
+function loadDone(){st.dnBusy=true;st.dnErr='';api('work.done',{owner:st.dp||'',year:st.dy||'',q:st.dq||'',limit:100}).then(j=>{st.dn=j.done}).catch(e=>{st.dn={total:0,items:[],years:[],owners:[]};st.dnErr=/UNKNOWN|ไม่รู้จัก/i.test((e.code||'')+e.message)?'ระบบหลังบ้านยังไม่รองรับคลังงานเสร็จ':e.message}).finally(()=>{st.dnBusy=false;if(st.wf==='arch')render()})}
+function archPanel(all){if(!st.dn&&!st.dnBusy)loadDone();const D=st.dn;
+  const bar=`<div class="ltf">${all?`<select id="dp" aria-label="กรองตามผู้รับผิดชอบ"><option value="">ทุกคน</option>${((D||{}).owners||[]).map(o=>`<option value="${o.id}" ${st.dp===o.id?'selected':''}>${esc(o.name)} (${o.n})</option>`).join('')}</select>`:''}<select id="dy" aria-label="กรองตามปี"><option value="">ทุกปี</option>${((D||{}).years||[]).map(y=>`<option value="${y}" ${String(st.dy)===String(y)?'selected':''}>พ.ศ. ${y}</option>`).join('')}</select><div class="search">${svg('search')}<input type="search" id="dq" value="${esc(st.dq||'')}" placeholder="ค้นหาชื่องานหรือโครงการ" aria-label="ค้นหางานที่เสร็จแล้ว"></div></div>`;
+  if(!D)return bar+'<div class="loadbox"><span class="spin sm"></span>กำลังโหลดงานที่เสร็จแล้ว</div>';
+  if(st.dnErr)return bar+`<div class="callout c-warn">${esc(st.dnErr)}</div>`;
+  return bar+(D.items.length?`<p class="sub">แสดง ${D.items.length} จาก ${D.total} งาน · งานที่ตรวจรับแล้วเก็บไว้ดูย้อนหลังได้ทั้งหมด</p><ul class="list">${D.items.map(x=>`<li><div class="main"><b>${esc(x.t)}</b><div class="sub">${all?esc(nm(x.own))+' · ':''}เสร็จ ${esc(thD(x.at))} · กำหนด ${esc(thD(x.due))}${x.rby?' · ตรวจรับโดย '+esc(x.rby):''}${x.vp!=null?' · '+x.vp+'%':''}${x.ot?' · '+esc(x.ot):''}${x.proj?' · โครงการ: '+esc(x.proj):''}${x.self?' · เพิ่มเอง':''}</div></div><span class="lt lt-d">✓ เสร็จแล้ว</span></li>`).join('')}</ul>`:empty('ไม่พบงานที่เสร็จแล้ว'))}
 function taskCard(t,mode){
   const own=t.own===me(),ed=own&&mode==='mine',canRev=t.st==='sent'&&!t.self&&(ME.isAdmin||ME.isClerk||t.by===me());
   const open=st.open['w'+t.id];
-  return`<article class="task ${t.st}"><button class="trow" data-open="w${t.id}" aria-expanded="${!!open}"><span class="main"><b class="t">${esc(t.t)}</b><span class="sub">${mode==='all'?esc(nm(t.own))+' · ':''}ส่ง ${esc(t.to)} · กำหนด ${esc(t.dueTx)}</span></span><span class="tags"><span class="pill ${WST[t.st][1]}">${WST[t.st][0]}</span>${dueTag(t)}</span></button>
+  return`<article class="task ${t.st}${LTC[t.light]?' l-'+LTC[t.light]:''}"><button class="trow" data-open="w${t.id}" aria-expanded="${!!open}"><span class="main"><b class="t">${esc(t.t)}</b><span class="sub">${mode==='all'?esc(nm(t.own))+' · ':''}ส่ง ${esc(t.to)} · กำหนด ${esc(t.dueTx)}</span></span><span class="tags">${!t.light||['todo','doing'].includes(t.st)?`<span class="pill ${WST[t.st][1]}">${WST[t.st][0]}</span>`:''}${t.light?ltBadge(t):dueTag(t)}</span></button>
    <div class="row between"><span class="sub">ความคืบหน้า${t.st==='done'&&!t.self?' (ตรวจรับแล้ว)':' (เจ้าของงานรายงานเอง)'}</span><b class="num">${t.pct}%</b></div><div class="prog"><i style="width:${t.pct}%"></i></div>
    ${t.st==='fix'&&t.rnote?`<div class="callout c-bad"><b>ต้องแก้ไข</b>${esc(t.rnote)}${t.rby?' · '+esc(t.rby):''}</div>`:''}
    ${open||ed&&t.st!=='done'?`
    ${t.proj?`<p class="sub">โครงการ: ${esc(t.proj)}</p>`:''}${!t.self?`<p class="sub">มอบหมายโดย ${esc(nm(t.by))} · ${esc(thDT(t.at))}${t.cnt?' · <b>นับเข้าการประเมิน (น้ำหนัก '+t.wt+')</b>':''}${t.acc?' · รับทราบแล้ว '+esc(thDT(t.acc)):''}${t.vp!=null?' · ตรวจรับ '+t.vp+'% '+esc(t.ot||'')+(t.dl?' ('+esc(t.dl)+')':''):''}</p>${own&&!t.acc&&t.st!=='done'?`<div><button class="btn sm" data-wacc="${t.id}">รับทราบงาน</button></div>`:''}`:'<p class="sub">เพิ่มเอง</p>'}
    ${t.steps?`<div class="steplist">${t.steps.map((x,i)=>ed&&t.st!=='done'?`<button data-step="${t.id}:${i}"><span class="tick ${x[1]?'on':''}">${x[1]?TICK:''}</span>${esc(x[0])}</button>`:`<span class="sstep"><span class="tick ${x[1]?'on':''}">${x[1]?TICK:''}</span>${esc(x[0])}</span>`).join('')}</div>`:''}
    ${t.log?`<p class="sub">ล่าสุด: ${esc(t.log)}</p>`:''}
+   ${HAS_TL()&&t.st!=='done'&&(ME.isAdmin||ME.isClerk||ed&&t.self)?`<div><button class="btn sm ${t.urg?'ghost':''}" data-urg="${t.id}:${t.urg?0:1}">${t.urg?'ยกเลิกป้ายด่วน':'ตั้งเป็นงานด่วน'}</button></div>`:''}
    ${ed&&!['done','sent'].includes(t.st)?`
     ${t.steps?`<div class="row"><input type="text" id="ns${t.id}" placeholder="เพิ่มขั้นตอน" style="flex:1 1 180px" aria-label="ขั้นตอนใหม่"><button class="btn sm" data-addstep="${t.id}">+ ขั้นตอน</button><button class="btn sm ghost" data-mode="${t.id}:ten">ใช้รายงาน %</button></div>`
      :`<div class="row"><span class="sub">รายงานความคืบหน้า:</span>${[25,50,75].map(v=>`<button class="chip" data-tset="${t.id}:${v}" aria-pressed="${t.pct===v}">${v}%</button>`).join('')}<button class="btn sm ghost" data-mode="${t.id}:steps">แบ่งเป็นขั้นตอน</button></div>`}
@@ -2310,31 +2340,35 @@ function taskCard(t,mode){
    ${(ME.isAdmin||ME.isClerk)&&t.self===false?`<div class="row"><label class="row"><input type="checkbox" id="ef${t.id}" style="width:auto" ${t.cnt?'checked':''}> นับเข้าการประเมิน</label><input type="number" id="ew${t.id}" min="0.5" max="5" step="0.5" value="${t.wt}" style="width:84px" aria-label="น้ำหนัก"><button class="btn sm" data-evflag="${t.id}">บันทึก</button></div>`:''}
    ${mode==='all'&&(ME.isAdmin||ME.isClerk)&&t.self===false&&t.st!=='done'?`<div><button class="btn sm danger" data-wdel="${t.id}">ลบงาน</button></div>`:''}`:''}</article>`}
 const HOWTO=`<details class="howto"><summary>วิธีใช้งาน</summary><p>งานที่ได้รับมอบหมายแสดงทันที · เลือกวิธีติดตามได้ 2 แบบ: <b>แบ่งเป็นขั้นตอน</b> ติ๊กทีละขั้น ระบบคิด % ให้ หรือ <b>รายงาน %</b> กดครั้งเดียว 25/50/75% · งานสั้นกด "ส่งงาน" ได้เลย · งานที่มอบหมายจะ "เสร็จสิ้น" เมื่อผู้มอบหมายตรวจรับ · % เป็นค่าที่เจ้าของงานรายงานเอง</p></details>`;
-function workFilterList(list,f){const d=t=>dayDiff(t.due);return f==='open'?list.filter(t=>t.st!=='done'):f==='late'?list.filter(t=>['todo','doing','fix'].includes(t.st)&&d(t)<0):f==='soon'?list.filter(t=>['todo','doing','fix'].includes(t.st)&&d(t)>=0&&d(t)<=3):f==='sent'?list.filter(t=>t.st==='sent'):f==='fix'?list.filter(t=>t.st==='fix'):f==='done'?list.filter(t=>t.st==='done'):list}
-function workFilters(list){const c=f=>workFilterList(list,f).length;return seg('wf',[['open','ยังไม่เสร็จ',c('open')],['late','เลยกำหนด',c('late')],['soon','ใน 3 วัน',c('soon')],['sent','รอตรวจ',c('sent')],['done','เสร็จสิ้น',c('done')],['all','ทั้งหมด',list.length]],st.wf)}
-const sortTasks=l=>l.slice().sort((a,b)=>(a.st==='fix'?-1:0)-(b.st==='fix'?-1:0)||(['done','sent'].includes(a.st))-(['done','sent'].includes(b.st))||dayDiff(a.due)-dayDiff(b.due));
+function workFilterList(list,f){const d=t=>dayDiff(t.due);return f==='open'?list.filter(t=>t.st!=='done'):f==='late'?list.filter(t=>['todo','doing','fix'].includes(t.st)&&d(t)<0):f==='soon'?list.filter(t=>['todo','doing','fix'].includes(t.st)&&d(t)>=0&&d(t)<=SOON()):['red','yellow','green'].includes(f)?list.filter(t=>t.st!=='done'&&t.light===f):f==='sent'?list.filter(t=>t.st==='sent'):f==='fix'?list.filter(t=>t.st==='fix'):f==='done'?list.filter(t=>t.st==='done'):list}
+function workFilters(list){const c=f=>workFilterList(list,f).length;return `<div class="wfs">${seg('wf',[['open','ยังไม่เสร็จ',c('open')],['late','เลยกำหนด',c('late')],['soon','ใน '+SOON()+' วัน',c('soon')],['sent','รอตรวจ',c('sent')],['done','เสร็จสิ้น',c('done')],['all','ทั้งหมด',list.length]].concat(HAS_TL()?[['arch','งานที่เสร็จแล้ว (ย้อนหลัง)',0]]:[]),st.wf)}</div>`}
+const sortTasks=l=>l.slice().sort((a,b)=>(a.st==='fix'?-1:0)-(b.st==='fix'?-1:0)||(['done','sent'].includes(a.st))-(['done','sent'].includes(b.st))||({red:0,yellow:1,green:2}[a.light]??3)-({red:0,yellow:1,green:2}[b.light]??3)||dayDiff(a.due)-dayDiff(b.due));
 V.mywork=()=>{const mine=TASKS.filter(t=>t.own===me());const list=sortTasks(workFilterList(mine,st.wf));
   return`<section class="panel"><div class="ph"><h2>งานที่ได้รับ</h2><button class="btn sm pri" data-addtask="1">${st.addTask?'ปิด':'+ เพิ่มงานของฉัน'}</button></div>
    ${st.addTask?myTaskForm():''}
-   ${mine.length?workFilters(mine):''}
-   ${!mine.length?empty('ยังไม่มีงาน'):list.length?`<div class="tasks">${list.map(t=>taskCard(t,'mine')).join('')}</div>`:empty('ไม่มีงานในกลุ่มนี้')}
+   ${mine.length||st.wf==='arch'?workFilters(mine):''}
+   ${st.wf==='arch'?archPanel(false):!mine.length?empty('ยังไม่มีงาน'):list.length?`<div class="tasks">${list.map(t=>taskCard(t,'mine')).join('')}</div>`:empty('ไม่มีงานในกลุ่มนี้')}
    ${HOWTO}</section>`};
 function myTaskForm(){return`<form class="f boxed" id="myTaskForm">
   <div class="fld"><label for="mt1">ชื่องาน</label><input type="text" id="mt1" required placeholder="เช่น รายงานผลการประเมินการอ่าน ป.1"></div>
   <div class="fgrid"><div class="fld"><label for="mt3">กำหนดส่ง</label><input type="date" id="mt3" value="${addDays(TODAY_ISO,7)}"></div><div class="fld"><label for="mt2">ส่งถึง</label><input type="text" id="mt2" value="งานวิชาการ"></div></div>
+  <label class="row"><input type="checkbox" id="mt5" style="width:auto"> งานด่วน (แสดงสีแดง)</label>
   <details class="more"><summary>ขั้นตอนย่อย (ถ้ามี)</summary><div class="fld"><label for="mt4">บรรทัดละขั้น · เว้นว่าง = รายงานเป็น %</label><textarea id="mt4" placeholder="เช่น&#10;เก็บข้อมูล&#10;สรุปผล&#10;ส่งหัวหน้าตรวจ"></textarea></div></details>
   <div><button class="btn pri" type="submit">เพิ่มงาน</button></div></form>`}
 V.tasks=()=>{
-  const list=sortTasks(workFilterList(TASKS,st.wf));
-  return`${inboxPanel()}<section class="panel"><div class="ph"><h2>งานที่มอบหมาย</h2><button class="btn sm pri" data-addtask="1">${st.addTask?'ปิด':'+ เพิ่มงาน'}</button></div>
+  const arch=st.wf==='arch',base=workPick(TASKS),list=sortTasks(workFilterList(base,st.wf));
+  const sm=arch?'':ltSummary(base);
+  return`${sm?`<section class="panel">${sm}</section>`:''}${inboxPanel()}<section class="panel"><div class="ph"><h2>งานที่มอบหมาย</h2><button class="btn sm pri" data-addtask="1">${st.addTask?'ปิด':'+ เพิ่มงาน'}</button></div>
    ${st.addTask?taskForm():''}
-   ${TASKS.length?workFilters(TASKS):''}
-   ${!TASKS.length?empty('ยังไม่มีงาน'):list.length?`<div class="tasks">${list.map(t=>taskCard(t,'all')).join('')}</div>`:empty('ไม่มีงานในกลุ่มนี้')}
+   ${TASKS.length||arch?workFilters(TASKS):''}
+   ${arch?'':workBar()}
+   ${arch?archPanel(true):!TASKS.length?empty('ยังไม่มีงาน'):list.length?`<div class="tasks">${list.map(t=>taskCard(t,'all')).join('')}</div>`:empty('ไม่มีงานในกลุ่มนี้')}
    ${HOWTO}</section>`};
 function taskForm(){return`<form class="f boxed" id="taskForm">
   <div class="fld"><label for="tk1">ชื่องาน</label><input type="text" id="tk1" required placeholder="เช่น รายงานผลสอบ NT ป.3"></div>
   <div class="fgrid"><div class="fld"><label for="tk3">ผู้รับผิดชอบ</label><select id="tk3">${REAL.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></div>
   <div class="fld"><label for="tk4">กำหนดส่ง</label><input type="date" id="tk4" value="${addDays(TODAY_ISO,7)}"></div></div>
+  <label class="row"><input type="checkbox" id="tk9" style="width:auto"> งานด่วน (แสดงสีแดงทันที ผู้รับได้แจ้งเตือน)</label>
   <div class="boxed f" style="gap:6px"><label class="row"><input type="checkbox" id="tk7" style="width:auto"> นับเข้าการประเมิน (อ.2 งานที่ได้รับมอบหมายจากผู้บังคับบัญชา)</label><div class="fld"><label for="tk8">น้ำหนักของงาน (เริ่มต้น 1)</label><input type="number" id="tk8" min="0.5" max="5" step="0.5" value="1"></div><p class="sub">ติ๊กเฉพาะงานที่ต้องการให้ใช้เป็นคะแนนการประเมินของครู · ตอนตรวจรับต้องใส่ร้อยละที่ยืนยันและตรงเวลา/ล่าช้า</p></div>
   <details class="more"><summary>เพิ่มรายละเอียด (ส่งถึง ขั้นตอนย่อย โครงการ)</summary><div class="f">
    <div class="fld"><label for="tk2">ส่งถึง</label><input type="text" id="tk2" value="สพป.นราธิวาส เขต 2"></div>
@@ -2594,6 +2628,8 @@ V.set=()=>secBox('admin',A=>{const R=B.rules,Q=B.quota;
     <div class="fld"><label for="t8">สรุปมาสายที่หน้าแรก</label><select id="t8"><option value="0" ${Q.homeLate?'':'selected'}>ปิด (แสดงเฉพาะหน้าคำขอ)</option><option value="1" ${Q.homeLate?'selected':''}>เปิด</option></select></div></div>
     <p class="note">ภาคเรียน: ${(()=>{const u=lvTermUse();return u?esc(u.T.label)+' · '+thD(u.T.start)+' – '+thD(u.T.end):'ยังไม่มีข้อมูล'})()} (จากทะเบียนกลาง แท็บ years) · ลาป่วยที่มีใบรับรองแพทย์ไม่นับโควตา · ไม่มีใบรับรองนับรวมกับลากิจ · มาสายนับตามรอบเลื่อนเงินเดือน (ตั้งที่หมวด "เกณฑ์ติดตาม")${Q.termSample?' · <b>ตอนนี้เป็นค่าตัวอย่าง ยังไม่ยืนยัน</b>':''}</p>${metaNote(A,'leave_term_days')}
     <div><button class="btn pri" type="submit">บันทึกหมวดนี้</button></div></form>`)}
+  ${HAS_TL()?setSec('worksoon','ติดตามงาน (ไฟจราจร)','จำนวนวันที่ถือว่า "ใกล้ส่ง"',`<form class="f" id="sfWork" data-sec="worksoon">${unitIn('ws1','งานจะเป็นสีเหลืองเมื่อเหลือไม่เกิน',Q.workSoon,'วัน','type="number" inputmode="numeric" min="0" max="30" step="1"')}
+    <p class="note">แดง = เลยกำหนดหรือติดป้ายด่วน · เหลือง = ใกล้ส่งตามจำนวนวันนี้ · เขียว = ปกติ · เทา = ตรวจรับแล้ว</p><div><button class="btn pri" type="submit">บันทึกหมวดนี้</button></div></form>`):''}
   ${setSec('dev','เป้าหมายพัฒนาครู','ชั่วโมงต่อปีงบประมาณ',`<form class="f" id="sfDev" data-sec="dev">${unitIn('s6','เป้าหมายชั่วโมงพัฒนา',DEV_TARGET,'ชั่วโมง/ปีงบประมาณ','type="number" inputmode="numeric" min="0" max="500"')}
     <p class="note">ตั้งตามที่โรงเรียนหรือหน่วยงานต้นสังกัดกำหนดจริง</p>${metaNote(A,'dev_hours_target')}<div><button class="btn pri" type="submit">บันทึกหมวดนี้</button></div></form>`)}
   ${setSec('loc','จุดลงเวลา GPS และ QR สำรอง','พิกัด รัศมี จุดชั่วคราว พิมพ์ QR',`<ul class="list">${A.locations.map(l=>`<li><span class="sw" style="background:${l.kind==='ถาวร'?'var(--c-blue)':'var(--c-teal)'}"></span><div class="main">${esc(l.n)}<div class="sub">รัศมี ${l.r} เมตร · ${esc(l.kind)}${l.from?' '+thD(l.from)+'–'+thD(l.to):''}${l.main?' · จุดหลัก':''}${l.on?'':' · ไม่ใช้งาน'}</div></div>${l.lat?`<a class="btn sm" href="https://www.google.com/maps?q=${l.lat},${l.lng}" target="_blank" rel="noopener">แผนที่</a>`:''}${l.main?`<button class="btn sm" data-gpsmain="1">แก้</button>`:`<button class="btn sm ${l.active?'danger':''}" data-loctoggle="${l.id}">${l.active?'ปิด':'เปิด'}</button>`}</li>`).join('')}</ul>
@@ -2705,7 +2741,9 @@ document.addEventListener('click',async e=>{
   if(d.tab){go(d.tab);return}
   if(d.bell){if(st.tab!=='home')go('home');st.allPend=true;render();setTimeout(()=>(needCheckIn()?$('#punch'):$('#actions'))?.scrollIntoView({behavior:'smooth'}),30);return}
   if(d.allpend){st.allPend=!st.allPend;render();return}
-  if(d.seg){const[k,v]=d.seg.split(':');st[k]=k==='round'?+v:v;if(k==='staffTab'||k==='opsTab')st.open={};render();return}
+  if(d.ltf){st.wf=st.wf===d.ltf?'open':d.ltf;render();return}
+  if(d.urg){const[p,v]=d.urg.split(':');act('work.edit',{data:{wid:p,op:'urgent',on:v==='1'}},t).catch(()=>{});return}
+  if(d.seg){const[k,v]=d.seg.split(':');if(k==='wf'&&v==='arch'){st.dn=null;st.dp='';st.dy='';st.dq=''}st[k]=k==='round'?+v:v;if(k==='staffTab'||k==='opsTab')st.open={};render();return}
   if(d.open){st.open[d.open]=!st.open[d.open];render();return}
   if(d.go){if(d.gct)st.countTab=d.gct;if(d.gact)st.act=d.gact;if('kind' in d)st.kind=d.kind;if(d.got)st.opsTab=d.got;if(d.gwf)st.wf=d.gwf;if(d.gst){st.staffTab=d.gst;st.open={}}if(d.gsf){st.staffF=d.gsf;st.staffTab='today'}if(d.addtask)st.addTask=true;
     go(d.go);if(d.inc)setTimeout(()=>$('#incPanel')?.scrollIntoView({behavior:'smooth'}),30);return}
@@ -2829,6 +2867,9 @@ document.addEventListener('change',async e=>{
 document.addEventListener('input',e=>{
   const t=e.target;
   if(t.id==='pq'){st.pq=t.value;updatePick();return}
+  if(t.id==='wp'){st.wp=t.value;render();return}
+  if(t.id==='dp'||t.id==='dy'){st[t.id]=t.value;st.dn=null;render();return}
+  if(t.id==='wq'||t.id==='dq'){st[t.id]=t.value;const id=t.id,pos=t.selectionStart;if(id==='dq'){clearTimeout(st.dqT);st.dqT=setTimeout(()=>{st.dn=null;render();const n=$('#dq');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}},400);return}render();const n=$('#wq');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}return}
   if(t.id==='staffQ'){st.staffQ=t.value;const pos=t.selectionStart;render();const n=$('#staffQ');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}return}
   if(t.closest('#view form')){st.dirty=true;const f=t.closest('form[data-sec]');if(f){const tag=$('#dt-'+f.dataset.sec);if(tag)tag.hidden=false}}
 });
@@ -2849,8 +2890,8 @@ document.addEventListener('submit',async e=>{
   if(f.id==='fDoc'){await act('doc.add',{data:{date:v('#dc1'),hours:v('#dc2'),what:v('#dc3')}},btn);return}
   if(f.id==='fOut'){const teach=B.hasTT?!!MY_TT[v('#o1')]:!!st.outTeach;await act('out.create',{data:{period:v('#o1'),why:v('#o2'),teaching:teach,sub:teach?v('#o4'):'',work:teach?v('#o5'):''}},btn);st.outTeach=false;st.kind='';render()}
   if(f.id==='fGov'){await act('leave.create',{data:{type:'ไปราชการ',start:v('#g3'),end:v('#g6')||v('#g3'),reason:v('#g1'),place:v('#g2'),proj:v('#g4'),cost:v('#g5'),attachment:v('#g7'),photo:photoOf('g8')}},btn);clearPick('g8');st.kind='';render()}
-  if(f.id==='myTaskForm'){const steps=$('#mt4').value.trim();await act('work.addMine',{data:{title:v('#mt1'),to:v('#mt2'),due:v('#mt3'),mode:steps?'steps':'ten',steps}},btn);st.addTask=false;render()}
-  if(f.id==='taskForm'){await act('work.add',{data:{title:v('#tk1'),to:v('#tk2'),owner:v('#tk3'),due:v('#tk4'),steps:$('#tk6').value,proj:v('#tk5'),count_for_eval:!!($('#tk7')||{}).checked,weight:v('#tk8')}},btn);st.addTask=false;render()}
+  if(f.id==='myTaskForm'){const steps=$('#mt4').value.trim();await act('work.addMine',{data:{title:v('#mt1'),to:v('#mt2'),due:v('#mt3'),mode:steps?'steps':'ten',steps,urgent:!!($('#mt5')||{}).checked}},btn);st.addTask=false;render()}
+  if(f.id==='taskForm'){await act('work.add',{data:{title:v('#tk1'),to:v('#tk2'),owner:v('#tk3'),due:v('#tk4'),steps:$('#tk6').value,proj:v('#tk5'),urgent:!!($('#tk9')||{}).checked,count_for_eval:!!($('#tk7')||{}).checked,weight:v('#tk8')}},btn);st.addTask=false;render()}
   if(f.id==='cpForm'){if(!v('#cp1')){toast('พิมพ์ชื่อจุดตรวจ');return}await act('cp.add',{name:v('#cp1')},btn)}
   if(f.id==='actForm'){syncDraft();const d=st.draft2;await act('act.create',{data:{name:d.name,start:d.start,days:d.days,places:d.places,cps:d.cps,rows:d.rows}},btn);st.newAct=false;st.draft2={name:'',start:'',days:1,places:[''],cps:st.draft2.cps,rows:[]};render()}
   if(f.id==='cntForm'){await act('act.pick',{data:{gid:f.dataset.g,students:[],count:$('#gc'+f.dataset.g).value}},btn)}
@@ -2872,6 +2913,7 @@ document.addEventListener('submit',async e=>{
     if(!confirm('บันทึกเกณฑ์ติดตาม? มีผลกับการแสดงผลตั้งแต่ตอนนี้ (ไม่แก้ข้อมูลเดิม)'))return;await act('admin.rules',{data:o},btn)}
   if(f.id==='sfTerm'){const o={leave_term_days:v('#t1'),leave_term_times:v('#t2'),leave_personal_term_days:v('#t3'),leave_personal_term_times:v('#t4'),leave_personal_fy_days:v('#t5'),med_cert_days:v('#t6'),late_yellow_counts:v('#t7'),home_late_summary:v('#t8'),leave_near_days:v('#t9'),leave_near_times:v('#t10'),leave_fy_near_days:v('#t11')};if(Object.values(o).some(x=>x===''||+x<0)){toast('กรอกตัวเลขตั้งแต่ 0 ขึ้นไป');return}
     if(!confirm('บันทึกเกณฑ์การลาต่อภาคเรียน? มีผลกับการแสดงผลและการตรวจใบลาใหม่ตั้งแต่ตอนนี้ (ไม่แก้ข้อมูลเดิม)'))return;await act('admin.rules',{data:o},btn)}
+  if(f.id==='sfWork'){const n=v('#ws1');if(!/^\d+$/.test(n)||+n>30){toast('กรอกจำนวนวัน 0–30 (จำนวนเต็ม)');return}await act('admin.rules',{data:{work_soon_days:n}},btn)}
   if(f.id==='sfDev'){if(!(+v('#s6')>=0)){toast('กรอกชั่วโมงให้ถูกต้อง');return}await act('admin.rules',{data:{dev_hours_target:v('#s6')}},btn)}
   if(f.id==='sfRounds'){const r=v('#s7').split(/[,\s]+/).filter(Boolean);if(!r.length||!r.every(x=>/^([01]\d|2[0-3]):[0-5]\d$/.test(x))){toast('รูปแบบเวลาไม่ถูกต้อง เช่น 20:00, 23:00, 02:00');return}await act('admin.rules',{data:{patrol_rounds:r.join(',')}},btn)}
   if(f.id==='locForm'){await act('loc.add',{data:{name:v('#lc1'),lat:v('#lc2'),lng:v('#lc3'),radius:v('#lc4'),kind:$('input[name="lk"]:checked').value,from:v('#lc5'),to:v('#lc6')}},btn);st.locOpen=false;render()}
