@@ -899,6 +899,7 @@ const WAIT_TYPES=['leave.wait','pending'];
 function taskLevel(t){
   if(t.done) return 'g';
   if(t.wait||WAIT_TYPES.includes(t.type)) return 'p';
+  if(t.light==='red') return 'r'; if(t.light==='yellow') return 'y';
   if(URGENT_TYPES.includes(t.type)) return 'r';
   if(t.due){ const d=daysBetween(S.home.today.date,t.due); if(d<=1) return 'r'; if(d<=3) return 'y'; }
   return 'b';
@@ -908,7 +909,7 @@ function taskRow(t){
   const [icn,col]=map[t.type]||['list','c-g'];
   const lv=taskLevel(t);
   const src=t.app==='hub'?(SRC[t.type]||'หน้ากลาง'):(APP_NAMES[t.app]||'');
-  const due=t.due?' · กำหนด '+thDate(t.due,{day:'numeric',month:'short',year:'2-digit'}):'';
+  const due=t.due&&!t.light?' · กำหนด '+thDate(t.due,{day:'numeric',month:'short',year:'2-digit'}):'';
   const inner=`<span class="ic ${col}">${ic(icn)}</span><span class="tx"><span class="t1">${esc(TH_ISO(t.title))}</span><span class="t2">${esc(src)} · ${esc(TH_ISO(t.sub||''))}${esc(due)}</span></span>`
     +(lv==='g'?`<span class="go g">✓ เสร็จแล้ว</span>`:lv==='p'?`<span class="go p">รอผู้อื่น ›</span>`:`<span class="go ${lv}">กดเพื่อทำงานนี้ ›</span>`);
   return t.done?`<div class="task lv-g">${inner}</div>`
