@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Q-Portfolio บ้านกาวะ</title>
+<meta name="description" content="แฟ้มผลงานของครู โรงเรียนบ้านกาวะ · ผู้พัฒนา นายฮาฟีซี อูมา">
+<meta name="theme-color" content="#1E2341">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://script.google.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Kanit:wght@500;600&display=swap">
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+/* ============ ตั้งค่า (ที่เดียว) ============ */
+const CONFIG = {
+  LIFF_ID: '2012013981-CUuRUfnG',   // LIFF เดียวกับหน้ากลาง Q-Teacher Q-Student และ Q-Academic
+  API_URL: 'https://script.google.com/macros/s/AKfycbxsRZ77Ojd6a9GDNNGVwRK981IZ-WEEmWwjSwffi7Hv9Zst0yyRhhWQZNHs2_6YxzJUOg/exec',                   // URL หลังบ้าน Q-Portfolio ที่ Deploy แล้ว (ยังไม่ได้ Deploy จึงเว้นว่างไว้) · ว่าง = ขึ้นข้อความรอตั้งค่า
+  HUB_URL: '../',                    // กลับหน้ากลาง Q-Kawa
+  WEB_VERSION: 'หน้าเว็บ v0.1 · 2 พ.ย. 2569'
+};
+</script>
+<script>
+/* ตัวเฝ้าหน้า: ค้างที่หน้า "กำลังเปิด…" เกิน 15 วินาที หรือมี error ก่อนหน้าแรกวาดเสร็จ → ขึ้นข้อความสาเหตุ + ปุ่มลองใหม่ */
+(function(){
+  var W=window;W.__qpStage='script';
+  var WHY={script:'ไฟล์หน้าเว็บโหลดไม่ครบ หรือสคริปต์ยังไม่เริ่มทำงาน',liff:'เชื่อมต่อ LINE ไม่สำเร็จหรือช้ามาก',login:'กำลังพาไปล็อกอิน LINE ไม่สำเร็จ',api:'รอข้อมูลจากระบบนานผิดปกติ อาจเป็นเน็ตช้า',render:'วาดหน้าจอไม่สำเร็จ'};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function splash(){var b=document.getElementById('boot');return !!(b&&!b.hidden&&b.querySelector('.spin'))}
+  W.qpFail=function(stage,err,wait){
+    var host=document.getElementById('boot');if(!host)return;host.hidden=false;
+    host.innerHTML='<div class="card" style="max-width:420px;margin:18vh auto 0;text-align:center"><div style="font-size:2rem">⚠️</div><h2>'+(wait?'Q-Portfolio เปิดช้ากว่าปกติ':'Q-Portfolio เปิดไม่สำเร็จ')+'</h2><p class="sub">'+esc(WHY[stage||W.__qpStage]||WHY.script)+(err&&err.message?'<br>'+esc(err.message):'')+'</p><button class="bn pri wide" onclick="location.reload()">ลองใหม่</button></div>';
+  };
+  W.addEventListener('error',function(e){if(splash())W.qpFail(W.__qpStage,e&&e.error?e.error:{message:e.message},false)});
+  W.addEventListener('unhandledrejection',function(e){if(splash())W.qpFail(W.__qpStage,e&&e.reason,false)});
+  setTimeout(function(){if(splash())W.qpFail(W.__qpStage,null,true)},15000);
+})();
+</script>
+<style>
+:root{--bg:#F3F4FB;--card:#fff;--soft:#F2F3F9;--line:#E7E9F3;--ink:#1B1F3B;--muted:#5E6385;--pri:#5B5BF0;--pri-ink:#4343D4;--pri-soft:#ECEBFE;--navy:#1E2341;--navy2:#2C3263;
+ --ok:#0A6F45;--ok-bg:#E2F6EC;--bad:#B3262E;--bad-bg:#FDE8E9;--warn:#8A5300;--warn-bg:#FFF1D9;--act:#1D5FA8;--act-bg:#E3EEFA;
+ --shadow:0 8px 20px -8px rgba(30,35,65,.30),0 2px 5px rgba(30,35,65,.07);--f:"IBM Plex Sans Thai","Leelawadee UI",Tahoma,system-ui,sans-serif;--fh:"Kanit","IBM Plex Sans Thai",sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1022;--card:#171A31;--soft:#1F2340;--line:#2A2E50;--ink:#EDEEFB;--muted:#B4B8D8;--pri:#8C8CFF;--pri-ink:#B8B8FF;--pri-soft:#262A5C;--navy:#0A0C1C;--navy2:#1B1F45;
+ --ok:#6BD6A3;--ok-bg:#15352A;--bad:#FF9AA0;--bad-bg:#40191D;--warn:#F5C26B;--warn-bg:#3A2D12;--act:#8CC4FF;--act-bg:#16304F;--shadow:0 8px 28px rgba(0,0,0,.35);color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f);-webkit-text-size-adjust:100%;padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+h1,h2,h3{font-family:var(--fh);margin:0;line-height:1.25}h1{font-size:22px;font-weight:600}h2{font-size:17px;font-weight:600}h3{font-size:15px;font-weight:600}
+.num{font-variant-numeric:tabular-nums}.sub{color:var(--muted);font-size:13px}.wrap{padding:0 16px;max-width:760px;margin:0 auto}
+.hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;border-radius:0 0 28px 28px;box-shadow:0 12px 28px rgba(30,35,65,.22);padding:18px 16px 20px;margin-bottom:14px}
+.hdr .row{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}.hdr h1{color:#fff;flex:1;min-width:0}.hdr p{margin:2px 0 0;color:rgba(255,255,255,.82);font-size:13px}
+.hbtn{flex:none;min-width:44px;min-height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.16);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font-weight:500;text-decoration:none;white-space:nowrap}
+.hbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ro{background:#F59E0B;color:#1B1F3B;padding:8px 14px;font-size:13.5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-weight:500}.ro button{min-height:44px;border:0;border-radius:12px;background:#1B1F3B;color:#fff;padding:0 14px}
+.card{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px}
+.stack{display:grid;gap:12px}.rowf{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}
+.bn{min-height:44px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:0 16px;font-weight:500}.bn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bn.pri{color:#0E1022}}
+.bn.good{background:var(--ok);border-color:var(--ok);color:#fff}.bn.bad{background:var(--bad-bg);border-color:var(--bad-bg);color:var(--bad)}.bn.wide{width:100%}.bn.big{min-height:56px;font-size:17px;font-family:var(--fh);border-radius:18px}.bn.sm{min-height:44px;padding:0 14px;font-size:14px}
+.bn[disabled]{opacity:.5}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.c-ok{background:var(--ok-bg);color:var(--ok)}.c-warn{background:var(--warn-bg);color:var(--warn)}.c-bad{background:var(--bad-bg);color:var(--bad)}.c-act{background:var(--act-bg);color:var(--act)}.c-mut{background:var(--soft);color:var(--muted)}
+.cat{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;width:100%;text-align:left;border:0;background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px;min-height:72px}
+.cat .ic{width:48px;height:48px;border-radius:14px;background:var(--pri-soft);display:flex;align-items:center;justify-content:center;font-size:24px;grid-row:span 2}
+.cat b{font:600 16px var(--fh)}.cat .last{color:var(--muted);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cat .n{font:600 22px var(--fh);color:var(--pri-ink);min-width:28px;text-align:right}
+.item{border-bottom:1px solid var(--line);padding:12px 0}.item:last-child{border-bottom:0}.item b{display:block;font-weight:600}.item .meta{color:var(--muted);font-size:13.5px}
+.item .acts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.item p{margin:4px 0 0;font-size:14px;overflow-wrap:anywhere}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));min-height:56px;border:0;border-radius:28px;background:var(--pri);color:#fff;padding:0 22px;font:600 17px var(--fh);box-shadow:0 10px 24px rgba(67,67,212,.45);z-index:6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fab{color:#0E1022}}
+input[type=text],input[type=date],textarea,select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card)}
+textarea{min-height:96px;resize:vertical}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}.req{color:var(--bad)}
+.err{color:var(--bad);font-size:13.5px;margin:6px 0 0}
+.sheetbg{position:fixed;inset:0;background:rgba(10,12,28,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:14px;z-index:30;max-width:90vw;box-shadow:var(--shadow)}
+.spin{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto}@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+.empty{color:var(--muted);text-align:center;padding:18px 8px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div id="boot"><div class="card" style="max-width:420px;margin:22vh auto 0;text-align:center"><div class="spin"></div><p class="sub" style="margin-top:12px">กำลังเปิดแฟ้มผลงาน…</p></div></div>
+<div id="app" hidden></div>
+<script>
+(function(){
+'use strict';
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const S={B:null,viewing:'',folder:null,staff:null,trash:null,page:'home',cat:'',sheet:null,viewAs:'',busy:false};
+const thMon=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const thD=iso=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso||'');return m?(+m[3])+' '+thMon[+m[2]-1]+' '+String((+m[1]+543)%100).padStart(2,'0'):''};
+const thDT=iso=>{const m=/(\d{2}:\d{2})/.exec(String(iso||'').slice(11));return thD(iso)+(m?' '+m[1]+' น.':'')};
+const nonce=()=>{try{return crypto.randomUUID().replace(/-/g,'').slice(0,24)}catch(e){return Date.now().toString(36)+Math.random().toString(36).slice(2,12)}};
+/* หมวดทั้ง 5 ตามลำดับที่แสดง · เพิ่มได้เฉพาะ 3 หมวดแรกที่ผู้ใช้กรอกเอง (อบรมกับงานที่ทำเสร็จดึงมาจากระบบอื่น ดูอย่างเดียว) */
+const CATS=[['awards','รางวัล','🏆'],['pieces','ผลงาน','📁'],['training','การอบรม','📚'],['works','งานที่ทำเสร็จ','✅'],['assets','ครุภัณฑ์ที่ดูแล','🧰']];
+const CAT=Object.fromEntries(CATS.map(c=>[c[0],c]));
+const FIELDS={
+  awards:[['title','ชื่อรางวัล','text',1],['level','ระดับ','level',1],['date','วันที่ได้รับรางวัล','date',1],['org','หน่วยงานที่มอบ','text'],['note','หมายเหตุ','text']],
+  pieces:[['title','ชื่อผลงาน','text',1],['detail','รายละเอียด','area'],['date','วันที่','date']],
+  assets:[['name','ชื่อครุภัณฑ์','text',1],['asset_no','เลขครุภัณฑ์','text'],['place','สถานที่ตั้ง','text'],['condition','สภาพ','cond',1]]
+};
+const EMPTY={awards:'ยังไม่มีรางวัล',pieces:'ยังไม่มีผลงาน',training:'ยังไม่มีรายการอบรม',works:'ยังไม่มีงานที่ตรวจรับแล้ว',assets:'ยังไม่มีครุภัณฑ์ที่ดูแล'};
+
+/* ---------- เรียกหลังบ้าน ---------- */
+async function api(action,data,extra,ms){
+  if(!CONFIG.API_URL){const e=new Error('ยังไม่ได้ตั้งค่าการเชื่อมต่อกับระบบหลังบ้าน กรุณาแจ้งผู้ดูแลระบบ');e.code='NO_API';throw e}
+  let r,j;
+  try{
+    r=await Promise.race([fetch(CONFIG.API_URL,{method:'POST',body:JSON.stringify(Object.assign({action:action,idToken:liff.getIDToken(),data:data||{}},S.viewAs?{viewAs:S.viewAs}:{},extra||{}))}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms||25000))]);
+    j=await r.json();
+  }catch(er){const e=new Error('เชื่อมต่อไม่ได้ ตรวจสัญญาณอินเทอร์เน็ตแล้วลองใหม่');e.code='NET';throw e}
+  if(!j.ok){const e=new Error(j.error||'เกิดข้อผิดพลาด');e.code=j.code||'ERROR';if(e.code==='TOKEN_EXPIRED'||e.code==='BAD_TOKEN')relogin();throw e}
+  return j;
+}
+function relogin(){let n=0;try{n=Number(sessionStorage.getItem('qp_relogin')||0);sessionStorage.setItem('qp_relogin',String(n+1))}catch(e){}if(n>1)return;if(liff.isInClient())location.reload();else{try{liff.logout()}catch(e){}liff.login({redirectUri:location.href})}}
+function toast(t){const o=document.createElement('div');o.className='toast';o.setAttribute('role','status');o.textContent=t;document.body.appendChild(o);setTimeout(()=>o.remove(),3200)}
+
+/* ---------- สิทธิ์ที่หน้าจอใช้ซ่อน/โชว์ปุ่ม (หลังบ้านตรวจซ้ำทุกครั้ง) ---------- */
+const ro=()=>!!S.viewAs;
+const own=()=>S.B&&S.viewing===S.B.me.id;
+const addKinds=()=>{if(ro())return[];const all=['awards','pieces','assets'];if(own())return all;return all.filter(k=>(S.B.can.addForOthers||[]).includes(k))};
+const canEdit=k=>{if(ro())return false;if((S.B.can.editAny||[]).includes(k))return true;return own()&&S.B.can.editOwn&&S.B.can.editOwn[k]===true};
+const canTrash=()=>!ro()&&S.B&&(S.B.can.restore||[]).length>0;
+const visibleCats=()=>S.folder&&S.folder.restricted?CATS.filter(c=>(S.folder.shown||[]).includes(c[0])):CATS;
+
+/* ---------- วาดหน้า ---------- */
+function itemMain(k,r){return k==='assets'?r.name:r.title}
+function itemMeta(k,r){
+  if(k==='awards')return [r.level,thD(r.date),r.org].filter(Boolean).join(' · ');
+  if(k==='pieces')return thD(r.date);
+  if(k==='training')return [thD(r.date),r.hours?r.hours+' ชั่วโมง':''].filter(Boolean).join(' · ');
+  if(k==='works')return ['ตรวจรับแล้ว '+thD(r.verifiedAt),'ทำได้ '+r.pct+'%'].filter(Boolean).join(' · ');
+  return [r.asset_no,r.place].filter(Boolean).join(' · ');
+}
+function itemExtra(k,r){
+  if(k==='awards')return r.note?'<p class="sub">'+esc(r.note)+'</p>':'';
+  if(k==='pieces')return r.detail?'<p>'+esc(r.detail)+'</p>':'';
+  if(k==='assets')return '<span class="chip '+(r.condition==='ชำรุด'?'c-bad':'c-ok')+'">'+esc(r.condition||'ใช้ได้')+'</span>';
+  if(k==='training')return (r.cert?'<span class="chip c-ok">มีเกียรติบัตร</span> ':'')+(r.report?'<span class="chip c-act">มีรายงาน</span>':'');
+  if(k==='works')return (r.verifiedPct!=null?'<span class="chip c-ok">ผลตรวจรับ '+r.verifiedPct+'%</span> ':'')+(r.onTime==='ตรงเวลา'?'<span class="chip c-ok">ส่งตรงเวลา</span>':r.onTime==='ล่าช้า'?'<span class="chip c-warn">ส่งล่าช้า</span>':'');
+  return '';
+}
+function itemRow(k,r,withActs){
+  const acts=withActs&&canEdit(k)?'<div class="acts"><button class="bn sm" data-a="edit" data-k="'+k+'" data-id="'+esc(r.id)+'">แก้ไข</button><button class="bn sm bad" data-a="del" data-k="'+k+'" data-id="'+esc(r.id)+'">ลบ</button></div>':'';
+  return '<div class="item"><b>'+esc(itemMain(k,r))+'</b><div class="meta">'+esc(itemMeta(k,r))+'</div>'+itemExtra(k,r)+acts+'</div>';
+}
+function linkNote(k){
+  if((k==='training'||k==='works')&&S.folder&&S.folder.external&&!S.folder.external.ok)return 'ยังเชื่อมข้อมูลส่วนนี้ไม่ได้ (รอผู้ดูแลระบบตั้งค่า)';
+  return '';
+}
+function vHome(){
+  let h='';
+  if(S.staff)h+='<div class="card"><label for="picker" style="margin-top:0">ดูแฟ้มของ</label><select id="picker"><option value="'+esc(S.B.me.id)+'"'+(own()?' selected':'')+'>แฟ้มของฉัน</option>'+S.staff.filter(s=>s.id!==S.B.me.id).map(s=>'<option value="'+esc(s.id)+'"'+(S.viewing===s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</select></div>';
+  const F=S.folder;
+  if(!F)return h+'<div class="card" style="text-align:center"><div class="spin"></div></div>';
+  if(F.restricted)h+='<p class="sub" style="margin:0 2px 10px">คุณเห็นเฉพาะครุภัณฑ์ของ'+esc(F.staff.name)+'</p>';
+  h+=visibleCats().map(c=>{
+    const k=c[0],list=F[k]||[],note=linkNote(k),n=note?'–':list.length;
+    const last=note?note:list.length?itemMain(k,list[0]):EMPTY[k];
+    return '<button class="cat" data-a="cat" data-c="'+k+'"><span class="ic" aria-hidden="true">'+c[2]+'</span><b>'+c[1]+'</b><span class="n num">'+n+'</span><span class="last">'+esc(last)+'</span></button>';
+  }).join('');
+  if(canTrash())h+='<div style="text-align:right"><button class="bn sm" data-a="trash"><span aria-hidden="true">🗑️</span> ถังขยะ</button></div>';
+  return h;
+}
+function vCat(){
+  const k=S.cat,F=S.folder,list=(F&&F[k])||[],c=CAT[k],note=linkNote(k);
+  let h='<div class="rowf" style="margin-bottom:10px"><button class="bn" data-a="back">‹ กลับ</button><h2>'+c[1]+'</h2><span class="sub num">'+(note?'':list.length+' รายการ')+'</span></div>';
+  if(k==='training'||k==='works')h+='<p class="sub" style="margin:0 2px 10px">ดึงมาจากระบบอื่นให้อัตโนมัติ ดูได้อย่างเดียว ไม่ต้องกรอก'+(k==='works'?' · แสดงเฉพาะงานที่ผู้ตรวจรับยืนยันแล้ว':'')+'</p>';
+  if(note)return h+'<div class="card"><p class="empty">'+esc(note)+'</p></div>';
+  if(!list.length)return h+'<div class="card"><p class="empty">'+esc(EMPTY[k])+(addKinds().includes(k)?'<br>กดปุ่ม "เพิ่ม" มุมล่างได้เลย':'')+'</p></div>';
+  return h+'<div class="card">'+list.map(r=>itemRow(k,r,true)).join('')+'</div>';
+}
+function vTrash(){
+  let h='<div class="rowf" style="margin-bottom:10px"><button class="bn" data-a="back">‹ กลับ</button><h2>ถังขยะ</h2></div><p class="sub" style="margin:0 2px 10px">รายการที่ลบไปแล้ว กดกู้คืนเพื่อใส่กลับเข้าแฟ้มของเจ้าของ</p>';
+  const T=S.trash;
+  if(!T)return h+'<div class="card" style="text-align:center"><div class="spin"></div></div>';
+  if(!T.length)return h+'<div class="card"><p class="empty">ถังขยะว่าง ยังไม่มีรายการที่ลบ</p></div>';
+  return h+'<div class="card">'+T.map(r=>'<div class="item"><b>'+esc(r.title)+'</b><div class="meta">'+esc(r.kindLabel)+' · ของ '+esc(r.ownerName)+'</div><div class="meta">ลบเมื่อ '+esc(thDT(r.deletedAt))+' โดย '+esc(r.deletedBy)+'</div><div class="acts"><button class="bn sm" data-a="restore" data-id="'+esc(r.id)+'">กู้คืน</button></div></div>').join('')+'</div>';
+}
+function render(){
+  const a=$('#app');if(!S.B)return;
+  const F=S.folder,who=F?(own()?'แฟ้มของฉัน · '+F.staff.name:F.staff.name):S.B.me.name;
+  const body=S.page==='cat'?vCat():S.page==='trash'?vTrash():vHome();
+  a.innerHTML=(ro()?'<div class="ro">กำลังดูแฟ้มของ '+esc(S.B.me.name)+' (ดูอย่างเดียว)<button data-a="exitview">กลับมุมมองของฉัน</button></div>':'')+
+    '<header class="hdr"><div class="row"><a class="hbtn" href="'+esc(CONFIG.HUB_URL)+'" aria-label="กลับ Q-Kawa"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg><span>Q-Kawa</span></a><div style="flex:1;min-width:0"><h1>แฟ้มผลงาน</h1><p>'+esc(who)+'</p></div></div></header>'+
+    '<main class="wrap">'+body+'<p class="sub" style="text-align:center;margin:18px 0">Q-Portfolio '+esc(S.B.version||'')+' · '+CONFIG.WEB_VERSION+'</p></main>'+
+    (addKinds().length&&F&&!S.sheet&&S.page!=='trash'?'<button class="fab" data-a="add" aria-label="เพิ่มรายการใหม่">+ เพิ่ม</button>':'')+sheetHtml();
+  document.title='Q-Portfolio · '+(S.page==='cat'?CAT[S.cat][1]:S.page==='trash'?'ถังขยะ':'แฟ้มผลงาน');
+}
+/* ---------- แผ่นล่าง: เลือกหมวด · ฟอร์ม · ยืนยันลบ ---------- */
+function fieldHtml(f,v){
+  const id='f_'+f[0],label=esc(f[1])+(f[3]?' <span class="req" aria-hidden="true">*</span>':''),val=esc(v==null?'':v);
+  if(f[2]==='area')return '<label for="'+id+'">'+label+'</label><textarea id="'+id+'" maxlength="1000">'+val+'</textarea>';
+  if(f[2]==='date')return '<label for="'+id+'">'+label+'</label><input type="date" id="'+id+'" value="'+val+'">';
+  if(f[2]==='level')return '<label for="'+id+'">'+label+'</label><select id="'+id+'"><option value="">เลือกระดับ</option>'+(S.B.levels||[]).map(x=>'<option'+(x===v?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select>';
+  if(f[2]==='cond')return '<label for="'+id+'">'+label+'</label><select id="'+id+'">'+(S.B.conditions||[]).map(x=>'<option'+((v||'ใช้ได้')===x?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select>';
+  return '<label for="'+id+'">'+label+'</label><input type="text" id="'+id+'" maxlength="150" value="'+val+'" autocomplete="off">';
+}
+function sheetHtml(){
+  const s=S.sheet;if(!s)return '';let h='';
+  if(s.t==='pick'){h='<h2>เพิ่มอะไรดี</h2><div class="stack" style="margin-top:12px">'+addKinds().map(k=>'<button class="bn pri big wide" data-a="form" data-k="'+k+'">'+CAT[k][2]+' '+CAT[k][1]+'</button>').join('')+'<button class="bn wide" data-a="closesheet">ยกเลิก</button></div>';}
+  else if(s.t==='form'){
+    const row=s.id?(S.folder[s.k]||[]).find(r=>r.id===s.id):null;
+    h='<h2>'+(s.id?'แก้ไข':'เพิ่ม')+CAT[s.k][1]+'</h2>'+(S.folder&&!own()?'<p class="sub">ของ '+esc(S.folder.staff.name)+'</p>':'')+'<form id="pf" novalidate>'+FIELDS[s.k].map(f=>fieldHtml(f,row?row[f[0]]:(f[2]==='cond'?'ใช้ได้':''))).join('')+
+      '<p class="err" id="ferr" role="alert" hidden></p><div class="stack" style="margin-top:14px"><button class="bn pri big wide" type="submit" '+(S.busy?'disabled':'')+'>บันทึก</button><button class="bn wide" type="button" data-a="closesheet">ยกเลิก</button></div></form>';
+  }else if(s.t==='del'){
+    const row=(S.folder[s.k]||[]).find(r=>r.id===s.id);
+    h='<h2>ลบรายการนี้ใช่ไหม</h2><p style="margin:10px 0"><b>'+esc(row?itemMain(s.k,row):'')+'</b></p><p class="sub">ลบแล้วจะไม่แสดงในแฟ้มอีก</p><div class="stack" style="margin-top:14px"><button class="bn bad big wide" data-a="delok" '+(S.busy?'disabled':'')+'>ลบ</button><button class="bn wide" data-a="closesheet">ไม่ลบ</button></div>';
+  }
+  if(s.t==='restore'){
+    const row=(S.trash||[]).find(r=>r.id===s.id);
+    h='<h2>กู้คืนรายการนี้ใช่ไหม</h2><p style="margin:10px 0"><b>'+esc(row?row.title:'')+'</b></p><p class="sub">จะกลับเข้าแฟ้มของ '+esc(row?row.ownerName:'')+'</p><div class="stack" style="margin-top:14px"><button class="bn pri big wide" data-a="restoreok" '+(S.busy?'disabled':'')+'>กู้คืน</button><button class="bn wide" data-a="closesheet">ไม่กู้คืน</button></div>';
+  }
+  return '<div class="sheetbg" data-a="sheetbg"><div class="sheet" role="dialog" aria-modal="true">'+h+'</div></div>';
+}
+/* ---------- ทำงาน ---------- */
+async function loadFolder(){
+  S.folder=null;render();
+  try{const j=await api('folder.get',own()?{}:{staff_id:S.viewing});S.folder=j.folder}
+  catch(e){toast(e.message);if(!own()){S.viewing=S.B.me.id;return loadFolder()}}
+  render();
+}
+async function save(form){
+  if(S.busy||ro())return;const s=S.sheet,k=s.k,data={},err=$('#ferr');
+  for(const f of FIELDS[k]){const el=$('#f_'+f[0]);data[f[0]]=el?el.value.trim():'';if(f[3]&&!data[f[0]]){err.textContent='กรุณาใส่'+f[1];err.hidden=false;el.focus();return}}
+  if(!own())data.staff_id=S.viewing;
+  S.busy=true;
+  try{
+    const j=await api(s.id?'item.update':'item.add',s.id?{kind:k,id:s.id,data:data}:{kind:k,data:data},{nonce:nonce()});
+    S.folder=j.folder;S.sheet=null;S.busy=false;toast(s.id?'แก้ไขแล้ว':'บันทึกแล้ว');render();
+  }catch(e){S.busy=false;err.textContent=e.message;err.hidden=false}
+}
+async function openTrash(){
+  S.page='trash';S.trash=null;S.sheet=null;render();window.scrollTo(0,0);
+  try{const j=await api('trash.list');S.trash=j.trash}catch(e){toast(e.message);S.page='home';S.trash=null}
+  render();
+}
+async function restore(){
+  if(S.busy||ro())return;const s=S.sheet;S.busy=true;
+  try{const j=await api('trash.restore',{id:s.id},{nonce:nonce()});S.trash=j.trash;S.sheet=null;S.busy=false;toast('กู้คืนแล้ว');render()}
+  catch(e){S.busy=false;S.sheet=null;toast(e.message);render()}
+}
+async function del(){
+  if(S.busy||ro())return;const s=S.sheet;S.busy=true;
+  try{const j=await api('item.delete',{kind:s.k,id:s.id},{nonce:nonce()});S.folder=j.folder;S.sheet=null;S.busy=false;toast('ลบแล้ว');render()}
+  catch(e){S.busy=false;S.sheet=null;toast(e.message);render()}
+}
+document.addEventListener('click',async ev=>{
+  const el=ev.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
+  if(a==='sheetbg'){if(ev.target===el){S.sheet=null;render()}return}
+  if(a==='closesheet'){S.sheet=null;render();return}
+  if(a==='exitview'){location.href=location.pathname;return}
+  if(a==='cat'){S.cat=el.dataset.c;S.page='cat';render();window.scrollTo(0,0);return}
+  if(a==='back'){const was=S.page;S.page='home';render();if(was==='trash')loadFolder();return}
+  if(a==='trash'){openTrash();return}
+  if(a==='restore'){S.sheet={t:'restore',id:el.dataset.id};render();return}
+  if(a==='restoreok'){restore();return}
+  if(a==='add'){const ks=addKinds();if(ks.length===1)S.sheet={t:'form',k:ks[0]};else S.sheet={t:'pick'};render();return}
+  if(a==='form'){S.sheet={t:'form',k:el.dataset.k};render();return}
+  if(a==='edit'){S.sheet={t:'form',k:el.dataset.k,id:el.dataset.id};render();return}
+  if(a==='del'){S.sheet={t:'del',k:el.dataset.k,id:el.dataset.id};render();return}
+  if(a==='delok'){del();return}
+});
+document.addEventListener('submit',ev=>{if(ev.target.id==='pf'){ev.preventDefault();save(ev.target)}});
+document.addEventListener('change',ev=>{if(ev.target.id==='picker'){S.viewing=ev.target.value;S.page='home';S.sheet=null;loadFolder()}});
+
+/* ---------- เริ่มต้น ---------- */
+function fatal(h,msg){$('#boot').hidden=false;$('#app').hidden=true;$('#boot').innerHTML='<div class="card" style="max-width:420px;margin:18vh auto 0;text-align:center"><h2>'+esc(h)+'</h2><p class="sub">'+esc(msg)+'</p><button class="bn pri wide" onclick="location.reload()">ลองใหม่</button></div>'}
+function fail(e){
+  if(e.code==='NOT_LINKED')return fatal('ยังไม่ได้ผูกบัญชี','ผูกบัญชี LINE กับโรงเรียนที่หน้ากลาง Q-Kawa ก่อน (กรอกรหัส 6 หลักจาก ผอ.) แล้วกลับมาที่นี่');
+  if(e.code==='APP_OFF')return fatal('Q-Portfolio ยังไม่เปิดใช้',e.message);
+  if(e.code==='FORBIDDEN')return fatal('เปิดแอปนี้ไม่ได้',e.message);
+  if(e.code==='NO_API')return fatal('ระบบยังไม่พร้อมใช้งาน',e.message);
+  return fatal('โหลดข้อมูลไม่สำเร็จ',e.message);
+}
+async function start(){
+  window.__qpStage='liff';
+  try{await liff.init({liffId:CONFIG.LIFF_ID})}catch(e){return fatal('เปิดการเข้าสู่ระบบ LINE ไม่สำเร็จ',e.message)}
+  if(!liff.isInClient())return fatal('กรุณาเปิดผ่าน LINE','แอปนี้ใช้ได้เฉพาะเมื่อเปิดจากแอป LINE ของโรงเรียน เปิดจากหน้ากลาง Q-Kawa ใน LINE แล้วกดเข้าแอปนี้');
+  window.__qpStage='login';
+  if(!liff.isLoggedIn()){liff.login({redirectUri:location.href});return}
+  window.__qpStage='api';
+  try{const as=new URLSearchParams(location.search).get('as');if(as)S.viewAs=as}catch(e){}
+  try{S.B=await api('boot')}
+  catch(e){if(S.viewAs&&(e.code==='FORBIDDEN'||e.code==='NOT_FOUND')){S.viewAs='';try{S.B=await api('boot')}catch(e2){return fail(e2)}}else return fail(e)}
+  S.viewing=S.B.me.id;
+  window.__qpStage='render';
+  $('#boot').hidden=true;$('#app').hidden=false;
+  render();
+  if(S.B.can.pickStaff&&!ro()){api('staff.list').then(j=>{S.staff=j.staff;if(!S.sheet)render()}).catch(()=>{})}
+  await loadFolder();
+}
+start().catch(e=>fail(e));
+})();
+</script>
+</body>
+</html>
