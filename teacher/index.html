@@ -1000,7 +1000,7 @@ function openHash(){
 /* ---------- หน้า / เมนู ตามบทบาท ---------- */
 const PAGES={
  home:['หน้าหลัก','home','blue'],approve:['พิจารณาคำขอ','endorse','amber'],tasks:['ติดตามงาน','tasks','blue'],staff:['บุคลากร','staff','teal'],
- mywork:['งานของฉัน','tasks','blue'],myreq:['คำขอ','req','coral'],mytime:['ประวัติลงเวลา','clock','teal'],
+ mywork:['งานของฉัน','tasks','blue'],myreq:['คำขอ','req','coral'],mytime:['ประวัติลงเวลา','clock','teal'],me:['ภาพรวมของฉัน','staff','blue'],
  sub:['จัดสอนแทน','sub','violet'],mysub:['สอนแทนของฉัน','sub','violet'],
  ops:['งานอาคารสถานที่','ops','amber'],jan:['งานวันนี้','job','amber'],patrol:['งาน รปภ.','guard','slate'],visit:['ผู้มาติดต่อ','visit','teal'],
  fixreq:['แจ้งซ่อม','fix','coral'],count:['เช็คยอดนักเรียน','count','rose'],dev:['พัฒนาครู','dev','green'],pachal:['PA ประเด็นท้าทาย','dev','green'],eval:['ประเมินผลการปฏิบัติงาน','dev','green'],set:['ตั้งค่า','set','slate']};
@@ -1023,6 +1023,7 @@ function avail(){
   if(m.isTeacher||m.isAdmin||m.isAcad)t.push('dev');
   if(m.paElig||m.isHR||m.isDirector)t.push('pachal','eval');
   if(m.isAdmin)t.push('set');
+  if((SLOT_VIS[m.role]||[]).includes('ppl'))t.push('me');   // ภาพรวมของฉัน: เฉพาะบทบาทที่เห็นช่อง 5
   return t}
 /** เมนูล่าง 5 ช่อง (สเปก Q-Kawa App ข้อ 2): หน้าแรก · คำขอ · งาน · อาคาร · บุคลากร — แต่ละช่องรวมหน้าเดิมไว้เป็นแท็บย่อย */
 const SLOTS=[
@@ -1030,10 +1031,10 @@ const SLOTS=[
  {id:'req',label:'คำขอ',icon:'req',pages:['myreq','approve']},
  {id:'work',label:'งาน',icon:'tasks',pages:['mywork','tasks','sub','mysub']},
  {id:'bld',label:'อาคาร',icon:'ops',pages:['jan','patrol','visit','fixreq','ops','count']},
- {id:'ppl',label:'บุคลากร',icon:'staff',pages:['staff','dev','pachal','eval','pa','set']}];
+ {id:'ppl',label:'บุคลากร',icon:'staff',pages:['me','staff','dev','pachal','eval','pa','set']}];
 /** ช่องที่แต่ละบทบาทเห็นที่แถบล่าง (หน้าอื่นที่เข้าได้ เช่น ภารโรงยื่นใบลา ยังเปิดได้จากปุ่มลัดหน้าแรกหรือเมนูบัญชี) */
 const SLOT_VIS={dir:['home','req','work','bld','ppl'],head:['home','req','work','bld','ppl'],acad:['home','req','work','ppl'],tch:['home','req','work','ppl'],adm:['home','req','work'],jan:['home','bld'],grd:['home','bld']};
-const TAB_LABEL={mytime:'ประวัติลงเวลา',myreq:'คำขอของฉัน',approve:'พิจารณาคำขอ',mywork:'งานของฉัน',tasks:'ติดตามงาน',sub:'จัดสอนแทน',mysub:'สอนแทนของฉัน',jan:'งานวันนี้',patrol:'งาน รปภ.',visit:'ผู้มาติดต่อ',fixreq:'แจ้งซ่อม',ops:'ภาพรวมอาคาร',count:'เหตุฉุกเฉิน',staff:'บุคลากรวันนี้',dev:'พัฒนาครู',pachal:'PA ประเด็นท้าทาย',eval:'ประเมินผล',pa:'ประเมิน & PA (ต้นแบบ)',set:'ตั้งค่า'};
+const TAB_LABEL={me:'ภาพรวมของฉัน',mytime:'ประวัติลงเวลา',myreq:'คำขอของฉัน',approve:'พิจารณาคำขอ',mywork:'งานของฉัน',tasks:'ติดตามงาน',sub:'จัดสอนแทน',mysub:'สอนแทนของฉัน',jan:'งานวันนี้',patrol:'งาน รปภ.',visit:'ผู้มาติดต่อ',fixreq:'แจ้งซ่อม',ops:'ภาพรวมอาคาร',count:'เหตุฉุกเฉิน',staff:'บุคลากรวันนี้',dev:'พัฒนาครู',pachal:'PA ประเด็นท้าทาย',eval:'ประเมินผล',pa:'ประเมิน & PA (ต้นแบบ)',set:'ตั้งค่า'};
 const slotOf=t=>SLOTS.find(s=>s.pages.includes(t));
 const slotPages=s=>s.pages.filter(p=>avail().includes(p));
 const visibleSlots=()=>SLOTS.filter(s=>(SLOT_VIS[ME.role]||SLOT_VIS.tch).includes(s.id)&&slotPages(s).length);
@@ -1143,6 +1144,29 @@ function getPos(){
       e=>{const er=new Error(e.code===1?'LINE ยังไม่ได้รับอนุญาตให้ใช้ตำแหน่ง':e.code===3?'หาตำแหน่งนานเกินไป (สัญญาณ GPS อ่อน)':'หาตำแหน่งไม่ได้');er.code=e.code===1?'DENIED':'NO_POS';rej(er)},
       {enableHighAccuracy:true,timeout:15000,maximumAge:0})});
 }
+/* ===== ข้อความต้อนรับหลังลงเวลาเข้า (ไทยอย่างเดียว · เรื่องบวกเท่านั้น · ไม่ตำหนิ · ขึ้นวันละไม่เกิน 1 ครั้ง · ชุดข้อความสำเร็จรูปในโค้ด ยังไม่มีที่เก็บให้ ผอ. แก้) ===== */
+const CHEER_BACK=['ยินดีต้อนรับกลับมา ขอให้วันนี้เป็นวันที่ราบรื่น','ดีใจที่ได้เจอกันอีกครั้ง ค่อย ๆ เริ่มงานทีละอย่างได้เลย','กลับมาแล้ว ขอบคุณที่กลับมาร่วมงานกับเรา วันนี้ขอให้เป็นวันที่ดี'];
+const CHEER_GREET=['สวัสดีตอนเช้า ขอให้วันนี้เป็นวันที่ดี','ขอบคุณที่มาโรงเรียนวันนี้ ขอให้ทุกอย่างราบรื่น','เริ่มต้นวันใหม่ด้วยรอยยิ้มนะ','ขอให้เป็นวันที่เต็มไปด้วยเรื่องดี ๆ','ขอบคุณที่ดูแลนักเรียนและโรงเรียนของเรา','สู้ ๆ นะ วันนี้ก็เป็นอีกวันที่ดี','ขอให้วันนี้มีแต่เรื่องที่น่ายินดี'];
+const CHEER_GREET_MODE='weekly';   // weekly = ขึ้นเฉพาะวันทำการแรกของสัปดาห์ · daily = ทุกวัน · off = ไม่ขึ้นทักทาย
+function cheerPick(list,iso){const p=iso.split('-').map(Number);return list[Math.floor(Date.UTC(p[0],p[1]-1,p[2])/864e5)%list.length]}
+function cheerMsg(kind){
+  if(kind!=='in')return'';
+  const key='qt_cheer_'+me()+'_'+TODAY_ISO;
+  try{if(localStorage.getItem(key))return''}catch(e){}
+  const hol=new Set(B.holidays||[]),addD=(d,n)=>ymd(new Date(d8(d).getTime()+n*864e5)),isW=d=>{const w=d8(d).getDay();return w!==0&&w!==6&&!hol.has(d)};
+  const lv=REQ.filter(r=>r.who===me()&&r.kind==='leave'&&r.st==='approved'),covers=(r,d)=>r.from<=d&&d<=r.to&&(!r.part||r.part==='เต็มวัน');
+  let p=addD(TODAY_ISO,-1),g=0;while(!isW(p)&&g++<20)p=addD(p,-1);
+  let msg='';
+  if(lv.some(r=>covers(r,p))&&!lv.some(r=>covers(r,TODAY_ISO)))msg=cheerPick(CHEER_BACK,TODAY_ISO);
+  else if(CHEER_GREET_MODE==='daily')msg=cheerPick(CHEER_GREET,TODAY_ISO);
+  else if(CHEER_GREET_MODE==='weekly'){const mon=addD(TODAY_ISO,-((d8(TODAY_ISO).getDay()+6)%7));let first=true;for(let d=mon;d<TODAY_ISO;d=addD(d,1))if(isW(d)){first=false;break}if(first)msg=cheerPick(CHEER_GREET,TODAY_ISO)}
+  if(msg)try{localStorage.setItem(key,'1')}catch(e){}
+  return msg;
+}
+const cheerHtml=x=>{const m=cheerMsg(x.kind);return m?'<p class="cheer">'+esc(m)+'</p>':''};
+/** ถามความสุขเฉพาะตอนลงเวลาออก · ไม่บังคับ มีปุ่มข้าม · ใช้ mood.set เดิม (ไม่เก็บซ้ำ) · ถามครั้งเดียวต่อวัน (ถ้าตอบแล้วไม่ถามซ้ำ) */
+const moodAskOn=x=>x.kind==='out'&&!(B.mood&&B.mood.mine);
+const moodAsk=x=>moodAskOn(x)?'<div class="moodask"><b>วันนี้รู้สึกอย่างไร <span class="sub">(ไม่บังคับ)</span></b><div class="mood-row" role="group" aria-label="ดัชนีความสุขวันนี้">'+MOODS.map(([v,e,l])=>'<button class="mo" data-moodm="'+v+'" aria-label="'+l+'"><span>'+e+'</span><small>'+l+'</small></button>').join('')+'</div><p class="sub moodnote">คำตอบไม่แสดงชื่อ · กด "ข้าม" ได้</p></div>':'';
 let CHECKING=false;
 async function startCheck(kind,useQr){
   if(CHECKING)return;
@@ -1167,7 +1191,9 @@ async function sendCheck(data){
     const how=x.method==='gps'?(x.dist===''?'GPS · '+x.point:'GPS · ห่างจุดลงเวลา '+x.dist+' ม.'+(x.point?' · '+x.point:'')):x.method==='qr'?'สแกน QR · '+x.point:'';
     modal(`<div style="text-align:center;display:grid;gap:8px"><span class="okc">${svg('check')}</span><h2>${x.kind==='in'?'บันทึกเวลาเข้าแล้ว':'บันทึกเวลาออกแล้ว'}</h2>
      <div class="clockbig num" style="color:var(--accent)">${esc(x.time)} น.</div><div>${stPill(x.status)}</div><p class="sub">${esc(how)} · เวลาจากเซิร์ฟเวอร์ (เวลาไทย)</p>
-     ${x.status==='สายเกิน 09:00'?'<button class="btn pri wide" data-halfleave="1">ยื่นใบลาครึ่งวันเช้า</button>':''}<button class="btn wide" data-close="1">ปิด</button></div>`);
+     ${x.firstOfDay===true&&x.congrats?`<div class="callout c-good congrats" role="status"><b>${esc(x.congrats)}</b><button type="button" class="btn wide" onclick="this.closest('.congrats').remove()">ปิดข้อความ</button></div>`:''}
+     ${cheerHtml(x)}
+     ${x.status==='สายเกิน 09:00'?'<button class="btn pri wide" data-halfleave="1">ยื่นใบลาครึ่งวันเช้า</button>':''}${moodAsk(x)}<button class="btn wide" data-close="1">${moodAskOn(x)?'ข้าม':'ปิด'}</button></div>`);
   }catch(e){
     if(e.code==='NEED_REASON')return askReason(data,e.message);
     if(e.code==='ALREADY'){refresh(true);return modal(`<div style="text-align:center;display:grid;gap:8px"><span class="okc">${svg('check')}</span><h2>ลงเวลาไว้แล้ว</h2><p>${esc(e.message)}</p><button class="btn wide" data-close="1">ปิด</button></div>`)}
@@ -1780,12 +1806,12 @@ function evSignModal(staff){
 const MOODS=[[1,'😞','แย่'],[2,'😕','ไม่ค่อยดี'],[3,'😐','เฉยๆ'],[4,'🙂','ดี'],[5,'😄','ดีมาก']];
 function moodCard(){
   const M=B.mood||{mine:0},A=M.all;
-  const row=`<div class="mood-row" role="group" aria-label="ดัชนีความสุขวันนี้">${MOODS.map(([v,e,l])=>`<button class="mo ${M.mine===v?'on':''}" data-mood="${v}" aria-pressed="${M.mine===v}" aria-label="${l}"><span>${e}</span><small>${l}</small></button>`).join('')}</div>`;
+  if(!A)return'';   // แถวอีโมจิย้ายไปถามตอนลงเวลาออก (หน้าต่างหลังเช็คเอาท์) · หน้าแรกแสดงเฉพาะภาพรวมแบบไม่แสดงชื่อให้ ผอ.
   const ov=A?`<div class="mood-ov"><div class="sub">ภาพรวมวันนี้ (ผอ.เห็น ไม่แสดงชื่อ) · ตอบแล้ว <b class="num">${A.n}/${A.total}</b> คน</div>
     ${A.show?`<div class="mood-bars">${MOODS.map(([v,e],i)=>`<div><span>${e}</span><i style="height:${A.n?Math.round(A.counts[i]/A.n*100):0}%"></i><b class="num">${A.counts[i]}</b></div>`).join('')}</div><div class="sub">เฉลี่ยวันนี้ ${A.avg}/5</div>`
       :`<div class="callout c-info">ตอบน้อยกว่า ${A.min} คน จึงยังไม่แสดงรายละเอียดรายระดับ เพื่อไม่ให้เดาตัวตนได้</div>`}
     <div class="sub">7 วันล่าสุด (ค่าเฉลี่ย · แสดงเมื่อมีผู้ตอบ ≥ ${A.min} คน): ${A.week.map(w=>w.avg!=null?w.avg:'–').join(' · ')}</div></div>`:'';
-  return`<section class="moodbox"><div class="row between"><h2>วันนี้เลิกงานแล้วรู้สึกอย่างไร</h2><span class="sub">${M.mine?'บันทึกแล้ว · แตะใหม่เพื่อเปลี่ยน':'แตะ 1 ครั้ง'}</span></div>${row}
+  return`<section class="moodbox"><div class="row between"><h2>ดัชนีความสุขวันนี้</h2><span class="sub">เห็นเฉพาะ ผอ.</span></div>
    <p class="sub moodnote">คำตอบไม่แสดงชื่อ ยกเว้นเลือกหน้าเศร้า 3 วันติดกัน ผอ. จะได้รับแจ้งเพื่อเข้ามาดูแล</p>${ov}</section>`;
 }
 function helpSheet(){
@@ -1901,6 +1927,101 @@ function forCheckForm(id){
 }
 
 /* ---------- ประวัติลงเวลาของฉัน ---------- */
+/* ===== ภาพรวมของฉัน (ช่อง 5 บุคลากร · แท็บแรก) · เห็นเฉพาะของตัวเอง · ใช้ข้อมูลที่หลังบ้านส่งอยู่แล้ว (stats · dev · pa · eval · praise · boot.works · boot.subCounts)
+   ไม่ต้องกรอกเพิ่ม · ไม่มีข้อมูล = "ยังไม่มีข้อมูล" · ไม่แสดงดัชนีความสุข · รอบ = B.round (ค่าตั้งรอบเลื่อนเงินเดือนในชีต ไม่ฝังในโค้ด) ===== */
+const ND='<span class="me-nd">ยังไม่มีข้อมูล</span>';
+const meTile=(tab,label,val,sub)=>'<button class="metile" data-tab="'+tab+'"><span>'+label+'</span><b class="num">'+val+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</button>';
+const meCard=(title,sub,body)=>'<section class="panel mecard"><div class="ph"><h2>'+title+'</h2>'+(sub?'<span class="sub">'+sub+'</span>':'')+'</div>'+body+'</section>';
+const inRound=d=>{const R=B.round;return !!d&&(!R||(d>=R.start&&d<=R.end))};
+const meRoundTx=()=>B.round&&B.round.label?esc(B.round.label):'';
+/** บรรทัดสิทธิ์ลาคงเหลือ: lvRemain คืน {num,unit} หรือ {text} (ไม่มีสิทธิ/ยังไม่มีข้อมูล) · ไม่มีค่าตัวเลข = แสดงข้อความ ไม่เรียก lvFmtN กับค่าว่าง */
+const meLeft=(label,r)=>'<div>'+label+': '+(r&&r.num!=null?'เหลือ <b class="num">'+lvFmtN(r.num)+'</b> '+esc(r.unit||'วัน'):esc((r&&(r.short||r.text))||'ยังไม่มีข้อมูล'))+'</div>';
+function meAttend(){
+  return secBox('stats',S=>{
+    const sk=lvRemain(lvT('sick')),pr=lvRemain(lvT('per')),L=lvRound();
+    return '<div class="metiles">'
+      +meTile('mytime','มาสาย',S.my.late+' ครั้ง','เกณฑ์ติดตาม '+LATE_RULE+' ครั้ง/รอบ')
+      +meTile('mytime','ไฟเหลือง',S.my.yellow+' ครั้ง','หลัง '+esc(B.rules.general.on)+' น.')
+      +meTile('myreq','ลา (อนุมัติแล้ว)',S.my.leaveTimes+' ครั้ง '+lvFmtN(S.my.leaveDays)+' วัน',S.my.pendingDays?'รอพิจารณาอีก '+lvFmtN(S.my.pendingDays)+' วัน':'ในรอบนี้')
+      +meTile('mytime','มาตรงเวลา',ND,'ระบบยังไม่ส่งจำนวนวันที่ตรงเวลา')
+      +'</div><div class="metext"><b>สิทธิ์ลาคงเหลือ</b>'
+      +meLeft('ลาป่วย',sk)
+      +meLeft('ลากิจส่วนตัว',pr)
+      +'<div class="sub">เกณฑ์ติดตามไม่ใช่สิทธิการลาหรือสิทธิมาสาย · ดูทุกประเภทที่ฟอร์มใบลา</div></div>';
+  });
+}
+function meDev(){
+  return secBox('dev',D=>{
+    const mine=(D.myLog||[]).filter(x=>inRound(x.d)),evOf=x=>!!(x.cert||x.report);
+    const evH=mine.filter(evOf).reduce((s,x)=>s+(Number(x.h)||0),0),noH=mine.filter(x=>!evOf(x)).reduce((s,x)=>s+(Number(x.h)||0),0);
+    const plc=(D.plc||[]).filter(p=>(p.who||[]).includes(me())&&inRound(p.d)),plcH=plc.reduce((s,p)=>s+(Number(p.h)||0),0);
+    const ev=Math.round((evH+plcH)*10)/10;
+    return '<div class="metiles">'
+      +meTile('dev','ชั่วโมงพัฒนาที่มีหลักฐาน (รวม PLC)',lvFmtN(ev)+' / '+D.target+' ชม.',(D.targetSample?'ค่าตั้งตัวอย่าง ยังไม่ยืนยัน · ':'')+(noH>0?'อีก '+lvFmtN(Math.round(noH*10)/10)+' ชม. ยังไม่มีหลักฐาน (ไม่นับ)':'นับเฉพาะที่มีเกียรติบัตร/รายงาน/PLC'))
+      +meTile('dev','PLC ที่เข้าร่วม',plc.length+' ครั้ง',lvFmtN(Math.round(plcH*10)/10)+' ชม. ในรอบนี้')
+      +'</div>';
+  });
+}
+function meWork(){
+  const W=(B.works||[]).filter(w=>w.own===me()),open=W.filter(w=>w.st!=='done'),over=open.filter(w=>w.due&&w.due<TODAY_ISO);
+  const vf=W.filter(w=>w.ot==='ตรงเวลา'||w.ot==='ล่าช้า'),ok=vf.filter(w=>w.ot==='ตรงเวลา').length;
+  return '<div class="metiles">'
+    +meTile('mywork','งานค้าง',open.length+' งาน',over.length?'เลยกำหนด '+over.length+' งาน':'ไม่มีงานเลยกำหนด')
+    +meTile('mywork','ส่งตรงเวลา',vf.length?Math.round(ok/vf.length*100)+' %':ND,vf.length?ok+' จาก '+vf.length+' งานที่ตรวจรับแล้ว':'ยังไม่มีงานที่ตรวจรับ')
+    +'</div><p class="sub">นับงานที่ตรวจรับแล้วย้อนหลัง 30 วัน (ตามข้อมูลที่ระบบส่งมา)</p>';
+}
+function meSubs(){
+  const t=(SUBTERM||{})[me()]||0,m=(SUBCOUNT||{})[me()]||0;
+  return '<div class="metiles">'+meTile('mysub','สอนแทนภาคเรียนนี้',t+' คาบ','เดือนนี้ '+m+' คาบ · ระบบนับตามภาคเรียน ยังไม่นับตามรอบประเมิน')+'</div>';
+}
+function mePA(){
+  return secBox('pa',S=>{
+    const it=(S.items||[]).filter(x=>x.own&&x.fy===S.fy),pr=it.map(paProg).filter(v=>v!=null),avg=pr.length?Math.round(pr.reduce((a,b)=>a+b,0)/pr.length):null,sent=it.filter(x=>x.sent).length;
+    return '<div class="metiles">'
+      +meTile('pachal','ความก้าวหน้า PA',avg==null?ND:avg+' %',avg==null?(it.length?'ยังกรอกค่าฐาน/เป้า/จริงไม่ครบ':'ยังไม่มีข้อตกลงในปีงบประมาณ '+esc(String(S.fy))):'เฉลี่ย '+pr.length+' เรื่อง · ปีงบประมาณ '+esc(String(S.fy)))
+      +meTile('pachal','ข้อตกลงที่ส่งแล้ว',it.length?sent+' / '+it.length+' เรื่อง':ND,it.length?'ฉบับร่าง '+(it.length-sent)+' เรื่อง':'')
+      +'</div>';
+  });
+}
+function meRadar(){
+  return secBox('eval',S=>{
+    const V=S.view;
+    if(!V)return '<p>'+ND+'</p><p class="sub">'+(S.notOpen||!(S.current&&S.current.opened)?'ยังไม่เปิดรอบประเมิน':'ยังไม่มีข้อมูลให้แสดง')+'</p><button class="btn" data-tab="eval">ไปหน้าประเมิน</button>';
+    return '<p class="sub">เบื้องต้น: จากข้อมูลจริงในระบบ ผู้บริหารอาจยังให้ระดับไม่ครบ · ข้อที่ไม่มีข้อมูลไม่นับ</p>'+evRadar(V.radar)+'<button class="btn" data-tab="eval">ดูรายละเอียดที่หน้าประเมิน</button>';
+  });
+}
+function meStars(){
+  return secBox('praise',S=>{
+    const M=S.myStars||{count:0,recent:[]};
+    if(!M.count)return '<p>'+ND+'</p><p class="sub">ดาวมาจากผู้ปกครอง ยังไม่มีผู้ให้ดาว</p>';
+    return '<div class="metiles"><div class="metile static"><span>ดาวที่ได้รับ</span><b class="num">'+M.count+' ดวง</b></div></div>'
+      +'<details class="more"><summary>ข้อความล่าสุด</summary><ul class="list">'+M.recent.map(r=>'<li><div class="main">'+esc(r.msg||'–')+'<div class="sub">'+esc(r.from||'ผู้ปกครอง')+(r.at?' · '+esc(thDT(r.at)):'')+'</div></div></li>').join('')+'</ul></details>';
+  });
+}
+/** ดาวมาเช้า: ใช้ ranking จาก sec stats (หลังบ้านกรองภารโรง/รปภ./บัญชีทดสอบแล้ว) · แถว = [staff_id, นาทีเฉลี่ยก่อนเกณฑ์สาย, จำนวนวันที่นับ]
+ *  ผอ./หัวหน้างานบุคคล (ranking.full) เห็น 5 อันดับ · คนอื่นหลังบ้านส่ง 3 อันดับแรก + แถวตัวเอง (ไม่มีเลขอันดับของตัวเอง) */
+function meEarly(){
+  return secBox('stats',S=>{
+    const R=S.ranking,tab=st.earlyTab==='m'?'m':'w',list=(R&&Array.isArray(R[tab])?R[tab]:[]).filter(r=>Array.isArray(r)&&r[0]),N=R&&R.full?5:3;
+    const fmt=a=>(Number(a)>=0?'ก่อนเกณฑ์ '+lvFmtN(Number(a)):'หลังเกณฑ์ '+lvFmtN(-Number(a)))+' นาที';
+    const head=seg('earlyTab',[['w','สัปดาห์นี้'],['m','เดือนนี้']],tab)+(R&&(tab==='m'?R.mLabel:R.wLabel)?'<p class="sub">'+esc(tab==='m'?R.mLabel:R.wLabel)+'</p>':'');
+    if(!list.length)return head+'<p>'+ND+'</p>';
+    const top=list.slice(0,N),mine=list.find(r=>r[0]===me());
+    return head+'<ul class="rank">'+top.map((r,i)=>'<li'+(r[0]===me()?' class="mine"':'')+'><b class="num">'+(i+1)+'</b><span>'+esc(nm(r[0]))+'</span><span class="sub num">'+fmt(r[1])+' · '+(Number(r[2])||0)+' วัน</span></li>').join('')+'</ul>'
+      +(mine&&list.indexOf(mine)>=N?'<p class="metext">ท่านอยู่นอก '+N+' อันดับแรก · เฉลี่ย '+lvFmtN(Number(mine[1])||0)+' นาที · '+(Number(mine[2])||0)+' วัน</p>':'');
+  });
+}
+V.me=()=>{
+  const a=avail(),c=[];
+  if(!(ME.isJan||ME.isGuard))c.push(meCard('ดาวมาเช้า','',meEarly()));
+  c.push(meCard('การมาทำงาน',meRoundTx(),meAttend()));
+  if(a.includes('dev'))c.push(meCard('พัฒนาตนเอง',meRoundTx(),meDev()));
+  c.push(meCard('งานของฉัน','',meWork()));
+  if(a.includes('mysub'))c.push(meCard('สอนแทน','',meSubs()));
+  if(ME.paElig){c.push(meCard('PA ประเด็นท้าทาย','',mePA()));c.push(meCard('ผลประเมินเบื้องต้น (เรดาร์ 6 แกน)',meRoundTx(),meRadar()))}
+  if(ME.isTeacher)c.push(meCard('ดาวและคำชมที่ได้รับ','',meStars()));
+  return '<p class="sub meintro">เห็นเฉพาะของท่านเอง · ใช้ข้อมูลที่ระบบมีอยู่แล้ว ไม่ต้องกรอกเพิ่ม · แตะตัวเลขเพื่อดูรายละเอียด</p>'+c.join('');
+};
 V.mytime=()=>secBox('stats',S=>{
   const H=S.history||[];
   return`<section class="panel"><div class="ph"><h2>${esc(S.round.label)}</h2></div>
@@ -2180,7 +2301,23 @@ function lvExport(){
   const ref='LVX-'+nowIso.replace(/-/g,'').slice(2)+'-'+String(h%10000).padStart(4,'0');
   const rows=['sick','per','vac'].map(k=>{const t=lvT(k),used=k==='vac'?0:lvUsed(t,fy),cur=t===ty?n:0;return`<tr><td>${esc(t.n)}</td><td>${lvFmtN(used)}</td><td>${lvFmtN(cur)}</td><td>${lvFmtN(used+cur)}</td></tr>`}).join('');
   const html=`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>ใบลา ${esc(ref)}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap">
-<style>@page{size:A4;margin:18mm 20mm}body{font-family:Sarabun,"TH Sarabun New",Thonburi,Tahoma,sans-serif;font-size:16px;line-height:1.6;color:#111;margin:0}h1{font-size:22px;text-align:center;margin:0 0 4px}.sub{text-align:center;color:#555;font-size:13px;margin-bottom:14px}.r{text-align:right}p{margin:6px 0}.ind{text-indent:2.2em}table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px}th,td{border:1px solid #444;padding:4px 8px;text-align:center}td:first-child{text-align:left}.sig{margin-top:22px;text-align:center;width:55%;margin-left:auto}.sig img{height:70px}.stamp{font-size:12px;color:#555;margin-top:4px}.box{border:1px solid #444;padding:10px 14px;margin-top:18px;min-height:90px;font-size:14.5px}</style></head><body>
+<style>@page{size:A4;margin:18mm 20mm}body{font-family:Sarabun,"TH Sarabun New",Thonburi,Tahoma,sans-serif;font-size:16px;line-height:1.6;color:#111;margin:0}h1{font-size:22px;text-align:center;margin:0 0 4px}.sub{text-align:center;color:#555;font-size:13px;margin-bottom:14px}.r{text-align:right}p{margin:6px 0}.ind{text-indent:2.2em}table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px}th,td{border:1px solid #444;padding:4px 8px;text-align:center}td:first-child{text-align:left}.sig{margin-top:22px;text-align:center;width:55%;margin-left:auto}.sig img{height:70px}.stamp{font-size:12px;color:#555;margin-top:4px}.box{border:1px solid #444;padding:10px 14px;margin-top:18px;min-height:90px;font-size:14.5px}/* ===== ภาพรวมของฉัน · ข้อความต้อนรับ · ถามความสุขตอนออก ===== */
+.metiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:1000px){.metiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.metile{border:0;background:var(--sunk);border-radius:14px;padding:10px 12px;display:grid;gap:2px;align-content:start;min-height:72px;min-width:0;text-align:left;font:inherit;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s ease}
+.metile:active{transform:scale(.98)}.metile.static{cursor:default}.metile.static:active{transform:none}
+.metile span{font-size:.8rem;color:var(--muted);line-height:1.3}
+.metile b{font-family:var(--f-display);font-weight:600;font-size:1.15rem;line-height:1.25;overflow-wrap:anywhere}
+.metile small{font-size:.74rem;color:var(--muted);line-height:1.3}
+.me-nd{font-size:.95rem;font-weight:500;color:var(--muted)}
+.metext{display:grid;gap:4px;font-size:.92rem}.metext>b{font-size:.95rem}
+.meintro{margin:0 2px}
+.mecard .btn{min-height:44px}
+.cheer{background:var(--accent-soft);color:var(--ink);border-radius:14px;padding:10px 14px;font-weight:500;margin:0}
+.moodask{display:grid;gap:8px;text-align:left;border-top:1px dashed var(--line);padding-top:10px}
+.moodask .mo{min-height:56px}
+@media (prefers-reduced-motion:reduce){.metile{transition:none}.metile:active{transform:none}}
+</style></head><body>
 <h1>ใบลา${esc(ty.n.split(' / ')[0])}</h1><div class="sub">โรงเรียนบ้านกาวะ · เลขที่อ้างอิง ${esc(ref)}</div>
 <p class="r">เขียนที่ โรงเรียนบ้านกาวะ<br>วันที่ ${esc(D(nowIso))}</p><p>เรื่อง&nbsp; ขอ${esc(ty.n)}</p><p>เรียน&nbsp; ผู้อำนวยการโรงเรียนบ้านกาวะ</p>
 <p class="ind">ข้าพเจ้า ${esc(ME.name)} ตำแหน่ง ${esc(pos)} สังกัด โรงเรียนบ้านกาวะ มีความประสงค์ขอ${esc(ty.n)} เนื่องจาก ${esc(why)}</p>
@@ -2734,6 +2871,7 @@ document.addEventListener('click',async e=>{
   if(d.evasort){const k=d.evasort,s=st.evaSort||{k:'name',d:1};st.evaSort=s.k===k?{k,d:-s.d}:{k,d:k==='name'?1:-1};render();return}
   if(d.lsort){const k=d.lsort,s=st.loadSort||{k:'over',d:-1};st.loadSort=s.k===k?{k,d:-s.d}:{k,d:k==='name'?1:-1};render();return}
   if(d.docdel){if(!confirm('ลบรายการนี้?'))return;act('doc.del',{id:d.docdel},t).catch(()=>{});return}
+  if(d.moodm){act('mood.set',{data:{level:Number(d.moodm)}},t).then(closeModal).catch(()=>{});return}
   if(d.mood){act('mood.set',{data:{level:Number(d.mood)}},t).catch(()=>{});return}
   if(d.help){helpSheet();return}
   if(d.helpsend){act('help.ask',{data:{text:(($('#hlp')||{}).value||'').trim()}},t).then(closeModal).catch(()=>{});return}
