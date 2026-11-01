@@ -17,7 +17,7 @@
 const CONFIG = {
   LIFF_ID: '2012013981-CUuRUfnG',   // ได้จากขั้นสร้าง LIFF เช่น 2012013981-AbCdEfGh
   API_URL: 'https://script.google.com/macros/s/AKfycbyLw2XbIIA-6JJpssSqhtwP8MvAYW5GvJ5zIyB0mXHNVly7tlHtiFOwfhS3c3ljEW3X/exec',   // Deploy เวอร์ชัน 1 · 14 ต.ค. 2569
-  APP_URLS: { teacher: 'teacher/', budget: '', student: 'student/', parent: '', academic: '', director: '' },  // ลิงก์แอปอื่น
+  APP_URLS: { teacher: 'teacher/', budget: '', student: 'student/', parent: '', academic: 'academic/', director: '' },  // ลิงก์แอปอื่น
   TEACHER_API: 'https://script.google.com/macros/s/AKfycbzF6I2oQGbhtf42zxyaWDvX3labWdWJW1zBMSkWiS2dLKeqyJ5eoDwQhaBm5mivPsfQGg/exec'  // Q-Teacher (ดึงงานมารวม)
 };
 /* ===== ลิงก์กลาง (แก้ที่นี่ที่เดียว) =====
@@ -26,7 +26,7 @@ const CONFIG = {
    ใส่ลิงก์จริงของแอปแล้วทุกปุ่ม/ทุกไอคอนในกริดทำงานทันที ไม่ต้องแก้หน้าจอ */
 const VA_WRITE=['cfgBrand','compose','ack','addEv','cancelAnn','edit','issue','unlink','approve','reject','cfgClock','cfgWin','logoutYes','thanks'];
 function vaBlocked(t){ const d=t.dataset; return (d.act&&VA_WRITE.indexOf(d.act)>=0)||d.sw!==undefined||d.lcfg!==undefined||d.ev!==undefined; }
-const DLY={clock:['teacher','#tab=home'],leave:['teacher','#tab=myreq&kind=leave'],read:['student',''],scan:['academic',''],emg:['teacher','#tab=count'],staff:['teacher','#tab=staff']};
+const DLY={clock:['teacher','#tab=home'],leave:['teacher','#tab=myreq&kind=leave'],read:['student',''],scan:['academic','#go=scan'],emg:['teacher','#tab=count'],staff:['teacher','#tab=staff']};
 /* แอปที่แต่ละบทบาทเห็นในกริด (ผอ./ผู้ดูแลระบบเห็นทั้งหมดเสมอ) */
 /* สำรองเท่านั้น: ใช้เมื่อหลังบ้านไม่ส่ง home.cfg · ค่าจริงอยู่ในแท็บ settings ของ QK-Hub (cfg_apps_*) แก้ที่ Admin Panel → ค่าตั้งหน้าแรก */
 const CFG_ROLES_FB=['ครู','ธุรการ','หัวหน้างานบุคคล','หัวหน้าวิชาการ','รองหัวหน้าวิชาการ','ภารโรง','รปภ.'];
@@ -1068,7 +1068,7 @@ function clockStatus(){
   if(T.in) return {t:'มา '+T.in+' น.'+(afterCutoff()?' · ยังไม่ลงเวลากลับ':''),c:afterCutoff()?'warn':'done'};
   return {t:'ยังไม่ได้ลงเวลา',c:'warn'};
 }
-function readInfo(){ const d=todayDow(); return d===1||d===2?['อ่านไทย','จ–อ อ่านภาษาไทย','thai']:d===3||d===4?['อิกเราะห์','พ–พฤ อิกเราะห์','iqra']:['เช็คชื่อ','ศุกร์ เช็คชื่ออย่างเดียว','check']; }
+function readInfo(){ const d=todayDow(); return d===1||d===2?['อ่านไทย','จ–อ อ่านภาษาไทย','thai']:d===3||d===4?['อิกเราะอฺ','พ–พฤ อิกเราะอฺ','iqra']:['เช็คชื่อ','ศุกร์ เช็คชื่ออย่างเดียว','check']; }
 /* ไอคอนแนวอิสลาม เส้นเดียวกันทั้งชุด สีตามธีม (currentColor) · ไม่มีตัวอักษรอาหรับ ใช้ลวดลายเรขาคณิต */
 const READ_SVG={
  check:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V12.5C4 8.5 8 6.5 12 2.5c4 4 8 6 8 10V21"/><path d="M2.5 21h19"/><path d="M8.5 14.5l2.6 2.6 4.6-5"/></svg>',
