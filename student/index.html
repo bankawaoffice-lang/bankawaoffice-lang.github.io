@@ -300,7 +300,7 @@ function today(){
   if(t.closed){b+='<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(t.holiday||'วันหยุด')+' · ไม่มีงานเช็คชื่อ</p></div>';return h+b+'</div>'}
   const late=clockNow()>=cfg().remind&&scopes.some(s=>!s.sent);
   if(late)b+='<div class="banner '+(clockNow()>cfg().cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>cfg().cutoff?'เลย '+esc(cfg().cutoff)+' น. แล้ว ยังมีงานเช็คชื่อที่ยังไม่ส่ง':'ใกล้ '+esc(cfg().cutoff)+' น. · เคลียร์คนที่ยังไม่ยืนยัน แล้วกดส่ง')+'</b><span>ต้องรู้ข้อมูลการมาเรียนก่อน '+esc(cfg().cutoff)+' น. (เตือนในแอปเท่านั้น)</span></div>';
-  if(!scopes.length)b+='<div class="card"><h2>วัน'+dow+'ไม่มีงานเช็คชื่อของท่าน</h2><p class="sub">'+(t.dow<=2?'จันทร์–อังคาร ครูประจำชั้นเช็คชื่อและฟังอ่านไทย':t.dow<=4?'พุธ–พฤหัส ครูประจำกลุ่มเช็คชื่อและฟังอิกเราะอฺ · ครูประจำชั้นเช็คชื่อเด็กที่ไม่อยู่กลุ่ม':'ศุกร์ ครูประจำชั้นเช็คชื่ออย่างเดียว')+'</p></div>';
+  if(!scopes.length)b+='<div class="card"><h2>วัน'+dow+'ไม่มีงานเช็คชื่อของท่าน</h2><p class="sub">'+(t.dow<=2?'จันทร์–อังคาร ครูประจำชั้นเช็คชื่อและฟังอ่านไทย (อนุบาล: ครูประจำกลุ่มเช็คชื่อและฟังอิกเราะอฺ · ครูประจำชั้นเช็คชื่อเด็กที่ไม่อยู่กลุ่ม)':t.dow<=4?'พุธ–พฤหัส ครูประจำกลุ่มเช็คชื่อและฟังอิกเราะอฺ · ครูประจำชั้นเช็คชื่อเด็กที่ไม่อยู่กลุ่ม':'ศุกร์ ครูประจำชั้นเช็คชื่ออย่างเดียว')+'</p></div>';
   scopes.forEach(sc=>{const c=sc.counts,n=sc.students.length,done=n-c[''],rd=sc.kind==='att'?(sc.onet?'<span class="chip c-pri">'+esc(sc.onetText)+'</span>':''):'<span class="chip c-pri">ประเมินอ่านแล้ว '+sc.students.filter(s=>s.read).length+'/'+n+'</span>';
     b+='<button class="task" data-act="open" data-v="'+esc(sc.key)+'"><div class="t"><b>'+esc(sc.title)+'</b>'+statusChip(sc)+'</div><div class="prog" aria-hidden="true"><i style="width:'+(n?Math.round(done/n*100):0)+'%"></i></div><div class="line"><span class="chip c-ok">มา '+c['มา']+'</span><span class="chip c-bad">ขาด '+c['ขาด']+'</span><span class="chip c-lv">ลา '+c['ลา']+'</span><span class="chip c-act">กิจกรรม '+c['กิจกรรม']+'</span><span class="chip '+(c['']?'c-warn':'')+'">ยังไม่ยืนยัน '+c['']+'</span>'+rd+'</div>'+(((sc.co||[])[0])?'<span class="hint">ครูร่วม: '+esc(sc.co[0].name)+'</span>':'')+'</button>'});
   b+=followBox(scopes);
@@ -447,7 +447,7 @@ function avatar(g){
   return '<svg class="av" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#DCE8FF"/>'+shirt+'<path d="M19 37.5l5 4.5 5-4.5" fill="none" stroke="#3E6FD0" stroke-width="2.2" stroke-linejoin="round"/>'+face+(g==='m'?'<path d="M15.2 19.8c-.5-7.2 4.1-11.8 8.8-11.8s9.3 4.6 8.8 11.8c-2.4-3.3-5.6-4.5-8.8-4.5s-6.4 1.2-8.8 4.5z" fill="#2A2118"/>':'')+eyes+'</svg>';
 }
 const LVK={'ดีเยี่ยม':'l-ok','ดี':'l-act','ผ่าน':'l-lv','ไม่ผ่าน':'l-bad'};
-const curMode=()=>S.rmode||(B&&B.today&&B.today.dow>=3&&B.today.dow<=4?'iqra':'thai');
+const curMode=()=>{if(S.rmode)return S.rmode;const rd=B?B.scopes.filter(s=>(s.kind==='thai'||s.kind==='iqra')&&!s.extra):[];if(rd.length)return rd[0].kind;return B&&B.today&&B.today.dow>=3&&B.today.dow<=4?'iqra':'thai'};   // เลือกโหมดตามงานอ่านจริงของครูวันนี้ (อนุบาล จ–อ = อิกเราะอฺ) ไม่มีงาน = ตามวัน
 /* ---------- คำคมหน้าอิกเราะอฺ (คลังคำคมที่ ผอ. แก้ได้ · หมุนตามวัน + แตะดูข้อถัดไป) ---------- */
 function quoteCard(){
   const q=(B&&B.quotes)||[];if(!q.length)return '';
@@ -529,7 +529,7 @@ function readingPage(){
   if(mode==='iqra')b+=quoteCard();
   if(t.closed)b+='<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(t.holiday||'วันหยุด')+'</p></div>';
   else if(t.dow===5)b+='<div class="card"><h2>วันศุกร์ไม่มีการอ่าน</h2><p class="sub">วันศุกร์เช็คชื่ออย่างเดียว ไปที่ "งานวันนี้"</p></div>';
-  else if(!scopes.length&&!onet.length)b+='<div class="card"><h2>ไม่มีงาน'+(mode==='iqra'?'อิกเราะอฺ':'อ่านไทย')+'ของท่าน</h2><p class="sub">'+(mode==='iqra'?'ครูประจำกลุ่มอิกเราะอฺเห็นกลุ่มของตนที่นี่':'ครูประจำชั้นเห็นห้องของตนที่นี่')+'</p></div>';
+  else if(!scopes.length&&!onet.length)b+='<div class="card"><h2>ไม่มีงาน'+(mode==='iqra'?'อิกเราะอฺ':'อ่านไทย')+'ของท่าน</h2><p class="sub">'+(mode==='iqra'?'ครูประจำกลุ่มอิกเราะอฺเห็นกลุ่มของตนที่นี่':'ครูประจำชั้นเห็นห้องของตนที่นี่')+(all.some(s=>s.kind===(mode==='iqra'?'thai':'iqra'))?' · ท่านมีงาน'+(mode==='iqra'?'อ่านไทย':'อิกเราะอฺ')+' กดสลับที่ปุ่มด้านบน':'')+'</p></div>';
   onet.forEach(sc=>{b+='<button class="task" data-act="open" data-v="'+esc(sc.key)+'"><div class="t"><b>'+esc(sc.title)+'</b><span class="chip c-pri">'+esc(sc.onetText)+'</span></div><span class="sub">วันนี้ไม่มีบันทึกอ่านไทย · แตะเพื่อเช็คมา/ไม่มา</span></button>'});
   scopes.forEach(sc=>{const n=sc.students.length,rd=sc.students.filter(s=>s.read).length;
     b+='<button class="task" data-act="open" data-v="'+esc(sc.key)+'"><div class="t"><b>'+esc(sc.title.replace(/^เช็คชื่อ \+ /,''))+'</b><span class="chip c-pri">ประเมินอ่านแล้ว '+rd+'/'+n+'</span></div><div class="prog" aria-hidden="true"><i style="width:'+(n?Math.round(rd/n*100):0)+'%"></i></div></button>'});
