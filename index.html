@@ -1066,6 +1066,7 @@ function clockStatus(){
   if(offDay()) return {t:'วันนี้วันหยุด',c:''};
   const T=S.tToday;
   if(!T) return {t:S.extState==='err'?'ตรวจสถานะไม่ได้':S.extState==='ok'?'แตะเพื่อลงเวลา':'กำลังตรวจสถานะ…',c:''};
+  if(T.outLabel) return {t:'ออกแล้ว · '+T.outLabel,c:'done'};
   if(T.in&&T.out) return {t:'ออกแล้ว '+T.out+' น.',c:'done'};
   if(T.in) return {t:'มา '+T.in+' น.'+(afterCutoff()?' · ยังไม่ลงเวลากลับ':''),c:afterCutoff()?'warn':'done'};
   return {t:'ยังไม่ได้ลงเวลา',c:'warn'};
