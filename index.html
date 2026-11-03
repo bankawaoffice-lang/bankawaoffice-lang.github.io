@@ -254,6 +254,13 @@ button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:in
 .dly .dbtn{min-height:150px;padding:16px}.dly .dbtn b{font-size:21px}.dly .dbtn .k{font-size:14px}.dly .dbtn .s{font-size:14px}.dly .dbtn .ic{width:54px;height:54px}
 .apps3{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:10px 8px}
 .appt{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:none;padding:6px 2px;min-height:88px;color:var(--ink);font:inherit;min-width:0}
+.appt .aiw{position:relative;display:block}
+.lt{position:absolute;top:-6px;right:-8px;min-width:22px;height:22px;padding:0 5px;box-sizing:border-box;border-radius:999px;border:2px solid var(--card);color:#fff;font:700 12px/18px var(--f);text-align:center}
+.lt-r{background:#C4262F}.lt-g{background:#0F7A4B}
+.hdr2 .hsum{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:44px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;border-radius:14px;padding:8px 12px;font:600 13.5px/1.35 var(--f);text-align:left}
+.hdr2 .hs-t{flex:1;min-width:0;overflow-wrap:anywhere}.hdr2 .hs-c{flex:none;display:flex;transition:transform .15s}.hdr2 .hs-c.up{transform:rotate(-90deg)}.hdr2 .hs-c:not(.up){transform:rotate(90deg)}
+.hdr2 .hsum-det{grid-column:1/-1;background:rgba(0,0,0,.22);color:#fff;border-radius:14px;padding:8px 12px;font-size:13.5px;line-height:1.45;max-height:max(0px,calc(50vh - 200px));overflow:auto}
+.hsum-det h4{margin:6px 0 4px;font-size:13px;color:#fff;opacity:.95}.hsum-det ul{margin:0;padding-left:18px}.hsum-det li{margin:2px 0}
 .appt .aicw{width:46px;height:46px;border-radius:14px;box-shadow:0 5px 10px var(--sh)}
 .appt b{font:600 12.5px/1.25 var(--fh);text-align:center;overflow-wrap:anywhere}
 @media (min-width:1000px){.apps3{grid-template-columns:repeat(4,minmax(0,120px))}}
@@ -1105,7 +1112,7 @@ function inboxGroups(){
   const cal=(S.cal||S.home.calendar||[]).filter(c=>c.date===td&&c.kind!=='holiday');
   return {work,ann,cal,appr};
 }
-const IBX=[['work','งาน','list'],['cal','นัดวันนี้','cal'],['ann','ประกาศ','mega'],['appr','รออนุมัติ','checkc']];
+const IBX=[['work','กล่องงาน','list'],['cal','นัดวันนี้','cal'],['ann','ข่าวสาร','mega'],['appr','รออนุมัติ','checkc']];
 /* ตัวนับเดียวของทั้งแอป: กล่อง 4 ช่อง · ป้ายเมนูล่าง · แท็บในกล่องข้อความ ใช้ค่านี้ที่เดียว (ห้ามนับซ้ำที่อื่น) */
 function inboxCounts(){ const G=inboxGroups(), c={}; Object.keys(G).forEach(k=>{ c[k]=G[k].length; }); c.total=c.work+c.ann+c.appr; return c; }
 /* กระดิ่งบนหัวหน้าแรก: นับจากตัวนับเดียวกับ 4 ปุ่ม (งาน + ประกาศ + รออนุมัติ ไม่รวมนัดวันนี้) แตะแล้วเปิดกล่องข้อความ */
@@ -1169,10 +1176,20 @@ function dirRow(){
   else if(S.boardState==='err') num='โหลดไม่สำเร็จ';
   return `<button class="dirrow" data-dly="staff"><span class="e" aria-hidden="true">👥</span><span class="tx">บุคลากรวันนี้<small>กดดูรายคนใน Q-Teacher</small></span><span class="num">${num}</span></button>`;
 }
+/** ไฟจราจรมุมไอคอน: มีข้อมูลจริงใน home เฉพาะ Q-Teacher (งานที่ดึงมาจาก Q-Teacher) · 🔴 พร้อมตัวเลข = งานด่วน/เกินกำหนด (ใช้เกณฑ์สีแดงเดียวกับหน้ากล่องงาน) · 🟢 = ไม่มีงานค้างเลย · ยังโหลดไม่ครบ/โหลดไม่สำเร็จ/มีงานแต่ไม่ด่วน = ไม่โชว์ไฟ
+ *  แอปอื่น (Academic Student Budget Portfolio Parent Director) ยังไม่มีข้อมูลส่งมาที่ home จึงไม่โชว์ไฟ · 🟡 ไม่มีข้อมูลรองรับ จึงไม่ทำ */
+function appLight(k){
+  if(k!=='teacher'||!S.home||!appReady('teacher')||S.extState!=='ok') return '';
+  const ts=S.home.tasks.filter(t=>t.app==='teacher'&&t.type!=='link'), lv=ts.map(taskLevel), red=lv.filter(l=>l==='r').length, open=lv.filter(l=>['r','y','b'].includes(l)).length;
+  if(red) return '<span class="lt lt-r" role="img" aria-label="มีงานด่วน '+red+' รายการ">'+red+'</span>';
+  if(!open) return '<span class="lt lt-g" role="img" aria-label="ไม่มีงานค้าง">✓</span>';
+  return '';
+}
 function appGrid(){
   if(!S.me) return '';
-  const vs=visibleApps(); if(!vs.length) return '';   // ไอคอนทุกตัวโชว์ตลอด (รวม Q-Student แม้ปุ่ม "เช็คอ่านเช้า" แสดงอยู่)
-  return `<section aria-label="แอปของโรงเรียน"><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps3">${vs.map(a=>`<button class="appt" data-app="${a.key}" aria-label="${esc(TH_APP[a.key]||a.name)} (${a.name})"><span class="aicw" style="--sh:${a.sh}">${appIcon(a.key,46)}</span><b>${TH_APP[a.key]||a.name}</b></button>`).join('')}</div></section>`;
+  let vs=visibleApps(); if(!vs.length) return '';   // ไอคอนทุกตัวโชว์ตลอด (รวม Q-Student แม้ปุ่ม "เช็คอ่านเช้า" แสดงอยู่)
+  { const m=bkkMin(); if(m>=450&&m<540) vs=vs.filter(a=>a.key==='student').concat(vs.filter(a=>a.key!=='student')); }   // 07:30-09:00 ดูแลนักเรียนขึ้นก่อน ช่วงอื่นเรียงตามเดิม
+  return `<section aria-label="แอปของโรงเรียน"><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps3">${vs.map(a=>`<button class="appt" data-app="${a.key}" aria-label="${esc(TH_APP[a.key]||a.name)} (${a.name})"><span class="aiw"><span class="aicw" style="--sh:${a.sh}">${appIcon(a.key,46)}</span>${appLight(a.key)}</span><b>${TH_APP[a.key]||a.name}</b></button>`).join('')}</div></section>`;
 }
 /** แถบ "ล่าสุด" 1 รายการ (ใช้ข้อมูลที่ home โหลดอยู่แล้ว): ประกาศปักหมุดที่ยังไม่รับทราบ → กิจกรรมปฏิทินวันนี้/พรุ่งนี้ → ไม่มีก็ซ่อนทั้งแถบ */
 function recentBar(){
@@ -1185,10 +1202,37 @@ function recentBar(){
   if(!E) return '';
   return `<section class="recent" aria-label="ล่าสุด"><span class="rk">ล่าสุด</span><button class="rbt" data-go="cal"><span class="ri" aria-hidden="true">📅</span><span class="tx"><b>${esc(E.title)}</b><small>${E.date===td?'วันนี้':'พรุ่งนี้'}${E.kind==='due'?' · กำหนดส่ง':''} · แตะเพื่อดูตารางงาน</small></span><span class="chev">${ic('chev',16)}</span></button></section>`;
 }
+/** โซน 1 สรุปรวบยอดในหัวม่วง · ใช้เฉพาะข้อมูลจริงที่หน้า home โหลดอยู่ (board ของ Q-Teacher สำหรับ ผอ. · งานจาก myTasks) · ส่วนไหนยังไม่มีข้อมูลไม่แสดง
+ *  ผอ.: บุคลากรมา x/y | ลา n | ด่วน n รายการ · คนอื่น: งานค้าง n รายการ (ด่วน n) หรือ ไม่มีงานค้าง · ไม่มีข้อมูลคาบสอน/ห้องค้างเช็คชื่อ จึงไม่ทำส่วนนั้น */
+function sumData(){
+  if(!S.home||!S.me) return null;
+  const done=S.extState==='ok'||!appReady('teacher');   // งานจาก Q-Teacher มาครบแล้ว (หรือยังไม่ได้ใช้ Q-Teacher)
+  const ts=myTasks(), R=ts.filter(t=>taskLevel(t)==='r'), O=ts.filter(t=>['r','y','b'].includes(taskLevel(t)));
+  const parts=[], det=[], tl=t=>esc(TH_ISO(t.title))+(t.sub?' · '+esc(TH_ISO(t.sub)):'');
+  if(isDir()){
+    const B=S.board;
+    if(B&&B.count&&!offDay()){
+      parts.push('🟢 บุคลากรมา '+B.count.came+'/'+B.count.total, '⚠️ ลา '+B.count.leave);
+      const L=(B.people||[]).filter(p=>['leave','official','leavePending'].includes(p.state));
+      if(L.length) det.push(['คนลา/ไปราชการวันนี้',L.map(p=>esc(p.call||p.name)+(p.leave?' · '+esc(p.leave.type)+(p.leave.status!=='อนุมัติ'?' (รอพิจารณา)':''):''))]);
+    }
+    if(done){ parts.push('🔴 ด่วน '+R.length+' รายการ'); if(R.length) det.push(['รายการด่วน',R.slice(0,6).map(tl)]); }
+  }else if(done){
+    if(O.length){ parts.push('งานค้าง '+O.length+' รายการ'); if(R.length) parts.push('🔴 ด่วน '+R.length);
+      det.push(['งานค้างของฉัน',O.slice(0,6).map(t=>(taskLevel(t)==='r'?'ด่วน · ':taskLevel(t)==='y'?'ใกล้กำหนด · ':'')+tl(t))]); }
+    else parts.push('🟢 ไม่มีงานค้าง');
+  }
+  return parts.length?{text:parts.join(' | '),det:det}:null;
+}
+function sumBar(){
+  const d=sumData(); if(!d) return '';
+  const can=d.det.length>0, open=!!S.sumOpen&&can;
+  return `<button class="hsum" data-act="sumToggle" aria-expanded="${open}" aria-label="สรุปวันนี้ ${esc(d.text.replace(/[🟢⚠️🔴]/gu,''))}"${can?'':' tabindex="-1"'}><span class="hs-t">${esc(d.text)}</span>${can?`<span class="hs-c${open?' up':''}" aria-hidden="true">${ic('chev',16)}</span>`:''}</button>${open?`<div class="hsum-det">${d.det.map(([h,l])=>`<h4>${h}</h4><ul>${l.map(x=>'<li>'+x+'</li>').join('')}</ul>`).join('')}</div>`:''}`;
+}
 function pageHome(){
   const m=S.me, h=S.home;
   const bell=h?bellBtn():'';
-  const gn=greetName(), top=`<header class="hdr hdr2"><h1 class="g1">สวัสดี${gn?' คุณ'+esc(gn):''}</h1>${bell}${m?`<button class="avbtn" data-go="menu" aria-label="ตั้งค่า">${avatar()}</button>`:''}<p class="g2">${esc(welcomeText())}</p></header>`;
+  const gn=greetName(), top=`<header class="hdr hdr2"><h1 class="g1">สวัสดี${gn?' คุณ'+esc(gn):''}</h1>${bell}${m?`<button class="avbtn" data-go="menu" aria-label="ตั้งค่า">${avatar()}</button>`:''}<p class="g2">${esc(welcomeText())}</p>${sumBar()}</header>`;
   const cs=clockStatus(), rd=readInfo();
   const out=afterCutoff();
   const daily=`<section aria-label="ทำงานประจำวัน"><div class="dly">
@@ -1565,6 +1609,7 @@ document.addEventListener('click',async ev=>{
   if(act==='cfgWin'){ const v=(document.getElementById('cfgWin')||{}).value||'', mx=(document.getElementById('cfgWinMax')||{}).value||''; try{ await api('admin.setConfig',{key:'cfg_win_streaks',value:v}); const r=await api('admin.setConfig',{key:'cfg_win_max',value:mx}); applyHome(r.home); toast('บันทึกเกณฑ์การ์ดคำชมแล้ว'); }catch(e){ toast(e.message); } return; }
   if(act==='cfgClock'){ const v=(document.getElementById('cfgClock')||{}).value||''; saveCfg('cfg_clock_cutoff',v,'บันทึกเวลาตัดแล้ว · '+v+' น.'); return; }
   if(act==='extRetry'){ loadExt(true); return; }
+  if(act==='sumToggle'){ S.sumOpen=!S.sumOpen; render(); return; }
   if(act==='refresh'){ await refresh(); toast('โหลดข้อมูลใหม่แล้ว'); return; }
   if(act==='logout'){ logoutSheet(); return; }
   if(act==='logoutYes'){ cacheClear(); S.ext=null; liff.logout(); location.reload(); return; }
