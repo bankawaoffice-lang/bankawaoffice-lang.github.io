@@ -20,7 +20,7 @@ const CONFIG = {
   HUB_URL: '../',                   // กลับหน้ากลาง Q-Kawa
   CODE_DIGITS: 8,                   // จำนวนหลักของรหัส (ต้องตรงกับ CONFIG.CODE_DIGITS ของหลังบ้าน)
   LINK_URL: 'link.html',               // หน้าผูกบัญชี (เพิ่มลูก)
-  WEB_VERSION: 'หน้าทดสอบ v0.4'
+  WEB_VERSION: 'หน้าทดสอบ v0.4.1'
 };
 </script>
 <script>
@@ -89,6 +89,9 @@ label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
 .wk .c{border-radius:12px;min-height:60px;padding:6px 2px;display:grid;align-content:center;justify-items:center;gap:2px;font-size:11.5px;font-weight:600;line-height:1.2;word-break:break-word}
 .wk .c b{font-size:17px;line-height:1}.wk .c.now{outline:3px solid var(--pri);outline-offset:1px}
 .wk .c.fut{background:transparent;border:1.5px dashed var(--line);color:var(--muted)}.wk .c.hol{background:var(--warn-bg);color:var(--warn)}
+.cum{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.cum .bar{height:10px;border-radius:999px;background:var(--soft);overflow:hidden;margin:8px 0 6px}.cum .bar i{display:block;height:100%;background:var(--pri);border-radius:999px}
+.cum .big{font-family:var(--fh);font-size:20px;font-weight:600}
 .kid h2{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 [hidden]{display:none!important}
 </style>
@@ -149,8 +152,19 @@ function kidCard(k,today){
   return '<div class="card kid"><h2>'+esc(k.nick||k.name)+(k.room?'<span class="chip c-lv">'+esc(k.room)+'</span>':'')+'</h2>'
    +'<p class="sub" style="margin:2px 0 0">'+esc(k.name)+(k.teacher?' · ครูประจำชั้น: '+esc(k.teacher.replace(/^ครู/,'')):'')+'</p>'
    +'<div class="today '+s.cls+'" style="margin-top:10px" role="status"><span class="ic" aria-hidden="true">'+s.ic+'</span><span>วันนี้: '+esc(s.today)+'</span></div>'
-   +weekRow(k,today)+'</div>';
+   +weekRow(k,today)+cumBlock(k)+'</div>';
 }
+function cumBlock(k){
+  const c=k.cum||{};
+  const note='<p class="sub" style="margin:6px 0 0">ไม่นับวันที่ครูยังไม่ได้เช็กชื่อ · วันลาไม่นับเป็นวันมา</p>';
+  if(c.status!=='ok')return '<div class="cum"><b>สะสมเทอมนี้</b><p class="sub" style="margin:4px 0 0">ยังไม่มีข้อมูลสะสม</p>'+note+'</div>';
+  const pct=Math.max(0,Math.min(100,Number(c.pct)||0));
+  return '<div class="cum" aria-label="สะสมเทอมนี้"><div class="rowf between"><b>สะสมเทอมนี้</b><span class="big num">'+pct+'%</span></div>'
+   +'<div class="bar" role="img" aria-label="มา '+esc(c.present)+' จาก '+esc(c.days)+' วัน"><i style="width:'+pct+'%"></i></div>'
+   +'<div class="num">มา '+esc(c.present)+' จาก '+esc(c.days)+' วัน</div>'
+   +'<p class="sub" style="margin:4px 0 0">ข้อมูลถึงวันที่ '+esc(thShort(c.as_of))+'</p>'+note+'</div>';
+}
+function thShort(ymd){const p=String(ymd||'').split('-').map(Number);return p.length===3&&p[0]?p[2]+' '+thMon[p[1]-1]+' '+String((p[0]+543)%100).padStart(2,'0'):''}
 function render(){
   const H=S.home;if(!H)return;
   const kids=H.kids||[];
@@ -192,9 +206,9 @@ function mockApi(action,d){
     const dow=n.getDay()||7,mon=new Date(n.getFullYear(),n.getMonth(),n.getDate()-(dow-1)),today=ymd(n);
     const days=[0,1,2,3,4].map(i=>{const x=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i);return {day:['จ','อ','พ','พฤ','ศ'][i],date:ymd(x)}});
     const pat={A:['มา','ลา','มา','มา','ขาด'],B:['มา','กิจกรรม','มา','','มา']};
-    const mk=(id,nick,name,room,teacher,p)=>{const week=days.map((x,i)=>({day:x.day,date:x.date,status:dow>5||x.date>today?'ยังไม่ถึง':(p[i]||'ยังไม่เช็กชื่อ')}));if(dow>5)week.forEach((w,i)=>{w.status=p[i]||'ยังไม่เช็กชื่อ'});
-      const t=dow>5?'วันหยุด':(week.find(w=>w.date===today)||{}).status;return {id:id,nick:nick,name:name,room:room,teacher:teacher,today:{date:today,status:t},week:week}};
-    res({home:{today:today,week_from:days[0].date,week_to:days[4].date,kids:[mk('T1','น้องตัวอย่างหนึ่ง','ด.ญ.ตัวอย่างหนึ่ง สมมติ','ป.4','ครูสมมติหนึ่ง',pat.A),mk('T2','น้องตัวอย่างสอง','ด.ช.ตัวอย่างสอง สมมติ','อ.2','',pat.B)]}});
+    const mk=(id,nick,name,room,teacher,p,cum)=>{const week=days.map((x,i)=>({day:x.day,date:x.date,status:dow>5||x.date>today?'ยังไม่ถึง':(p[i]||'ยังไม่เช็กชื่อ')}));if(dow>5)week.forEach((w,i)=>{w.status=p[i]||'ยังไม่เช็กชื่อ'});
+      const t=dow>5?'วันหยุด':(week.find(w=>w.date===today)||{}).status;return {id:id,nick:nick,name:name,room:room,teacher:teacher,today:{date:today,status:t},week:week,cum:cum}};
+    res({home:{today:today,week_from:days[0].date,week_to:days[4].date,kids:[mk('T1','น้องตัวอย่างหนึ่ง','ด.ญ.ตัวอย่างหนึ่ง สมมติ','ป.4','ครูสมมติหนึ่ง',pat.A,{status:'ok',present:36,days:44,pct:82,as_of:today}),mk('T2','น้องตัวอย่างสอง','ด.ช.ตัวอย่างสอง สมมติ','อ.2','',pat.B,{status:'ยังไม่มีข้อมูลสะสม'})]}});
   },120));
 }
 
