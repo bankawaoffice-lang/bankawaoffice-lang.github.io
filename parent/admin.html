@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Q-Parent · ออกรหัสผูกบัญชี บ้านกาวะ</title>
+<meta name="description" content="หน้า ผอ. ออกรหัสผูกบัญชีผู้ปกครอง Q-Parent โรงเรียนบ้านกาวะ · ผู้พัฒนา นายฮาฟีซี อูมา">
+<meta name="theme-color" content="#1E2341">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://script.google.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Kanit:wght@500;600&display=swap">
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+/* ============ ตั้งค่า (ที่เดียว) ============ */
+const CONFIG = {
+  LIFF_ID: '2012013981-CUuRUfnG',   // LIFF เดียวกับหน้ากลาง Q-Teacher / Q-Student / Q-Academic
+  API_URL: 'https://script.google.com/macros/s/AKfycbx3hRVmBE0qttsEkeclss7wtvbJNfPb7jKBYpkxNXMDL1Vrm3iQlBhgKZlLGKBwWbsT/exec',   // URL หลังบ้าน Q-Parent ที่ Deploy แล้ว
+  HUB_URL: '../',                   // กลับหน้ากลาง Q-Kawa
+  WEB_VERSION: 'หน้าเว็บ v0.2 · 3 พ.ย. 2569'
+};
+</script>
+<script>
+/* ตัวเฝ้าหน้า: ค้างที่หน้า "กำลังเปิด…" เกิน 15 วินาที หรือมี error ก่อนหน้าแรกวาดเสร็จ → ขึ้นข้อความสาเหตุ + ปุ่มลองใหม่ */
+(function(){
+  var W=window;W.__qpStage='script';
+  var WHY={script:'ไฟล์หน้าเว็บโหลดไม่ครบ หรือสคริปต์ยังไม่เริ่มทำงาน',liff:'เชื่อมต่อ LINE (LIFF) ไม่สำเร็จหรือช้ามาก',login:'กำลังพาไปล็อกอิน LINE ไม่สำเร็จ',api:'รอหลังบ้าน (Google Apps Script) ตอบ ใช้เวลานานผิดปกติ อาจเป็นเน็ตช้า',render:'วาดหน้าจอไม่สำเร็จ'};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function splash(){var b=document.getElementById('boot');return !!(b&&!b.hidden&&b.querySelector('.spin'))}
+  W.qpFail=function(stage,err,wait){
+    var host=document.getElementById('boot');if(!host)return;host.hidden=false;
+    host.innerHTML='<div class="card" style="max-width:420px;margin:18vh auto 0;text-align:center"><div style="font-size:2rem">⚠️</div><h2>'+(wait?'หน้านี้เปิดช้ากว่าปกติ':'หน้านี้เปิดไม่สำเร็จ')+'</h2><p class="sub">'+esc(WHY[stage||W.__qpStage]||WHY.script)+(err&&err.message?'<br>'+esc(err.message):'')+'</p><button class="bn pri wide" onclick="location.reload()">ลองใหม่</button></div>';
+  };
+  W.addEventListener('error',function(e){if(splash())W.qpFail(W.__qpStage,e&&e.error?e.error:{message:e.message},false)});
+  W.addEventListener('unhandledrejection',function(e){if(splash())W.qpFail(W.__qpStage,e&&e.reason,false)});
+  setTimeout(function(){if(splash())W.qpFail(W.__qpStage,null,true)},15000);
+})();
+</script>
+<style>
+:root{--bg:#F3F4FB;--card:#fff;--soft:#F2F3F9;--line:#E7E9F3;--ink:#1B1F3B;--muted:#5E6385;--pri:#5B5BF0;--pri-ink:#4343D4;--pri-soft:#ECEBFE;--navy:#1E2341;--navy2:#2C3263;
+ --ok:#0A6F45;--ok-bg:#E2F6EC;--bad:#B3262E;--bad-bg:#FDE8E9;--warn:#8A5300;--warn-bg:#FFF1D9;--lv:#6B2FA8;--lv-bg:#F1E6FB;--act:#1D5FA8;--act-bg:#E3EEFA;
+ --shadow:0 8px 20px -8px rgba(30,35,65,.30),0 2px 5px rgba(30,35,65,.07);--f:"IBM Plex Sans Thai","Leelawadee UI",Tahoma,system-ui,sans-serif;--fh:"Kanit","IBM Plex Sans Thai",sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1022;--card:#171A31;--soft:#1F2340;--line:#2A2E50;--ink:#EDEEFB;--muted:#B4B8D8;--pri:#8C8CFF;--pri-ink:#B8B8FF;--pri-soft:#262A5C;--navy:#0A0C1C;--navy2:#1B1F45;
+ --ok:#6BD6A3;--ok-bg:#15352A;--bad:#FF9AA0;--bad-bg:#40191D;--warn:#F5C26B;--warn-bg:#3A2D12;--lv:#D2A8FF;--lv-bg:#2E1F45;--act:#8CC4FF;--act-bg:#16304F;--shadow:0 8px 28px rgba(0,0,0,.35);color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f);-webkit-text-size-adjust:100%;padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+h1,h2,h3{font-family:var(--fh);margin:0;line-height:1.25}h1{font-size:22px;font-weight:600}h2{font-size:17px;font-weight:600}h3{font-size:15px;font-weight:600}
+.num{font-variant-numeric:tabular-nums}.sub{color:var(--muted);font-size:13px}.wrap{padding:0 16px;max-width:760px;margin:0 auto}
+.hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;border-radius:0 0 28px 28px;box-shadow:0 12px 28px rgba(30,35,65,.22);padding:18px 16px 20px;margin-bottom:14px}
+.hdr .row{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}.hdr h1{color:#fff;flex:1;min-width:0}.hdr p{margin:2px 0 0;color:rgba(255,255,255,.82);font-size:13px}
+.hbtn{flex:none;min-width:44px;min-height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.16);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font-weight:500;text-decoration:none;white-space:nowrap}
+.pv{background:#F59E0B;color:#1B1F3B;padding:8px 14px;font-size:13.5px;font-weight:600;text-align:center}
+.offbar{background:var(--warn-bg);color:var(--warn);padding:8px 14px;font-size:13.5px;font-weight:500;text-align:center}
+.card{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px}
+.stack{display:grid;gap:12px}.rowf{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}
+.bn{min-height:44px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:0 16px;font-weight:500}.bn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bn.pri{color:#0E1022}}
+.bn.good{background:var(--ok);border-color:var(--ok);color:#fff}.bn.bad{background:var(--bad-bg);border-color:var(--bad-bg);color:var(--bad)}.bn.wide{width:100%}.bn.big{min-height:60px;font-size:18px;font-family:var(--fh);border-radius:18px}
+.bn[disabled],.bn.dis{opacity:.45;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.c-ok{background:var(--ok-bg);color:var(--ok)}.c-warn{background:var(--warn-bg);color:var(--warn)}.c-bad{background:var(--bad-bg);color:var(--bad)}.c-lv{background:var(--lv-bg);color:var(--lv)}.c-act{background:var(--act-bg);color:var(--act)}.c-mut{background:var(--soft);color:var(--muted)}
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:6px;z-index:5}
+.nav button{flex:1;max-width:200px;min-height:50px;border:0;border-radius:14px;background:transparent;color:var(--muted);font-weight:500;font-size:13px;display:grid;gap:2px;justify-items:center;align-content:center}
+.nav button.on{background:var(--navy);color:#fff;box-shadow:inset 0 3px 0 #38BDF8}.nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.kpi{border:0;border-radius:16px;padding:8px 4px;text-align:center;min-height:62px;background:var(--card);box-shadow:var(--shadow)}.kpi b{display:block;font:600 21px var(--fh)}.kpi span{font-size:12px;color:var(--muted)}.kpi.on{outline:3px solid var(--pri)}
+.seg{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}.seg button{flex:none;min-height:44px}
+input[type=text],input[type=search],select{width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card)}
+label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+.pick{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;width:100%;text-align:left;border:2px solid transparent;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:10px 14px;margin-bottom:8px;min-height:56px}
+.pick.on{border-color:var(--pri)}
+.rel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.rel button{min-height:56px;border:2px solid var(--line);border-radius:14px;background:var(--card);font-weight:600}.rel button[aria-pressed="true"]{border-color:var(--pri);background:var(--pri-soft);color:var(--pri-ink)}
+.warnbox{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:10px 14px;font-weight:600;font-size:14px}
+.sheetbg{position:fixed;inset:0;background:rgba(10,12,28,.55);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto}
+.codebox{font:600 40px/1.15 var(--fh);letter-spacing:.12em;text-align:center;background:var(--pri-soft);color:var(--pri-ink);border-radius:18px;padding:18px 8px;margin:10px 0;user-select:all;-webkit-user-select:all;word-break:break-all}
+.msgprev{white-space:pre-wrap;background:var(--soft);border-radius:12px;padding:10px 12px;font-size:14px;margin:8px 0}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:14px;z-index:30;max-width:90vw;box-shadow:var(--shadow)}
+.spin{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--pri);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto}@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+.empty{text-align:center;color:var(--muted);padding:18px 8px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div id="boot"><div class="card" style="max-width:420px;margin:22vh auto 0;text-align:center"><div class="spin"></div><p class="sub" style="margin-top:12px">กำลังเปิดหน้าออกรหัส…</p></div></div>
+<div id="app" hidden></div>
+<script>
+(function(){
+'use strict';
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nonce=()=>{try{return crypto.randomUUID().replace(/-/g,'').slice(0,24)}catch(e){return Date.now().toString(36)+Math.random().toString(36).slice(2,12)}};
+const thMon=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const thDT=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?/.exec(String(s||''));if(!m)return '';return Number(m[3])+' '+thMon[Number(m[2])-1]+' '+(Number(m[1])+543)+(m[4]?' เวลา '+m[4]+':'+m[5]+' น.':'')};
+const thD=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||''));return m?Number(m[3])+' '+thMon[Number(m[2])-1]+' '+String((Number(m[1])+543)%100).padStart(2,'0'):''};
+/* โหมดตัวอย่างบนเครื่อง: เปิดได้เฉพาะเมื่อเปิดจากไฟล์ในเครื่อง (file://) พร้อม ?preview=1 · เมื่อขึ้นเว็บจริงเงื่อนไขนี้ไม่เป็นจริงเด็ดขาด · ข้อมูลทั้งหมดสมมติ ไม่มีข้อมูลเด็กจริง */
+const PREVIEW=location.protocol==='file:'&&/[?&]preview=1(&|$)/.test(location.search);
+
+const S={tab:'issue',B:null,q:'',room:'',res:null,sel:null,rel:'',list:null,filter:'รอใช้',lq:'',busy:false,issued:null,confirm:null,online:navigator.onLine!==false};
+let TMR=null;
+
+/* ---------- เรียกหลังบ้าน ---------- */
+async function api(action,data,extra,ms){
+  if(PREVIEW)return mockApi(action,data||{});
+  if(!CONFIG.API_URL){const e=new Error('ยังไม่ได้ตั้งค่า API_URL');e.code='NO_API';throw e}
+  let r,j;
+  try{
+    r=await Promise.race([fetch(CONFIG.API_URL,{method:'POST',body:JSON.stringify(Object.assign({action:action,idToken:liff.getIDToken(),data:data||{}},extra||{}))}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms||25000))]);
+    j=await r.json();
+  }catch(er){const e=new Error('เชื่อมต่อไม่ได้ (ไม่มีสัญญาณหรือช้ามาก)');e.code='NET';throw e}
+  if(!j.ok){const e=new Error(j.error||'เกิดข้อผิดพลาด');e.code=j.code||'ERROR';
+    if(e.code==='TOKEN_EXPIRED'||e.code==='BAD_TOKEN')relogin();throw e}
+  return j;
+}
+function relogin(){let n=0;try{n=Number(sessionStorage.getItem('qp_relogin')||0);sessionStorage.setItem('qp_relogin',String(n+1))}catch(e){}if(n>1)return;if(liff.isInClient())location.reload();else{try{liff.logout()}catch(e){}liff.login({redirectUri:location.href})}}
+
+/* ---------- ส่วนช่วย ---------- */
+function toast(t){const o=document.createElement('div');o.className='toast';o.textContent=t;document.body.appendChild(o);setTimeout(()=>o.remove(),3200)}
+const ST_CHIP={'รอใช้':'c-act','ใช้แล้ว':'c-ok','หมดอายุ':'c-warn','ยกเลิก':'c-mut'};
+const chip=(s)=>'<span class="chip '+(ST_CHIP[s]||'c-mut')+'">'+esc(s)+'</span>';
+function icon(n){const P={issue:'<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><path d="M12 15v2"/>',list:'<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>'};return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(P[n]||'')+'</svg>'}
+function inviteText(it){
+  return 'รหัสผูกบัญชี Q-Parent ของ'+it.student.nick+'\n'
+   +'รหัส: '+it.code+'\n'
+   +'ใช้ได้ถึง '+thDT(it.expires_at)+' (ใช้ได้ครั้งเดียว)\n'
+   +'วิธีใช้: เปิดเมนู Q-Parent ใน LINE โรงเรียนบ้านกาวะ แล้วกรอกรหัสนี้';
+}
+async function copyText(txt){
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(txt);return true}}catch(e){}
+  try{const ta=document.createElement('textarea');ta.value=txt;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,txt.length);const ok=document.execCommand('copy');ta.remove();return ok}catch(e){return false}
+}
+
+/* ---------- วาดหน้า ---------- */
+function header(){
+  return '<div class="hdr"><div class="row"><div style="flex:1;min-width:0"><h1>ออกรหัสผูกบัญชีผู้ปกครอง</h1><p>Q-Parent · สำหรับผู้อำนวยการ</p></div><a class="hbtn" href="'+esc(CONFIG.HUB_URL)+'">หน้ากลาง</a></div></div>';
+}
+function render(){
+  if(!S.B)return;
+  const tabs=[['issue','ออกรหัส'],['list','รายการ']];
+  $('#app').innerHTML=(PREVIEW?'<div class="pv">โหมดตัวอย่างบนเครื่อง · ข้อมูลสมมติ ไม่ได้เชื่อมระบบจริง</div>':'')
+    +(S.online?'':'<div class="offbar">ไม่มีสัญญาณอินเทอร์เน็ต</div>')+header()
+    +'<div class="wrap">'+(S.tab==='issue'?vIssue():vList())+'<p class="sub" style="text-align:center;margin:18px 0 6px">'+esc(CONFIG.WEB_VERSION)+'</p></div>'
+    +'<nav class="nav" aria-label="เมนู">'+tabs.map(t=>'<button data-a="tab" data-t="'+t[0]+'" class="'+(S.tab===t[0]?'on':'')+'">'+icon(t[0])+'<span>'+t[1]+'</span></button>').join('')+'</nav>'
+    +(S.issued?sheetIssued():S.confirm?sheetConfirm():'');
+}
+function stuLine(s){return '<b>'+esc(s.nick||s.name)+'</b><span class="sub">'+esc(s.name&&s.name!==s.nick?s.name+' · ':'')+esc(s.room||'')+'</span>'}
+
+/* ----- แท็บออกรหัส ----- */
+function vIssue(){
+  const B=S.B,rooms=B.rooms||[];
+  let h='<div class="card"><h2>1. ค้นหานักเรียน</h2><label for="q">ชื่อหรือชื่อเล่น</label><input type="search" id="q" value="'+esc(S.q)+'" placeholder="พิมพ์ชื่อหรือชื่อเล่น แล้วกดค้นหา" autocomplete="off" enterkeyhint="search">'
+   +'<label for="room">หรือเลือกห้อง</label><select id="room"><option value="">ทุกห้อง</option>'+rooms.map(r=>'<option value="'+esc(r.room_id)+'" '+(S.room===r.room_id?'selected':'')+'>'+esc(r.grade)+'</option>').join('')+'</select>'
+   +'<button class="bn pri wide" style="margin-top:10px" data-a="search" '+(S.busy?'disabled':'')+'>ค้นหา</button></div>';
+  if(S.res){
+    h+='<div class="card"><h2>เลือกนักเรียน</h2>'
+     +(S.res.students.length?'<div style="margin-top:8px">'+S.res.students.map(s=>'<button class="pick '+(S.sel&&S.sel.id===s.id?'on':'')+'" data-a="pick" data-id="'+esc(s.id)+'"><span>'+stuLine(s)+'</span><span class="chip c-mut">'+(S.sel&&S.sel.id===s.id?'เลือกแล้ว':'เลือก')+'</span></button>').join('')+'</div>'
+       +(S.res.more?'<p class="sub">พบ '+S.res.total+' คน แสดง 30 คนแรก พิมพ์ชื่อให้เจาะจงขึ้น</p>':'')
+       :'<p class="empty">ไม่พบนักเรียนที่ตรงกับที่ค้นหา</p>')+'</div>';
+  }
+  if(S.sel){
+    const exist=activeCodes(S.sel.id,S.rel);
+    h+='<div class="card"><h2>2. เลือกผู้รับรหัส</h2><p class="sub" style="margin:2px 0 8px">รหัส 1 ใบ ใช้ผูกได้ 1 บัญชี LINE · พ่อและแม่ใช้คนละรหัส ให้ออกแยกกัน</p>'
+     +'<div class="rel">'+(B.relations||[]).map(r=>'<button data-a="rel" data-r="'+esc(r)+'" aria-pressed="'+(S.rel===r)+'">'+esc(r)+'</button>').join('')+'</div>'
+     +(S.rel&&exist?'<p class="warnbox" style="margin-top:10px">มีรหัสของ'+esc(S.rel)+'ที่ยังรอใช้อยู่ ถ้าออกใหม่ รหัสใบเก่าจะถูกยกเลิก</p>':'')
+     +'<button class="bn pri big wide" style="margin-top:12px" data-a="issue" '+(S.rel&&!S.busy?'':'disabled')+'>ออกรหัส'+(S.rel?' ให้'+esc(S.rel):'')+'</button>'
+     +'<p class="sub" style="margin-top:8px">นักเรียน: '+esc(S.sel.nick||S.sel.name)+' · '+esc(S.sel.room)+' · รหัสใช้ได้ '+esc(B.days)+' วัน ('+esc(B.digits)+' หลัก)</p></div>';
+  }
+  return '<div class="stack">'+h+'</div>';
+}
+function activeCodes(sid,rel){return !!(S.list&&S.list.codes.some(c=>c.student.id===sid&&c.for_relation===rel&&c.status==='รอใช้'))}
+
+/* ----- แท็บรายการ ----- */
+function vList(){
+  const L=S.list;if(!L)return '<div class="card" style="text-align:center"><div class="spin"></div></div>';
+  const c=L.counts||{},FS=['รอใช้','ใช้แล้ว','หมดอายุ','ยกเลิก'];
+  const q=S.lq.trim().toLowerCase();
+  const match=s=>!q||[s.nick,s.name,s.room].join(' ').toLowerCase().indexOf(q)>=0;
+  const codes=L.codes.filter(x=>x.status===S.filter&&match(x.student));
+  const links=L.links.filter(x=>match(x.student));
+  let h='<div class="kpis">'+FS.map(s=>'<button class="kpi '+(S.filter===s?'on':'')+'" data-a="filter" data-s="'+s+'"><b class="num">'+(c[s]||0)+'</b><span>'+s+'</span></button>').join('')+'</div>'
+   +'<div class="card" style="margin-top:12px"><label for="lq" style="margin-top:0">ค้นในรายการ (ชื่อ ชื่อเล่น ห้อง)</label><input type="search" id="lq" value="'+esc(S.lq)+'" placeholder="พิมพ์เพื่อกรอง" autocomplete="off"></div>'
+   +'<h2 style="margin:6px 2px 8px">รหัสที่ออกแล้ว · '+esc(S.filter)+'</h2>';
+  h+=codes.length?codes.map(x=>'<div class="card"><div class="rowf between"><div style="display:grid">'+stuLine(x.student)+'</div>'+chip(x.status)+'</div>'
+     +'<div class="rowf" style="margin-top:6px"><span class="chip c-lv">ผู้รับ: '+esc(x.for_relation)+'</span><span class="sub">ออก '+esc(thD(x.issued_at))+(x.status==='รอใช้'?' · หมดอายุ '+esc(thD(x.expires_at)):'')+(x.status==='ใช้แล้ว'?' · ใช้เมื่อ '+esc(thD(x.used_at)):'')+'</span></div>'
+     +'<p class="sub" style="margin:6px 0 0">ไม่แสดงตัวรหัส (ดูได้ครั้งเดียวตอนออก)</p>'
+     +'<div class="rowf" style="margin-top:10px">'+(x.status==='รอใช้'?'<button class="bn bad" data-a="cancelcode" data-id="'+esc(x.cid)+'">ยกเลิกรหัส</button>':'')
+     +'<button class="bn" data-a="reissue" data-id="'+esc(x.cid)+'">'+(x.status==='รอใช้'?'ออกใหม่':'ออกรหัสใหม่')+'</button></div></div>').join(''):'<div class="card empty">ไม่มีรหัสในสถานะนี้</div>';
+  h+='<h2 style="margin:14px 2px 8px">การผูกบัญชีที่ใช้อยู่</h2>';
+  h+=links.length?links.map(x=>'<div class="card"><div class="rowf between"><div style="display:grid">'+stuLine(x.student)+'</div><span class="chip c-ok">ผูกอยู่</span></div>'
+     +'<div class="rowf" style="margin-top:6px"><span class="chip c-lv">ผู้รับ: '+esc(x.relation)+'</span><span class="sub">ผูกเมื่อ '+esc(thD(x.linked_at))+' · อ้างอิง LINE <span class="num">'+esc(x.ref)+'</span></span></div>'
+     +'<div class="rowf" style="margin-top:10px"><button class="bn bad" data-a="cancellink" data-id="'+esc(x.link_id)+'">ยกเลิกการผูก</button></div></div>').join(''):'<div class="card empty">ยังไม่มีการผูกบัญชี</div>';
+  return '<div class="stack">'+h+'</div>';
+}
+
+/* ----- แผ่นล่าง ----- */
+function sheetIssued(){
+  const it=S.issued,msg=inviteText(it);
+  return '<div class="sheetbg" role="dialog" aria-modal="true" aria-label="รหัสที่ออกแล้ว"><div class="sheet">'
+   +'<h2>รหัสของ'+esc(it.student.nick)+' · ผู้รับ: '+esc(it.for_relation)+'</h2>'
+   +'<div class="codebox num" id="codebox" aria-live="polite">'+esc(it.code)+'</div>'
+   +'<p class="warnbox">รหัสนี้เห็นได้ครั้งเดียว ปิดหน้านี้แล้วจะไม่เห็นอีก<br>กด "คัดลอกข้อความ" แล้วส่งให้ผู้ปกครองก่อนปิด</p>'
+   +'<p class="sub" style="margin:8px 0 0">ใช้ได้ถึง '+esc(thDT(it.expires_at))+(it.cancelled_old?' · ยกเลิกรหัสใบเก่าของ'+esc(it.for_relation)+'แล้ว':'')+'</p>'
+   +'<div class="msgprev">'+esc(msg)+'</div>'
+   +'<div class="rowf" style="margin-top:6px"><button class="bn pri big" style="flex:1" data-a="copy">คัดลอกข้อความ</button><button class="bn" style="min-height:60px" data-a="closeissued">ปิด</button></div></div></div>';
+}
+function sheetConfirm(){
+  const c=S.confirm;
+  return '<div class="sheetbg" role="dialog" aria-modal="true" aria-label="ยืนยัน"><div class="sheet"><h2>'+esc(c.title)+'</h2><p style="margin:8px 0 14px">'+esc(c.body)+'</p>'
+   +'<div class="rowf"><button class="bn '+(c.danger?'bad':'pri')+'" style="flex:1;min-height:52px" data-a="confirmyes" '+(S.busy?'disabled':'')+'>'+esc(c.yes)+'</button><button class="bn" style="min-height:52px" data-a="confirmno">ไม่ทำ</button></div></div></div>';
+}
+
+/* ---------- การทำงาน ---------- */
+async function loadList(){
+  try{S.list=await api('admin.list',{status:'ทั้งหมด',link_status:'ใช้งาน'});S.B.rooms=S.list.rooms||S.B.rooms;S.B.relations=S.list.relations;S.B.digits=S.list.digits;S.B.days=S.list.days}
+  catch(e){if(e.code==='FORBIDDEN')return fatalNotAdmin();toast(e.message)}
+  render();
+}
+async function doSearch(){
+  const q=($('#q')||{value:S.q}).value.trim(),room=($('#room')||{value:S.room}).value;
+  S.q=q;S.room=room;
+  if(!q&&!room){toast('พิมพ์ชื่อหรือเลือกห้องก่อน');return}
+  S.busy=true;render();
+  try{S.res=await api('admin.students.search',{q:q,room_id:room});S.sel=null;S.rel=''}catch(e){if(e.code==='FORBIDDEN'){S.busy=false;return fatalNotAdmin()}toast(e.message)}
+  S.busy=false;render();
+}
+async function doIssue(sid,rel){
+  S.busy=true;S.confirm=null;render();
+  try{
+    const j=await api('admin.code.issue',{student_id:sid,for_relation:rel},{nonce:nonce()});
+    S.issued={code:j.code,expires_at:j.expires_at,for_relation:j.for_relation,student:j.student,cancelled_old:j.cancelled_old};
+    S.busy=false;render();loadListQuiet();return;
+  }catch(e){S.busy=false;if(e.code==='FORBIDDEN')return fatalNotAdmin();toast(e.code==='DUP_REQ'?'ส่งซ้ำ ลองกดอีกครั้ง':e.message)}
+  render();
+}
+async function loadListQuiet(){try{S.list=await api('admin.list',{status:'ทั้งหมด',link_status:'ใช้งาน'});render()}catch(e){}}
+function closeIssued(){S.issued=null;render()}   // ลบรหัสออกจากหน้าและตัวแปรทันที
+async function doConfirm(){
+  const c=S.confirm;if(!c)return;
+  if(c.kind==='reissue'){return doIssue(c.sid,c.rel)}
+  S.busy=true;render();
+  try{
+    if(c.kind==='cancelcode'){await api('admin.code.cancel',{cid:c.id},{nonce:nonce()});toast('ยกเลิกรหัสแล้ว')}
+    else if(c.kind==='cancellink'){await api('admin.link.cancel',{link_id:c.id},{nonce:nonce()});toast('ยกเลิกการผูกแล้ว ผู้ปกครองจะไม่เห็นลูกคนนี้อีก')}
+  }catch(e){S.busy=false;S.confirm=null;if(e.code==='FORBIDDEN')return fatalNotAdmin();toast(e.message);render();return}
+  S.busy=false;S.confirm=null;await loadList();
+}
+function findCode(cid){return S.list&&S.list.codes.find(c=>c.cid===cid)}
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const a=el.dataset.a;
+  if(a==='tab'){S.tab=el.dataset.t;S.issued=null;render();if(S.tab==='list')loadList();window.scrollTo(0,0);return}
+  if(a==='search'){doSearch();return}
+  if(a==='pick'){S.sel=S.res.students.find(s=>s.id===el.dataset.id)||null;S.rel='';render();return}
+  if(a==='rel'){S.rel=el.dataset.r;render();return}
+  if(a==='issue'){if(S.sel&&S.rel)doIssue(S.sel.id,S.rel);return}
+  if(a==='copy'){const ok=await copyText(inviteText(S.issued));toast(ok?'คัดลอกข้อความแล้ว นำไปวางในแชท LINE ได้เลย':'คัดลอกไม่ได้ ให้กดค้างที่ข้อความเพื่อคัดลอก');return}
+  if(a==='closeissued'){closeIssued();return}
+  if(a==='filter'){S.filter=el.dataset.s;render();return}
+  if(a==='cancelcode'){const c=findCode(el.dataset.id);if(!c)return;S.confirm={kind:'cancelcode',id:c.cid,title:'ยกเลิกรหัสนี้?',body:'ยกเลิกรหัสของ'+c.student.nick+' (ผู้รับ: '+c.for_relation+') ผู้ปกครองจะใช้รหัสนี้ไม่ได้อีก',yes:'ยืนยันยกเลิกรหัส',danger:true};render();return}
+  if(a==='reissue'){const c=findCode(el.dataset.id);if(!c)return;S.confirm={kind:'reissue',sid:c.student.id,rel:c.for_relation,title:'ออกรหัสใหม่?',body:'ออกรหัสใหม่ให้'+c.for_relation+'ของ'+c.student.nick+(c.status==='รอใช้'?' รหัสใบเก่าจะถูกยกเลิก':''),yes:'ออกรหัสใหม่',danger:false};render();return}
+  if(a==='cancellink'){const l=S.list.links.find(x=>x.link_id===el.dataset.id);if(!l)return;S.confirm={kind:'cancellink',id:l.link_id,title:'ยกเลิกการผูกบัญชี?',body:'ผู้ปกครองที่ผูกกับ'+l.student.nick+' (ผู้รับ: '+l.relation+') จะเห็นลูกคนนี้ไม่ได้อีกทันที ถ้าต้องการให้กลับมาใช้ ต้องออกรหัสใหม่',yes:'ยืนยันยกเลิกการผูก',danger:true};render();return}
+  if(a==='confirmyes'){doConfirm();return}
+  if(a==='confirmno'){S.confirm=null;render();return}
+});
+document.addEventListener('input',e=>{if(e.target.id==='lq'){S.lq=e.target.value;const pos=e.target.selectionStart;render();const n=$('#lq');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(x){}}}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='q'){e.preventDefault();doSearch()}});
+window.addEventListener('online',()=>{S.online=true;render()});
+window.addEventListener('offline',()=>{S.online=false;render()});
+
+/* ---------- ตัวอย่างบนเครื่อง (ข้อมูลสมมติ ใช้เฉพาะ file:// + ?preview=1) ---------- */
+let MOCK=null;
+function mockApi(action,d){
+  if(!MOCK){const d0=new Date();const f=n=>{const x=new Date(d0.getTime()+n*86400000),z=v=>String(v).padStart(2,'0');return x.getFullYear()+'-'+z(x.getMonth()+1)+'-'+z(x.getDate())+' '+z(x.getHours())+':'+z(x.getMinutes())};
+    MOCK={st:[{id:'T1',nick:'น้องตัวอย่างหนึ่ง',name:'ด.ญ.ตัวอย่างหนึ่ง สมมติ',room:'ป.4',room_id:'P4'},{id:'T2',nick:'น้องตัวอย่างสอง',name:'ด.ช.ตัวอย่างสอง สมมติ',room:'ป.2',room_id:'P2'},{id:'T3',nick:'น้องตัวอย่างสาม',name:'ด.ญ.ตัวอย่างสาม สมมติ',room:'อ.2',room_id:'K2'}],
+      codes:[{cid:'C1',student_id:'T1',for_relation:'แม่',issued_at:f(-1),expires_at:f(6),status:'รอใช้',used_at:'',used_ref:''},{cid:'C2',student_id:'T2',for_relation:'พ่อ',issued_at:f(-5),expires_at:f(2),status:'ใช้แล้ว',used_at:f(-4),used_ref:'a1b2c3d4e5f6'},{cid:'C3',student_id:'T3',for_relation:'แม่',issued_at:f(-12),expires_at:f(-5),status:'หมดอายุ',used_at:'',used_ref:''}],
+      links:[{link_id:'L1',student_id:'T2',relation:'พ่อ',linked_at:f(-4),status:'ใช้งาน',ref:'a1b2c3d4e5f6',code_id:'C2'}],f:f}}
+  const rooms=[{room_id:'P4',grade:'ป.4'},{room_id:'P2',grade:'ป.2'},{room_id:'K2',grade:'อ.2'}];
+  const stu=id=>MOCK.st.find(s=>s.id===id)||{id:'',nick:'(ไม่พบนักเรียน)',name:'',room:'',room_id:''};
+  return new Promise((res,rej)=>setTimeout(()=>{
+    const fail=(code,msg)=>{const e=new Error(msg);e.code=code;rej(e)};
+    if(/nonadmin=1/.test(location.search)&&action!=='whoami')return fail('FORBIDDEN','คำสั่งนี้สำหรับผู้อำนวยการเท่านั้น');
+    if(action==='whoami')return res({admin:!/nonadmin=1/.test(location.search)});
+    if(action==='admin.students.search'){const q=String(d.q||'').replace(/\s+/g,'');const hits=MOCK.st.filter(s=>(!d.room_id||s.room_id===d.room_id)&&(!q||s.nick.indexOf(q)>=0||s.name.replace(/\s+/g,'').indexOf(q)>=0));return res({students:hits,total:hits.length,more:false,rooms:rooms})}
+    if(action==='admin.code.issue'){const code=String(Math.floor(10000000+Math.random()*89999999));let old=0;MOCK.codes.forEach(c=>{if(c.student_id===d.student_id&&c.for_relation===d.for_relation&&c.status==='รอใช้'){c.status='ยกเลิก';old++}});MOCK.codes.push({cid:'C'+(MOCK.codes.length+1),student_id:d.student_id,for_relation:d.for_relation,issued_at:MOCK.f(0),expires_at:MOCK.f(7),status:'รอใช้',used_at:'',used_ref:''});return res({code:code,cid:'x',expires_at:MOCK.f(7),for_relation:d.for_relation,student:stu(d.student_id),cancelled_old:old,digits:8})}
+    if(action==='admin.code.cancel'){const c=MOCK.codes.find(x=>x.cid===d.cid);if(!c||c.status!=='รอใช้')return fail('BAD_STATE','รหัสนี้ไม่ได้อยู่ในสถานะ รอใช้');c.status='ยกเลิก';return res({cid:d.cid,status:'ยกเลิก'})}
+    if(action==='admin.link.cancel'){const l=MOCK.links.find(x=>x.link_id===d.link_id);if(!l||l.status!=='ใช้งาน')return fail('BAD_STATE','การผูกนี้ถูกยกเลิกไปแล้ว');l.status='ยกเลิก';return res({link_id:d.link_id,status:'ยกเลิก'})}
+    if(action==='admin.list'){const counts={'รอใช้':0,'ใช้แล้ว':0,'หมดอายุ':0,'ยกเลิก':0};MOCK.codes.forEach(c=>counts[c.status]++);return res({codes:MOCK.codes.map(c=>Object.assign({},c,{student:stu(c.student_id)})).sort((a,b)=>a.issued_at<b.issued_at?1:-1),counts:counts,links:MOCK.links.filter(l=>l.status==='ใช้งาน').map(l=>Object.assign({},l,{student:stu(l.student_id)})),rooms:rooms,relations:['แม่','พ่อ','ผู้ปกครองอื่น'],digits:8,days:7})}
+    fail('UNKNOWN_ACTION','ไม่รู้จักคำสั่ง');
+  },120));
+}
+
+/* ---------- เริ่มต้น ---------- */
+function fatal(h,msg,retry){$('#boot').hidden=false;$('#app').hidden=true;$('#boot').innerHTML='<div class="card" style="max-width:420px;margin:18vh auto 0;text-align:center"><h2>'+esc(h)+'</h2><p class="sub">'+esc(msg)+'</p>'+(retry?'<button class="bn pri wide" onclick="location.reload()">ลองใหม่</button>':'')+'</div>'}
+function fatalNotAdmin(){fatal('หน้านี้สำหรับผู้อำนวยการ','บัญชี LINE นี้ไม่มีสิทธิ์ใช้หน้านี้ ถ้าเป็นผู้อำนวยการ ให้ผูกบัญชี LINE กับ Q-Kawa ที่หน้ากลางก่อน แล้วเปิดหน้านี้อีกครั้ง',false)}
+async function start(){
+  if(!PREVIEW){
+    window.__qpStage='liff';
+    try{await liff.init({liffId:CONFIG.LIFF_ID})}catch(e){return fatal('เปิดการเข้าสู่ระบบ LINE ไม่สำเร็จ',e.message,true)}
+    window.__qpStage='login';
+    if(!liff.isLoggedIn()){liff.login({redirectUri:location.href});return}
+  }
+  window.__qpStage='api';
+  let w;
+  try{w=await api('whoami',{})}catch(e){
+    if(e.code==='NO_API')return fatal('ยังไม่ได้ตั้งค่า API_URL',e.message,false);
+    return fatal('เปิดหน้านี้ไม่สำเร็จ',e.message,true);
+  }
+  if(!w.admin)return fatalNotAdmin();
+  S.B={rooms:[],relations:['แม่','พ่อ','ผู้ปกครองอื่น'],digits:8,days:7};
+  window.__qpStage='render';
+  $('#boot').hidden=true;$('#app').hidden=false;
+  render();loadList();
+}
+start().catch(e=>{if(window.qpFail)window.qpFail(window.__qpStage,e,false)});
+})();
+</script>
+</body>
+</html>
