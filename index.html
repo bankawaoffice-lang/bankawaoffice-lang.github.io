@@ -248,6 +248,18 @@ button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:in
 .m-nav .fab{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;margin:-30px auto 2px;padding:0;justify-content:center;box-shadow:0 10px 22px rgba(91,91,240,.4)}
 .m-nav .fab svg{width:26px;height:26px;stroke-width:2.2}
 .m-nav .dot{top:-2px;right:calc(50% - 22px)}
+.m-nav button{min-height:48px;font-size:12px;justify-content:center}.side .nv{min-height:44px}
+/* หน้าแรก: หัวม่วงติดบนสุดเวลาเลื่อน · ปุ่มใหญ่ 2x2 ตัวใหญ่ · กริดแอปไอคอนเล็ก · แถบล่าสุด */
+.hdr.hdr2{position:sticky;top:var(--vah,0px);z-index:6}
+.dly .dbtn{min-height:150px;padding:16px}.dly .dbtn b{font-size:21px}.dly .dbtn .k{font-size:14px}.dly .dbtn .s{font-size:14px}.dly .dbtn .ic{width:54px;height:54px}
+.apps3{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:10px 8px}
+.appt{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:none;padding:6px 2px;min-height:88px;color:var(--ink);font:inherit;min-width:0}
+.appt .aicw{width:46px;height:46px;border-radius:14px;box-shadow:0 5px 10px var(--sh)}
+.appt b{font:600 12.5px/1.25 var(--fh);text-align:center;overflow-wrap:anywhere}
+@media (min-width:1000px){.apps3{grid-template-columns:repeat(4,minmax(0,120px))}}
+.recent{display:grid;gap:6px}.recent .rk{font-size:13px;font-weight:700;color:var(--muted)}
+.rbt{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;border:0;background:var(--card);box-shadow:var(--shadow);border-left:4px solid var(--pri);border-radius:16px;padding:10px 14px;text-align:left;color:var(--ink);font:inherit}
+.rbt .ri{font-size:22px;flex:none}.rbt .tx{flex:1;min-width:0;display:flex;flex-direction:column}.rbt b{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rbt small{color:var(--muted);font-size:12.5px}
 .bell .dot{top:-9px;right:-9px;min-width:26px;height:26px;border-radius:13px;font-size:14px;line-height:22px;padding:0 6px;font-weight:700;background:#E5121F;border:2px solid #fff;box-shadow:0 3px 8px rgba(229,18,31,.55)}
 :root[data-theme="dark"] .bell .dot{border-color:var(--card)}
 /* คอมพิวเตอร์ */
@@ -541,6 +553,7 @@ coin:'<circle cx="12" cy="12" r="8"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.
 book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h7M8 11h5"/>',
 cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
 fam:'<circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-4 3-6 5-6s5 2 5 6M14 20c0-3 1.5-5 3-5s4 2 4 5"/>',
+inbox:'<path d="M3 13l2.5-7.2A2 2 0 0 1 7.4 4.4h9.2a2 2 0 0 1 1.9 1.4L21 13"/><path d="M3 13v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5h-5.5a3.5 3.5 0 0 1-7 0z"/>',
 gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
 key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
 chev:'<path d="M9 6l6 6-6 6"/>',
@@ -676,7 +689,7 @@ function renderLink(msg){
   document.getElementById('app').innerHTML=`<div class="intro">
     <div class="logo">Q</div>
     <h1>งานโรงเรียน<br><em>ครบ จบ</em><br>ในที่เดียว</h1>
-    <p class="lead">ประกาศ งานของฉัน และปฏิทินของโรงเรียนบ้านกาวะ รวมไว้ใน LINE</p>
+    <p class="lead">ข่าวสาร กล่องงาน และตารางงานของโรงเรียนบ้านกาวะ รวมไว้ใน LINE</p>
     <div class="art">${introArt()}</div>
     <form class="form" id="linkForm">
       ${name?`<p class="note">LINE ที่ใช้อยู่: <b>${esc(name)}</b></p>`:''}
@@ -771,7 +784,7 @@ function praiseBoard(){
   return (T.length?`<section class="hubb" aria-label="ครูที่ทำได้ตามเป้าวันนี้"><div class="sec" style="margin:0"><h3>ชื่นชมครูวันนี้</h3><span class="t2">ระบบคิดให้อัตโนมัติ</span></div><ul class="achv">${rows}</ul>${T.length>4?`<p class="t2">และอีก ${T.length-4} ท่าน</p>`:''}</section>`:`<section class="hubb" aria-label="ครูที่ทำได้ตามเป้าวันนี้"><div class="sec" style="margin:0"><h3>ชื่นชมครูวันนี้</h3><span class="t2">ระบบคิดให้อัตโนมัติ</span></div><p class="okline">วันนี้ยังไม่มีครูที่ทำได้ตามเป้า พรุ่งนี้เริ่มใหม่ได้</p></section>`)
    +(L?`<section class="starcard" aria-label="ดาวล่าสุดจากผู้ปกครอง"><span class="si" aria-hidden="true">⭐</span><div style="min-width:0"><p class="k">ดาวล่าสุดจากผู้ปกครอง</p><b>${esc(L.name)} ได้รับดาว</b>${L.msg?`<p>"${esc(L.msg)}"</p>`:''}<p class="t2">${esc(L.from)} · ${esc(thDT(L.at))} · ดาวสะสม ⭐ ${L.total}</p></div></section>`:`<section class="starcard" aria-label="ดาวล่าสุดจากผู้ปกครอง"><span class="si" aria-hidden="true">⭐</span><div style="min-width:0"><p class="k">ดาวล่าสุดจากผู้ปกครอง</p><b>ยังไม่มีดาวใหม่</b><p class="t2">เมื่อผู้ปกครองให้ดาว จะแสดงที่นี่</p></div></section>`);
 }
-/** ดาวสะสมในโปรไฟล์ครู (หน้า "บัญชี") */
+/** ดาวสะสมในโปรไฟล์ครู (หน้า "ตั้งค่า") */
 function starProfile(){
   if(!PR||!PR.mine) return '';
   const M=PR.myStars||{count:0,recent:[]};
@@ -814,7 +827,7 @@ function render0(){
   const el=document.getElementById('app');
   const n=S.home?inboxCounts().total:0;
   if(wide.matches){
-    const items=[{id:'home',label:'หน้าแรก',icon:'home'},{id:'tasks',label:'งานของฉัน',icon:'list',badge:n},{id:'ann',label:'ประกาศ',icon:'mega'},{id:'cal',label:'ปฏิทิน',icon:'cal'},{id:'menu',label:'บัญชี',icon:'user'}];
+    const items=[{id:'home',label:'หน้าแรก',icon:'home'},{id:'tasks',label:'กล่องงาน',icon:'inbox',badge:n},{id:'ann',label:'ข่าวสาร',icon:'mega'},{id:'cal',label:'ตารางงาน',icon:'cal'},{id:'menu',label:'ตั้งค่า',icon:'gear'}];
     const nav=items.map(i=>`<button class="nv" data-go="${i.id}"${S.page===i.id?' aria-current="page"':''}><span class="sq">${ic(i.icon)}</span>${i.label}${i.badge?`<span class="n">${i.badge}</span>`:''}</button>`).join('');
     const appsNav=visibleApps().map(a=>`<button class="nv" data-app="${a.key}"><span class="sq c-${a.c}">${ic(a.icon)}</span>${a.name}${appReady(a.key)?'':`<span class="pill" style="margin-left:auto">${appState(a.key)}</span>`}</button>`).join('');
     const adm=adminItems().map(i=>`<button class="nv" data-go="${i.id}"${S.page===i.id?' aria-current="page"':''}><span class="sq c-${i.c}">${ic(i.icon)}</span>${i.label}</button>`).join('');
@@ -827,7 +840,7 @@ function render0(){
     const cur=['link','switch','admin','viewas'].includes(S.page)?'menu':S.page==='inbox'?'home':S.page;
     const b=(id,label,icon,badge)=>`<button data-go="${id}"${cur===id?' aria-current="page"':''}>${ic(icon,22)}${label}${badge?`<span class="dot">${badge}</span>`:''}</button>`;
     el.innerHTML=`<div class="m-shell"><main class="m-main">${body}</main>
-      <nav class="m-nav" aria-label="เมนูหลัก">${b('home','หน้าแรก','home')}${b('tasks','งานของฉัน','list',n)}${b('ann','ประกาศ','mega')}${b('cal','ปฏิทิน','cal')}${b('menu','บัญชี','user')}</nav></div>`;
+      <nav class="m-nav" aria-label="เมนูหลัก">${b('home','หน้าแรก','home')}${b('tasks','กล่องงาน','inbox',n)}${b('ann','ข่าวสาร','mega')}${b('cal','ตารางงาน','cal')}${b('menu','ตั้งค่า','gear')}</nav></div>`;
   }
 }
 function avatar(){ const m=S.me; return `<div class="avatar">${m.picture?`<img src="${esc(m.picture)}" alt="">`:esc((m.name.replace(/^(นาย|นางสาว|นาง)/,'')||'?').charAt(0))}</div>`; }
@@ -1007,7 +1020,7 @@ function logoutSheet(){
     <div style="display:flex;gap:8px"><button class="btn block" style="flex:1" data-act="close">ยกเลิก</button><button class="btn bad block" style="flex:1" data-act="logoutYes">ออกจากระบบ</button></div></div>`);
 }
 
-function annOffNote(){ return (!S.annOn&&S.me.isAdmin)?`<p class="note warn">ระบบประกาศยังปิดอยู่ บุคลากรอื่นยังไม่เห็น เปิดได้ที่ "เปิด–ปิดการใช้งาน" ในหน้าบัญชี</p>`:''; }
+function annOffNote(){ return (!S.annOn&&S.me.isAdmin)?`<p class="note warn">ระบบประกาศยังปิดอยู่ บุคลากรอื่นยังไม่เห็น เปิดได้ที่ "เปิด–ปิดการใช้งาน" ในหน้าตั้งค่า</p>`:''; }
 /* ---------- หน้าแรก ---------- */
 /* ---------- ความสำเร็จเล็กๆ ของวันนี้ ---------- */
 /* ถ้าหลังบ้านส่ง home.win = {title, praise} มาในอนาคต จะขึ้นการ์ดฉลอง ไม่มีก็ขึ้นข้อความให้กำลังใจ */
@@ -1117,7 +1130,7 @@ function pageInbox(){
   const G=inboxGroups(), CT=inboxCounts(), tab=S.inboxTab||'work';
   const TABS=IBX.map(([k,l])=>[k,l,CT[k]]);
   const chips=`<div class="chips" role="tablist" aria-label="กล่องข้อความ">${TABS.map(([k,l,n])=>`<button class="chip" role="tab" data-ibtab="${k}" aria-pressed="${tab===k}">${l}${n?`<small>${n}</small>`:''}</button>`).join('')}</div>`;
-  const ORIGIN={work:['tasks','เปิดหน้า "งานของฉัน"'],ann:['ann','เปิดหน้า "ประกาศ"'],cal:['cal','เปิดหน้า "ปฏิทิน"'],appr:['tasks','เปิดหน้า "งานของฉัน"']};
+  const ORIGIN={work:['tasks','เปิดหน้า "กล่องงาน"'],ann:['ann','เปิดหน้า "ข่าวสาร"'],cal:['cal','เปิดหน้า "ตารางงาน"'],appr:['tasks','เปิดหน้า "กล่องงาน"']};
   const list=tab==='cal'?G.cal.map(c=>`<div class="irow"><i class="tl b" aria-hidden="true"></i>${evRow(c)}</div>`).join(''):G[tab].map(t=>`<div class="irow"><i class="tl ${taskLevel(t)}" aria-hidden="true"></i>${taskRow(t)}</div>`).join('');
   const ext=S.extState==='err'?'<p class="note warn">โหลดงานจาก Q-Teacher ไม่สำเร็จ <button class="btn sm" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
   return head('กล่องข้อความ','สิ่งที่ยังต้องดำเนินการ · แตะรายการเพื่อไปหน้าเดิม','','home')+`<div class="stack">${chips}<div class="list">${list||`<p class="okline">${ic('checkc',18)} ไม่มีรายการค้างในหมวดนี้</p>`}</div>${ext}<button class="btn block" data-go="${ORIGIN[tab][0]}">${ORIGIN[tab][1]}</button></div>`;
@@ -1158,13 +1171,24 @@ function dirRow(){
 }
 function appGrid(){
   if(!S.me) return '';
-  const vs=visibleApps(); if(!vs.length) return '';
-  return `<section aria-label="แอปของโรงเรียน"><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps2">${vs.map(a=>`<button class="appc big" data-app="${a.key}"><span class="aicw" style="--sh:${a.sh}">${appIcon(a.key,54)}</span><span class="tx"><b class="th">${TH_APP[a.key]||a.name}</b><small class="en">${a.name}</small></span></button>`).join('')}</div></section>`;
+  const vs=visibleApps(); if(!vs.length) return '';   // ไอคอนทุกตัวโชว์ตลอด (รวม Q-Student แม้ปุ่ม "เช็คอ่านเช้า" แสดงอยู่)
+  return `<section aria-label="แอปของโรงเรียน"><div class="sec"><h3>แอปของโรงเรียน</h3></div><div class="apps3">${vs.map(a=>`<button class="appt" data-app="${a.key}" aria-label="${esc(TH_APP[a.key]||a.name)} (${a.name})"><span class="aicw" style="--sh:${a.sh}">${appIcon(a.key,46)}</span><b>${TH_APP[a.key]||a.name}</b></button>`).join('')}</div></section>`;
+}
+/** แถบ "ล่าสุด" 1 รายการ (ใช้ข้อมูลที่ home โหลดอยู่แล้ว): ประกาศปักหมุดที่ยังไม่รับทราบ → กิจกรรมปฏิทินวันนี้/พรุ่งนี้ → ไม่มีก็ซ่อนทั้งแถบ */
+function recentBar(){
+  if(!S.home||!S.me) return '';
+  const A=(S.home.allAnns||[]).filter(a=>a.pinned&&a.canAck&&!a.acked&&!a.expired&&a.status==='เผยแพร่')[0];
+  if(A) return `<section class="recent" aria-label="ล่าสุด"><span class="rk">ล่าสุด</span><button class="rbt" data-ann="${esc(A.id)}"><span class="ri" aria-hidden="true">📌</span><span class="tx"><b>ประกาศปักหมุด · ${esc(A.title)}</b><small>ยังไม่ได้รับทราบ · แตะเพื่ออ่านและรับทราบ</small></span><span class="chev">${ic('chev',16)}</span></button></section>`;
+  const td=S.home.today.date, d=new Date(td+'T12:00:00'); d.setDate(d.getDate()+1);
+  const tm=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const E=(S.cal||S.home.calendar||[]).filter(c=>c.kind!=='holiday'&&(c.date===td||c.date===tm)).sort((x,y)=>x.date<y.date?-1:x.date>y.date?1:0)[0];
+  if(!E) return '';
+  return `<section class="recent" aria-label="ล่าสุด"><span class="rk">ล่าสุด</span><button class="rbt" data-go="cal"><span class="ri" aria-hidden="true">📅</span><span class="tx"><b>${esc(E.title)}</b><small>${E.date===td?'วันนี้':'พรุ่งนี้'}${E.kind==='due'?' · กำหนดส่ง':''} · แตะเพื่อดูตารางงาน</small></span><span class="chev">${ic('chev',16)}</span></button></section>`;
 }
 function pageHome(){
   const m=S.me, h=S.home;
   const bell=h?bellBtn():'';
-  const gn=greetName(), top=`<header class="hdr hdr2"><h1 class="g1">สวัสดี${gn?' คุณ'+esc(gn):''}</h1>${bell}${m?`<button class="avbtn" data-go="menu" aria-label="บัญชีของฉัน">${avatar()}</button>`:''}<p class="g2">${esc(welcomeText())}</p></header>`;
+  const gn=greetName(), top=`<header class="hdr hdr2"><h1 class="g1">สวัสดี${gn?' คุณ'+esc(gn):''}</h1>${bell}${m?`<button class="avbtn" data-go="menu" aria-label="ตั้งค่า">${avatar()}</button>`:''}<p class="g2">${esc(welcomeText())}</p></header>`;
   const cs=clockStatus(), rd=readInfo();
   const out=afterCutoff();
   const daily=`<section aria-label="ทำงานประจำวัน"><div class="dly">
@@ -1174,14 +1198,14 @@ function pageHome(){
     ${dBtn('leave','teacher','Q-Teacher','ขอลา','ยื่นใบลา · ดูสถานะ')}
   </div></section>`;
   const rooms=`<button class="roomb" data-dly="rooms"><span class="e" aria-hidden="true">🏫</span><span class="tx"><b>ห้อง/วิชาของฉัน</b><small>เร็วๆ นี้ · จะสรุปห้องและวิชาที่รับผิดชอบเมื่อ Student/Academic เปิดใช้</small></span><span class="chev">${ic('chev',16)}</span></button>`;
-  return `${top}<div class="stack" style="gap:14px">${winTop()}${daily}${notifBox()}${prayerLine()}<button class="emgb" data-dly="emg">🚨 เหตุฉุกเฉิน</button>${dirRow()}${rooms}${appGrid()}<p class="credit">${esc(brandOf().name)} v2 · ผู้พัฒนา: นายฮาฟีซี อูมา</p></div>`;
+  return `${top}<div class="stack" style="gap:14px">${winTop()}${daily}${appGrid()}${notifBox()}${prayerLine()}<button class="emgb" data-dly="emg">🚨 เหตุฉุกเฉิน</button>${dirRow()}${rooms}<p class="credit">${esc(brandOf().name)} v2 · ผู้พัฒนา: นายฮาฟีซี อูมา</p>${recentBar()}</div>`;
 }
 /* ---------- งานของฉัน ---------- */
 const TF=[['all','ทั้งหมด'],['teacher','Teacher'],['academic','Academic'],['student','Student'],['budget','Budget']];
-function ttabs(){ const t=S.taskTab||'list'; return `<div class="chips" role="tablist" aria-label="หมวดงานของฉัน"><button class="chip" role="tab" data-ttab="list" aria-pressed="${t==='list'}">งานทั้งหมด</button><button class="chip" role="tab" data-ttab="rooms" aria-pressed="${t==='rooms'}">ห้อง/วิชาของฉัน</button></div>`; }
+function ttabs(){ const t=S.taskTab||'list'; return `<div class="chips" role="tablist" aria-label="หมวดกล่องงาน"><button class="chip" role="tab" data-ttab="list" aria-pressed="${t==='list'}">งานทั้งหมด</button><button class="chip" role="tab" data-ttab="rooms" aria-pressed="${t==='rooms'}">ห้อง/วิชาของฉัน</button></div>`; }
 function roomsSoon(){ return `<div class="card soonbox"><div class="big" aria-hidden="true">🏫</div><h2>เร็วๆ นี้</h2><p>หน้านี้จะแสดงห้องและวิชาที่ฉันรับผิดชอบ (อ่านอย่างเดียว)<br>ข้อมูลจะมาจาก Q-Academic เมื่อเปิดใช้งาน</p></div>`; }
 function pageTasks(){
-  if(S.taskTab==='rooms') return head('งานของฉัน','กล่องงานกลางจากทุกแอป',null,null,'pgh')+`<div class="stack">${ttabs()}${roomsSoon()}</div>`;
+  if(S.taskTab==='rooms') return head('กล่องงาน','กล่องงานกลางจากทุกแอป',null,null,'pgh')+`<div class="stack">${ttabs()}${roomsSoon()}</div>`;
   const all=myTasks(), st=setupTasks(), f=S.taskApp||'all';
   const pick=a=>f==='all'?a:a.filter(x=>x.app===f);
   const t=pick(all);
@@ -1189,7 +1213,7 @@ function pageTasks(){
   const cnt=k=>k==='all'?all.length:all.filter(x=>x.app===k).length;
   const chips=`<div class="chips tfs" role="tablist" aria-label="กรองตามแอป">${TF.map(([k,l])=>`<button class="chip" data-tf="${k}" aria-pressed="${f===k}">${l}<small>${cnt(k)}</small></button>`).join('')}</div>`;
   const ext=S.extState==='loading'?'<p class="note">กำลังโหลดงานจาก Q-Teacher…</p>':S.extState==='err'?'<p class="note warn">โหลดงานจาก Q-Teacher ไม่สำเร็จ <button class="btn sm" data-act="extRetry">ลองอีกครั้ง</button></p>':'';
-  return head('งานของฉัน','กล่องงานกลางจากทุกแอป',null,null,'pgh')+`<div class="stack">${ttabs()}${chips}${levelStrip(t)}<div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการ${f==='all'?'ตอนนี้':'ในแอปนี้'}</p>`)}</div>${ext}
+  return head('กล่องงาน','กล่องงานกลางจากทุกแอป',null,null,'pgh')+`<div class="stack">${ttabs()}${chips}${levelStrip(t)}<div class="list">${t.length?t.map(taskRow).join(''):(S.extState==='loading'?'':`<p class="okline">${ic('checkc',18)} ไม่มีเรื่องที่ต้องดำเนินการ${f==='all'?'ตอนนี้':'ในแอปนี้'}</p>`)}</div>${ext}
   ${st.length&&f==='all'?`<section><div class="sec"><h3>งานตั้งค่าระบบ</h3></div><div class="list">${st.map(taskRow).join('')}</div></section>`:''}
   ${done.length?`<section><div class="sec"><h3>ทำเสร็จแล้ว</h3></div><div class="list">${done.map(taskRow).join('')}</div></section>`:''}
   <p class="note tlegend"><span><i class="tl b"></i>น้ำเงิน = งานใหม่/ยังไม่ถึงกำหนด</span><span><i class="tl p"></i>ม่วง = รอผู้อื่น</span><span><i class="tl g"></i>เขียว = เสร็จแล้ว</span><span><i class="tl y"></i>เหลือง = ใกล้ครบกำหนด (≤3 วัน)</span><span><i class="tl r"></i>แดง = ด่วน/เกินกำหนด</span></p>
@@ -1197,7 +1221,7 @@ function pageTasks(){
 }
 /* ---------- ประกาศ ---------- */
 function pageAnn(){
-  if(!S.anns){ loadAnns(); return head('ประกาศ',null,null,null,'pgh')+'<div class="spin"></div>'; }
+  if(!S.anns){ loadAnns(); return head('ข่าวสาร',null,null,null,'pgh')+'<div class="spin"></div>'; }
   const m=S.me, f=S.annFilter, q=(S.annQ||'').trim();
   const anyPending=S.anns.some(a=>a.status==='รออนุมัติ'&&(m.isAdmin||a.mine));
   const chips=[['all','ทั้งหมด'],['unread','ยังไม่รับทราบ']];
@@ -1206,7 +1230,7 @@ function pageAnn(){
   let list=S.anns.filter(a=>f==='all'?a.status==='เผยแพร่'||a.mine||m.isAdmin:f==='unread'?(a.canAck&&!a.acked):f==='pending'?a.status==='รออนุมัติ':a.mine);
   if(q) list=list.filter(a=>(a.title+' '+a.body_th).indexOf(q)>=0);
   const btn=canWrite()&&m.canPublishSchool?`<button class="btn pri sm" data-act="compose">${ic('plus',16)} เขียนประกาศ</button>`:'';
-  return head('ประกาศ','ประกาศกลางของโรงเรียน',btn,null,'pgh')+`<div class="stack" style="gap:14px">${annOffNote()}
+  return head('ข่าวสาร','ประกาศกลางของโรงเรียน',btn,null,'pgh')+`<div class="stack" style="gap:14px">${annOffNote()}
     ${!S.annOn&&!m.isAdmin?'<p class="note">ระบบประกาศยังไม่เปิดใช้</p>':''}
     <input type="search" class="search" id="annQ" placeholder="ค้นหาประกาศ" value="${esc(q)}" aria-label="ค้นหาประกาศ">
     <div class="chips" role="group" aria-label="กรองประกาศ">${chips.map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${f===k}">${l}</button>`).join('')}</div>
@@ -1318,7 +1342,7 @@ function pageCal(){
   const label=S.calDay?thDate(S.calDay,{weekday:'long',day:'numeric',month:'long',year:'numeric'}):thDate(from,{day:'numeric',month:'short'})+' – '+thDate(to,{day:'numeric',month:'short',year:'numeric'});
   const addBtn=S.me.canEditCal?`<button class="btn pri sm" data-act="addEv">${ic('plus',16)} เพิ่มกิจกรรม</button>`:'';
   const nav=S.calDay?'<button class="btn sm" data-day="">ดูทุกวัน</button>':`<div class="row2"><button class="btn sm" data-win="-1"${w===0?' disabled':''}>${ic('left',16)} ก่อนหน้า</button><button class="btn sm" data-win="1"${w>=2?' disabled':''}>ถัดไป ${ic('chev',16)}</button></div>`;
-  return head('ปฏิทิน',today.toLocaleDateString('th-TH',{month:'long',year:'numeric'}),addBtn)+`<div class="stack" style="gap:16px">${week}
+  return head('ตารางงาน',today.toLocaleDateString('th-TH',{month:'long',year:'numeric'}),addBtn)+`<div class="stack" style="gap:16px">${week}
     <section><div class="sec"><h3>${esc(label)}</h3>${nav}</div>
     <div class="list">${list.length?list.map(evRow).join(''):'<p class="okline">ไม่มีรายการในช่วงนี้</p>'}</div></section>
     <p class="note" style="display:flex;gap:14px;flex-wrap:wrap"><span><b style="color:var(--pri)">●</b> กิจกรรม</span><span><b style="color:var(--warn)">●</b> กำหนดส่ง</span><span><b style="color:var(--bad)">●</b> วันหยุด</span><span><b style="color:var(--s-c)">●</b> เปิด-ปิดภาคเรียน</span></p>
@@ -1331,7 +1355,7 @@ function pageMenu(){
   const notLinked=setupTasks().length?setupTasks()[0].sub:'';
   const adm=isDir()?row('data-go="admin"','gear','h','Admin Panel <small style="display:block;font-size:12px;color:var(--muted)">บุคลากร · รหัสผูกบัญชี · เปิด–ปิดแอป · แจ้งเตือน LINE · สุขภาพระบบ</small>',notLinked?`<span class="pill warn">${esc(notLinked)}</span>`:''):'';
   const vaRow=(m.isAdmin&&!S.viewAs)?row('data-go="viewas"','user','p','ดูในมุมมองของ… <small style="display:block;font-size:12px;color:var(--muted)">ดูหน้าจอเหมือนที่บุคลากรคนนั้นเห็น (ดูอย่างเดียว)</small>'):'';
-  return head('บัญชี')+`<div class="stack" style="gap:16px">
+  return head('ตั้งค่า')+`<div class="stack" style="gap:16px">
   <div class="card pcard"><div style="display:flex;align-items:center;gap:14px">${avatar()}<div style="min-width:0"><h2 style="font-size:18px">${esc(m.name)}</h2><p class="t2">${esc(rolesText())}</p><p class="t2">รหัสบุคลากร ${esc(m.staff_id)}${m.rooms.length?' · ครูประจำชั้น '+esc(m.rooms.map(r=>r.grade).join(', ')):''}</p></div></div>
     <p class="okline" style="margin-top:10px">${ic('checkc',18)} ผูกกับ LINE แล้ว${m.lineName?' ('+esc(m.lineName)+')':''}</p>${starProfile()}</div>
   ${(adm||vaRow)?`<section><div class="sec"><h3>ผู้ดูแลระบบ</h3></div><div class="card" style="padding:4px 16px">${vaRow}${adm}</div></section>`:''}
