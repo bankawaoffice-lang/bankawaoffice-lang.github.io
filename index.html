@@ -174,6 +174,33 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 .note.warn{background:var(--warn-bg);color:var(--warn)}
 .err{font-size:14px;color:var(--bad);background:var(--bad-bg);border-radius:14px;padding:10px 14px}
 .credit{font-size:12px;color:var(--faint);text-align:center;padding:18px 0 4px}
+/* โซน 2: การ์ดอนุมัติใบลา/ใบออกนอกบริเวณ (เลื่อนซ้ายขวา · ปุ่ม ≥ 44px · ไม่ใช้สีเป็นตัวบอกอย่างเดียว) */
+.apz{min-width:0}.apzh{display:flex;align-items:center;gap:8px;margin:0 2px 6px;font-size:15px;color:var(--ink)}
+.apzh .apn{background:var(--badge-bg);color:#fff;border-radius:999px;min-width:22px;height:22px;display:inline-grid;place-items:center;font-size:13px;font-weight:700;padding:0 6px}
+.aprow{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;max-width:100%;-webkit-overflow-scrolling:touch}
+.apc{flex:0 0 85%;scroll-snap-align:start;min-width:0;box-sizing:border-box;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--warn);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+.aprow.one .apc{flex-basis:100%}
+.apc .aph{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px}.apc .apk{font-size:12px;font-weight:700;background:var(--pri-soft);color:var(--ink);border-radius:8px;padding:2px 8px}
+.apc .aph b{font-size:16px;overflow-wrap:anywhere}.apc p{margin:0;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.apc .apw{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:10px;padding:8px 10px;font-size:14px;color:var(--ink)}
+.apc .apr{color:var(--ink)}.apc .apr b{font-weight:700}.apc .aperr{background:var(--bad-bg);border-left:4px solid var(--bad);border-radius:10px;padding:8px 10px;font-size:14px;color:var(--ink)}
+.apb{display:flex;gap:8px;margin-top:4px}
+.apbtn{flex:1;min-width:0;min-height:48px;border-radius:12px;font:inherit;font-size:14.5px;font-weight:700;border:2px solid;display:inline-flex;gap:6px;align-items:center;justify-content:center;cursor:pointer;padding:0 6px;line-height:1.2}
+.apbtn.no{background:var(--card);border-color:var(--bad);color:var(--ink)}.apbtn.no .i{color:var(--bad);font-size:18px}
+.apbtn.yes{background:var(--ok-ink);border-color:var(--ok-ink);color:var(--on-ok)}.apbtn.yes .i{font-size:18px}
+.apbtn:disabled{opacity:.5;cursor:default}.apbtn.gh{background:var(--soft);border-color:var(--line);color:var(--ink)}
+.apnote{width:100%;box-sizing:border-box;min-height:64px;border:1.5px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-size:15px;background:var(--card);color:var(--ink);resize:vertical}
+.apc.fade{animation:apfade .4s ease forwards;pointer-events:none}
+@keyframes apfade{to{opacity:0;flex-basis:0;padding:0;margin-right:-10px;border-width:0;min-width:0;overflow:hidden}}
+@media (prefers-reduced-motion:reduce){.apc.fade{animation:none;display:none}}
+#apbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(100px + env(safe-area-inset-bottom,0px));width:min(92vw,460px);z-index:31;display:flex;flex-direction:column;gap:6px}
+#apbar[hidden]{display:none}
+#apbar .api{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;border-radius:14px;padding:8px 8px 8px 14px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+#apbar .api span{flex:1;min-width:0;overflow-wrap:anywhere}
+#apbar .api button{min-height:44px;min-width:76px;border-radius:10px;border:2px solid #fff;background:transparent;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+#apbar .api::after{content:"";position:absolute;left:0;bottom:0;height:3px;background:#fff;width:100%;animation:apcount 3s linear forwards}
+@keyframes apcount{to{width:0}}
+@media (prefers-reduced-motion:reduce){#apbar .api::after{animation:none;display:none}}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(100px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:10px 18px;border-radius:14px;font-size:14px;max-width:min(92vw,460px);z-index:30;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 .body{white-space:pre-wrap;word-wrap:break-word}
 .back{border:0;background:var(--card);box-shadow:var(--shadow);width:40px;height:40px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink);flex:none}
@@ -531,9 +558,9 @@ details.more summary{cursor:pointer;color:var(--pri);font-weight:500;font-size:1
 .pgh~.stack .search{min-height:44px;border-radius:999px;padding:0 18px}
 .pgh~.stack .chip{min-height:44px;display:inline-flex;align-items:center;flex:none}
 /* สีตัวอักษรบนปุ่ม/ป้าย: ความคมชัด ≥ 4.5 ในโหมดปกติ · โหมดมืดใช้สีเดิม · ปรับที่ตัวแปร --*-ink */
-:root{--pri-ink:#4343D4;--ok-ink:#0A6F45;--warn-ink:#8A5300;--badge-bg:#C4262F}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pri-ink:var(--pri);--ok-ink:var(--ok);--warn-ink:var(--warn)}}
-:root[data-theme="dark"]{--pri-ink:var(--pri);--ok-ink:var(--ok);--warn-ink:var(--warn)}
+:root{--pri-ink:#4343D4;--ok-ink:#0A6F45;--warn-ink:#8A5300;--badge-bg:#C4262F;--on-ok:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pri-ink:var(--pri);--ok-ink:var(--ok);--warn-ink:var(--warn);--on-ok:#0E1022}}
+:root[data-theme="dark"]{--pri-ink:var(--pri);--ok-ink:var(--ok);--warn-ink:var(--warn);--on-ok:#0E1022}
 .dot{background:var(--badge-bg)}
 .dbtn.done .s{color:var(--ok-ink)}
 .dbtn.warn .s{color:var(--warn-ink)}
@@ -828,6 +855,125 @@ function progBar(){
   const hm=new Date(c.at).toLocaleTimeString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false});
   return `<section class="prog" aria-label="ความคืบหน้าวันนี้">${rows}<small class="pupd">อัปเดต ${hm}</small></section>`;
 }
+/* ---------- โซน 2: การ์ดอนุมัติใบลา/ใบออกนอกบริเวณ ----------
+ * ใช้งานชนิด leave.dir / out.dir ที่ Q-Teacher ส่งมาพร้อมก้อน card เท่านั้น (หลังบ้านกรองสิทธิ์ให้แล้ว หน้านี้ไม่คำนวณสิทธิ์เอง)
+ * อนุมัติ/ไม่อนุมัติ = หน่วง 3 วินาทีให้กด "เลิกทำ" ก่อนจึงเรียกหลังบ้าน · ออกจากหน้า/ซ่อนหน้าก่อนครบ = ยกเลิกโดยไม่ส่ง */
+const AP_DELAY=3000, AP_TMO=15000;
+const AP={ ph:{}, note:{}, err:{}, q:{} };   // ph: ''|'note'|'wait'|'busy' ต่อรหัสใบ · q: คำขอที่รอหน่วง
+function apItems(){
+  if(!S.home||S.viewAs||!S.me||!Array.isArray(S.ext)) return [];
+  return S.ext.filter(t=>t&&(t.type==='leave.dir'||t.type==='out.dir')&&t.id&&t.card&&typeof t.card==='object');
+}
+function apFind(id){ return apItems().find(t=>t.id===id); }
+function apName(t){ const p=String(t.title||'').split(' · '); return p.length>1?p.slice(1).join(' · '):''; }
+function apOkDate(s){ return /^\d{4}-\d{2}-\d{2}/.test(String(s||'')); }
+function apDate(s){
+  if(!apOkDate(s)) return '';
+  const full=thDate(s,{day:'numeric',month:'long',year:'numeric'}), td=S.home&&S.home.today&&S.home.today.date;
+  const d=td?daysBetween(td,s):null, rel=d===0?'วันนี้':d===1?'พรุ่งนี้':d===-1?'เมื่อวาน':'';
+  return rel?rel+' ('+full+')':full;
+}
+function apRows(t){
+  const c=t.card, R=[];
+  const row=(l,v)=>{ if(v!==undefined&&v!==null&&String(v).trim()!=='') R.push('<p class="apr"><b>'+l+'</b> '+esc(v)+'</p>'); };
+  if(t.type==='out.dir'){
+    const dt=apDate(c.date);
+    if(dt||c.period) R.push('<p class="apr"><b>เวลา</b> '+esc([dt,c.period?'คาบ '+c.period:'',(c.from&&c.to)?c.from+'–'+c.to+' น.':''].filter(Boolean).join(' · '))+'</p>');
+    row('เหตุผล',c.reason);
+    if(c.gone) R.push('<p class="apr"><b>การกลับ</b> ไม่กลับมาแล้ว</p>'); else if(c.backPlan) row('จะกลับ',c.backPlan+' น.');
+    if(c.sub) R.push('<p class="apr"><b>ครูสอนแทน</b> '+esc(c.sub)+' · '+(c.subAck?'รับทราบแล้ว':'ยังไม่รับทราบ')+'</p>');
+    row('งานที่ฝาก',c.work);
+  }else{
+    const d=Number(c.days);
+    const kd=[c.kind||'',d>0?d+' วัน':'',(c.part&&c.part!=='เต็มวัน')?'('+c.part+')':''].filter(Boolean).join(' ');
+    if(kd) R.push('<p class="apr"><b>'+esc(kd)+'</b></p>');
+    const a=apDate(c.start), b=apDate(c.end);
+    if(a) R.push('<p class="apr"><b>วันที่</b> '+esc(b&&c.end!==c.start?a+' – '+b:a)+'</p>');
+    row('เหตุผล',c.reason);
+    if(c.subPeriods===0) R.push('<p class="apr">ไม่มีคาบสอนที่ต้องจัดสอนแทน</p>');
+    else if(typeof c.subPeriods==='number'&&c.subPeriods>0) R.push('<p class="apr">มีคาบสอน <b>'+c.subPeriods+'</b> คาบที่ต้องจัดสอนแทน</p>');
+    if(c.certRequired===true) R.push('<p class="apw" role="note">⚠️ ลาป่วย'+(Number(c.certDays)>0?'ตั้งแต่ '+c.certDays+' วันขึ้นไป':'ครบเกณฑ์')+' ต้องแนบใบรับรองแพทย์'+(c.hasCert===true?' (ครูแนบแล้ว)':c.hasCert===false?' (ยังไม่พบไฟล์แนบ)':'')+'</p>');
+  }
+  return R.join('');
+}
+function apCard(t){
+  const id=t.id, ph=AP.ph[id]||'', name=apName(t), out=t.type==='out.dir';
+  const who=name?' ของ '+name:'', kind=out?'ใบออกนอกบริเวณ':'ใบลา';
+  const busy=ph==='wait'||ph==='busy';
+  const err=AP.err[id]?'<p class="aperr" role="alert">'+esc(AP.err[id])+'</p>':'';
+  const acts=ph==='note'
+    ?'<textarea class="apnote" data-apnote="'+esc(id)+'" maxlength="300" placeholder="เหตุผลที่ไม่อนุมัติ (จำเป็น)" aria-label="เหตุผลที่ไม่อนุมัติ'+esc(who)+'">'+esc(AP.note[id]||'')+'</textarea>'
+      +'<div class="apb"><button class="apbtn gh" data-ap="noCancel" data-id="'+esc(id)+'">ยกเลิก</button><button class="apbtn no" data-ap="noGo" data-id="'+esc(id)+'" aria-label="ยืนยันไม่อนุมัติ'+kind+esc(who)+'"><span class="i" aria-hidden="true">✕</span> ส่ง ไม่อนุมัติ</button></div>'
+    :'<div class="apb"><button class="apbtn no" data-ap="no" data-id="'+esc(id)+'"'+(busy?' disabled':'')+' aria-label="ไม่อนุมัติ'+kind+esc(who)+'"><span class="i" aria-hidden="true">✕</span> ไม่อนุมัติ</button>'
+      +'<button class="apbtn yes" data-ap="yes" data-id="'+esc(id)+'"'+(busy?' disabled':'')+' aria-label="อนุมัติทันที'+kind+esc(who)+'"><span class="i" aria-hidden="true">✓</span> อนุมัติทันที</button></div>';
+  return '<article class="apc'+(busy?' fade':'')+'" data-apc="'+esc(id)+'" aria-label="'+kind+esc(who)+' รออนุมัติ"><div class="aph"><span class="apk">'+kind+'</span>'+(name?'<b>'+esc(name)+'</b>':'')+'</div>'+apRows(t)+err+acts+'</article>';
+}
+function apZone(){
+  const it=apItems(); if(!it.length) return '';
+  return '<section class="apz" aria-label="รออนุมัติ '+it.length+' รายการ"><div class="apzh"><b>รออนุมัติ</b><span class="apn" aria-hidden="true">'+it.length+'</span></div><div class="aprow'+(it.length===1?' one':'')+'">'+it.map(apCard).join('')+'</div></section>';
+}
+function apBar(){
+  let el=document.getElementById('apbar');
+  const ids=Object.keys(AP.q);
+  if(!el){ if(!ids.length) return; el=document.createElement('div'); el.id='apbar'; el.setAttribute('role','status'); document.body.appendChild(el); }
+  el.hidden=!ids.length;
+  el.innerHTML=ids.map(id=>{ const q=AP.q[id]; return '<div class="api"><span>จะ'+(q.approve?'อนุมัติ':'บันทึกว่าไม่อนุมัติ')+(q.name?'ใบของ '+esc(q.name):'ใบนี้')+'ใน 3 วินาที</span><button data-ap="undo" data-id="'+esc(id)+'" aria-label="เลิกทำ ไม่ส่งคำสั่ง">เลิกทำ</button></div>'; }).join('');
+}
+function apNonce(){ return 'ap'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); }
+function apStart(id,approve,note){
+  const t=apFind(id); if(!t||AP.q[id]) return;
+  AP.err[id]=''; AP.ph[id]='wait';
+  AP.q[id]={ id:id, type:t.type, approve:approve, note:note||'', name:apName(t), tm:setTimeout(()=>apSend(id),AP_DELAY) };
+  apBar(); render();
+}
+function apUndo(id){
+  const q=AP.q[id]; if(!q) return;
+  clearTimeout(q.tm); delete AP.q[id];
+  AP.ph[id]=q.approve?'':'note'; apBar(); render();
+}
+function apCancelAll(msg,noRender){
+  const ids=Object.keys(AP.q); if(!ids.length) return;
+  ids.forEach(id=>{ const q=AP.q[id]; clearTimeout(q.tm); delete AP.q[id]; AP.ph[id]=q.approve?'':'note'; });
+  apBar(); if(msg) toast(msg);
+  if(!noRender){ try{ render(); }catch(e){} }   // การ์ดกลับมาให้เห็นตามเดิม
+}
+const AP_GONE=['BAD_STATE','NOT_FOUND','DUP_REQ'];
+const AP_ERR={ BAD_STATE:'ใบนี้มีคนจัดการไปแล้ว', NOT_FOUND:'ไม่พบใบนี้แล้ว (อาจถูกยกเลิก)', DUP_REQ:'คำขอนี้ส่งไปแล้ว', NEED_CERT:'ยังอนุมัติไม่ได้ ต้องรอครูแนบใบรับรองแพทย์', FORBIDDEN:'ไม่มีสิทธิ์อนุมัติใบนี้', TOKEN_EXPIRED:'หมดเวลาเข้าสู่ระบบ ให้เปิดแอปใหม่อีกครั้ง', BAD_TOKEN:'ตรวจสอบการเข้าสู่ระบบไม่ผ่าน ให้เปิดแอปใหม่อีกครั้ง', APP_OFF:'ผอ. ยังไม่เปิดใช้ Q-Teacher', NET:'ส่งไม่สำเร็จ เน็ตช้าหรือหลุด ลองอีกครั้ง' };
+function apDrop(q){ const rm=x=>!(x&&x.type===q.type&&x.id===q.id); if(Array.isArray(S.ext)) S.ext=S.ext.filter(rm); if(S.home&&Array.isArray(S.home.tasks)) S.home.tasks=S.home.tasks.filter(rm); delete AP.ph[q.id]; delete AP.err[q.id]; delete AP.note[q.id]; try{ cacheSet(S.home); }catch(e){} }
+async function apSend(id){
+  const q=AP.q[id]; if(!q) return;
+  delete AP.q[id]; AP.ph[id]='busy'; apBar();
+  let j;
+  try{
+    const r=await Promise.race([
+      fetch(CONFIG.TEACHER_API,{method:'POST',body:JSON.stringify({action:q.type,idToken:liff.getIDToken(),id:q.id,approve:q.approve===true,note:q.note||'',slim:true,nonce:apNonce(),viewAs:vaId()})}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),AP_TMO))]);
+    j=await r.json();
+  }catch(e){ j={ok:false,code:'NET'}; }
+  if(j&&j.ok){ apDrop(q); toast(q.approve?'อนุมัติแล้ว':'บันทึกว่าไม่อนุมัติแล้ว'); try{ render(); }catch(e){} loadExt(true); return; }
+  const code=(j&&j.code)||'NET';
+  const msg=AP_ERR[code]||(code==='BAD_INPUT'&&j.error)||'ส่งไม่สำเร็จ ลองอีกครั้งในอีกสักครู่';
+  if(AP_GONE.indexOf(code)>=0){ apDrop(q); toast(msg); try{ render(); }catch(e){} loadExt(true); return; }
+  AP.ph[id]=q.approve?'':'note'; AP.err[id]=msg; toast(msg);
+  try{ render(); }catch(e){}
+  if(code==='NET') loadExt(true);   // อาจส่งสำเร็จแต่ตอบกลับไม่ทัน: โหลดรายการใหม่เงียบๆ
+}
+function apClick(t){
+  const id=t.dataset.id, a=t.dataset.ap;
+  if(a==='undo'){ apUndo(id); return; }
+  if(!apFind(id)||AP.q[id]||AP.ph[id]==='busy') return;
+  if(a==='yes'){ apStart(id,true,''); return; }
+  if(a==='no'){ AP.ph[id]='note'; AP.err[id]=''; render(); const el=document.querySelector('[data-apnote="'+id+'"]'); if(el) el.focus(); return; }
+  if(a==='noCancel'){ AP.ph[id]=''; AP.err[id]=''; render(); return; }
+  if(a==='noGo'){
+    const n=String(AP.note[id]||'').trim();
+    if(!n){ AP.err[id]='กรุณาใส่เหตุผลที่ไม่อนุมัติ'; render(); const el=document.querySelector('[data-apnote="'+id+'"]'); if(el) el.focus(); return; }
+    apStart(id,false,n);
+  }
+}
+document.addEventListener('input',e=>{ const id=e.target&&e.target.dataset&&e.target.dataset.apnote; if(id) AP.note[id]=e.target.value; });
+window.addEventListener('pagehide',()=>apCancelAll());
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) apCancelAll(); });
 /** คำชมครูจากระบบ + ดาวจากผู้ปกครอง: ดึงจาก Q-Teacher (ครูที่ทำได้ตามเป้า · ดาวล่าสุด · ดาวสะสมของฉัน) */
 let PR=null,PRAT=0,PRLOAD=false;
 async function loadPraise(force){
@@ -890,6 +1036,7 @@ function vaDecorate(){
 }
 function render0(){
   if(S.home) window.__qkReady=true;
+  if(S.page!=='home'&&Object.keys(AP.q).length) apCancelAll('ยกเลิกแล้ว ยังไม่ได้ส่งคำสั่ง ใบยังรออนุมัติ',true);
   const body=S.home?pageBody():pageHome();   // ยังไม่มีข้อมูลจากหลังบ้าน → วาดปุ่มทางลัดก่อนทันที
   const el=document.getElementById('app');
   const n=S.home?inboxCounts().total:0;
@@ -1308,7 +1455,7 @@ function pageHome(){
     ${dBtn('leave','teacher','Q-Teacher','ขอลา','ยื่นใบลา · ดูสถานะ')}
   </div></section>`;
   const rooms=`<button class="roomb" data-dly="rooms"><span class="e" aria-hidden="true">🏫</span><span class="tx"><b>ห้อง/วิชาของฉัน</b><small>เร็วๆ นี้ · จะสรุปห้องและวิชาที่รับผิดชอบเมื่อ Student/Academic เปิดใช้</small></span><span class="chev">${ic('chev',16)}</span></button>`;
-  return `${top}<div class="stack" style="gap:14px">${winTop()}${daily}${progBar()}${appGrid()}${notifBox()}${prayerLine()}<button class="emgb" data-dly="emg">🚨 เหตุฉุกเฉิน</button>${dirRow()}${rooms}<p class="credit">${esc(brandOf().name)} v2 · ผู้พัฒนา: นายฮาฟีซี อูมา</p>${recentBar()}</div>`;
+  return `${top}<div class="stack" style="gap:14px">${apZone()}${winTop()}${daily}${progBar()}${appGrid()}${notifBox()}${prayerLine()}<button class="emgb" data-dly="emg">🚨 เหตุฉุกเฉิน</button>${dirRow()}${rooms}<p class="credit">${esc(brandOf().name)} v2 · ผู้พัฒนา: นายฮาฟีซี อูมา</p>${recentBar()}</div>`;
 }
 /* ---------- งานของฉัน ---------- */
 const TF=[['all','ทั้งหมด'],['teacher','Teacher'],['academic','Academic'],['student','Student'],['budget','Budget']];
@@ -1627,8 +1774,9 @@ function dailyGo(k){
   location.href=appUrl(u,d[1]);
 }
 document.addEventListener('click',async ev=>{
-  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-tf],[data-atab],[data-lcfg],[data-day],[data-ev],[data-win],[data-ttab],[data-dly],[data-ibx],[data-ibtab],[data-va]');
+  const t=ev.target.closest('[data-go],[data-act],[data-ann],[data-app],[data-task],[data-filter],[data-sw],[data-tf],[data-atab],[data-lcfg],[data-day],[data-ev],[data-win],[data-ttab],[data-dly],[data-ibx],[data-ibtab],[data-va],[data-ap]');
   if(!t) return;
+  if(t.dataset.ap){ if(!S.viewAs) apClick(t); return; }
   if(S.viewAs&&vaBlocked(t)){ toast(ERR.VIEW_ONLY); return; }
   if(t.dataset.ibx){ S.inboxTab=t.dataset.ibx; go('inbox',true); return; }
   if(t.dataset.ibtab){ S.inboxTab=t.dataset.ibtab; render(); return; }
