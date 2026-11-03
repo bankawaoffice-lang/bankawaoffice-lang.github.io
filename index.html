@@ -256,9 +256,9 @@ button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:in
 .appt{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:none;padding:6px 2px;min-height:88px;color:var(--ink);font:inherit;min-width:0}
 .appt .aiw{position:relative;display:block}
 .lt{position:absolute;top:-6px;right:-8px;min-width:22px;height:22px;padding:0 5px;box-sizing:border-box;border-radius:999px;border:2px solid var(--card);color:#fff;font:700 12px/18px var(--f);text-align:center}
-.lt-r{background:#C4262F}.lt-g{background:#0F7A4B}
+.lt-r{background:#C4262F}.lt-g{background:#0F7A4B}.lt-y{background:#F5C26B;color:#3A2D12}
 .hdr2 .hsum{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:44px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;border-radius:14px;padding:8px 12px;font:600 13.5px/1.35 var(--f);text-align:left}
-.hdr2 .hs-t{flex:1;min-width:0;overflow-wrap:anywhere}.hdr2 .hs-c{flex:none;display:flex;transition:transform .15s}.hdr2 .hs-c.up{transform:rotate(-90deg)}.hdr2 .hs-c:not(.up){transform:rotate(90deg)}
+.hdr2 .hs-t{flex:1;min-width:0;overflow-wrap:anywhere}.hdr2 .hp{white-space:nowrap}.hdr2 .hs-c{flex:none;display:flex;transition:transform .15s}.hdr2 .hs-c.up{transform:rotate(-90deg)}.hdr2 .hs-c:not(.up){transform:rotate(90deg)}
 .hdr2 .hsum-det{grid-column:1/-1;background:rgba(0,0,0,.22);color:#fff;border-radius:14px;padding:8px 12px;font-size:13.5px;line-height:1.45;max-height:max(0px,calc(50vh - 200px));overflow:auto}
 .hsum-det h4{margin:6px 0 4px;font-size:13px;color:#fff;opacity:.95}.hsum-det ul{margin:0;padding-left:18px}.hsum-det li{margin:2px 0}
 .appt .aicw{width:46px;height:46px;border-radius:14px;box-shadow:0 5px 10px var(--sh)}
@@ -1176,14 +1176,14 @@ function dirRow(){
   else if(S.boardState==='err') num='โหลดไม่สำเร็จ';
   return `<button class="dirrow" data-dly="staff"><span class="e" aria-hidden="true">👥</span><span class="tx">บุคลากรวันนี้<small>กดดูรายคนใน Q-Teacher</small></span><span class="num">${num}</span></button>`;
 }
-/** ไฟจราจรมุมไอคอน: มีข้อมูลจริงใน home เฉพาะ Q-Teacher (งานที่ดึงมาจาก Q-Teacher) · 🔴 พร้อมตัวเลข = งานด่วน/เกินกำหนด (ใช้เกณฑ์สีแดงเดียวกับหน้ากล่องงาน) · 🟢 = ไม่มีงานค้างเลย · ยังโหลดไม่ครบ/โหลดไม่สำเร็จ/มีงานแต่ไม่ด่วน = ไม่โชว์ไฟ
+/** ไฟจราจรมุมไอคอน: มีข้อมูลจริงใน home เฉพาะ Q-Teacher (งานที่ดึงมาจาก Q-Teacher) · 🔴 พร้อมตัวเลข = มีงานด่วน/เกินกำหนด (ใช้เกณฑ์สีแดงเดียวกับหน้ากล่องงาน) · 🟡 พร้อมตัวเลข = มีงานค้างแต่ไม่ด่วน · 🟢 ✓ = ไม่มีงานค้างเลย · ยังโหลดไม่ครบ/โหลดไม่สำเร็จ = ไม่โชว์ไฟ
  *  แอปอื่น (Academic Student Budget Portfolio Parent Director) ยังไม่มีข้อมูลส่งมาที่ home จึงไม่โชว์ไฟ · 🟡 ไม่มีข้อมูลรองรับ จึงไม่ทำ */
 function appLight(k){
   if(k!=='teacher'||!S.home||!appReady('teacher')||S.extState!=='ok') return '';
   const ts=S.home.tasks.filter(t=>t.app==='teacher'&&t.type!=='link'), lv=ts.map(taskLevel), red=lv.filter(l=>l==='r').length, open=lv.filter(l=>['r','y','b'].includes(l)).length;
   if(red) return '<span class="lt lt-r" role="img" aria-label="มีงานด่วน '+red+' รายการ">'+red+'</span>';
   if(!open) return '<span class="lt lt-g" role="img" aria-label="ไม่มีงานค้าง">✓</span>';
-  return '';
+  return '<span class="lt lt-y" role="img" aria-label="มีงานค้าง '+open+' รายการ ไม่ด่วน">'+open+'</span>';
 }
 function appGrid(){
   if(!S.me) return '';
@@ -1212,9 +1212,15 @@ function sumData(){
   if(isDir()){
     const B=S.board;
     if(B&&B.count&&!offDay()){
+      // กลุ่มของคนทั้งหมด (ไม่ซ้ำกัน): มา(ลงเวลาเข้าแล้ว) · ลา/ไปราชการ · ยังไม่ลงเวลา · ขอเข้าสายไว้(ยังไม่ลงเวลามา) → บวกกันได้เท่ากับจำนวนทั้งหมดในแถวบุคลากร · ระบบไม่มีข้อมูล "คนที่ไม่ต้องลงเวลา" จึงนับทุกคนในทะเบียน (ไม่รวมบัญชีทดสอบ)
+      const P=B.people||[], AB=P.filter(p=>p.state==='absent'&&!p.in), LR=P.filter(p=>p.late&&!p.in);
       parts.push('🟢 บุคลากรมา '+B.count.came+'/'+B.count.total, '⚠️ ลา '+B.count.leave);
-      const L=(B.people||[]).filter(p=>['leave','official','leavePending'].includes(p.state));
-      if(L.length) det.push(['คนลา/ไปราชการวันนี้',L.map(p=>esc(p.call||p.name)+(p.leave?' · '+esc(p.leave.type)+(p.leave.status!=='อนุมัติ'?' (รอพิจารณา)':''):''))]);
+      if(AB.length) parts.push('🕘 ยังไม่ลงเวลา '+AB.length);
+      if(LR.length) parts.push('⏰ ขอเข้าสาย '+LR.length);
+      const L=P.filter(p=>['leave','official','leavePending'].includes(p.state)), nmOf=p=>esc(p.call||p.name);
+      if(L.length) det.push(['คนลา/ไปราชการวันนี้',L.map(p=>nmOf(p)+(p.leave?' · '+esc(p.leave.type)+(p.leave.status!=='อนุมัติ'?' (รอพิจารณา)':''):''))]);
+      if(AB.length) det.push(['ยังไม่ลงเวลา ('+AB.length+' คน)',AB.map(nmOf)]);
+      if(LR.length) det.push(['ขอเข้าสายไว้วันนี้ ('+LR.length+' คน)',LR.map(p=>nmOf(p)+(p.late.label?' · '+esc(p.late.label):''))]);
     }
     if(done){ parts.push('🔴 ด่วน '+R.length+' รายการ'); if(R.length) det.push(['รายการด่วน',R.slice(0,6).map(tl)]); }
   }else if(done){
@@ -1222,12 +1228,12 @@ function sumData(){
       det.push(['งานค้างของฉัน',O.slice(0,6).map(t=>(taskLevel(t)==='r'?'ด่วน · ':taskLevel(t)==='y'?'ใกล้กำหนด · ':'')+tl(t))]); }
     else parts.push('🟢 ไม่มีงานค้าง');
   }
-  return parts.length?{text:parts.join(' | '),det:det}:null;
+  return parts.length?{text:parts.join(' | '),parts:parts,det:det}:null;
 }
 function sumBar(){
   const d=sumData(); if(!d) return '';
   const can=d.det.length>0, open=!!S.sumOpen&&can;
-  return `<button class="hsum" data-act="sumToggle" aria-expanded="${open}" aria-label="สรุปวันนี้ ${esc(d.text.replace(/[🟢⚠️🔴]/gu,''))}"${can?'':' tabindex="-1"'}><span class="hs-t">${esc(d.text)}</span>${can?`<span class="hs-c${open?' up':''}" aria-hidden="true">${ic('chev',16)}</span>`:''}</button>${open?`<div class="hsum-det">${d.det.map(([h,l])=>`<h4>${h}</h4><ul>${l.map(x=>'<li>'+x+'</li>').join('')}</ul>`).join('')}</div>`:''}`;
+  return `<button class="hsum" data-act="sumToggle" aria-expanded="${open}" aria-label="สรุปวันนี้ ${esc(d.text.replace(/[🟢⚠️🔴]/gu,''))}"${can?'':' tabindex="-1"'}><span class="hs-t">${d.parts.map(p=>'<span class="hp">'+esc(p)+'</span>').join('<span class="hsep"> | </span>')}</span>${can?`<span class="hs-c${open?' up':''}" aria-hidden="true">${ic('chev',16)}</span>`:''}</button>${open?`<div class="hsum-det">${d.det.map(([h,l])=>`<h4>${h}</h4><ul>${l.map(x=>'<li>'+x+'</li>').join('')}</ul>`).join('')}</div>`:''}`;
 }
 function pageHome(){
   const m=S.me, h=S.home;
