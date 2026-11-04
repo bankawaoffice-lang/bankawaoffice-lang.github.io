@@ -281,12 +281,12 @@ function nav(){
   return '<nav class="nav" style="--n:'+items.length+'" aria-label="เมนูหลัก">'+items.map(i=>'<button data-act="tab" data-v="'+i[0]+'" '+(cur===i[0]&&!S.scope?'aria-current="page"':'')+'>'+i[2]+'<span>'+i[1]+'</span>'+(i[0]==='review'&&pend?'<span class="badge">'+pend+'</span>':'')+'</button>').join('')+'</nav>';
 }
 const CK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-function statusChip(sc){
-  const s=sc.sent,bad=Q.items.filter(i=>i.key===sc.key&&(i.state==='pending'||i.state==='failed')).length;
-  if(s)return '<span class="chip '+(s.late?'c-warn':'c-ok')+'">'+CK+' ส่งแล้ว '+esc(s.first_at)+' น.'+(!s.mine&&!isDir()?' · โดย '+esc(s.first_name):'')+(s.late?' · ส่งหลังเวลา':'')+'</span>';
+function statusChip(sc,sentOnly){
+  const s=sc.sent,bad=Q.items.filter(i=>i.key===sc.key&&(i.state==='pending'||i.state==='failed')).length,n=sc.students.length,left=sc.counts[''];
+  const sentChip=s?'<span class="chip c-ok">'+CK+' ส่งแล้ว '+esc(s.first_at)+' น.'+(!s.mine&&!isDir()?' · โดย '+esc(s.first_name):'')+'</span>':'';
   if(bad)return '<span class="chip c-warn">ยังไม่ได้ส่ง '+bad+' รายการ</span>';
-  if(clockNow()>cfg().cutoff)return '<span class="chip c-bad">เลย '+esc(cfg().cutoff)+' น. ยังไม่ส่ง</span>';
-  return '<span class="chip">ยังไม่ส่ง</span>';
+  if(sentOnly)return sentChip||'<span class="chip">ยังไม่ได้ส่ง</span>';
+  return '<span class="chip '+(left?'c-warn':'c-ok')+'">'+(left?'':CK+' ')+'เช็คแล้ว '+(n-left)+' จาก '+n+' คน · '+(left?'เหลือ '+left+' คน':'ครบทุกคน')+'</span>'+sentChip;
 }
 function followBox(scopes){
   const out=[];scopes.forEach(sc=>sc.students.forEach(s=>{if(s.follow)out.push({s:s,key:sc.key})}));
@@ -298,8 +298,6 @@ function today(){
   const scopes=scopesV().filter(s=>!s.extra),t=B.today,dow=DAYN[t.dow-1]||'';
   let h=header('งานวันนี้',(t.closed?'':'วัน'+dow+' · ')+(RO()?(S.viewAsName||''):ME.name))+roBar(),b='<div class="wrap">';
   if(t.closed){b+='<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(t.holiday||'วันหยุด')+' · ไม่มีงานเช็คชื่อ</p></div>';return h+b+'</div>'}
-  const late=clockNow()>=cfg().remind&&scopes.some(s=>!s.sent);
-  if(late)b+='<div class="banner '+(clockNow()>cfg().cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>cfg().cutoff?'เลย '+esc(cfg().cutoff)+' น. แล้ว ยังมีงานเช็คชื่อที่ยังไม่ส่ง':'ใกล้ '+esc(cfg().cutoff)+' น. · เคลียร์คนที่ยังไม่ยืนยัน แล้วกดส่ง')+'</b><span>ต้องรู้ข้อมูลการมาเรียนก่อน '+esc(cfg().cutoff)+' น. (เตือนในแอปเท่านั้น)</span></div>';
   if(!scopes.length)b+='<div class="card"><h2>วัน'+dow+'ไม่มีงานเช็คชื่อของท่าน</h2><p class="sub">'+(t.dow<=2?'จันทร์–อังคาร ครูประจำชั้นเช็คชื่อและฟังอ่านไทย (อนุบาล: ครูประจำกลุ่มเช็คชื่อและฟังอิกเราะอฺ · ครูประจำชั้นเช็คชื่อเด็กที่ไม่อยู่กลุ่ม)':t.dow<=4?'พุธ–พฤหัส ครูประจำกลุ่มเช็คชื่อและฟังอิกเราะอฺ · ครูประจำชั้นเช็คชื่อเด็กที่ไม่อยู่กลุ่ม':'ศุกร์ ครูประจำชั้นเช็คชื่ออย่างเดียว')+'</p></div>';
   scopes.forEach(sc=>{const c=sc.counts,n=sc.students.length,done=n-c[''],rd=sc.kind==='att'?(sc.onet?'<span class="chip c-pri">'+esc(sc.onetText)+'</span>':''):'<span class="chip c-pri">ประเมินอ่านแล้ว '+sc.students.filter(s=>s.read).length+'/'+n+'</span>';
     b+='<button class="task" data-act="open" data-v="'+esc(sc.key)+'"><div class="t"><b>'+esc(sc.title)+'</b>'+statusChip(sc)+'</div><div class="prog" aria-hidden="true"><i style="width:'+(n?Math.round(done/n*100):0)+'%"></i></div><div class="line"><span class="chip c-ok">มา '+c['มา']+'</span><span class="chip c-bad">ขาด '+c['ขาด']+'</span><span class="chip c-lv">ลา '+c['ลา']+'</span><span class="chip c-act">กิจกรรม '+c['กิจกรรม']+'</span><span class="chip '+(c['']?'c-warn':'')+'">ยังไม่ยืนยัน '+c['']+'</span>'+rd+'</div>'+(((sc.co||[])[0])?'<span class="hint">ครูร่วม: '+esc(sc.co[0].name)+'</span>':'')+'</button>'});
@@ -316,7 +314,6 @@ function openScope(){
   if(sc.kind==='iqra')b+=quoteCard();
   if(sc.onet)b+='<div class="banner c-pri" role="status"><b>'+esc(sc.onetText)+'</b><span>วันนี้ไม่มีบันทึกอ่านไทยของห้องนี้ · เช็คแค่มา / ไม่มา</span></div>';
   if(beOld()&&(sc.kind==='thai'||sc.kind==='iqra'))b+='<div class="banner c-bad" role="alert"><b>หลังบ้านยังเป็นรุ่น '+esc(B.version||'เก่า')+'</b><span>ต้อง Deploy รุ่น 0.5.0 ก่อนจึงบันทึกอ่านได้ (เช็คชื่อใช้ได้ตามปกติ)</span></div>';
-  if(!ex&&clockNow()>=cfg().remind&&!sc.sent)b+='<div class="banner '+(clockNow()>cfg().cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>cfg().cutoff?'เลย '+esc(cfg().cutoff)+' น. แล้ว':'ใกล้ '+esc(cfg().cutoff)+' น.')+' · เคลียร์ "ยังไม่ยืนยัน" แล้วกดส่ง</b></div>';
   if(o&&!ex)b+='<div class="banner c-pri"><b>ห้องนี้มีครูร่วม: '+esc(o.name)+'</b><span>ใครส่งก่อนถือเป็นผลของห้อง อีกคนเห็นว่าส่งแล้วและแก้ได้ ระบบเก็บประวัติว่าใครแก้</span></div>';
   if(S.offline)b+='<div class="banner c-warn" role="status"><b>สัญญาณหลุด</b><span>ที่แตะไว้เก็บเป็นร่างในเครื่อง ส่งซ้ำได้ ไม่เกิดรายการซ้ำ</span></div>';
   if(fl.length)b+='<div class="banner c-warn"><b>มีผลอ่านที่บันทึกไว้ของคนที่ถูกเปลี่ยนเป็น ขาด/ลา '+fl.length+' คน</b><span>ผลอ่านยังอยู่ ไม่ถูกลบ · กรุณาตรวจ</span></div>';
@@ -329,8 +326,9 @@ function openScope(){
   const warn=(sv.length?'<div class="hint">กำลังบันทึก '+sv.length+' รายการ…</div>':'')+(bad.length?'<div class="warnrow">ยังไม่ได้ส่ง '+bad.length+' รายการ'+(bad.some(s=>s.sync==='failed')?' · ส่งไม่สำเร็จ ลองใหม่':'')+'</div>':'');
   let bar;
   if(ex){const rd=sc.students.filter(s=>s.read).length;bar='<div class="bar"><div class="in"><div class="rowf between"><span><b class="num">ประเมินอ่านแล้ว '+rd+'/'+n+'</b></span><span class="hint">เช็คชื่อทำที่ "งานวันนี้"</span></div>'+warn+'<button class="bn pri wide" data-act="back">เสร็จแล้ว กลับ</button></div></div>'}
-  else{const snt=sc.sent;bar='<div class="bar"><div class="in"><div class="rowf between"><span><b class="num">บันทึกแล้ว '+mk+'/'+n+'</b> · ยังไม่ยืนยัน <b class="num">'+c['']+'</b></span>'+statusChip(sc)+'</div>'+warn
-   +'<button class="bn pri wide" data-act="send">'+(snt?(!snt.mine&&!isDir()?'บันทึกการแก้ไข (ห้องส่งโดย '+esc(snt.first_name)+')':'ส่งอีกครั้ง (มีการแก้ไข)'):bad.length?'ส่งซ้ำ':'ส่งเช็คชื่อ')+'</button></div></div>'}
+  else{const snt=sc.sent;bar='<div class="bar"><div class="in"><div class="rowf between"><span><b class="num">เช็คแล้ว '+mk+' จาก '+n+' คน · '+(c['']?'เหลือ '+c['']+' คน':'ครบทุกคน')+'</b></span>'+statusChip(sc,true)+'</div>'+warn
+   +(c['']?'<button class="bn wide" style="margin-bottom:8px" data-act="sheet" data-v="left">ดูว่าเหลือใคร ('+c['']+' คน)</button>':'')
+   +'<button class="bn pri wide" data-act="send">'+(snt?'ส่งอีกครั้ง':'ส่ง')+'</button></div></div>'}
   return h+b+'</div>'+bar;
 }
 function studentRow(s,sc,i){
@@ -359,6 +357,7 @@ function sheet(){
   if(sh.t==='diag')return wrap(diagHtml()+close);
   if(sh.t==='notif'){const l=B.notifs||[];return wrap('<h2>การแจ้งเตือน</h2>'+(l.length?'<div class="stack">'+l.slice(0,12).map(n=>'<div class="card" style="margin:0"><b>'+esc(n.text)+'</b><div class="hint">'+esc(String(n.at||'').slice(11,16))+' น.</div></div>').join('')+'</div>':'<p class="sub">ยังไม่มีการแจ้งเตือน</p>')+close)}
   if(sh.t==='leave')return wrap('<h2>ยังมีรายการที่ยังไม่เห็น "บันทึกสำเร็จ"</h2><p>เหลือ <b class="num">'+sh.n+'</b> รายการ ถ้าออกจากหน้านี้ตอนนี้ ระบบเก็บร่างไว้ในเครื่อง และส่งต่อเมื่อกลับมาเปิดแอป</p><button class="bn pri wide" data-act="close">อยู่ต่อ รอให้บันทึกสำเร็จ</button><button class="bn wide" data-act="leaveok">ออกจากหน้านี้</button>');
+  if(sh.t==='left'){const sc=scopeByKey(S.scope),l=sc?sc.students.filter(s=>!s.att.st):[],n=sc?sc.students.length:0;return wrap('<h2>ยังไม่ได้เช็ค ('+l.length+' คน)</h2><p class="sub">เช็คแล้ว '+(n-l.length)+' จาก '+n+' คน · เหลือ '+l.length+' คน</p>'+(l.length?'<ol style="margin:8px 0 12px;padding-left:22px">'+l.map(s=>'<li style="margin:4px 0">'+esc(s.name)+'</li>').join('')+'</ol>':'<p>ครบทุกคนแล้ว</p>')+close)}
   if(sh.t==='clear'){const sc=scopeByKey(S.scope);return wrap('<h2>เคลียร์คนที่ยังไม่ยืนยัน ('+sc.counts['']+' คน)</h2><p class="sub">เลือกให้ทุกคนที่ยังไม่ยืนยัน แก้รายคนทีหลังได้</p><div class="grid3"><button class="opt" data-act="clearto" data-v="ลา">ลา</button><button class="opt" data-act="clearto" data-v="ขาด">ขาด</button><button class="opt" data-act="clearto" data-v="ไม่ทราบ">ยังไม่ทราบสาเหตุ</button></div><p class="hint">ขาด/ลา ที่ยังไม่เลือกสาเหตุ และ "ยังไม่ทราบสาเหตุ" นับเป็นไม่มา และขึ้นรายการ "ต้องติดตาม" ของครูและ ผอ. จนกว่าจะเลือกสาเหตุ</p>'+close)}
   if(sh.t==='reason'){const sc=scopeByKey(S.scope),s=sc.students.find(x=>x.id===sh.id),r=s.att;return wrap('<h2>สาเหตุ'+(r.st==='ลา'?'การลา':'การขาด')+'</h2><div class="stack">'+REASONS.map(x=>'<button class="opt" data-act="setreason" data-id="'+esc(sh.id)+'" data-v="'+esc(x)+'" aria-pressed="'+(r.reason===x)+'">'+esc(x)+((x===UNKNOWN||x===LOST)?' (ขึ้นต้องติดตาม)':'')+'</button>').join('')+'</div><div class="fld"><label for="rtx">ถ้าเลือก "อื่นๆ" พิมพ์สาเหตุ</label><input id="rtx" maxlength="80" value="'+esc(r.text||'')+'"></div><button class="bn pri wide" data-act="reasontext" data-id="'+esc(sh.id)+'">บันทึกสาเหตุ</button>'+close)}
   if(sh.t==='stu'){const s=(S.adm&&S.adm.students||[]).find(x=>x.id===sh.id);if(!s)return '';const rooms=(S.adm&&S.adm.rooms)||[],groups=(S.adm&&S.adm.groups)||[];
@@ -391,21 +390,20 @@ function overview(){
   const o=S.ov;let h=header('ภาพรวมเช้า',o?('วัน'+(DAYN[o.dow-1]||'')+' · ตอนนี้ '+esc(o.hm)+' น. · นักเรียน '+o.total+' คน'):'กำลังโหลด…'),b='<div class="wrap">';
   if(!o)return h+b+'<div class="card"><div class="spin"></div></div></div>';
   if(o.closed)b+='<div class="card"><h2>วันนี้ปิดเรียน</h2><p class="sub">'+esc(o.holiday)+'</p></div>';
-  const c=o.tiles,unsent=o.scopes.filter(s=>!s.sent),short=s=>esc(s.title.replace(/^เช็คชื่อ( \+ [^·]+| อย่างเดียว)? · /,''));
+  const c=o.tiles,inc=o.scopes.filter(s=>s.counts['']>0),scs=o.scopes.slice().sort((a,b)=>(b.counts['']>0)-(a.counts['']>0)),short=s=>esc(s.title.replace(/^เช็คชื่อ( \+ [^·]+| อย่างเดียว)? · /,''));
   if(!o.closed){
-  if(unsent.length&&clockNow()>=o.cfg.remind)b+='<div class="banner '+(clockNow()>o.cfg.cutoff?'c-bad':'c-warn')+'" role="alert"><b>'+(clockNow()>o.cfg.cutoff?'เลย '+esc(o.cfg.cutoff)+' น.':'ใกล้ '+esc(o.cfg.cutoff)+' น.')+' · ยังไม่ส่ง '+unsent.length+' ห้อง/กลุ่ม</b><span>'+unsent.slice(0,6).map(short).join(' · ')+(unsent.length>6?' …':'')+'</span></div>';
   b+='<div class="tiles"><div class="tile c-ok"><b class="num">'+c['มา']+'</b><span>มา</span></div><div class="tile c-lv"><b class="num">'+c['ลา']+'</b><span>ลา</span></div><div class="tile c-bad"><b class="num">'+c['ขาด']+'</b><span>ขาด</span></div><div class="tile c-act"><b class="num">'+c['กิจกรรม']+'</b><span>กิจกรรมโรงเรียน</span></div><div class="tile c-warn"><b class="num">'+c['']+'</b><span>ยังไม่ยืนยัน</span></div><div class="tile c-bad"><b class="num">'+c.follow+'</b><span>ต้องติดตาม</span></div></div>';
   }
   b+='<div style="margin-top:12px"></div>'+chartsHtml(o)+rankCard();
   if(!o.closed){
-  b+='<div class="card" style="margin-top:12px"><div class="rowf between"><h3>ห้อง / กลุ่ม ที่ส่งแล้วและยังไม่ส่ง</h3>'+(o.lateSends?'<span class="chip c-warn">ส่งหลังเวลา '+o.lateSends+'</span>':'')+'</div><table class="tbl"><thead><tr><th>ห้อง/กลุ่ม</th><th>มา</th><th>ลา</th><th>ขาด</th><th>ยัง</th><th>ส่ง</th></tr></thead><tbody>'+o.scopes.map(s=>{const k=s.counts,sd=s.sent;return '<tr><td><button class="rb" data-act="open" data-v="'+esc(s.key)+'">'+short(s)+(s.noOwner?' <span class="chip c-bad">ยังไม่มีครู</span>':'')+'</button></td><td class="num">'+k['มา']+'</td><td class="num">'+k['ลา']+'</td><td class="num">'+k['ขาด']+'</td><td class="num">'+k['']+'</td><td>'+(sd?'<span class="chip '+(sd.late?'c-warn':'c-ok')+'">'+esc(sd.first_at)+(sd.late?' หลังเวลา':'')+'</span>':'<span class="chip c-bad">ยัง</span>')+'</td></tr>'}).join('')+'</tbody></table></div>';
+  b+='<div class="card" style="margin-top:12px"><div class="rowf between"><h3>ห้อง / กลุ่ม ครบและยังไม่ครบ</h3>'+(inc.length?'<span class="chip c-warn">ยังไม่ครบ '+inc.length+'</span>':'<span class="chip c-ok">ครบทุกห้อง/กลุ่ม</span>')+'</div><table class="tbl"><thead><tr><th>ห้อง/กลุ่ม</th><th>มา</th><th>ลา</th><th>ขาด</th><th>ยัง</th><th>สถานะ</th></tr></thead><tbody>'+scs.map(s=>{const k=s.counts,sd=s.sent;return '<tr><td><button class="rb" data-act="open" data-v="'+esc(s.key)+'">'+short(s)+(s.noOwner?' <span class="chip c-bad">ยังไม่มีครู</span>':'')+'</button></td><td class="num">'+k['มา']+'</td><td class="num">'+k['ลา']+'</td><td class="num">'+k['ขาด']+'</td><td class="num">'+k['']+'</td><td>'+(k['']>0?'<span class="chip c-warn">ยังไม่ครบ (เหลือ '+k['']+')</span>':'<span class="chip c-ok">ครบ</span>')+'</td></tr>'}).join('')+'</tbody></table></div>';
   if(o.follow.length)b+='<div class="card"><div class="rowf between"><h3>ต้องติดตาม</h3><span class="chip c-bad">'+c.follow+' คน</span></div><p class="sub">ไม่มาและยังไม่ได้เลือกสาเหตุ / ยังไม่ทราบสาเหตุ / ติดตามไม่ได้ (ที่รู้สาเหตุแล้วไม่ขึ้น) · แตะชื่อดูประวัติ</p>'+o.follow.slice(0,8).map(s=>'<button class="pbtn" style="margin-top:6px" data-act="hist" data-id="'+esc(s.id)+'"><span>'+esc(s.name)+'</span><span class="chip c-bad">'+esc(s.st)+'</span></button>').join('')+(o.follow.length>8?'<p class="hint">…และอีก '+(o.follow.length-8)+' คน</p>':'')+'</div>';
   }
   b+='<div class="card"><div class="rowf between"><h3>ตรวจรายชื่อ</h3><span class="chip '+(o.review.pending?'c-warn':'c-ok')+'">เหลือ '+o.review.pending+' / '+o.review.total+'</span></div></div>';
   b+='<div class="card"><h3>ดูในมุมมองของครู</h3><p class="sub">ดูอย่างเดียว บันทึกไม่ได้ (ระบบไม่เก็บประวัติการเปิดดู)</p><div class="fld"><label for="va">เลือกครู</label><select id="va" data-act="viewas-sel"><option value="">— เลือก —</option>'+o.teachers.map(t=>'<option value="'+esc(t.id)+'">'+esc(t.name)+'</option>').join('')+'</select></div></div>';
   b+=quotesCard();
   const gr=[],od=o.cfg.onet_days||[],og=o.cfg.onet_grades||[];(o.byRoom||[]).forEach(r=>{if(r.grade&&gr.indexOf(r.grade)<0)gr.push(r.grade)});
-  b+='<div class="card"><h3>ค่าตั้ง (ผอ. แก้ได้)</h3><div class="grid2"><div class="fld"><label for="c1">จำนวนบทอิกเราะอฺ</label><input id="c1" type="number" min="1" max="12" value="'+o.cfg.books+'"></div><div class="fld"><label for="c5">จำนวนหน้าต่อบท (0 = ไม่จำกัด)</label><input id="c5" type="number" min="0" max="999" value="'+(o.cfg.pages||0)+'"></div><div class="fld"><label for="c6">เด็กขั้นต่ำต่อกลุ่ม/ชั้น เพื่อจัดอันดับ</label><input id="c6" type="number" min="1" max="50" value="'+(o.cfg.rank_min||5)+'"></div><div class="fld"><label for="c3">เวลาเตือนในแอป</label><input id="c3" type="time" value="'+esc(o.cfg.remind)+'"></div><div class="fld"><label for="c4">เวลาที่ต้องรู้ข้อมูล</label><input id="c4" type="time" value="'+esc(o.cfg.cutoff)+'"></div></div>'
+  b+='<div class="card"><h3>ค่าตั้ง (ผอ. แก้ได้)</h3><div class="grid2"><div class="fld"><label for="c1">จำนวนบทอิกเราะอฺ</label><input id="c1" type="number" min="1" max="12" value="'+o.cfg.books+'"></div><div class="fld"><label for="c5">จำนวนหน้าต่อบท (0 = ไม่จำกัด)</label><input id="c5" type="number" min="0" max="999" value="'+(o.cfg.pages||0)+'"></div><div class="fld"><label for="c6">เด็กขั้นต่ำต่อกลุ่ม/ชั้น เพื่อจัดอันดับ</label><input id="c6" type="number" min="1" max="50" value="'+(o.cfg.rank_min||5)+'"></div></div>'
    +'<h3 style="margin-top:14px">ติวโอเน็ต (เช็คแค่มา / ไม่มา ไม่มีบันทึกอ่านไทย)</h3><p class="hint" style="margin:2px 0 8px">ชั้นที่เลือก ในวันที่เลือก ครูจะเห็นเฉพาะปุ่มมา/ขาด/ลา และข้อความ "ติวโอเน็ต" แทนการบันทึกอ่านไทย · ค่าเริ่มต้น ป.3 และ ป.6 วันจันทร์–อังคาร · ถ้าเลือกวันพุธ–พฤหัส หน้าดู/บันทึกอ่านไทยของชั้นนั้นจะถูกซ่อน</p>'
    +'<div class="lgd">'+gr.map(g=>'<label class="cbx"><input type="checkbox" name="og" value="'+esc(g)+'" '+(og.indexOf(g)>=0?'checked':'')+'><span class="bx" aria-hidden="true"></span> '+esc(g)+'</label>').join('')+'</div>'
    +'<div class="lgd" style="margin-top:8px">'+[[1,'จันทร์'],[2,'อังคาร'],[3,'พุธ'],[4,'พฤหัสบดี']].map(d=>'<label class="cbx"><input type="checkbox" name="od" value="'+d[0]+'" '+(od.indexOf(d[0])>=0?'checked':'')+'><span class="bx" aria-hidden="true"></span> '+d[1]+'</label>').join('')+'</div>'
@@ -654,13 +652,11 @@ function setStatus(sc,id,st,reason,text){if(blockRO())return;qPush({t:'att',key:
 function guardLeave(go){const n=unsafeN();if(n>0&&!S.sheet){S.sheet={t:'leave',n:n,go:go};render();return false}return true}
 function goBack(){if(S.scope){S.scope=''}render();window.scrollTo(0,0);if(S.tab==='overview'&&isDir())loadOverview();if(S.tab==='review')loadReview()}async function doSend(){
   if(blockRO())return;const sc=scopeByKey(S.scope);
-  if(sc.counts['']>0&&!S.sheet&&clockNow()>=cfg().remind&&!S.sendWarned){S.sendWarned=1;S.sheet={t:'clear'};toast('ยังมีคนที่ยังไม่ยืนยัน · เคลียร์ก่อนส่ง หรือกดส่งอีกครั้งเพื่อส่งทั้งที่ยังไม่ยืนยัน');render();return}
-  S.sendWarned=0;
   await waitFlush();
   if(Q.items.some(i=>i.key===S.scope)){Q.items.forEach(i=>{if(i.key===S.scope)i.state='failed'});qSave();render();toast('ส่งไม่สำเร็จ · เก็บร่างไว้ในเครื่อง ส่งซ้ำได้เมื่อสัญญาณกลับมา');return}
   try{
     const j=await api('att.send',{key:S.scope},{nonce:nonce()});mergeScope(j.scope);const sd=j.scope.sent;render();
-    toast(sd&&!sd.mine?'บันทึกแล้ว · ผลของห้องถือเป็นของ '+sd.first_name+' ที่ส่งก่อน · เก็บประวัติว่าท่านแก้':'ส่งเช็คชื่อแล้ว เวลา '+clockNow()+' น.'+(sd&&sd.late?' · ติดป้าย "ส่งหลังเวลา" ให้ ผอ. เห็น':' · ทันก่อน '+cfg().cutoff+' น.'));
+    const c2=scopeByKey(S.scope).counts[''],n2=scopeByKey(S.scope).students.length;toast((sd&&!sd.mine?'บันทึกแล้ว · ผลของห้องถือเป็นของ '+sd.first_name+' ที่ส่งก่อน · เก็บประวัติว่าท่านแก้':'ส่งแล้ว')+' · เช็คแล้ว '+(n2-c2)+' จาก '+n2+' คน'+(c2?' · เหลือ '+c2+' คน':' · ครบทุกคน'));
   }catch(e){toast(e.net?'ส่งไม่สำเร็จ · ลองใหม่เมื่อสัญญาณกลับมา':e.message)}
 }
 document.addEventListener('change',e=>{const t=e.target;if(!t.dataset)return;if(t.dataset.act==='viewas-sel'&&t.value){const o=S.ov&&S.ov.teachers.find(x=>x.id===t.value);startViewAs(t.value,o?o.name:t.value)}if(t.dataset.act==='sfilter'){S.rf=t.value;loadStudents()}
@@ -684,7 +680,7 @@ document.addEventListener('click',async e=>{
   const nmb=e.target.closest('.stu .nm b');if(nmb&&isDir()&&S.scope){const id=nmb.closest('.stu').querySelector('[data-id]');if(id){if(!S.adm)await loadStudents();S.sheet={t:'stu',id:id.dataset.id};render();return}}
   const t=e.target.closest('[data-act]');if(!t)return;const d=t.dataset,a=d.act,v=d.v;
   if(a==='ovclose'){if(e.target===t){S.sheet=null;RD={};render()}return}
-  if(a==='close'){S.sheet=null;RD={};S.sendWarned=0;render();return}
+  if(a==='close'){S.sheet=null;RD={};render();return}
   if(a==='leaveok'){const g=S.sheet&&S.sheet.go;S.sheet=null;if(g)g();return}
   if(a==='back'){if(!guardLeave(goBack))return;goBack();return}
   if(a==='viewas'){if(!guardLeave(endViewAs))return;endViewAs();return}
@@ -736,7 +732,7 @@ document.addEventListener('click',async e=>{
     try{const j=await api('review.decide',{key:d.key,act:'edit',sid:sid,raw:raw},{nonce:nonce()});S.rev=j.review;B.review.pending=j.review.filter(r=>!r.done).length;S.sheet=null;toast('บันทึกแล้ว');render()}catch(er){toast(er.message);S.sheet=null;loadReview()}return}
   if(a==='revnone'){try{const j=await api('review.decide',{key:d.key,act:'none'},{nonce:nonce()});S.rev=j.review;B.review.pending=j.review.filter(r=>!r.done).length;S.sheet=null;toast('บันทึกว่าไม่พบในทะเบียน');render()}catch(er){toast(er.message);S.sheet=null;loadReview()}return}
   if(a==='audit'){try{const j=await api('admin.audit',{});S.audit=j.audit;render()}catch(er){toast(er.message)}return}
-  if(a==='cfgsave'){try{const og=[...document.querySelectorAll('input[name=og]:checked')].map(x=>x.value),od=[...document.querySelectorAll('input[name=od]:checked')].map(x=>+x.value);const j=await api('admin.cfg.save',{books:+val('c1'),pages:+val('c5'),rank_min:+val('c6'),remind:val('c3'),cutoff:val('c4'),onet_grades:og,onet_days:od},{nonce:nonce()});B.cfg=j.cfg;if(S.ov)S.ov.cfg=j.cfg;toast('บันทึกค่าตั้งแล้ว');render();refreshQuiet()}catch(er){toast(er.message)}return}
+  if(a==='cfgsave'){try{const og=[...document.querySelectorAll('input[name=og]:checked')].map(x=>x.value),od=[...document.querySelectorAll('input[name=od]:checked')].map(x=>+x.value);const j=await api('admin.cfg.save',{books:+val('c1'),pages:+val('c5'),rank_min:+val('c6'),onet_grades:og,onet_days:od},{nonce:nonce()});B.cfg=j.cfg;if(S.ov)S.ov.cfg=j.cfg;toast('บันทึกค่าตั้งแล้ว');render();refreshQuiet()}catch(er){toast(er.message)}return}
   if(a==='stuedit'){S.sheet={t:'stu',id:d.id};render();return}
   if(a==='stusave'){try{const j=await api('admin.student.update',{id:d.id,prefix:val('f1'),first:val('f2'),last:val('f3'),code:val('f4'),room_id:val('f5'),gid:val('f6'),status:val('f7')},{nonce:nonce()});S.adm.students=j.students;S.sheet=null;toast(j.changed&&j.changed.length?'บันทึกแล้ว · เก็บประวัติแล้ว ('+j.changed.join(' · ')+')':'ไม่มีการเปลี่ยนแปลง');render();refreshQuiet()}catch(er){toast(er.message)}return}
   if(a==='studel'){S.sheet={t:'delc',id:d.id};render();return}
