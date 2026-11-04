@@ -288,6 +288,7 @@ button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:in
 .pbar{height:14px;border-radius:8px;background:var(--soft);border:1px solid var(--line);overflow:hidden}.pbar i{display:block;height:100%;border-radius:8px;background:var(--ok)}
 .prow.y .pbar i{background:var(--warn)}.prow.r .pbar i{background:var(--bad)}.prow.r{border-left:4px solid var(--bad);padding-left:8px}
 .plist{font-size:12.5px;line-height:1.45;color:var(--muted)}.plist b{color:var(--ink)}.pupd{font-size:11.5px;color:var(--muted)}
+.prow.n .pbar i{background:var(--muted)}.pgray{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;line-height:1.45;color:var(--muted)}
 .appt .aiw{position:relative;display:block}
 .lt{position:absolute;top:-6px;right:-8px;min-width:22px;height:22px;padding:0 5px;box-sizing:border-box;border-radius:999px;border:2px solid var(--card);color:#fff;font:700 12px/18px var(--f);text-align:center}
 .lt-r{background:#C4262F}.lt-g{background:#0F7A4B}.lt-y{background:#F5C26B;color:#3A2D12}
@@ -803,64 +804,124 @@ async function loadBoard(force){
   }catch(e){ S.boardState='err'; }
   S.boardLoading=false; render();
 }
-/** โซน 3 แถบความคืบหน้าตามช่วงเวลา (เฉพาะ ผอ. · อ่านอย่างเดียว) · ใช้คำสั่ง admin.overview ที่มีอยู่แล้วของ Q-Student / Q-Academic เท่านั้น
- *  07:30-09:00 Q-Student เท่านั้น · 09:00-15:00 Q-Academic เท่านั้น · หลัง 15:00 Q-Student เท่านั้น · ก่อน 07:30 ซ่อน · จำผล 60 วินาที · ล้มเหลว/ช้าเกิน 8 วินาที = ซ่อนเงียบๆ */
-const PROG_TTL=60000, PROG_TMO=8000, PROG_API={student:'STUDENT_API',academic:'ACADEMIC_API'};
-function progWin(){ const m=bkkMin(); return m>=450&&m<540?'am':m>=540&&m<900?'mid':m>=900?'pm':''; }
-function progKey(w){ return w==='mid'?'academic':w?'student':''; }
+/** โซน 3 แถบความคืบหน้า (เฉพาะ ผอ. · อ่านอย่างเดียว) · แสดงทุกหลอดที่มีข้อมูลต่อกันตลอดวัน เรียง: บุคลากรมา → เช็คชื่อเช้า → เข้าสอน → บันทึกผลอ่าน
+ *  ข้อมูล: admin.overview ของ Q-Student และ Q-Academic (ยิงทั้งคู่ตอนเปิดหน้า แยกกัน ไม่รอกัน ไม่บล็อกหน้าแรก) + board ของ Q-Teacher ที่หน้าโหลดอยู่แล้ว (ตัวเดียวกับแถบหัวม่วง)
+ *  ก่อน 07:30 หลอดเช็คชื่อเช้า/เข้าสอน/ผลอ่านเป็นสีเทา "ยังไม่ถึงเวลา" · หลอดไหนโหลดไม่ได้/ช้าเกิน 8 วินาที = บรรทัดเทา หลอดอื่นยังแสดง · ข้อมูลคนละวัน = ไม่แสดงตัวเลข
+ *  แคช 60 วินาที ผูกกับวันที่ (ข้ามเที่ยงคืน/กลับจากพื้นหลัง ตรวจวันใหม่ ล้างของเมื่อวานทันที) · ล้มเหลวลองใหม่ได้เร็วขึ้นที่ 15 วินาที */
+const PROG_TTL=60000, PROG_ERR_TTL=15000, PROG_TMO=8000, PROG_START=450, PROG_SRC=[['student','STUDENT_API'],['academic','ACADEMIC_API']];
+function bkkDay(){ try{ return new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Bangkok'}); }catch(e){ return ''; } }
 function progOk(){ return !!S.home&&!!S.me&&isDir()&&!S.viewAs&&!offDay(); }   // ผอ. เท่านั้น · ไม่ใช่มุมมองคนอื่น · ไม่ใช่วันหยุด (ไม่ใช่ = ไม่ยิงคำขอเลย)
-async function loadProg(force){
-  if(!progOk()) return;
-  const k=progKey(progWin()); if(!k||!CONFIG[PROG_API[k]]) return;
-  S.prog=S.prog||{}; const c=S.prog[k]||(S.prog[k]={});
+function progGuard(){ const d=bkkDay(); if(!S.prog||S.prog.day!==d) S.prog={day:d}; return S.prog; }   // แคชผูกกับวันที่: วันเปลี่ยน = เริ่มใหม่
+async function progFetch(k,cfgKey,force){
+  const P=progGuard(), day=P.day, c=P[k]||(P[k]={});
   if(c.loading) return;
-  if(!force&&c.at&&Date.now()-c.at<PROG_TTL) return;
+  if(!force&&c.at&&Date.now()-c.at<(c.err?PROG_ERR_TTL:PROG_TTL)) return;
   c.loading=true;
   let ok=false, ov=null;
   try{
-    const r=await Promise.race([fetch(CONFIG[PROG_API[k]],{method:'POST',body:JSON.stringify({action:'admin.overview',idToken:liff.getIDToken(),data:{}})}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),PROG_TMO))]);
-    const j=await r.json(); if(j&&j.ok&&j.overview){ ok=true; ov=j.overview; }
+    const r=await Promise.race([fetch(CONFIG[cfgKey],{method:'POST',body:JSON.stringify({action:'admin.overview',idToken:liff.getIDToken(),data:{}})}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),PROG_TMO))]);
+    const j=await r.json(); if(j&&j.ok&&j.overview&&typeof j.overview==='object'){ ok=true; ov=j.overview; }
   }catch(e){ ok=false; }
-  c.loading=false; c.at=Date.now(); c.ov=ok?ov:null; c.err=!ok;
+  c.loading=false;
+  if(!S.prog||S.prog.day!==day) return;   // วันเปลี่ยนระหว่างรอ: ทิ้งผลของเมื่อวาน
+  c.at=Date.now(); c.ov=ok?ov:null; c.err=!ok;
   try{ render(); }catch(e){}
 }
+function loadProg(force){
+  if(!progOk()) return;
+  progGuard();
+  PROG_SRC.forEach(([k,cfgKey])=>{ if(CONFIG[cfgKey]) progFetch(k,cfgKey,force); });   // ไม่ await: แต่ละคำขอเป็นอิสระต่อกัน
+}
+/** ตรวจวันใหม่: เปิดหน้าค้างข้ามเที่ยงคืน หรือกลับจากพื้นหลัง → ล้างตัวเลขเมื่อวานทันที แล้วโหลดของวันใหม่ */
+function progTick(){
+  if(document.hidden||!S.home||!S.me) return;
+  const d=bkkDay();
+  if(S.prog&&S.prog.day!==d){ S.prog=null; S.boardAt=0; try{ render(); }catch(e){} }
+  if(S.home.today.date!==d){
+    if(Date.now()-(S.progHomeAt||0)>60000&&!S.loading){ S.progHomeAt=Date.now(); S.loading=true; loadHome().catch(()=>{}).finally(()=>{S.loading=false;}); }
+    return;
+  }
+  if(S.page==='home') loadProg();
+}
+setInterval(progTick,30000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) progTick(); });
+window.addEventListener('pageshow',progTick);
 function pctCls(p){ return p>=80?'g':p>=50?'y':'r'; }
-function progRow(label,x,y,pct,extra){
-  const c=pctCls(pct), I={g:'✅',y:'⚠️',r:'⛔'}[c], W={g:'ดี',y:'ควรติดตาม',r:'ต้องเร่ง'}[c];
+function progRow(label,x,y,pct,extra,neutral){
+  const c=neutral?'n':pctCls(pct), I=neutral?'🕘':{g:'✅',y:'⚠️',r:'⛔'}[c], W=neutral?'ยังไม่ถึงเวลา':{g:'ดี',y:'ควรติดตาม',r:'ต้องเร่ง'}[c];
   return `<div class="prow ${c}"><div class="pt"><span class="pi" aria-hidden="true">${I}</span><b>${esc(label)} ${x}/${y}</b><span class="pp">${pct}% · ${W}</span></div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="${esc(label)} ${x} จาก ${y} คิดเป็น ${pct} เปอร์เซ็นต์ ${W}"><i style="width:${pct}%"></i></div>${extra||''}</div>`;
 }
 function progBar(){
   if(!progOk()) return '';
-  const w=progWin(), k=progKey(w); if(!k) return '';
-  const c=S.prog&&S.prog[k]; if(!c||c.err||!c.ov) return '';
-  const ov=c.ov, td=S.home.today.date; let rows='';
-  if(ov.date!==td) return '';   // ข้อมูลไม่ใช่ของวันนี้ → ไม่แสดง
+  const day=bkkDay(), early=bkkMin()<PROG_START, P=S.prog&&S.prog.day===day?S.prog:null;
   const n=v=>typeof v==='number'&&isFinite(v)&&v>=0;
-  if(w==='am'){
-    if(ov.closed||!Array.isArray(ov.scopes)||!ov.scopes.length) return '';
-    // นับตาม "เช็คครบทุกคน" (ไม่ใช่กดส่งแล้ว): left = จำนวนคนที่ยังไม่มีสถานะ (หลังบ้านใหม่ส่ง left/complete · หลังบ้านรุ่นก่อนมี counts[''] เท่ากัน) · ไม่มีตัวเลขเลย = ซ่อนแถบ ไม่เดา
+  const gray=t=>'<div class="pgray"><span aria-hidden="true">⏳</span><span>'+esc(t)+'</span></div>';
+  const bad=label=>gray('ข้อมูล'+label+' โหลดไม่ได้ตอนนี้');
+  const notYet=label=>'<div class="prow n"><div class="pt"><span class="pi" aria-hidden="true">🕘</span><b>'+esc(label)+'</b><span class="pp">ยังไม่ถึงเวลา</span></div></div>';
+  let at=0;
+  const src=(k,cfgKey)=>{ if(!CONFIG[cfgKey]) return {st:'none'}; const c=P&&P[k]; if(!c||!c.at) return {st:'wait'}; if(c.err||!c.ov) return {st:'err'}; if(c.ov.date!==day) return {st:'old'}; at=Math.max(at,c.at); return {st:'ok',ov:c.ov}; };
+  const bar=(label,s,build)=>{
+    if(s.st==='none') return '';
+    if(early) return notYet(label);
+    if(s.st==='wait') return '';
+    if(s.st==='err') return bad(label);
+    if(s.st==='old') return gray(label+' · ยังไม่มีข้อมูลของวันนี้');
+    return build(s.ov,label);
+  };
+  const rows=[];
+  // 1) บุคลากรมาทำงาน: ข้อมูลเดียวกับแถบสรุปหัวม่วง (S.board) · ตัวหารตามที่ระบบส่งมา
+  { const B=S.board;
+    if(B&&B.count&&n(B.count.total)&&n(B.count.came)){
+      if(B.date!==day) rows.push(gray('บุคลากรมาทำงาน · ยังไม่มีข้อมูลของวันนี้'));
+      else if(B.count.total>0){
+        const tot=B.count.total, came=B.count.came, lv=n(B.count.leave)?B.count.leave:0, ab=Array.isArray(B.people)?B.people.filter(p=>p.state==='absent'&&!p.in).length:(n(B.count.absent)?B.count.absent:0);
+        rows.push(progRow('บุคลากรมา',came,tot,Math.round(came*100/tot),'<div class="plist">ลา '+lv+' · ยังไม่ลงเวลา '+ab+'</div>',early));
+        if(S.boardAt) at=Math.max(at,S.boardAt);
+      }
+    }else if(S.boardState==='err') rows.push(bad('บุคลากรมาทำงาน'));
+  }
+  const stu=src('student','STUDENT_API'), aca=src('academic','ACADEMIC_API');
+  // 2) เช็คชื่อเช้า (นับตาม "เช็คครบทุกคน" ไม่ใช่กดส่งแล้ว: left = จำนวนคนที่ยังไม่มีสถานะ · ไม่มีตัวเลข = บรรทัดเทา ไม่เดา)
+  rows.push(bar('เช็คชื่อเช้า',stu,(ov,label)=>{
+    if(ov.closed) return '';
+    if(!Array.isArray(ov.scopes)) return bad(label);
+    if(!ov.scopes.length) return '';
     const leftOf=s=>{ if(!s) return null; if(n(s.left)) return s.left; if(s.counts&&n(s.counts[''])) return s.counts['']; return null; };
     const totOf=s=>n(s.total)?s.total:n(s.n)?s.n:null;
     const sc=ov.scopes.filter(s=>s&&totOf(s)!==0);   // ขอบเขตที่ไม่มีเด็กให้เช็คไม่นับ
-    if(!sc.length||sc.some(s=>leftOf(s)===null)) return '';
+    if(!sc.length) return '';
+    if(sc.some(s=>leftOf(s)===null)) return bad(label);
     const y=sc.length, x=sc.filter(s=>leftOf(s)===0).length, un=sc.filter(s=>leftOf(s)>0);
     const kids=(n(ov.checkTotal)&&n(ov.checkDone)&&ov.checkTotal>0&&ov.checkDone<=ov.checkTotal)?'<div class="plist" data-kids="1">เช็คแล้ว '+ov.checkDone+' จาก '+ov.checkTotal+' คน</div>':'';   // ใช้ตัวเลขรวมของหลังบ้านเท่านั้น (ไม่บวกรายห้อง) · หลังบ้านรุ่นเก่าไม่มี = ซ่อน
-    rows=progRow('เช็คชื่อเช้า ทำแล้ว',x,y,Math.round(x*100/y), kids+(un.length?'<div class="plist"><b>ยังเช็คไม่ครบ ('+un.length+')</b> '+un.slice(0,8).map(s=>esc(s.title||'')+' (เหลือ '+leftOf(s)+' คน)').join(' · ')+(un.length>8?' · อีก '+(un.length-8)+' ห้อง/กลุ่ม':'')+'</div>':'<div class="plist">เช็คครบทุกห้อง/กลุ่มแล้ว</div>'));
-  }else if(w==='mid'){
-    const C=ov.counts; if(ov.off||!C||!n(C.total)||!n(C.ontime)||!n(C.late)||!n(C.waiting)||!n(C.needsub)||C.total<=0) return '';
+    return progRow('เช็คชื่อเช้า ทำแล้ว',x,y,Math.round(x*100/y), kids+(un.length?'<div class="plist"><b>ยังเช็คไม่ครบ ('+un.length+')</b> '+un.slice(0,8).map(s=>esc(s.title||'')+' (เหลือ '+leftOf(s)+' คน)').join(' · ')+(un.length>8?' · อีก '+(un.length-8)+' ห้อง/กลุ่ม':'')+'</div>':'<div class="plist">เช็คครบทุกห้อง/กลุ่มแล้ว</div>'));
+  }));
+  // 3) เข้าสอน (รวมบรรทัดคาบที่ครูลาแล้วยังไม่มีคนสอนแทน)
+  rows.push(bar('เข้าสอน',aca,(ov,label)=>{
+    if(ov.off) return '';
+    const C=ov.counts; if(!C||!n(C.total)||!n(C.ontime)||!n(C.late)||!n(C.waiting)||!n(C.needsub)) return bad(label);
+    if(C.total<=0) return '';
     const x=C.ontime+C.late, due=C.total-C.waiting;
-    if(due>0) rows+=progRow('เข้าสอนแล้ว',x,C.total,Math.round(x*100/due),'<div class="plist">ถึงเวลาแล้ว '+due+' คาบ · ยังไม่ถึงเวลา '+C.waiting+' คาบ (สีคิดจากคาบที่ถึงเวลาแล้ว)</div>');
-    else rows+='<div class="prow"><div class="pt"><span class="pi" aria-hidden="true">🕘</span><b>เข้าสอนแล้ว '+x+'/'+C.total+' คาบ</b><span class="pp">ยังไม่ถึงเวลาคาบแรก</span></div></div>';
-    rows+='<div class="prow '+(C.needsub>0?'r':'g')+'"><div class="pt"><span class="pi" aria-hidden="true">'+(C.needsub>0?'⚠️':'✅')+'</span><b>คาบที่ครูลาแล้วยังไม่มีคนสอนแทน '+C.needsub+' คาบ</b></div><div class="plist">นับเฉพาะกรณีลา (ไม่รวมออกนอกบริเวณ)</div></div>';
-  }else{
+    let h=due>0?progRow('เข้าสอนแล้ว',x,C.total,Math.round(x*100/due),'<div class="plist">ถึงเวลาแล้ว '+due+' คาบ · ยังไม่ถึงเวลา '+C.waiting+' คาบ (สีคิดจากคาบที่ถึงเวลาแล้ว)</div>')
+      :'<div class="prow"><div class="pt"><span class="pi" aria-hidden="true">🕘</span><b>เข้าสอนแล้ว '+x+'/'+C.total+' คาบ</b><span class="pp">ยังไม่ถึงเวลาคาบแรก</span></div></div>';
+    h+='<div class="prow '+(C.needsub>0?'r':'g')+'"><div class="pt"><span class="pi" aria-hidden="true">'+(C.needsub>0?'⚠️':'✅')+'</span><b>คาบที่ครูลาแล้วยังไม่มีคนสอนแทน '+C.needsub+' คาบ</b></div><div class="plist">นับเฉพาะกรณีลา (ไม่รวมออกนอกบริเวณ)</div></div>';
+    return h;
+  }));
+  // 4) บันทึกผลอ่าน (อ่านไทยเป็นหลอด · อิกเราะอฺเป็นตัวเลข)
+  rows.push(bar('บันทึกผลอ่าน',stu,(ov,label)=>{
     if(ov.closed) return '';
-    if(n(ov.thaiTotal)&&n(ov.thaiRead)&&ov.thaiTotal>0) rows+=progRow('บันทึกผลอ่านไทย',ov.thaiRead,ov.thaiTotal,Math.round(ov.thaiRead*100/ov.thaiTotal));
-    if(n(ov.iqraRead)&&ov.iqraRead>0) rows+='<div class="prow"><div class="pt"><span class="pi" aria-hidden="true">📖</span><b>อ่านอิกเราะอฺ '+ov.iqraRead+' คน</b></div></div>';
-  }
-  if(!rows) return '';
-  const hm=new Date(c.at).toLocaleTimeString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false});
-  return `<section class="prog" aria-label="ความคืบหน้าวันนี้">${rows}<small class="pupd">อัปเดต ${hm}</small></section>`;
+    const okT=n(ov.thaiTotal)&&n(ov.thaiRead), okI=n(ov.iqraRead);
+    if(!okT&&!okI) return bad(label);
+    let h='';
+    if(okT&&ov.thaiTotal>0) h+=progRow('บันทึกผลอ่านไทย',ov.thaiRead,ov.thaiTotal,Math.round(ov.thaiRead*100/ov.thaiTotal));
+    if(okI&&ov.iqraRead>0) h+='<div class="prow"><div class="pt"><span class="pi" aria-hidden="true">📖</span><b>อ่านอิกเราะอฺ '+ov.iqraRead+' คน</b></div></div>';
+    return h;
+  }));
+  const out=rows.filter(Boolean);
+  if(!out.length) return '';
+  const hm=at?new Date(at).toLocaleTimeString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false}):'';
+  return `<section class="prog" aria-label="ความคืบหน้าวันนี้">${out.join('')}${hm?`<small class="pupd">อัปเดต ${hm}</small>`:''}</section>`;
 }
+
 /* ---------- โซน 2: การ์ดอนุมัติใบลา/ใบออกนอกบริเวณ ----------
  * ใช้งานชนิด leave.dir / out.dir ที่ Q-Teacher ส่งมาพร้อมก้อน card เท่านั้น (หลังบ้านกรองสิทธิ์ให้แล้ว หน้านี้ไม่คำนวณสิทธิ์เอง)
  * อนุมัติ/ไม่อนุมัติ = หน่วง 3 วินาทีให้กด "เลิกทำ" ก่อนจึงเรียกหลังบ้าน · ออกจากหน้า/ซ่อนหน้าก่อนครบ = ยกเลิกโดยไม่ส่ง */
