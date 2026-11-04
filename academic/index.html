@@ -95,6 +95,7 @@ const S={tab:'today',B:null,viewAs:'',viewAsName:'',scan:null,sheet:null,ov:null
 let B=null;
 const thDay=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'],thMon=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 const thD=iso=>{const p=iso.split('-').map(Number);return thDay[new Date(Date.UTC(p[0],p[1]-1,p[2])).getUTCDay()]+'ที่ '+p[2]+' '+thMon[p[1]-1]+' '+String((p[0]+543)%100).padStart(2,'0')};
+const pl=p=>p==='อนุบาล'?'อนุบาล (วันละครั้ง)':'คาบ '+p;   // อนุบาลไม่แบ่งคาบ
 const nonce=()=>{try{return crypto.randomUUID().replace(/-/g,'').slice(0,24)}catch(e){return Date.now().toString(36)+Math.random().toString(36).slice(2,12)}};
 const addDays=(iso,n)=>{const p=iso.split('-').map(Number),d=new Date(Date.UTC(p[0],p[1]-1,p[2]+n));return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0')};
 
@@ -162,7 +163,7 @@ function vToday(){
   }
   if(Q.length)h+=queueHtml();
   if(!B.today.off){
-    h+='<div class="card"><h2 style="margin-bottom:6px">คาบของฉันวันนี้</h2>'+(sl.length?sl.map(s=>'<div class="slot'+(s.state==='open'?' now':'')+'"><div class="pn num">'+esc(s.p)+'</div><div><b>'+esc(s.cls||s.room)+(s.subj?' · '+esc(s.subj):'')+'</b><div class="sub num">'+esc(s.from)+'–'+esc(s.to)+' น.'+(s.kind==='สอนแทน'?' · สอนแทน'+(s.absent?'ครู'+esc(s.absent.replace(/^ครู/,'')):''):'')+(s.time?' · สแกน '+esc(s.time)+' น.':'')+'</div></div><div style="text-align:right">'+chip(s.state)+(s.late_sync?'<br>'+lateTag:'')+'</div></div>').join(''):'<p class="sub">วันนี้ไม่มีคาบสอนตามตารางของท่าน — ถ้าต้องไปสอนแทน ให้สแกน QR หน้าห้องนั้นได้เลย</p>')+'</div>';
+    h+='<div class="card"><h2 style="margin-bottom:6px">คาบของฉันวันนี้</h2>'+(sl.length?sl.map(s=>'<div class="slot'+(s.state==='open'?' now':'')+'"><div class="pn num">'+(s.p==='อนุบาล'?'อ.':esc(s.p))+'</div><div><b>'+esc(s.cls||s.room)+(s.subj?' · '+esc(s.subj):'')+'</b><div class="sub num">'+esc(s.from)+'–'+esc(s.to)+' น.'+(s.kind==='สอนแทน'?' · สอนแทน'+(s.absent?'ครู'+esc(s.absent.replace(/^ครู/,'')):''):'')+(s.time?' · สแกน '+esc(s.time)+' น.':'')+'</div></div><div style="text-align:right">'+chip(s.state)+(s.late_sync?'<br>'+lateTag:'')+'</div></div>').join(''):'<p class="sub">วันนี้ไม่มีคาบสอนตามตารางของท่าน — ถ้าต้องไปสอนแทน ให้สแกน QR หน้าห้องนั้นได้เลย</p>')+'</div>';
   }
   if(B.notifs&&B.notifs.some(n=>!n.read))h+='<div class="card"><h3>แจ้งเตือน</h3>'+B.notifs.filter(n=>!n.read).map(n=>'<p class="sub">'+esc(n.text)+'</p>').join('')+'<button class="bn" data-a="notifread">รับทราบ</button></div>';
   return h;
@@ -181,13 +182,13 @@ function vScan(){
 }
 function preCard(sc){
   const p=sc.pre;
-  const head='<div class="rowf between"><h2>'+esc(p.room.label)+' · คาบ '+esc(p.p)+'</h2><span class="num sub">'+esc(p.from)+'–'+esc(p.to)+' น.</span></div>';
+  const head='<div class="rowf between"><h2>'+esc(p.room.label)+' · '+esc(pl(p.p))+'</h2><span class="num sub">'+esc(p.from)+'–'+esc(p.to)+' น.</span></div>';
   if(sc.offline)return '<div class="card" style="border:2px solid var(--warn)"><h2>ไม่มีสัญญาณ</h2><p>เก็บการสแกนนี้ไว้ในเครื่อง แล้วระบบจะตรวจคาบให้เมื่อมีสัญญาณ และส่งให้เอง (ติดป้าย "ส่งช้า")</p><button class="bn pri big wide" data-a="qadd">เก็บไว้ส่งทีหลัง</button></div>';
   if(p.state==='ready'){
     const kind=p.kind==='สอนแทน'?'สอนแทนครู'+esc((p.absent&&p.absent.name||'').replace(/^ครู/,'')):'สอนปกติ';
     return '<div class="card" style="border:2px solid var(--ok)">'+head+'<p style="font-size:17px;margin:8px 0"><b>'+kind+'</b>'+(p.subj?' · '+esc(p.subj):'')+'</p><p class="sub">ตอนนี้ '+esc(sc.now||'')+' น. · '+(p.status==='ตรงเวลา'?'<span class="chip c-ok">ตรงเวลา</span>':'<span class="chip c-warn">มาช้ากว่าเกณฑ์ ('+p.offMin+' นาที)</span>')+'</p><button class="bn good big wide" style="margin-top:12px" data-a="confirm" '+(S.busy?'disabled':'')+'>ยืนยัน</button><button class="bn wide" style="margin-top:8px" data-a="scancancel">ยกเลิก</button></div>';
   }
-  if(p.state==='already')return '<div class="card" style="border:2px solid var(--ok)">'+head+'<p style="font-size:17px">สแกนคาบนี้แล้วเมื่อ <b class="num">'+esc(p.scan.time)+' น.</b> '+(p.scan.status==='ตรงเวลา'?'<span class="chip c-ok">ตรงเวลา</span>':'<span class="chip c-warn">มาช้ากว่าเกณฑ์</span>')+'</p><button class="bn wide" data-a="scancancel">ปิด</button></div>';
+  if(p.state==='already')return '<div class="card" style="border:2px solid var(--ok)">'+head+'<p style="font-size:17px">สแกน'+(p.p==='อนุบาล'?'วันนี้':'คาบนี้')+'แล้วเมื่อ <b class="num">'+esc(p.scan.time)+' น.</b> '+(p.scan.status==='ตรงเวลา'?'<span class="chip c-ok">ตรงเวลา</span>':'<span class="chip c-warn">มาช้ากว่าเกณฑ์</span>')+'</p><button class="bn wide" data-a="scancancel">ปิด</button></div>';
   if(p.state==='replaced')return '<div class="card" style="border:2px solid var(--lv)">'+head+'<p>คาบนี้ฝ่ายวิชาการจัดครูสอนแทนไว้แล้ว ไม่ต้องสแกน หากท่านเป็นผู้สอนจริงโปรดแจ้งฝ่ายวิชาการ</p><button class="bn wide" data-a="scancancel">ปิด</button></div>';
   // need_choice
   return '<div class="card" style="border:2px solid var(--warn)">'+head+'<p>ไม่พบคาบนี้ในตารางสอนของท่าน และไม่มีรายการสอนแทนที่จัดไว้ <b>ยังไม่ได้บันทึกอะไร</b> — ท่านสอนแทนใคร?</p><div class="stack">'+
@@ -204,7 +205,7 @@ function vOv(){
   if(c.delayed)h+='<p class="sub">มี '+c.delayed+' รายการส่งช้า (ไม่มีสัญญาณตอนสแกน)</p>';
   const f=S.ovFilter,rows=o.rows.filter(r=>!f||(f==='subbed'?r.kind!=='สอนปกติ'&&r.time:r.state===f));
   let last='';
-  h+=rows.map(r=>{const g=r.p!==last?(last=r.p,'<h3 style="margin:14px 2px 6px">คาบ '+esc(r.p)+' <span class="sub num">'+esc(r.from)+'–'+esc(r.to)+'</span></h3>'):'';
+  h+=rows.map(r=>{const g=r.p!==last?(last=r.p,'<h3 style="margin:14px 2px 6px">'+esc(pl(r.p))+' <span class="sub num">'+esc(r.from)+'–'+esc(r.to)+'</span></h3>'):'';
     return g+'<button class="rowbtn" data-a="ovrow" data-k="'+esc(r.p+'|'+r.room)+'"><div><b>'+esc(r.cls||r.room)+(r.subj?' · '+esc(r.subj):'')+'</b><div class="sub">'+esc(r.who)+(r.kind!=='สอนปกติ'&&r.time?' · '+esc(r.kind):'')+(r.time?' · '+esc(r.time)+' น.':'')+'</div></div><div style="text-align:right">'+chip(r.state)+(r.late_sync?'<br>'+lateTag:'')+'</div></button>'}).join('')||'<div class="card"><p class="sub">ไม่มีรายการในตัวกรองนี้</p></div>';
   return h;
 }
@@ -224,14 +225,14 @@ function vQr(){
 function sheetHtml(){
   const s=S.sheet;if(!s)return '';
   let h='';
-  if(s.t==='done'){const d=s.d;h='<div class="big-ok">✅</div><div class="msg"><b>บันทึกเข้าสอนแล้ว</b><br>'+esc(d.scan.room)+' · คาบ '+esc(d.scan.p)+' · <span class="num">'+esc(d.scan.time)+' น.</span></div><p class="msg" style="font-size:16px">'+esc(d.message)+'</p>'+(d.scan.late_sync?'<p style="text-align:center">'+lateTag+'</p>':'')+'<button class="bn pri wide" data-a="closesheet">เรียบร้อย</button>';}
+  if(s.t==='done'){const d=s.d;h='<div class="big-ok">✅</div><div class="msg"><b>บันทึกเข้าสอนแล้ว</b><br>'+esc(d.scan.room)+' · '+esc(pl(d.scan.p))+' · <span class="num">'+esc(d.scan.time)+' น.</span></div><p class="msg" style="font-size:16px">'+esc(d.message)+'</p>'+(d.scan.late_sync?'<p style="text-align:center">'+lateTag+'</p>':'')+'<button class="bn pri wide" data-a="closesheet">เรียบร้อย</button>';}
   else if(s.t==='queued')h='<div class="big-ok">📥</div><div class="msg"><b>เก็บไว้ในเครื่องแล้ว</b></div><p class="sub" style="text-align:center">ระบบจะตรวจคาบและส่งให้เองเมื่อมีสัญญาณ เวลาที่สแกนถูกบันทึกตามเวลาเครื่องของท่าน และติดป้าย "ส่งช้า"</p><button class="bn pri wide" data-a="closesheet">เข้าใจแล้ว</button>';
-  else if(s.t==='row'){const r=s.r;h='<h2>'+esc(r.cls||r.room)+' · คาบ '+esc(r.p)+'</h2><p class="sub num">'+esc(r.from)+'–'+esc(r.to)+' น.'+(r.subj?' · '+esc(r.subj):'')+'</p><p>ครูตามตาราง: <b>'+esc(r.owner)+'</b><br>ผู้สอน: <b>'+esc(r.who)+'</b> '+chip(r.state)+(r.late_sync?' '+lateTag:'')+'</p>'+(r.time?'<p class="sub">สแกน '+esc(r.time)+' น. · '+esc(r.kind)+(r.source==='admin'?' · ลงเวลาแทนโดย ผอ.':'')+(r.reason?' · เหตุผล: '+esc(r.reason):'')+'</p>':'')+
+  else if(s.t==='row'){const r=s.r;h='<h2>'+esc(r.cls||r.room)+' · '+esc(pl(r.p))+'</h2><p class="sub num">'+esc(r.from)+'–'+esc(r.to)+' น.'+(r.subj?' · '+esc(r.subj):'')+'</p><p>ครูตามตาราง: <b>'+esc(r.owner)+'</b><br>ผู้สอน: <b>'+esc(r.who)+'</b> '+chip(r.state)+(r.late_sync?' '+lateTag:'')+'</p>'+(r.time?'<p class="sub">สแกน '+esc(r.time)+' น. · '+esc(r.kind)+(r.source==='admin'?' · ลงเวลาแทนโดย ผอ.':'')+(r.reason?' · เหตุผล: '+esc(r.reason):'')+'</p>':'')+
     (r.pendingSub?'<p class="sub">ครูลาและฝ่ายวิชาการยังไม่ได้จัดครูสอนแทน (จัดที่ Q-Teacher → สอนแทน)</p>':'')+
     (B.me.isAdmin&&!ro()?'<label for="rs">เหตุผล (ต้องกรอก)</label><input id="rs" type="text" maxlength="200" placeholder="เช่น ครูแจ้งว่าอยู่ในห้องแล้ว">'+
       '<div class="stack" style="margin-top:10px"><button class="bn good wide" data-a="admset" data-m="ok">ลงเวลาแทน/แก้เป็น ตรงเวลา</button><button class="bn wide" data-a="admset" data-m="late">ลงเวลาแทน/แก้เป็น มาช้ากว่าเกณฑ์</button>'+(r.sid?'<button class="bn bad wide" data-a="admset" data-m="del">ลบรายการสแกน (กู้คืนได้)</button>':'')+'</div>':'')+
     '<button class="bn wide" style="margin-top:10px" data-a="closesheet">ปิด</button>';}
-  else if(s.t==='qchoose'){const q=Q.find(x=>x.id===s.id);if(!q)return '';const p=q.pre;h='<h2>เลือกคาบที่สแกนไว้</h2><p class="sub">'+esc(p.room.label)+' · คาบ '+esc(p.p)+' · สแกนเมื่อ '+new Date(q.cts).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+' น.</p><p>ไม่พบคาบนี้ในตารางสอนของท่าน ท่านสอนแทนใคร?</p><div class="stack">'+p.choices.map(c=>'<button class="bn pri wide" data-a="qpick" data-id="'+q.id+'" data-c="'+esc(c.id)+'">สอนแทนครู'+esc(c.name.replace(/^ครู/,''))+'</button>').join('')+'<button class="bn wide" data-a="qpick" data-id="'+q.id+'" data-c="none">ไม่ใช่คาบของฉัน</button><button class="bn wide" data-a="closesheet">ปิด</button></div>';}
+  else if(s.t==='qchoose'){const q=Q.find(x=>x.id===s.id);if(!q)return '';const p=q.pre;h='<h2>เลือกคาบที่สแกนไว้</h2><p class="sub">'+esc(p.room.label)+' · '+esc(pl(p.p))+' · สแกนเมื่อ '+new Date(q.cts).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+' น.</p><p>ไม่พบคาบนี้ในตารางสอนของท่าน ท่านสอนแทนใคร?</p><div class="stack">'+p.choices.map(c=>'<button class="bn pri wide" data-a="qpick" data-id="'+q.id+'" data-c="'+esc(c.id)+'">สอนแทนครู'+esc(c.name.replace(/^ครู/,''))+'</button>').join('')+'<button class="bn wide" data-a="qpick" data-id="'+q.id+'" data-c="none">ไม่ใช่คาบของฉัน</button><button class="bn wide" data-a="closesheet">ปิด</button></div>';}
   return '<div class="sheetbg" data-a="sheetbg"><div class="sheet" role="dialog" aria-modal="true">'+h+'</div></div>';
 }
 
