@@ -838,8 +838,14 @@ function progBar(){
   const n=v=>typeof v==='number'&&isFinite(v)&&v>=0;
   if(w==='am'){
     if(ov.closed||!Array.isArray(ov.scopes)||!ov.scopes.length) return '';
-    const y=ov.scopes.length, x=ov.scopes.filter(s=>s&&s.sent).length, un=ov.scopes.filter(s=>s&&!s.sent).map(s=>esc(s.title||''));
-    rows=progRow('เช็คชื่อเช้า ทำแล้ว',x,y,Math.round(x*100/y), un.length?'<div class="plist"><b>ยังไม่เช็ค ('+un.length+')</b> '+un.slice(0,8).join(' · ')+(un.length>8?' · อีก '+(un.length-8)+' ห้อง/กลุ่ม':'')+'</div>':'<div class="plist">เช็คครบทุกห้อง/กลุ่มแล้ว</div>');
+    // นับตาม "เช็คครบทุกคน" (ไม่ใช่กดส่งแล้ว): left = จำนวนคนที่ยังไม่มีสถานะ (หลังบ้านใหม่ส่ง left/complete · หลังบ้านรุ่นก่อนมี counts[''] เท่ากัน) · ไม่มีตัวเลขเลย = ซ่อนแถบ ไม่เดา
+    const leftOf=s=>{ if(!s) return null; if(n(s.left)) return s.left; if(s.counts&&n(s.counts[''])) return s.counts['']; return null; };
+    const totOf=s=>n(s.total)?s.total:n(s.n)?s.n:null;
+    const sc=ov.scopes.filter(s=>s&&totOf(s)!==0);   // ขอบเขตที่ไม่มีเด็กให้เช็คไม่นับ
+    if(!sc.length||sc.some(s=>leftOf(s)===null)) return '';
+    const y=sc.length, x=sc.filter(s=>leftOf(s)===0).length, un=sc.filter(s=>leftOf(s)>0);
+    const kids=(n(ov.checkTotal)&&n(ov.checkDone)&&ov.checkTotal>0&&ov.checkDone<=ov.checkTotal)?'<div class="plist" data-kids="1">เช็คแล้ว '+ov.checkDone+' จาก '+ov.checkTotal+' คน</div>':'';   // ใช้ตัวเลขรวมของหลังบ้านเท่านั้น (ไม่บวกรายห้อง) · หลังบ้านรุ่นเก่าไม่มี = ซ่อน
+    rows=progRow('เช็คชื่อเช้า ทำแล้ว',x,y,Math.round(x*100/y), kids+(un.length?'<div class="plist"><b>ยังเช็คไม่ครบ ('+un.length+')</b> '+un.slice(0,8).map(s=>esc(s.title||'')+' (เหลือ '+leftOf(s)+' คน)').join(' · ')+(un.length>8?' · อีก '+(un.length-8)+' ห้อง/กลุ่ม':'')+'</div>':'<div class="plist">เช็คครบทุกห้อง/กลุ่มแล้ว</div>'));
   }else if(w==='mid'){
     const C=ov.counts; if(ov.off||!C||!n(C.total)||!n(C.ontime)||!n(C.late)||!n(C.waiting)||!n(C.needsub)||C.total<=0) return '';
     const x=C.ontime+C.late, due=C.total-C.waiting;
