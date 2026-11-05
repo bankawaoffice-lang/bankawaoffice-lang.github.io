@@ -738,6 +738,7 @@ details.more>.f{margin-top:8px}
   html:not(.on-home) header.top .hublink{min-height:44px;background:var(--hp-btn-bg)!important;color:var(--hp-btn-ink)!important;box-shadow:none}
   html:not(.on-home) header.top .hublink svg{stroke:currentColor}
 }
+.px .btn,.px .srow,.px .chip{min-height:44px}
 </style>
 <style>
 :root{--nv:#1F3A5F;--nv-soft:#E3ECF7}
@@ -787,6 +788,7 @@ details.more>.f{margin-top:8px}
 .lvlate2{font-size:1rem;color:var(--ink)}.lvlate2 b{font-size:1.15rem;font-family:var(--f-display)}
 .lvlate .lvss{margin-top:2px}
 .reqtypes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.btn.ltb{min-height:44px;min-width:88px}
 .reqtb{min-height:48px;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;font-family:var(--f-body);font-size:.98rem;font-weight:600;padding:0 8px}
 .reqtb[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 @media (min-width:480px){.reqtypes{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -1017,8 +1019,8 @@ function start(){$('#boot').hidden=true;document.body.classList.remove('plain');
 function openHash(){
   let h=decodeURIComponent(location.hash||'');if(!h)return;
   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
-  /* #tab=myreq&kind=leave → เปิดฟอร์มประเภทนั้นเลย (leave|out|gov|doc) · ไม่มี &kind = เหมือนเดิม */
-  let kind='';const km=/&kind=(\w*)$/.exec(h);if(km){if(['leave','out','gov','doc'].includes(km[1]))kind=km[1];h=h.slice(0,km.index)}
+  /* #tab=myreq&kind=leave → เปิดฟอร์มประเภทนั้นเลย (leave|half|out|gov|doc) · ไม่มี &kind = เหมือนเดิม */
+  let kind='';const km=/&kind=(\w*)$/.exec(h);if(km){if(['leave','half','out','gov','doc'].includes(km[1]))kind=km[1];h=h.slice(0,km.index)}
   const m=/^#(\w+)(?:=(.+))?$/.exec(h);if(!m)return;
   let t=m[1]==='tab'?m[2]:m[1]==='leave'?(REQ.some(r=>r.id===m[2]&&r.canDir)?'approve':'myreq'):'';
   t=ALIAS[t]||t;
@@ -1113,7 +1115,7 @@ function pending(){
   riskPending(add);
   paPending(add);
   return a.sort((x,y)=>x.p-y.p)}
-function needCheckIn(){return!B.my.in&&!B.my.late&&isWork()&&!(B.my.leaveToday&&B.my.leaveToday.part==='เต็มวัน')&&NOW_HM<=B.rules.general.out}
+function needCheckIn(){return!B.my.in&&isWork()&&!(B.my.leaveToday&&B.my.leaveToday.part==='เต็มวัน')&&NOW_HM<=B.rules.general.out}
 function badgeFor(t){
   if(t==='approve')return REQ.filter(x=>x.canDir).length;
   if(t==='sub')return SUBS.filter(s=>!s.done&&s.date>=TODAY_ISO).length;
@@ -1220,7 +1222,8 @@ async function sendCheck(data){
      <div class="clockbig num" style="color:var(--accent)">${esc(x.time)} น.</div><div>${stPill(x.status)}</div><p class="sub">${esc(how)} · เวลาจากเซิร์ฟเวอร์ (เวลาไทย)</p>
      ${x.firstOfDay===true&&x.congrats?`<div class="callout c-good congrats" role="status"><b>${esc(x.congrats)}</b><button type="button" class="btn wide" onclick="this.closest('.congrats').remove()">ปิดข้อความ</button></div>`:''}
      ${cheerHtml(x)}
-     ${x.status==='สายเกิน 09:00'?'<button class="btn pri wide" data-halfleave="1">ยื่นใบลาครึ่งวันเช้า</button>':''}${moodAsk(x)}<button class="btn wide" data-close="1">${moodAskOn(x)?'ข้าม':'ปิด'}</button></div>`);
+     ${x.forcedHalf?'<div class="callout c-warn" role="alert"><b>ถูกบังคับเป็นลาครึ่งวันเช้า</b>เวลาเข้าเลย 10:30 น. ระบบบันทึกเวลาจริงของท่านไว้แล้ว และสร้างใบลาครึ่งวันเช้าให้ ('+esc(x.forcedHalf.leaveId||'')+') · ไปเลือกประเภทลา (ลากิจ/ลาป่วย) ที่หน้า "คำขอ" ตอนนี้ใส่ "ลากิจ" ไว้ชั่วคราว ผอ. อนุมัติได้เลยโดยไม่ต้องรอ<button class="btn pri wide" data-golv="1">ไปเลือกประเภทลา</button></div>':''}
+     ${x.status==='สายเกิน 09:00'&&!x.forcedHalf?'<button class="btn pri wide" data-halfleave="1">ยื่นใบลาครึ่งวันเช้า</button>':''}${moodAsk(x)}<button class="btn wide" data-close="1">${moodAskOn(x)?'ข้าม':'ปิด'}</button></div>`);
   }catch(e){
     if(e.code==='NEED_REASON')return askReason(data,e.message);
     if(e.code==='ALREADY'){refresh(true);return modal(`<div style="text-align:center;display:grid;gap:8px"><span class="okc">${svg('check')}</span><h2>ลงเวลาไว้แล้ว</h2><p>${esc(e.message)}</p><button class="btn wide" data-close="1">ปิด</button></div>`)}
@@ -1288,7 +1291,7 @@ async function pickFile(id,f){PICKED[id]={name:f.name};const s=$('#'+id+'s');
 const V={};
 const empty=(t,s)=>`<p class="empty">${esc(t)}${s?`<span class="sub"> · ${esc(s)}</span>`:''}</p>`;
 const seg=(key,items,cur)=>`<div class="seg" role="tablist">${items.map(([v,l,n])=>`<button class="chip" role="tab" data-seg="${key}:${v}" aria-pressed="${cur===v}">${esc(l)}${n?` <b class="num">${n}</b>`:''}</button>`).join('')}</div>`;
-const reqKindPill=r=>r.kind==='leave'?`<span class="pill ${r.type==='ลาป่วย'?'p-warn':'p-info'}">${esc(r.type)}</span>`:r.kind==='out'?'<span class="pill p-calm">ออกนอกบริเวณ</span>':r.kind==='late'?'<span class="pill p-calm">ขอเข้าสาย</span>':'<span class="pill p-info">ไปราชการ/อบรม</span>';
+const reqKindPill=r=>r.kind==='leave'?`<span class="pill ${r.type==='ลาป่วย'?'p-warn':'p-info'}">${esc(r.type==='ลากิจส่วนตัว'&&r.askType?'ลากิจ (ชั่วคราว)':r.type)}</span>${r.srcLabel?`<span class="pill p-calm srcpill">${esc(r.srcLabel)}</span>`:''}`:r.kind==='out'?'<span class="pill p-calm">ออกนอกบริเวณ</span>'+(r.halfReq&&r.halfReq!=='ข้าม'?'<span class="pill p-warn srcpill">ลาครึ่งวันบ่าย (ระบบสร้างให้ '+esc(r.halfReq)+')</span>':''):r.kind==='late'?'<span class="pill p-calm">ขอเข้าสาย</span>':'<span class="pill p-info">ไปราชการ/อบรม</span>';
 function reqStatus(r){
   if(r.kind==='out'&&r.st==='approved'&&(r.go==='gone'||r.closed))return r.closed==='offsite'?'<span class="pill p-good">ออกแล้ว · เช็คเอาท์นอกพื้นที่</span>':'<span class="pill p-good">ออกแล้ว · ไม่กลับ</span>';
   return{approved:'<span class="pill p-good">อนุมัติแล้ว</span>',rejected:'<span class="pill p-bad">ไม่อนุมัติ</span>',cancel:'<span class="pill p-mute">ยกเลิกแล้ว</span>',
@@ -1306,7 +1309,6 @@ function reqStages(r){
       out.push({t:names[k],sub:subs[k]||'',c:k<idx?'on':k===idx?'wait':''})}
     return out};
   const when=s=>s?thDT(s):'',dirTxt=(r.dirBy?r.dirBy+' · ':'')+when(r.dirAt);
-  if(r.kind==='late')return[{t:'แจ้งแล้ว',sub:'',c:'on'},{t:'ผอ. ทราบแล้ว',sub:'แจ้งให้ทราบ ไม่ต้องอนุมัติ',c:'on'}];
   const bad=r.st==='rejected'?['ไม่อนุมัติ',dirTxt]:r.st==='cancel'?['ยกเลิกแล้ว','']:null;
   if(r.kind==='out'){
     const fin=r.go==='gone'?'ไม่กลับแล้ว':r.closed==='offsite'?'เช็คเอาท์นอกพื้นที่':'กลับแล้ว',finDone=r.go==='gone'||!!r.closed||!!r.back;
@@ -1378,21 +1380,21 @@ async function offsiteCheck(id,kind){
 }
 function punchCard(){
   const my=B.my,R=B.rules;
-  const lateBox=(lab)=>!my.in&&my.late?`<div><span>${lab}</span><b style="font-size:.95rem">${esc(my.late.label)}</b><span>ไม่ต้องลงเวลามา</span></div>`:'';
+  const lateBox=(lab)=>!my.in&&my.late?`<div><span>${lab}</span><b style="font-size:.95rem">${esc(my.late.label)}${my.late.time?' · เข้า '+esc(my.late.time)+' น.':''}</b><span>ลงเวลาเมื่อมาถึง</span></div>`:'';
   const box=(lab,x)=>lab==='เวลาเข้า'&&lateBox(lab)?lateBox(lab):x&&x.gone?`<div><span>${lab}</span><b style="font-size:.95rem">${esc(x.label)}</b><span>ไม่ต้องลงเวลาออก</span></div>`:`<div><span>${lab}</span><b class="num">${x?esc(x.time):'––:––'}</b>${x?`<span>${stPill(x.status)} ${x.method==='qr'?'QR':x.method==='admin'?'ลงแทน':'GPS'}${x.point?' · '+esc(x.point):''}</span>`:''}</div>`;
   let btn='';
   const dutyTxt=B.hasDuty?'':'<span class="sub">ยังไม่มีตารางเวรในระบบ จึงให้เลือกเอง</span>';
   if(st.stale)btn=`<div class="loadbox" role="status"><span class="spin sm"></span>กำลังตรวจสถานะลงเวลาล่าสุด…</div>`;
-  else if(!my.in&&!my.late)btn=`<label class="dutyrow"><input type="checkbox" id="duty" ${st.duty?'checked':''}> วันนี้ฉันเป็นครูเวร ${dutyTxt}</label>
-     <button class="btn big pri wide punchbtn" data-punch="in">${svg('pin')}ลงเวลาเข้า</button><button class="btn wide ghost" data-punchqr="in">${svg('qr','i18')} ใช้ QR แทน (เมื่อ GPS ไม่พร้อม)</button>${isWork()&&!(my.leaveToday&&my.leaveToday.part==='เต็มวัน')?`<button class="btn wide ghost" data-go="myreq" data-kind="late">ขอเข้าสาย (แจ้งล่วงหน้า)</button>`:''}`;
-  else if(!my.out)btn=`<button class="btn big wide punchbtn navy" data-punch="out">${svg('out')}ลงเวลาออก</button><button class="btn wide ghost" data-punchqr="out">${svg('qr','i18')} ใช้ QR แทน</button>${!my.in&&my.late?`<button class="btn wide ghost" data-punch="in">มาถึงแล้ว ลงเวลาเข้า (ไม่นับสาย)</button>`:''}`;
+  else if(!my.in)btn=`<label class="dutyrow"><input type="checkbox" id="duty" ${st.duty?'checked':''}> วันนี้ฉันเป็นครูเวร ${dutyTxt}</label>
+     <button class="btn big pri wide punchbtn" data-punch="in">${svg('pin')}ลงเวลาเข้า</button><button class="btn wide ghost" data-punchqr="in">${svg('qr','i18')} ใช้ QR แทน (เมื่อ GPS ไม่พร้อม)</button>${isWork()&&!my.late&&!(my.leaveToday&&my.leaveToday.part==='เต็มวัน')?`<button class="btn wide ghost" data-go="myreq" data-kind="late">ขอเข้าสาย (ต้องให้ ผอ. อนุมัติ)</button>`:''}`;
+  else if(!my.out)btn=`<button class="btn big wide punchbtn navy" data-punch="out">${svg('out')}ลงเวลาออก</button><button class="btn wide ghost" data-punchqr="out">${svg('qr','i18')} ใช้ QR แทน</button>`;
   else btn=`<div class="callout c-good" style="text-align:center">ลงเวลาครบแล้ววันนี้</div>`;
   if(!st.stale&&!my.out){const g=offsiteReq();if(g)btn+=`<button class="btn wide" data-offsite="${g.id}:${my.in?'out':'in'}">${svg('pin','i18')} ${my.in?'ลงเวลาออก':'เช็คอิน'}นอกสถานที่ (ไปราชการ: ${esc((g.place||g.why||'').slice(0,28))})</button><span class="sub">ใช้เมื่อมีคำขอไปราชการที่อนุมัติแล้วครอบคลุมวันนี้ · จับตำแหน่งจริง ไม่นับสาย</span>`}
   const duty=my.in?my.in.duty:st.duty,x=duty?R.duty:R.general;
-  const stTxt=my.out?'ลงเวลาครบแล้ว':my.in?'มาแล้ว · ยังไม่ลงเวลาออก':my.late?esc(my.late.label)+' · ลงเวลากลับอย่างเดียว':B.today.holiday?esc(B.today.holiday):my.leaveToday&&my.leaveToday.part==='เต็มวัน'?'วันนี้มีใบ'+esc(my.leaveToday.type):'ยังไม่ลงเวลาเข้า';
+  const stTxt=my.out?'ลงเวลาครบแล้ว':my.in?'มาแล้ว · ยังไม่ลงเวลาออก':my.late?esc(my.late.label)+(my.late.time?' · เข้า '+esc(my.late.time)+' น.':'')+' · ลงเวลาเข้าตามปกติเมื่อมาถึง':B.today.holiday?esc(B.today.holiday):my.leaveToday&&my.leaveToday.part==='เต็มวัน'?'วันนี้มีใบ'+esc(my.leaveToday.type):'ยังไม่ลงเวลาเข้า';
   return`<section class="status" id="punch"><div class="row between"><h2>ลงเวลาของฉัน</h2><span class="sub">${esc(TODAY)}</span></div>
    <p class="pstate">${stTxt}</p>
-   ${(B.lateMiss||[]).map(m=>`<div class="callout c-warn"><b>ท่านแจ้งเข้าสายวันที่ ${thD(m.date)} แต่ไม่ได้ลงเวลามา</b>ให้ยื่นใบลาของวันนั้นเอง และเลือกประเภทการลาเอง (ระบบไม่ได้สร้างใบลาหรือหักวันลาให้)<div><button class="btn sm pri" data-go="myreq" data-kind="leave">ไปยื่นใบลา</button></div></div>`).join('')}
+   
    <div class="punch">${box('เวลาเข้า',my.in)}${box('เวลาออก',my.out)}</div>
    ${B.today.holiday&&!my.in?`<div class="note">วันนี้เป็น${esc(B.today.holiday)} · ถ้ามาปฏิบัติงานก็ลงเวลาได้</div>`:''}
    ${my.leaveToday?`<div class="callout c-info">วันนี้มีใบ${esc(my.leaveToday.type)}${my.leaveToday.part!=='เต็มวัน'?' ('+esc(my.leaveToday.part)+')':''} · ${esc(my.leaveToday.status)}</div>`:''}
@@ -1426,7 +1428,7 @@ function inboxPanel(){
 function dailyList(){
   if(!ME.isTeacher)return'';
   const rows=[];
-  rows.push({k:'in',t:'เช็คอินมาโรงเรียน',s:B.my.in?'ลงเวลาแล้ว '+B.my.in.time+' น.':B.my.late?B.my.late.label+' · ลงเวลากลับอย่างเดียว':!isWork()?'วันนี้'+B.today.holiday+' · ไม่ต้องลงเวลา':'ยังไม่ได้ลงเวลา · แตะเพื่อไปที่ปุ่มลงเวลา',done:!!B.my.in||!!B.my.late||!isWork()});;
+  rows.push({k:'in',t:'เช็คอินมาโรงเรียน',s:B.my.in?'ลงเวลาแล้ว '+B.my.in.time+' น.':B.my.late?B.my.late.label+' · ลงเวลาตามปกติเมื่อมาถึง':!isWork()?'วันนี้'+B.today.holiday+' · ไม่ต้องลงเวลา':'ยังไม่ได้ลงเวลา · แตะเพื่อไปที่ปุ่มลงเวลา',done:!!B.my.in||!isWork()});;
   TASKS.filter(t=>t.own===me()&&['todo','doing','fix','sent'].includes(t.st)&&dayDiff(t.due)<=7).sort((a,b)=>dayDiff(a.due)-dayDiff(b.due)).forEach(t=>
     rows.push({k:'w:'+t.id,t:t.t,s:(t.st==='sent'?'ส่งแล้ว · รอตรวจ':dayDiff(t.due)<0?'เลยกำหนด '+(-dayDiff(t.due))+' วัน':dayDiff(t.due)===0?'ครบกำหนดวันนี้':'ครบกำหนด '+t.dueTx)+(t.self?'':' · มอบหมายโดย '+nm(t.by)),done:t.st==='sent'||t.st==='done'}));
   const n=rows.filter(r=>r.done).length;
@@ -1921,12 +1923,13 @@ function staffToday(){
     ${i&&i.note?`<div><span class="sub">เหตุผล</span> ${esc(i.note)}</div>`:''}
     ${l?`<div><span class="sub">ใบลาวันนี้</span> ${esc(l.type)} ${l.part!=='เต็มวัน'?'('+esc(l.part)+')':''} · ${esc(l.status)}</div>`:''}
     ${o?`<div><span class="sub">${o.gone?'ออกแล้ว':'ออกนอกบริเวณ'}</span> <span class="num">${esc(o.from)}–${esc(o.to)}</span> · ${esc(o.why)}${o.how==='offsite'?' · เช็คเอาท์นอกพื้นที่':''}${ME.isAdmin&&!o.gone?` <button class="btn sm" data-outoff="${esc(o.id)}">เช็คเอาท์แทน</button>`:''}</div>`:''}
+    ${ME.isAdmin&&s.teacher!==false?`<div><button class="btn sm" data-proxy="${s.id}">บันทึกแทนครู</button> <span class="sub">ลา · เข้าสาย · ออกนอก · ไปราชการ · ลงเวลา</span></div>`:''}
     ${ME.isAdmin&&s.teacher!==false&&!o?`<div><button class="btn sm" data-outadmin="${s.id}">บันทึกออกนอกบริเวณให้</button> <span class="sub">ผอ. บันทึกให้ ถือว่าอนุมัติแล้ว</span></div>`:''}
     ${!ATT[s.id]||!ATT_OUT[s.id]?`<div><button class="btn sm" data-forcheck="${s.id}">ลงเวลาแทน</button> <span class="sub">ใช้เมื่อโทรศัพท์ของบุคลากรมีปัญหา</span></div>`:''}</div>`};
   const body=!list.length?empty(q?'ไม่พบชื่อที่ค้นหา':'ไม่มีรายการในกลุ่มนี้')
    :isMobile()?`<ul class="slist">${list.map(s=>{const x=staffState(s.id),open=st.open['s'+s.id];return`<li${overOut(s.id)?' style="background:var(--warn-soft);border-radius:12px;padding:0 8px" title="มาแล้วแต่ยังไม่ลงเวลาออก หลังเวลาเลิกงาน"':''}><button class="srow" data-open="s${s.id}" aria-expanded="${!!open}"><span class="main"><b>${esc(s.name)}</b><span class="sub one">${esc(s.pos)}</span>${ATT[s.id]?`<span class="sub one num" style="font-size:.82rem">${outLine(s.id)}</span>`:''}</span><span class="num t">${x.t?esc(x.t):''}</span><span class="pill ${x.cls}">${esc(x.label)}</span>${OUTNOW[s.id]?'<span class="pill p-calm">ออกนอก</span>':''}</button>${open?detail(s):''}</li>`}).join('')}</ul>`
    :`<div class="scroll"><table><thead><tr><th>บุคลากร</th><th>เข้า</th><th>ออก</th><th>วิธี/จุด</th><th>สถานะ</th><th></th></tr></thead><tbody>${list.map(s=>{const x=staffState(s.id),i=ATT_INFO[s.id];return`<tr${overOut(s.id)?' style="background:var(--warn-soft)"':''}><td><b>${esc(s.name)}</b><div class="sub">${esc(s.pos)}</div></td><td class="num">${i?esc(i.time):'–'}</td><td class="num">${ATT_OUT[s.id]?esc(ATT_OUT[s.id]):noOut(s.id)?'ยังไม่ออก':'–'}</td><td>${i?(i.method==='qr'?'QR':i.method==='admin'?'ลงแทน':'GPS')+(i.point?' · '+esc(i.point):''):'–'}${i&&i.note?`<div class="sub">${esc(i.note)}</div>`:''}</td><td><span class="pill ${x.cls}">${esc(x.label)}</span>${OUTNOW[s.id]?' <span class="pill p-calm">ออกนอก '+esc(OUTNOW[s.id].from)+'</span>':''}</td><td class="r">${!ATT[s.id]||!ATT_OUT[s.id]?`<button class="btn sm" data-forcheck="${s.id}">ลงแทน</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`;
-  return`<section class="panel"><div class="ph"><h2>${esc(TODAY)}</h2><button class="btn sm ghost" data-copyatt="1">คัดลอกสรุป (ไปวางในไลน์กลุ่มเอง)</button></div>
+  return`<section class="panel"><div class="ph"><h2>${esc(TODAY)}</h2><button class="btn sm ghost" data-copyatt="1">คัดลอกสรุป (ไปวางในไลน์กลุ่มเอง)</button>${ME.isAdmin?'<button class="btn sm pri" data-proxy="">บันทึกแทนครู</button>':''}</div>
    ${st.stale?'<div class="loadbox"><span class="spin sm"></span>กำลังโหลดสถานะล่าสุด ยังไม่สรุปผล</div>':`${filt}<div class="search">${svg('search')}<input type="search" id="staffQ" value="${esc(st.staffQ)}" placeholder="ค้นหาชื่อ" aria-label="ค้นหาชื่อบุคลากร"></div>${body}`}
    <p class="note">"ยังไม่ลงเวลา" ไม่ได้แปลว่าขาดงาน ระบบตรวจวันหยุด ใบลา และไปราชการก่อนแสดงสถานะ · ไม่นับบัญชีทดสอบ${STAFF.some(s=>s.test)?' ('+STAFF.filter(s=>s.test).map(s=>esc(s.name)).join(', ')+')':''}</p></section>`}
 const TH_MON=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
@@ -1972,6 +1975,65 @@ function staffRound(S){
 function attText(){
   const L=f=>REAL.filter(s=>f(staffState(s.id),s)).map(s=>'- '+s.name+(ATT[s.id]?' เข้า '+ATT[s.id]+' · '+(ATT_OUT[s.id]?(ATT_OUTI[s.id]&&ATT_OUTI[s.id].gone?ATT_OUT[s.id]:'ออก '+ATT_OUT[s.id]):'ยังไม่ออก'):'')+(ONLEAVE[s.id]?' ('+staffState(s.id).label+')':'')).join('\n')||'- ไม่มี';const c=dayCounts();
   return`สรุปการมาปฏิบัติงาน ${TODAY} (ณ ${clockNow()} น.)\nลงเวลาแล้ว ${c.in}/${c.all} คน\n\nมาสาย:\n${L(x=>x.k==='late')}\n\nลา/ไปราชการ:\n${L(x=>x.k==='leave')}\n\nยังไม่ลงเวลา (ยังไม่ใช่การขาดงาน):\n${L(x=>x.k==='none')}\n\n(จาก Q-Teacher โรงเรียนบ้านกาวะ)`}
+/* ===== ผอ. บันทึกแทนครู (v3.7) · เลือกครู (เรียงชื่อ ค้นหาได้) → เลือกประเภท → กรอกสั้น ๆ → บันทึก · ใช้คำสั่งเดิม check.admin / out.admin + ใหม่ leave.admin / late.admin · อนุมัติทันที ไม่แจ้งเตือนครู · เฉพาะ ผอ. (หลังบ้านตรวจสิทธิ์ซ้ำ) ===== */
+const PX_KINDS=[['check','ลงเวลาเข้า/ออก'],['leave','ลา'],['late','ขอเข้าสาย'],['out','ออกนอกบริเวณ'],['gov','ไปราชการ']];
+let PX=null;
+function proxyOpen(id){PX={id:id||'',q:'',kind:'',err:''};proxyRender()}
+function proxyRender(){
+  const P=PX;if(!P)return;
+  const people=REAL.filter(s=>s.teacher!==false).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),'th'));
+  const head=`<div class="row between"><h2>บันทึกแทนครู</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div>`;
+  const err=P.err?`<div class="callout c-warn" role="alert" id="pxErr"><b>บันทึกไม่ได้</b>${esc(P.err)}</div>`:'';
+  if(!P.id){
+    modal(`<div class="f px" id="pxBox">${head}<p class="note">ขั้นที่ 1 · เลือกครู · สิ่งที่บันทึกแทนถือว่า ผอ. อนุมัติทันที และไม่แจ้งเตือนครู (ครูเห็นที่ "คำขอของฉัน")</p>
+     <div class="search">${svg('search')}<input type="search" id="pxQ" value="${esc(P.q)}" placeholder="ค้นหาชื่อ" aria-label="ค้นหาชื่อครู" autocomplete="off"></div>
+     <ul class="slist" id="pxList"></ul></div>`);
+    const draw=()=>{const q=($('#pxQ').value||'').trim();P.q=q;const L=people.filter(x=>!q||String(x.name).indexOf(q)>=0);
+      $('#pxList').innerHTML=L.length?L.map(x=>`<li><button type="button" class="srow" data-pxp="${esc(x.id)}"><span class="main"><b>${esc(x.name)}</b></span></button></li>`).join(''):'<li class="sub">ไม่พบชื่อที่ค้นหา</li>'};
+    draw();$('#pxQ').addEventListener('input',draw);
+    $('#pxList').addEventListener('click',e=>{const b=e.target.closest('[data-pxp]');if(b){P.id=b.dataset.pxp;proxyRender()}});
+    return}
+  if(!P.kind){
+    modal(`<div class="f px" id="pxBox">${head}<p class="note">ขั้นที่ 2 · เลือกประเภทสำหรับ <b>${esc(nm(P.id))}</b> · <button type="button" class="btn sm ghost" id="pxBack">เปลี่ยนครู</button></p>
+     <div class="seg" role="group" aria-label="ประเภท" style="flex-wrap:wrap">${PX_KINDS.map(([k,l])=>`<button type="button" class="chip" data-pxk="${k}">${l}</button>`).join('')}</div></div>`);
+    $('#pxBack').addEventListener('click',()=>{P.id='';proxyRender()});
+    $('#pxBox').addEventListener('click',e=>{const b=e.target.closest('[data-pxk]');if(b){P.kind=b.dataset.pxk;P.err='';proxyRender()}});
+    return}
+  const kl=(PX_KINDS.find(x=>x[0]===P.kind)||[])[1]||'';
+  const per=PERIODS.filter(p=>p[0]!=='เช้า');
+  const dateF=(id,lab,v)=>`<div class="fld"><label for="${id}">${lab}</label><input type="date" id="${id}" value="${v||TODAY_ISO}" required></div>`;
+  const partF=`<div class="fld"><label for="pxPart">ช่วง</label><select id="pxPart"><option>เต็มวัน</option><option>ครึ่งวันเช้า</option><option>ครึ่งวันบ่าย</option></select></div>`;
+  let body='';
+  if(P.kind==='check')body=`<div class="fgrid"><div class="fld"><label for="pxK">ประเภท</label><select id="pxK"><option value="in" ${ATT[P.id]?'disabled':''}>เข้า</option><option value="out" ${ATT[P.id]?'selected':''}>ออก</option></select></div><div class="fld"><label for="pxT">เวลา</label><input type="time" id="pxT" required value="${esc(clockNow())}"></div></div>
+     <label class="row"><input type="checkbox" id="pxD" style="width:auto"> เป็นครูเวรวันนี้</label><div class="fld"><label for="pxN">เหตุผล</label><input type="text" id="pxN" maxlength="300" required placeholder="เช่น โทรศัพท์แบตหมด มาถึงเวลานี้จริง"></div>`;
+  else if(P.kind==='leave')body=`<div class="fgrid"><div class="fld"><label for="pxTy">ประเภทลา</label><select id="pxTy"><option value="ลากิจส่วนตัว">ลากิจ</option><option value="ลาป่วย">ลาป่วย</option></select></div>${partF}</div>
+     <div class="fgrid">${dateF('pxS','วันที่เริ่ม')}<div class="fld" id="pxEw">${'<label for="pxE">ถึงวันที่</label><input type="date" id="pxE" value="'+TODAY_ISO+'">'}</div></div>
+     <div class="fld"><label for="pxR">เหตุผล (ไม่บังคับ)</label><input type="text" id="pxR" maxlength="500"></div>
+     <p class="note">ครูแก้ประเภท (กิจ/ป่วย) ทีหลังได้ · เกินโควตาหรือขาดใบรับรองแพทย์ ระบบติดธงแดงแต่บันทึกให้</p>`;
+  else if(P.kind==='late')body=`<div class="fgrid">${dateF('pxS','วันที่')}<div class="fld"><label for="pxT">เวลาที่จะเข้า</label><input type="time" id="pxT" required></div></div>
+     <div class="fld"><label for="pxN">เหตุผล (ไม่บังคับ)</label><input type="text" id="pxN" maxlength="200"></div><p class="note">เวลาเลย 10:30 น. ระบบสร้างใบลาครึ่งวันเช้าที่อนุมัติแล้วให้ตามกฎเดิม</p>`;
+  else if(P.kind==='out')body=`<div class="fgrid"><div class="fld"><label for="pxP">ออกช่วงคาบ (วันนี้)</label><select id="pxP">${per.map(([p,t,fr,to])=>`<option value="${esc(p)}" ${clockNow()<to&&clockNow()>=fr?'selected':''}>คาบ ${esc(p)} · ${t}</option>`).join('')}</select></div>
+     <div class="fld"><label for="pxG">แบบ</label><select id="pxG"><option value="back">จะกลับมา</option><option value="gone">ไม่กลับแล้ว</option></select></div></div>
+     <div class="fld" id="pxBw"><label for="pxB">เวลาที่จะกลับ</label><input type="time" id="pxB"></div>
+     <div class="fld"><label for="pxN">เหตุผล (ไม่บังคับ)</label><input type="text" id="pxN" maxlength="200"></div><div class="fld"><label for="pxW">งานที่ฝาก (ถ้ามีสอน)</label><input type="text" id="pxW" maxlength="300"></div>`;
+  else body=`<div class="fld"><label for="pxPl">สถานที่</label><input type="text" id="pxPl" maxlength="200" required></div><div class="fld"><label for="pxR">ชื่องาน/เรื่อง</label><input type="text" id="pxR" maxlength="200" required></div>
+     <div class="fgrid">${partF}${dateF('pxS','วันที่เริ่ม')}</div><div class="fld" id="pxEw"><label for="pxE">ถึงวันที่</label><input type="date" id="pxE" value="${TODAY_ISO}"></div>`;
+  modal(`<form class="f px" id="pxForm">${head}<p class="note">ขั้นที่ 3 · <b>${esc(nm(P.id))}</b> · ${kl} · <button type="button" class="btn sm ghost" id="pxBack">เปลี่ยนประเภท</button> ถือว่า ผอ. อนุมัติแล้วทันที · ไม่แจ้งเตือนครู</p>${err}${body}<button class="btn pri big wide" type="submit">บันทึก</button></form>`);
+  $('#pxBack').addEventListener('click',()=>{P.kind='';P.err='';proxyRender()});
+  const syncE=()=>{const half=$('#pxPart')&&$('#pxPart').value!=='เต็มวัน';const w=$('#pxEw');if(w)w.style.display=half?'none':''};
+  if($('#pxPart'))$('#pxPart').addEventListener('change',syncE);
+  const syncB=()=>{const w=$('#pxBw');if(w)w.style.display=$('#pxG').value==='gone'?'none':''};
+  if($('#pxG')){$('#pxG').addEventListener('change',syncB);syncB()}
+  $('#pxForm').addEventListener('submit',e=>{
+    e.preventDefault();e.stopPropagation();
+    const v=i=>($('#'+i)||{}).value||'',id=P.id;let a,data;
+    if(P.kind==='check'){a='check.admin';data={staff_id:id,kind:v('pxK'),time:v('pxT'),note:v('pxN'),duty:$('#pxD').checked}}
+    else if(P.kind==='leave'||P.kind==='gov'){a='leave.admin';const half=v('pxPart')!=='เต็มวัน';data={staff_id:id,type:P.kind==='gov'?'ไปราชการ':v('pxTy'),part:v('pxPart'),start:v('pxS'),end:half?v('pxS'):(v('pxE')||v('pxS')),reason:v('pxR'),place:v('pxPl')}}
+    else if(P.kind==='late'){a='late.admin';data={staff_id:id,date:v('pxS'),time:v('pxT'),key:'other',text:v('pxN')||'ผอ. บันทึกให้'}}
+    else{a='out.admin';const gone=v('pxG')==='gone';data={staff_id:id,period:v('pxP'),go:gone?'gone':'',why:v('pxN'),work:v('pxW'),back_plan:gone?'':v('pxB')}}
+    act(a,{data},e.submitter).then(()=>{PX=null;closeModal()}).catch(er=>{P.err=er.message||'ผิดพลาด';proxyRender()});
+  });
+}
 function outAdminForm(id){
   const P=PERIODS.filter(p=>p[0]!=='เช้า');
   modal(`<form class="f" id="oaForm"><div class="row between"><h2>บันทึกออกนอกบริเวณให้</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div>
@@ -2131,19 +2193,28 @@ const reqText=r=>[r.type,r.why,r.place||'',r.proj||'',r.id,thRange(r.from,r.to),
 V.myreq=()=>{
   const m=me(),k=st.kind,my0=lateItems().concat(REQ.filter(r=>r.who===m)),rq=(st.reqQ||'').trim(),my=rq?my0.filter(r=>reqText(r).indexOf(rq)>=0):my0,asked=REQ.filter(r=>r.canSub);
   const mySubs=SUBS.filter(s=>s.for===m&&s.date>=TODAY_ISO);
-  const types=[['leave','ใบลา','ลาป่วย ลากิจ ลาพักผ่อน ฯลฯ','leave','coral'],['out','ออกนอกบริเวณ','ระหว่างวัน ภายในวันนี้','out','teal'],['late','ขอเข้าสาย','แจ้งล่วงหน้า ไม่ต้องลงเวลามา','pin','amber'],['gov','ไปราชการ / อบรม','ตามหนังสือเชิญหรือคำสั่ง','gov','violet'],['doc','ชั่วโมงงานเอกสาร','งานเอกสารนอกเวลาสอน','file','teal']];
+  const types=[['leave','ใบลา','ลาป่วย ลากิจ ลาพักผ่อน ฯลฯ','leave','coral'],['half','ลาครึ่งวัน','เช้าหรือบ่าย · ลากิจ/ลาป่วย','leave','coral'],['out','ออกนอกบริเวณ','ระหว่างวัน ภายในวันนี้','out','teal'],['late','ขอเข้าสาย','บอกเวลาที่จะเข้า · ผอ. อนุมัติ','pin','amber'],['gov','ไปราชการ / อบรม','ตามหนังสือเชิญหรือคำสั่ง','gov','violet'],['doc','ชั่วโมงงานเอกสาร','งานเอกสารนอกเวลาสอน','file','teal']];
   return`${quotaBox()}${quickCard()}${reqTypeBar(k)}${asked.length?`<div class="callout c-info"><b>มีคนขอให้ท่านสอนแทน ${asked.length} รายการ</b><div><button class="btn sm" data-go="mysub">ไปตอบรับ</button></div></div>`:''}
    <section class="panel"><div class="ph"><h2>ยื่นคำขอ</h2>${k?'<button class="btn sm ghost" data-kind="">เปลี่ยนประเภท</button>':''}</div>
     ${!k?`<p class="sub">เลือกประเภทก่อน ระบบจะแสดงเฉพาะช่องที่ต้องกรอก · ชื่อและตำแหน่งเติมจากบัญชีให้แล้ว</p><div class="typepick">${types.map(([v,t,s,ic,h])=>reqBlock(v)?`<button class="action reqgrey" type="button" disabled aria-disabled="true">${tile(ic,h)}<span class="main"><b>${t}</b><span class="sub"><b>ใช้ไม่ได้วันนี้</b> · ${esc(reqBlock(v))}</span></span></button>`:`<button class="action" data-kind="${v}">${tile(ic,h)}<span class="main"><b>${t}</b><span class="sub">${s}</span></span>${svg('chev','chev')}</button>`).join('')}</div>${lateCancelRow()}`
-      :`<div class="who1">${avatar()}<div><b>${esc(ME.name)}</b><div class="sub">${esc((SM[m]||{}).pos||ME.position)}</div></div></div>${(k==='late'||k==='out')&&reqBlock(k)?blockedNote(k):k==='leave'?leaveForm():k==='out'?outForm():k==='late'?lateForm():k==='doc'?docForm():govForm()}`}
+      :`<div class="who1">${avatar()}<div><b>${esc(ME.name)}</b><div class="sub">${esc((SM[m]||{}).pos||ME.position)}</div></div></div>${(k==='late'||k==='out')&&reqBlock(k)?blockedNote(k):k==='leave'?leaveForm():k==='half'?halfForm():k==='out'?outForm():k==='late'?lateForm():k==='doc'?docForm():govForm()}`}
    </section>
    ${mySubs.length?`<section class="panel"><div class="ph"><h2>ฝากงานให้ครูสอนแทน</h2><p>คาบที่ท่านไม่อยู่</p></div><ul class="list">${mySubs.map(s=>`<li style="flex-wrap:wrap"><div class="main">${thD(s.date)} · ${s.p==='ทั้งวัน'?'ทั้งวัน':'คาบ '+esc(s.p)} · ${esc(s.cls)}<div class="sub">ผู้สอนแทน: ${s.done?(s.pick?esc(nm(s.pick)):'รวมชั้น'):'รอฝ่ายวิชาการจัด'}</div></div><div class="row" style="flex:1 1 260px"><input type="text" id="wk${s.id}" value="${esc(s.work)}" placeholder="เช่น ใบงานหน้า 24" style="flex:1" aria-label="งานที่ฝาก"><button class="btn sm pri" data-subwork="${s.id}">บันทึก</button></div></li>`).join('')}</ul></section>`:''}
    <section class="panel"><div class="ph"><h2>คำขอของฉัน</h2><span class="count">${my.length}</span></div>
    <input type="search" id="reqQ" class="search" placeholder="ค้นหาประวัติคำขอ (ประเภท เหตุผล วันที่)" value="${esc(st.reqQ||'')}" aria-label="ค้นหาประวัติคำขอ">${my.length?`<div class="cards">${my.slice(0,30).map(r=>`<article class="card" id="rq_${esc(r.id)}"><div class="row between">${reqKindPill(r)}${reqStatus(r)}</div>${lvCertPill(r)?`<div>${lvCertPill(r)}</div>`:''}<span>${thRange(r.from,r.to)}${r.time?' · '+r.time:''}${r.days?' · '+r.days+' วัน':''} · ${esc(r.why)}</span>${stageView(r)}${r.dirNote?`<p class="sub">${esc(r.dirNote)}</p>`:''}
      ${r.canExt?`<div class="callout c-warn"><b>บันทึกผลจากผู้มีอำนาจ</b><div class="fld"><label for="ex${r.id}">ผู้อนุมัติ / เลขที่หนังสือ</label><input type="text" id="ex${r.id}" placeholder="เช่น ผอ.สพป.นราธิวาส เขต 2 หนังสือที่ ..."></div><div class="row"><button class="btn sm good" data-ext="${r.id}:ok">อนุมัติแล้ว</button><button class="btn sm danger" data-ext="${r.id}:no">ไม่อนุมัติ</button></div></div>`:''}
      ${lvAttachBox(r)}
+     ${r.canType?`<div class="callout ${r.askType?'c-warn':'c-info'}"><b>${r.askType?'เลือกประเภทการลา':'ประเภทการลา'}</b>${r.askType?'ระบบใส่ "ลากิจ" ไว้ชั่วคราว ท่านเลือกลากิจหรือลาป่วยได้ (ผอ. อนุมัติโดยไม่รอก็ได้ และแก้ทีหลังได้)':'แก้เป็นอีกประเภทได้ โควตาคำนวณใหม่ตามที่เลือก'}<div class="row"><button class="btn sm ltb${r.type==='ลากิจส่วนตัว'?' pri':''}" data-ltype="${esc(r.id)}:ลากิจส่วนตัว">ลากิจ</button><button class="btn sm ltb${r.type==='ลาป่วย'?' pri':''}" data-ltype="${esc(r.id)}:ลาป่วย">ลาป่วย</button></div></div>`:''}
      <div class="row">${r.hasFile?`<button class="btn sm" data-evid="${r.id}">ดูหลักฐาน</button>`:''}${r.canBack?`<button class="btn sm good" data-back="${r.id}">กลับถึงโรงเรียนแล้ว</button>`:''}${r.canOffsite?`<button class="btn sm" data-outoff="${r.id}">เช็คเอาท์จากที่นี่</button>`:''}${r.kind==='gov'&&r.st==='approved'&&!r.report?`<button class="btn sm pri" data-report="${r.id}">เขียนรายงานหลังอบรม</button>`:''}${r.report?'<span class="pill p-good">ส่งรายงานแล้ว</span>':''}${r.canCancel?(r.kind==='late'?`<button class="btn sm danger" data-lcancel="${esc(r.id)}">ยกเลิก</button>`:`<button class="btn sm danger" data-rcancel="${r.id}:${r.kind}">ยกเลิก</button>`):''}</div></article>`).join('')}</div>`:empty('ยังไม่มีคำขอ')}</section>`;
 };
+function halfForm(){
+  return`<form class="f" id="fHalf">
+   <div class="fgrid"><div class="fld"><label for="h1">วันที่</label><input type="date" id="h1" value="${TODAY_ISO}"></div>
+   <div class="fld"><label for="h2">ช่วงเวลา</label><select id="h2"><option value="am">ครึ่งวันเช้า</option><option value="pm">ครึ่งวันบ่าย</option></select></div></div>
+   <div class="fld"><label for="h3">ประเภทการลา</label><select id="h3"><option value="ลากิจส่วนตัว">ลากิจ</option><option value="ลาป่วย">ลาป่วย</option></select></div>
+   <div class="fld"><label for="h4">เหตุผล</label><textarea id="h4" rows="2" required placeholder="เช่น ไปธุระที่ธนาคารช่วงเช้า"></textarea></div>
+   <p class="note">${ME.isDirector?'ใบของ ผอ.: อนุมัติทันที (ผอ. ยื่นเอง)':'ส่งถึง ผอ. อนุมัติ'} · นับ 0.5 วัน ในโควตาเดียวกับลากิจ/ลาป่วย · เมื่อ ผอ. อนุมัติ ระบบสร้างรายการสอนแทนให้ฝ่ายวิชาการจัดครู</p>
+   <div><button class="btn pri big" type="submit">ยื่นลาครึ่งวัน</button></div></form>`}
 function leaveForm(){
   return`<form class="f" id="fLeave">
    ${lvTypeSelect()}
@@ -2242,7 +2313,7 @@ function lvCertBox(r){
   const st=r.certOk&&r.cert==='ok'?'ยืนยันแล้ว (ไม่นับโควตา)':r.askCert?'ขอให้ครูแนบแล้ว · รอครูแนบ':r.cert==='no'?'ตีกลับแล้ว (นับเข้าโควตา)':r.certOk?'แนบไฟล์แล้ว · ถือว่ามีใบรับรองชั่วคราว (ไม่นับโควตา) · รอท่านยืนยัน':'ยังไม่มีใบรับรอง (นับรวมกับลากิจ)';
   return'<div class="lvcert"><div class="sub"><b>ใบรับรองแพทย์:</b> '+st+'</div><div class="row">'+(r.hasFile?'<button class="btn sm" data-evid="'+r.id+'">ดูไฟล์</button>':'')+(r.cert!=='ok'?'<button class="btn sm good" data-cert="'+r.id+':ok">ยืนยันใบรับรอง</button>':'')+((r.hasFile||r.cert==='ok')&&r.cert!=='no'?'<button class="btn sm danger" data-cert="'+r.id+':no">ตีกลับ (นับเข้าโควตา)</button>':'')+(!r.askCert?'<button class="btn sm" data-cert="'+r.id+':ask">ขอให้แนบใบรับรอง</button>':'')+'</div></div>'}
 /** ตัวเลือกประเภทคำขอ มองเห็นชัดเสมอบนหน้า "คำขอ" เมื่อเปิดฟอร์มอยู่ (ใบลา · ออกนอกบริเวณ · ไปราชการ · เอกสาร) */
-const REQ_TYPES=[['leave','ใบลา'],['out','ออกนอกบริเวณ'],['late','ขอเข้าสาย'],['gov','ไปราชการ'],['doc','เอกสาร']];
+const REQ_TYPES=[['leave','ใบลา'],['half','ลาครึ่งวัน'],['out','ออกนอกบริเวณ'],['late','ขอเข้าสาย'],['gov','ไปราชการ'],['doc','เอกสาร']];
 const reqTypeBar=k=>k?'<div class="reqtypes" role="group" aria-label="ประเภทคำขอ">'+REQ_TYPES.map(([v,t])=>reqBlock(v)?'<button type="button" class="reqtb reqgrey" disabled aria-disabled="true">'+t+'</button>':'<button type="button" class="reqtb" data-kind="'+v+'" aria-pressed="'+(k===v)+'">'+t+'</button>').join('')+'</div>'+(REQ_TYPES.filter(([v])=>reqBlock(v)).map(([v,t])=>t+': '+reqBlock(v)).join(' · ')?'<p class="note qgnote"><b>ใช้ไม่ได้วันนี้</b> · '+esc(REQ_TYPES.filter(([v])=>reqBlock(v)).map(([v,t])=>t+': '+reqBlock(v)).join(' · '))+'</p>':''):'';
 const lvLong=s=>s?d8(s).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
 const lvTermHead=T=>{const m=/ภาคเรียนที่ (\d+)\/(\d+)/.exec((T&&T.label)||'');return m?'ภาคเรียนที่ '+m[1]+' ปีการศึกษา '+m[2]:((T&&T.label)||'')};
@@ -2445,7 +2516,7 @@ function docForm(){
    ${D.all?`<h3>สรุปรายคน เดือนนี้ (ผอ./หัวหน้างานบุคคล)</h3>${D.all.length?`<ul class="list">${D.all.map(x=>`<li><div class="main">${esc(x.name)}</div><span class="num">${x.h} ชม.</span></li>`).join('')}</ul>`:empty('ยังไม่มีข้อมูล')}`:''}`}
 /** ปุ่มประเภทคำขอที่วันนี้ใช้ไม่ได้ → ข้อความเหตุผล (ว่าง = ใช้ได้) · ใช้ข้อมูลที่มีในหน้าเว็บ (B.my, B.lates) */
 /** ขอเข้าสาย (ใช้ B.lates ที่มีอยู่แล้ว) แปลงให้เป็นรูปแบบเดียวกับคำขออื่น เพื่อแสดงในรายการ "คำขอของฉัน" */
-function lateItems(){return(B.lates||[]).map(x=>({id:x.id,who:me(),kind:'late',type:'ขอเข้าสาย',from:x.date,to:x.date,days:0,why:x.why||x.label||'',st:'notified',canCancel:true,created:''}))}
+function lateItems(){return[]}   // v3.3: ขอเข้าสายอยู่ใน REQ แล้ว (มีสถานะรออนุมัติ/อนุมัติ/ไม่อนุมัติ)
 function reqBlock(k){
   if(k!=='out')return'';   // "ขอเข้าสาย" ไม่เป็นสีเทาอีก (ตรวจในฟอร์มตามวันที่เลือก) · มีแค่ "ขอออกนอกบริเวณ" ที่เทาได้
   const my=B.my||{},full=!!(my.leaveToday&&my.leaveToday.part==='เต็มวัน');
@@ -2469,7 +2540,8 @@ function lateWhy(date){
   return''}
 function lateGate(){
   const d=$('#la3'),b=$('#fLate button[type=submit]');if(!d||!b)return;
-  const why=lateWhy(d.value);b.disabled=!!why;b.classList.toggle('reqgrey',!!why);b.textContent=why?'ส่งไม่ได้':'แจ้งเข้าสาย';
+  const why=lateWhy(d.value);b.disabled=!!why;b.classList.toggle('reqgrey',!!why);b.textContent=why?'ส่งไม่ได้':(($('#la4')&&$('#la4').value>'10:30')?'สร้างใบลาครึ่งวันเช้า':'ส่งคำขอเข้าสาย');
+  const fz=$('#laForce');if(fz)fz.hidden=!(($('#la4')&&$('#la4').value>'10:30')&&!why);
   let n=$('#laBlock');
   if(why){if(!n){n=document.createElement('div');n.id='laBlock';n.className='lvwarn';n.setAttribute('role','alert');b.parentNode.after(n)}n.innerHTML='<b>ส่งไม่ได้วันนี้</b> · '+esc(why)}
   else if(n)n.remove()}
@@ -2478,7 +2550,7 @@ const blockedNote=k=>'<div class="callout c-info"><b>ใช้ไม่ได้
 function lateCancelRow(){
   const x=(B.lates||[]).find(y=>y.date===TODAY_ISO)||(B.my&&B.my.late&&B.my.late.id?{id:B.my.late.id}:null);
   if(!x)return'';
-  return'<div class="qcancel"><span>ขอเข้าสายที่แจ้งไว้วันนี้</span><button type="button" class="btn sm danger" data-lcancel="'+esc(x.id)+'">ยกเลิกที่แจ้งไว้</button></div>'}
+  return'<div class="qcancel"><span>ขอเข้าสายวันนี้ไว้แล้ว ('+(x.status==='รออนุมัติ'?'รอ ผอ. อนุมัติ':'อนุมัติแล้ว')+')</span><button type="button" class="btn sm danger" data-lcancel="'+esc(x.id)+'">ยกเลิกคำขอ</button></div>'}
 /** การ์ด "แนะนำสำหรับตอนนี้": แสดงเมื่อมีเรื่องที่ต้องทำจริงเท่านั้น · ลำดับความสำคัญ ค (รายงานไปราชการ) → ข (แนบใบรับรองแพทย์) → ก (ยังไม่ลงเวลาและเลยเวลาเตือน) · ไม่แนะนำ "ขอออกนอกบริเวณ" ทุกกรณี */
 function quickCard(){
   try{
@@ -2500,14 +2572,16 @@ function quickCard(){
   }catch(e){return''}
 }
 function lateForm(){
-  const L=B.lates||[];
+  const L=(B.lates||[]);
   return`<form class="f" id="fLate">
    <div class="fgrid"><div class="fld"><label for="la1">เหตุผล</label><select id="la1"><option value="district">แวะส่งงานเขตพื้นที่</option><option value="other">เหตุผลอื่น (พิมพ์เอง)</option></select></div>
    <div class="fld"><label for="la3">วันที่</label><input type="date" id="la3" value="${TODAY_ISO}" min="${TODAY_ISO}" max="${addDays(TODAY_ISO,14)}"></div></div>
+   <div class="fld"><label for="la4">เวลาที่จะเข้ามา <span class="req">*</span></label><input type="time" id="la4" required aria-required="true"></div>
    <div class="fld"><label for="la2" id="la2l">รายละเอียดเพิ่มเติม (ถ้ามี)</label><input type="text" id="la2" maxlength="200" placeholder="เช่น คาดว่าถึงโรงเรียนประมาณ 10:00"></div>
-   <div class="callout c-info"><b>แจ้งแล้วไม่ต้องลงเวลามา</b>ลงเวลากลับอย่างเดียว · ช่องเวลามาจะขึ้นข้อความแทนเวลา และไม่นับเป็นมาสาย · แจ้ง ผอ. ให้ทราบในแอป ไม่ต้องรออนุมัติ · ถ้าไม่ได้ลงเวลามาเลยทั้งวัน ให้ยื่นใบลาของวันนั้นเอง</div>
-   <div><button class="btn pri big" type="submit">แจ้งเข้าสาย</button></div></form>
-   ${L.length?`<section class="panel"><div class="ph"><h2>ที่แจ้งไว้</h2></div><ul class="list">${L.map(x=>`<li><div class="main"><b>${thD(x.date)}</b> · ${esc(x.label)}<div class="sub">${esc(x.why)}</div></div><button class="btn sm danger" data-lcancel="${esc(x.id)}">ยกเลิก</button></li>`).join('')}</ul></section>`:''}`}
+   <div class="callout c-info"><b>ต้องให้ ผอ. อนุมัติ</b>ส่งคำขอแล้วรอ ผอ. พิจารณา (ยังไม่ถือว่าได้รับอนุญาต) · เมื่อมาถึงต้อง<b>ลงเวลาเข้าตามปกติ</b> · ถ้าเวลาที่จะเข้าเลย ${'10:30'} น. ไม่ใช่คำขอเข้าสาย ระบบจะสร้างใบ<b>ลาครึ่งวันเช้า</b>ให้แทน</div>
+   <div id="laForce" class="lvwarn" role="alert" hidden><b>เลย 10:30 น. = ลาครึ่งวันเช้า</b> · ระบบจะสร้างใบลาครึ่งวันเช้าให้ ท่านต้องเลือกประเภทลา (ลากิจ/ลาป่วย) ที่หน้าคำขอ และ ผอ. อนุมัติ</div>
+   <div><button class="btn pri big" type="submit">ส่งคำขอเข้าสาย</button></div></form>
+   ${L.length?`<section class="panel"><div class="ph"><h2>ที่ขอไว้</h2></div><ul class="list">${L.map(x=>`<li><div class="main"><b>${thD(x.date)}</b> · เข้า ${esc(x.time||'-')} น. · ${esc(x.label)}<div class="sub">${esc(x.why)} · ${x.status==='รออนุมัติ'?'รอ ผอ. อนุมัติ':'อนุมัติแล้ว'}</div></div><button class="btn sm danger" data-lcancel="${esc(x.id)}">ยกเลิก</button></li>`).join('')}</ul></section>`:''}`}
 /** ข้อความบอกเวลา/คาบปัจจุบันตามตารางสอนของครู (ไม่มีตารางสอน = ไม่แสดง ใช้ช่องติ๊กเดิม) */
 function outNowNote(){
   if(!B.hasTT)return'';
@@ -3024,7 +3098,7 @@ function after(){
     o.onchange=full;full();document.querySelectorAll('[data-oper]').forEach(b=>{b.onclick=()=>{o.value=b.dataset.oper;full()}})}
   const o6=$('#o6');if(o6){const u6=()=>{const g=o6.value==='gone';$('#o7w').hidden=g;$('#o7').required=!g};o6.onchange=u6;u6()}
   const la1=$('#la1');if(la1){const u=()=>{const o=la1.value==='other';$('#la2').required=o;$('#la2l').textContent=o?'เหตุผล (จำเป็น)':'รายละเอียดเพิ่มเติม (ถ้ามี)'};la1.onchange=u;u()}
-  const la3=$('#la3');if(la3){la3.onchange=lateGate;la3.oninput=lateGate;lateGate()}
+  const la3=$('#la3');if(la3){la3.onchange=lateGate;la3.oninput=lateGate;const la4=$('#la4');if(la4){la4.onchange=lateGate;la4.oninput=lateGate}lateGate()}
   const l1=$('#l1');if(l1){const upd=()=>{const a=l1.value,b=$('#l2').value;if(b<a)$('#l2').value=a;const same=a===$('#l2').value;$('#lpart').hidden=!same;if(!same)$('#l5').value='เต็มวัน';
     const n=workDays(a,$('#l2').value,$('#l5').value);$('#lDays').innerHTML=n?`ตรวจทาน: <b>${n} วันทำการ</b> (${thRange(a,$('#l2').value)} · ไม่นับเสาร์-อาทิตย์และวันหยุด)`:'<span class="bad">ช่วงที่เลือกเป็นวันหยุดทั้งหมด ไม่ต้องยื่นลา</span>'};
     ['#l1','#l2','#l5'].forEach(s=>$(s).onchange=upd);upd();
@@ -3105,8 +3179,10 @@ document.addEventListener('click',async e=>{
   if(d.retrycheck){if(st.retryCheck)sendCheck(st.retryCheck);return}
   if(d.quicksick){st.kind='leave';go('myreq');setTimeout(()=>{const s=$('#lt');if(s){s.value='sick';s.dispatchEvent(new Event('change'))}},50);return}
   if(d.qattach){const c=document.getElementById('rq_'+d.qattach);if(c){const dt=c.querySelector('details.lvfold');if(dt)dt.open=true;c.scrollIntoView({behavior:'smooth',block:'center'})}return}
+  if(d.golv){closeModal();st.kind='';go('myreq');return}
   if(d.halfleave){closeModal();st.kind='leave';go('myreq');setTimeout(()=>{if($('#l5')){$('#l5').value='ครึ่งวันเช้า';const r=$('#lt');if(r)r.value='per';$('#l5').dispatchEvent(new Event('change'))}},50);return}
   if('kind' in d&&!d.go){st.kind=d.kind;st.dirty=false;render();return}
+  if(d.proxy!==undefined&&ME.isAdmin){proxyOpen(d.proxy);return}
   if(d.forcheck){forCheckForm(d.forcheck);return}
   if(d.copyatt){copyTxt(attText(),'สรุปการมา');return}
   if(d.copyemg){copyTxt(emgText(),'ข้อความแจ้งเหตุ');return}
@@ -3116,15 +3192,16 @@ document.addEventListener('click',async e=>{
   if(d.unpick){delete PICKED[d.unpick];const s=$('#'+d.unpick+'s');if(s)s.textContent='นำรูปออกแล้ว';if($('#fLeave'))lvRefresh();return}
   /* คำขอ */
   if(d.ap){const[id,a,kind]=d.ap.split(':');const note=($('#nt'+id)?.value||'').trim();if(a==='no'&&!note){toast('กรุณาใส่เหตุผลในช่องความเห็น');$('#nt'+id)?.focus();return}
-    act(kind==='out'?'out.dir':'leave.dir',{id,approve:a==='ok',note},t).catch(()=>{});return}
+    act(kind==='out'?'out.dir':kind==='late'?'late.dir':'leave.dir',{id,approve:a==='ok',note},t).catch(()=>{});return}
   if(d.cert){const[id,v]=d.cert.split(':');if(v==='no'&&!confirm('ตีกลับใบรับรองแพทย์? ใบนี้จะนับเข้าโควตาลาและแจ้งครู'))return;if(v==='ask'&&!confirm('ขอให้ครูแนบใบรับรองแพทย์? ใบนี้จะอนุมัติไม่ได้จนกว่าครูจะแนบ และแจ้งเตือนครู'))return;act('leave.cert',{id,v},t).catch(()=>{});return}
   if(d.attach){let ph;try{ph=photoOf('at_'+d.attach)}catch(er){toast(er.message);return}if(!ph){toast('เลือกรูปหรือไฟล์ PDF ก่อน');return}act('leave.attach',{id:d.attach,data:{photo:ph}},t).then(()=>clearPick('at_'+d.attach)).catch(()=>{});return}
   if(d.ext){const[id,a]=d.ext.split(':');const note=($('#ex'+id)?.value||'').trim();if(!note){toast('ระบุผู้อนุมัติหรือเลขที่หนังสือ');$('#ex'+id)?.focus();return}
     if(!confirm('บันทึกผล "'+(a==='ok'?'อนุมัติแล้ว':'ไม่อนุมัติ')+'" ตามที่ผู้มีอำนาจพิจารณา?'))return;act('leave.ext',{id,approve:a==='ok',note},t).catch(()=>{});return}
+  if(d.ltype){const[id,ty]=d.ltype.split(':');act('leave.type',{id:id,type:ty},t).catch(()=>{});return}
   if(d.suback){act('sub.ack',{id:d.suback},t).catch(()=>{});return}
   if(d.sa){const[id,a]=d.sa.split(':');act('out.sub',{id,approve:a==='ok'},t).catch(()=>{});return}
   if(d.lcancel){if(!confirm('ยกเลิกการแจ้งเข้าสายนี้?'))return;act('late.cancel',{id:d.lcancel},t).catch(()=>{});return}
-  if(d.rcancel){const[id,kind]=d.rcancel.split(':');if(!confirm('ยกเลิกคำขอนี้? รายการสอนแทนที่เชื่อมกันจะถูกยกเลิกด้วย'))return;act(kind==='out'?'out.cancel':'leave.cancel',{id},t).catch(()=>{});return}
+  if(d.rcancel){const[id,kind]=d.rcancel.split(':');if(!confirm('ยกเลิกคำขอนี้? รายการสอนแทนที่เชื่อมกันจะถูกยกเลิกด้วย'))return;act(kind==='out'?'out.cancel':kind==='late'?'late.cancel':'leave.cancel',{id},t).catch(()=>{});return}
   if(d.back){act('out.back',{id:d.back},t).catch(()=>{});return}
   if(d.outoff){if(!confirm('เช็คเอาท์จากที่นี่? ระบบบันทึกเวลาออกตอนนี้และปิดคำขอออกนอก (ใช้เมื่อกลับโรงเรียนไม่ได้)'))return;act('out.offsite',{id:d.outoff},t).catch(()=>{});return}
   if(d.outadmin){outAdminForm(d.outadmin);return}
@@ -3236,7 +3313,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#modal').hid
 /** ตรวจความสมเหตุสมผลของค่าตั้งก่อนส่ง */
 function checkTimes(o){const a=o.warn_after,b=o.late_after,c=o.halfday_after;if(o.remind_in_at&&o.remind_in_at>b)return'เวลาเตือนให้ลงเวลามา ต้องไม่เกินเวลานับว่าสาย';if(!(a<=b&&b<=c))return'ลำดับเวลาไม่ถูกต้อง: มาไม่เกิน ≤ นับว่าสาย ≤ ต้องลาครึ่งวัน';if(o.duty_on>b)return'เวลามาของครูเวรต้องไม่เกินเวลานับว่าสาย';if(!(o.leave_time_general>c&&o.leave_time_duty>c))return'เวลาออกต้องหลังเวลาต้องลาครึ่งวัน';return''}
 document.addEventListener('submit',async e=>{
-  const f=e.target;if(f.closest('#modal')&&['rsForm','qrForm','fcForm','repForm'].includes(f.id))return;
+  const f=e.target;if(f.closest('#modal')&&['rsForm','qrForm','fcForm','repForm','pxForm'].includes(f.id))return;
   e.preventDefault();const btn=e.submitter||f.querySelector('button[type=submit]');
   const v=s=>($(s)?.value||'').trim();
   try{
@@ -3246,7 +3323,8 @@ document.addEventListener('submit',async e=>{
   if(f.id==='evFormDir'){await evSubmitDir(btn);return}
   if(f.id==='evFormSign'){const S=SEC[evKey()],V=S.view,g=s=>(($(s)||{}).value||'').trim();await evAct('eval.sign',{data:{round:V.round.id,staff:V.staff.id,note:g('#evsn'),force:!!($('#evsf')||{}).checked,forceWhy:g('#evsw')}},btn);closeModal();return}
   if(f.id==='fDoc'){await act('doc.add',{data:{date:v('#dc1'),hours:v('#dc2'),what:v('#dc3')}},btn);return}
-  if(f.id==='fLate'){const lw=lateWhy(v('#la3'));if(lw){toast(lw);return}if(v('#la1')==='other'&&!v('#la2').trim()){toast('กรุณาใส่เหตุผล');return}await act('late.create',{data:{key:v('#la1'),text:v('#la2'),date:v('#la3')}},btn);st.kind='';render();return}
+  if(f.id==='fHalf'){if(!v('#h4').trim()){toast('กรุณาใส่เหตุผล');return}await act('leave.half',{data:{date:v('#h1'),half:v('#h2'),type:v('#h3'),reason:v('#h4')}},btn);st.kind='';render();return}
+  if(f.id==='fLate'){const lw=lateWhy(v('#la3'));if(lw){toast(lw);return}if(!/^\d{2}:\d{2}$/.test(v('#la4'))){toast('กรุณาบอกเวลาที่จะเข้ามา');$('#la4').focus();return}if(v('#la1')==='other'&&!v('#la2').trim()){toast('กรุณาใส่เหตุผล');return}const j=await act('late.create',{data:{key:v('#la1'),text:v('#la2'),date:v('#la3'),time:v('#la4')}},btn);st.kind='';render();if(j&&j.late&&j.late.forced)modal(`<h2>ถูกบังคับเป็นลาครึ่งวันเช้า</h2><p>เวลาที่จะเข้าเลย 10:30 น. ไม่รับเป็นคำขอเข้าสาย ระบบจึงสร้างใบ<b>ลาครึ่งวันเช้า</b>ให้ท่าน (${esc(j.late.leaveId||'')})</p><p>ไปที่ <b>คำขอ</b> เลือกประเภทลา (ลากิจ/ลาป่วย) ตอนนี้ใส่ "ลากิจ" ไว้ชั่วคราว · ผอ. อนุมัติได้เลยโดยไม่ต้องรอ และแก้ทีหลังได้</p><div class="row"><button class="btn pri" data-close="1">รับทราบ</button></div>`);return}
   if(f.id==='fOut'){const teach=B.hasTT?!!MY_TT[v('#o1')]:!!st.outTeach;if(v('#o6')!=='gone'&&!/^\d{2}:\d{2}$/.test(v('#o7'))){toast('กรุณาบอกว่าจะกลับกี่โมง');return}await act('out.create',{data:{go:v('#o6')==='gone'?'gone':'',back_plan:v('#o6')==='gone'?'':v('#o7'),period:v('#o1'),why:v('#o2'),teaching:teach,sub:teach?v('#o4'):'',work:teach?v('#o5'):''}},btn);st.outTeach=false;st.kind='';render()}
   if(f.id==='fGov'){await act('leave.create',{data:{type:'ไปราชการ',start:v('#g3'),end:v('#g6')||v('#g3'),reason:v('#g1'),place:v('#g2'),proj:v('#g4'),cost:v('#g5'),attachment:v('#g7'),photo:photoOf('g8')}},btn);clearPick('g8');st.kind='';render()}
   if(f.id==='myTaskForm'){const steps=$('#mt4').value.trim();await act('work.addMine',{data:{title:v('#mt1'),to:v('#mt2'),due:v('#mt3'),mode:steps?'steps':'ten',steps,urgent:!!($('#mt5')||{}).checked}},btn);st.addTask=false;render()}
