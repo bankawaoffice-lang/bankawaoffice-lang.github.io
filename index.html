@@ -147,6 +147,16 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 .meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:8px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
+.abs h2{font-size:16px;font-weight:700;margin:0 0 8px;color:var(--ink)}
+.abg+.abg{margin-top:10px}
+.abg h3{font-size:13.5px;font-weight:700;margin:0 0 4px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.abg h3 small{background:var(--soft);border-radius:999px;padding:1px 8px;font-size:12px;color:var(--ink)}
+.abg ul{list-style:none;margin:0;padding:0}
+.abg li{padding:5px 0;font-size:14.5px;line-height:1.35;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.abg li:first-child{border-top:0}
+.abg li span{color:var(--muted)}
+.abg.gov h3{color:var(--ink)}
+.abn{margin:0;font-size:14.5px;color:var(--muted)}
 .chip{border:0;background:var(--card);box-shadow:var(--shadow);border-radius:999px;padding:7px 16px;font-size:13.5px;white-space:nowrap;color:var(--muted)}
 .chip[aria-pressed="true"]{background:var(--pri);color:var(--on-pri);font-weight:500}
 /* สวิตช์ แถว ฟอร์ม */
@@ -288,7 +298,7 @@ button.ev{border:0;background:none;padding:0;width:100%;text-align:left;color:in
 .pbar{height:14px;border-radius:8px;background:var(--soft);border:1px solid var(--line);overflow:hidden}.pbar i{display:block;height:100%;border-radius:8px;background:var(--ok)}
 .prow.y .pbar i{background:var(--warn)}.prow.r .pbar i{background:var(--bad)}.prow.r{border-left:4px solid var(--bad);padding-left:8px}
 .plist{font-size:12.5px;line-height:1.45;color:var(--muted)}.plist b{color:var(--ink)}.pupd{font-size:11.5px;color:var(--muted)}
-.prow.n .pbar i{background:var(--muted)}.pgray{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.prow.n .pbar i{background:var(--muted)}.pgray{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;font-size:12.5px;line-height:1.45;color:var(--muted)}.prelo{margin-left:auto;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:700}
 .appt .aiw{position:relative;display:block}
 .lt{position:absolute;top:-6px;right:-8px;min-width:22px;height:22px;padding:0 5px;box-sizing:border-box;border-radius:999px;border:2px solid var(--card);color:#fff;font:700 12px/18px var(--f);text-align:center}
 .lt-r{background:#C4262F}.lt-g{background:#0F7A4B}.lt-y{background:#F5C26B;color:#3A2D12}
@@ -667,11 +677,26 @@ async function api(action,payload){
   }
   return j;
 }
-function relogin(){
-  let n=0; try{ n=Number(sessionStorage.getItem('qk_relogin')||0); sessionStorage.setItem('qk_relogin',String(n+1)); }catch(e){}
-  if(n>1) return;
-  if(liff.isInClient()) location.reload();
+function doReload(){ location.reload(); }
+/** มีสิ่งที่ผู้ใช้กำลังทำอยู่ไหม (รีโหลดแล้วจะหาย): การ์ดอนุมัติรอเลิกทำ 3 วินาที/กำลังส่ง/เปิดช่องเหตุผล หรือมีช่องที่กำลังกรอก */
+function userBusy(){
+  try{
+    if(Object.keys(AP.ph).some(k=>AP.ph[k])||Object.keys(AP.q).length) return true;
+    const a=document.activeElement; if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
+    if([...document.querySelectorAll('textarea,input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit])')].some(e=>String(e.value||'').trim())) return true;
+  }catch(e){}
+  return false;
+}
+/** ขอ token ใหม่ด้วยการเข้าสู่ระบบ/รีโหลดใหม่ · คืน 'go' (ทำแล้ว) | 'defer' (รอผู้ใช้ทำรายการให้เสร็จก่อน) | 'capped' (เกินเพดาน 2 ครั้ง · force = ผู้ใช้กดเอง) */
+function relogin(force,src){
+  let n=0; try{ n=Number(sessionStorage.getItem('qk_relogin')||0); }catch(e){}
+  if(!force&&n>1){ S.reloginWait=false; return 'capped'; }
+  if(userBusy()){ S.reloginWait=true; S.reloginSrc=src||''; return 'defer'; }
+  S.reloginWait=false;
+  try{ sessionStorage.setItem('qk_relogin',String(n+1)); if(src) sessionStorage.setItem('qk_relogin_src',src); else sessionStorage.removeItem('qk_relogin_src'); }catch(e){}
+  if(liff.isInClient()) doReload();
   else { try{ liff.logout(); }catch(e){} liff.login({redirectUri:location.href}); }
+  return 'go';
 }
 
 /* ---------- เริ่มต้น ---------- */
@@ -696,7 +721,7 @@ async function boot(){
   window.__qkStage='api';
   try{
     await loadHome();   // เรียกหลังบ้านครั้งเดียว (เดิม 2 ครั้ง)
-    try{ sessionStorage.removeItem('qk_relogin'); }catch(e){}
+    try{ if(sessionStorage.getItem('qk_relogin_src')!=='prog') sessionStorage.removeItem('qk_relogin'); }catch(e){}   // รีโหลดที่แถบความคืบหน้าขอ: นับเพดานต่อจนกว่า token ของแถบนั้นจะใช้ได้จริง (กันวนรีโหลดเมื่อ Student/Academic ปฏิเสธ token ตลอด)
   }catch(e){
     if(e.code==='NOT_LINKED'){ cacheClear(); return renderLink(); }
     if(S.viewAs&&(e.code==='FORBIDDEN'||e.code==='NOT_FOUND')){ vaClear(); toast(e.message); return loadHome().catch(()=>{}); }
@@ -762,6 +787,7 @@ async function loadHome(){
   loadExt();
   loadBoard();
   loadWin();
+  loadAbsent();
   loadProg();
 }
 /** ดึงงานจาก Q-Teacher มารวมใน "งานของฉัน" · โหลดไม่ได้ก็ไม่กระทบหน้ากลาง */
@@ -792,6 +818,41 @@ async function loadWin(force){
   }catch(e){}
   S.winLoading=false; render();
 }
+/** "วันนี้ใครไม่อยู่/มาสาย" (ทุกคนเห็นเท่ากัน) จาก Q-Teacher action absent.today · ได้แค่ชื่อ+สถานะ · ไม่เก็บลงเครื่อง (ไม่เข้าแคช) · โหลดตามหลัง ไม่บล็อกหน้าแรก · ผูกกับวันที่ของหน้า */
+async function loadAbsent(force){
+  if(!S.home||!appReady('teacher')||!CONFIG.TEACHER_API||S.absLoading) return;
+  const d=S.home.today.date;
+  if(S.abs&&S.abs.date!==d){ S.abs=null; S.absAt=0; }
+  if(!force&&S.abs&&Date.now()-(S.absAt||0)<60000) return;
+  S.absLoading=true;
+  try{
+    const r=await fetch(CONFIG.TEACHER_API,{method:'POST',body:JSON.stringify({action:'absent.today',idToken:liff.getIDToken()})});
+    const j=await r.json();
+    if(j.ok&&j.absent&&j.absent.date===d){ S.abs=j.absent; S.absAt=Date.now(); }
+  }catch(e){}
+  S.absLoading=false;
+  try{ render(); }catch(e){ S.abs=null; }
+}
+/** ไปราชการ: ช่วงเวลา (วัน/ครึ่งวัน/ถึงวันที่) + ชื่องาน + สถานที่ · ต่อท้ายชื่อ */
+function govTx(x,d){
+  const dt=v=>{ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||''); return m?(+m[3])+'/'+(+m[2]):''; };
+  const when=(x.to&&x.to>d)?'ถึง '+dt(x.to):x.part;
+  const what=[x.what,x.place].filter(Boolean).map(esc).join(' · ');
+  return esc(when)+(what?' · '+what:'');
+}
+function absCard(){
+  const A=S.abs;
+  if(!A||!S.home||A.date!==S.home.today.date||offDay()) return '';
+  A.gov=A.gov||[];
+  const G=[
+    ['leave','ลา',A.leave,x=>esc(x.part)],
+    ['gov','ไปราชการ',A.gov,x=>govTx(x,A.date)],
+    ['late','เข้าสาย',A.late,x=>esc(x.time?'จะเข้า '+x.time+' น.':'เข้าสาย')],
+    ['out','ออกนอกบริเวณ',A.out,x=>esc(x.gone?'ไม่กลับแล้ว':(x.back?'กลับ '+x.back+' น.':'ออกนอกบริเวณ'))]
+  ].filter(g=>g[2]&&g[2].length);
+  const body=G.length?G.map(([k,l,a,tx])=>`<div class="abg ${k}"><h3>${l}<small>${a.length}</small></h3><ul>${a.map(x=>`<li><b>${esc(x.name)}</b><span> — ${tx(x)}</span></li>`).join('')}</ul></div>`).join(''):'<p class="abn">วันนี้ไม่มีผู้ลา เข้าสาย หรือออกนอกบริเวณ</p>';
+  return `<section class="card abs" aria-label="วันนี้ใครไม่อยู่ มาสาย"><h2>วันนี้ใครไม่อยู่ / มาสาย</h2>${body}</section>`;
+}
 /** สรุปบุคลากรวันนี้ (ผอ.) จาก Q-Teacher action board · โหลดตามหลัง ไม่บล็อกหน้าแรก */
 async function loadBoard(force){
   if(!S.home||!isDir()||!appReady('teacher')||!CONFIG.TEACHER_API||S.boardLoading) return;
@@ -806,46 +867,84 @@ async function loadBoard(force){
 }
 /** โซน 3 แถบความคืบหน้า (เฉพาะ ผอ. · อ่านอย่างเดียว) · แสดงทุกหลอดที่มีข้อมูลต่อกันตลอดวัน เรียง: บุคลากรมา → เช็คชื่อเช้า → เข้าสอน → บันทึกผลอ่าน
  *  ข้อมูล: admin.overview ของ Q-Student และ Q-Academic (ยิงทั้งคู่ตอนเปิดหน้า แยกกัน ไม่รอกัน ไม่บล็อกหน้าแรก) + board ของ Q-Teacher ที่หน้าโหลดอยู่แล้ว (ตัวเดียวกับแถบหัวม่วง)
- *  ก่อน 07:30 หลอดเช็คชื่อเช้า/เข้าสอน/ผลอ่านเป็นสีเทา "ยังไม่ถึงเวลา" · หลอดไหนโหลดไม่ได้/ช้าเกิน 8 วินาที = บรรทัดเทา หลอดอื่นยังแสดง · ข้อมูลคนละวัน = ไม่แสดงตัวเลข
- *  แคช 60 วินาที ผูกกับวันที่ (ข้ามเที่ยงคืน/กลับจากพื้นหลัง ตรวจวันใหม่ ล้างของเมื่อวานทันที) · ล้มเหลวลองใหม่ได้เร็วขึ้นที่ 15 วินาที */
-const PROG_TTL=60000, PROG_ERR_TTL=15000, PROG_TMO=8000, PROG_START=450, PROG_SRC=[['student','STUDENT_API'],['academic','ACADEMIC_API']];
+ *  ก่อน 07:30 หลอดเช็คชื่อเช้า/เข้าสอน/ผลอ่านเป็นสีเทา "ยังไม่ถึงเวลา" · ข้อมูลคนละวัน = ไม่แสดงตัวเลข · แคช 60 วินาที ผูกกับวันที่ (ข้ามเที่ยงคืน/กลับจากพื้นหลัง ล้างของเมื่อวานทันที)
+ *  โหลดซ้ำพลาด = เก็บตัวเลขล่าสุดของวันเดียวกันไว้แสดงพร้อม "ข้อมูลเมื่อ HH:MM" (ไม่ทิ้ง) · ไม่เคยสำเร็จวันนี้ = บรรทัดเทาพร้อมสาเหตุสั้นๆ
+ *  ล้มเหลวต่อเนื่อง = ลองใหม่ถอยห่าง 15 → 30 → 60 วินาที (สำเร็จแล้วรีเซ็ต) · ยิงเฉพาะตอนผู้ใช้ดูหน้าแรกอยู่ (ไม่ซ่อนหน้า ไม่อยู่หน้าอื่น)
+ *  token หมดอายุ (TOKEN_EXPIRED/NO_TOKEN/BAD_TOKEN) = ใช้ relogin() ตัวเดียวกับ api() · ไม่เกิน 2 ครั้ง · มีการ์ดอนุมัติรออยู่/ช่องที่กำลังกรอก = รอให้เสร็จก่อนจึงรีโหลด · เกินเพดาน = หยุดยิง + ปุ่ม "แตะเพื่อโหลดใหม่" */
+const PROG_TTL=60000, PROG_TMO=15000, PROG_START=450, PROG_BACKOFF=[15000,30000,60000], PROG_SRC=[['student','STUDENT_API'],['academic','ACADEMIC_API']];
+const PROG_AUTH=['TOKEN_EXPIRED','NO_TOKEN','BAD_TOKEN'];
+const PROG_CAUSE={auth:'เข้าสู่ระบบหมดอายุ',timeout:'ตอบช้า',net:'เครือข่าย',bad:'ข้อมูลอ่านไม่ได้',other:'ระบบตอบกลับผิดพลาด'};
 function bkkDay(){ try{ return new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Bangkok'}); }catch(e){ return ''; } }
 function progOk(){ return !!S.home&&!!S.me&&isDir()&&!S.viewAs&&!offDay(); }   // ผอ. เท่านั้น · ไม่ใช่มุมมองคนอื่น · ไม่ใช่วันหยุด (ไม่ใช่ = ไม่ยิงคำขอเลย)
+function progUsable(){ return !document.hidden&&S.page==='home'; }   // ยิงเฉพาะตอนผู้ใช้ดูหน้าแรกอยู่
+function progBackoff(n){ return PROG_BACKOFF[Math.min(Math.max(n||1,1),PROG_BACKOFF.length)-1]; }   // ล้มครั้งที่ 1/2/3+ → รอ 15/30/60 วินาที
 function progGuard(){ const d=bkkDay(); if(!S.prog||S.prog.day!==d) S.prog={day:d}; return S.prog; }   // แคชผูกกับวันที่: วันเปลี่ยน = เริ่มใหม่
+function progAuthOk(){
+  S.progTokenBad=false; S.progStop=false; S.reloginWait=false;
+  try{ if(sessionStorage.getItem('qk_relogin_src')==='prog'){ sessionStorage.removeItem('qk_relogin'); sessionStorage.removeItem('qk_relogin_src'); } }catch(e){}   // token ใช้ได้แล้ว = เริ่มนับเพดานใหม่
+}
+function progAuthFail(){
+  if(S.progTokenBad) return;   // สองแอปพลาดพร้อมกัน นับเป็นครั้งเดียว
+  S.progTokenBad=true;
+  if(relogin(false,'prog')==='capped') S.progStop=true;
+}
 async function progFetch(k,cfgKey,force){
   const P=progGuard(), day=P.day, c=P[k]||(P[k]={});
   if(c.loading) return;
-  if(!force&&c.at&&Date.now()-c.at<(c.err?PROG_ERR_TTL:PROG_TTL)) return;
+  if(!force&&c.at&&Date.now()-c.at<(c.err?progBackoff(c.fails):PROG_TTL)) return;
   c.loading=true;
-  let ok=false, ov=null;
+  let ok=false, ov=null, kind='';
   try{
     const r=await Promise.race([fetch(CONFIG[cfgKey],{method:'POST',body:JSON.stringify({action:'admin.overview',idToken:liff.getIDToken(),data:{}})}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),PROG_TMO))]);
-    const j=await r.json(); if(j&&j.ok&&j.overview&&typeof j.overview==='object'){ ok=true; ov=j.overview; }
-  }catch(e){ ok=false; }
+    let j=null; try{ j=await r.json(); }catch(e){ kind='bad'; }
+    if(!kind){
+      if(j&&j.ok===true&&j.overview&&typeof j.overview==='object'){ ok=true; ov=j.overview; }
+      else if(j&&j.ok===false){ kind=PROG_AUTH.indexOf(j.code)>=0?'auth':'other'; }
+      else kind='bad';
+    }
+  }catch(e){ kind=(e&&e.message==='TIMEOUT')?'timeout':'net'; }
   c.loading=false;
   if(!S.prog||S.prog.day!==day) return;   // วันเปลี่ยนระหว่างรอ: ทิ้งผลของเมื่อวาน
-  c.at=Date.now(); c.ov=ok?ov:null; c.err=!ok;
+  c.at=Date.now();
+  if(ok){ c.ov=ov; c.okAt=c.at; c.err=''; c.fails=0; if(!PROG_SRC.some(([kk])=>P[kk]&&P[kk].err==='auth')) progAuthOk(); }   // สำเร็จ: รีเซ็ตการถอยห่าง · ล้างเพดานรีล็อกอินเฉพาะเมื่อไม่มีแอปไหนยังโดน token ปฏิเสธ (กันวนรีโหลดเมื่อแอปเดียวปฏิเสธตลอด)
+  else{ c.err=kind; c.fails=(c.fails||0)+1; if(kind==='auth') progAuthFail(); }   // พลาด: เก็บตัวเลขเดิม (c.ov) ไว้
   try{ render(); }catch(e){}
+  progSchedule();
 }
 function loadProg(force){
-  if(!progOk()) return;
+  if(!progOk()||!progUsable()) return;
+  if(S.progStop||S.progTokenBad) return;   // token เสียอยู่: หยุดยิงจนกว่าจะขอใหม่ได้
   progGuard();
   PROG_SRC.forEach(([k,cfgKey])=>{ if(CONFIG[cfgKey]) progFetch(k,cfgKey,force); });   // ไม่ await: แต่ละคำขอเป็นอิสระต่อกัน
 }
-/** ตรวจวันใหม่: เปิดหน้าค้างข้ามเที่ยงคืน หรือกลับจากพื้นหลัง → ล้างตัวเลขเมื่อวานทันที แล้วโหลดของวันใหม่ */
+/** ตรวจวันใหม่ + ยิงเมื่อถึงเวลา: เปิดหน้าค้างข้ามเที่ยงคืน/กลับจากพื้นหลัง → ล้างตัวเลขเมื่อวานทันที แล้วโหลดของวันใหม่ */
 function progTick(){
-  if(document.hidden||!S.home||!S.me) return;
+  if(document.hidden||!S.home||!S.me){ progSchedule(); return; }
   const d=bkkDay();
-  if(S.prog&&S.prog.day!==d){ S.prog=null; S.boardAt=0; try{ render(); }catch(e){} }
+  if(S.prog&&S.prog.day!==d){ S.prog=null; S.boardAt=0; S.progTokenBad=false; try{ render(); }catch(e){} }
+  if(S.reloginWait&&relogin(false,S.reloginSrc||'')==='capped'){ S.progStop=true; try{ render(); }catch(e){} }   // รีโหลดที่รอผู้ใช้ทำรายการให้เสร็จ
   if(S.home.today.date!==d){
     if(Date.now()-(S.progHomeAt||0)>60000&&!S.loading){ S.progHomeAt=Date.now(); S.loading=true; loadHome().catch(()=>{}).finally(()=>{S.loading=false;}); }
-    return;
-  }
-  if(S.page==='home') loadProg();
+  }else loadProg();
+  progSchedule();
 }
-setInterval(progTick,30000);
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden) progTick(); });
-window.addEventListener('pageshow',progTick);
+/** นัดครั้งถัดไปตอนแคช/การถอยห่างหมดพอดี (ไม่ตรวจถี่ทุก 30 วินาที) */
+let progTimer=0;
+function progSchedule(){
+  clearTimeout(progTimer);
+  let wait=PROG_TTL;
+  const P=S.prog;
+  if(P&&!S.progStop&&!S.progTokenBad) PROG_SRC.forEach(([k])=>{ const c=P[k]; if(c&&c.at&&!c.loading) wait=Math.min(wait,Math.max((c.err?progBackoff(c.fails):PROG_TTL)-(Date.now()-c.at),0)); });
+  if(S.reloginWait) wait=Math.min(wait,5000);
+  progTimer=setTimeout(progTick,Math.min(Math.max(wait+200,3000),PROG_TTL));
+}
+progSchedule();
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ progTick(); if(S.page==='home') loadAbsent(); } });
+window.addEventListener('pageshow',()=>{ progTick(); if(S.page==='home') loadAbsent(); });
+document.addEventListener('click',e=>{
+  const b=e.target&&e.target.closest?e.target.closest('[data-prog="reload"]'):null; if(!b) return;
+  if(relogin(true,'prog')==='defer') toast('ทำรายการที่ค้างอยู่ให้เสร็จก่อน แล้วแตะอีกครั้ง');
+});
 function pctCls(p){ return p>=80?'g':p>=50?'y':'r'; }
 function progRow(label,x,y,pct,extra,neutral){
   const c=neutral?'n':pctCls(pct), I=neutral?'🕘':{g:'✅',y:'⚠️',r:'⛔'}[c], W=neutral?'ยังไม่ถึงเวลา':{g:'ดี',y:'ควรติดตาม',r:'ต้องเร่ง'}[c];
@@ -856,17 +955,25 @@ function progBar(){
   const day=bkkDay(), early=bkkMin()<PROG_START, P=S.prog&&S.prog.day===day?S.prog:null;
   const n=v=>typeof v==='number'&&isFinite(v)&&v>=0;
   const gray=t=>'<div class="pgray"><span aria-hidden="true">⏳</span><span>'+esc(t)+'</span></div>';
-  const bad=label=>gray('ข้อมูล'+label+' โหลดไม่ได้ตอนนี้');
+  const bad=(label,kind)=>gray('ข้อมูล'+label+' โหลดไม่ได้ตอนนี้ ('+PROG_CAUSE[kind||'bad']+')');
+  const hhmm=ms=>new Date(ms).toLocaleTimeString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false});
+  const note=st=>'<div class="pgray pnote"><span aria-hidden="true">🕘</span><span>ข้อมูลเมื่อ '+hhmm(st.okAt)+' · อัปเดตไม่ได้ตอนนี้ ('+PROG_CAUSE[st.kind||'other']+')</span></div>';
   const notYet=label=>'<div class="prow n"><div class="pt"><span class="pi" aria-hidden="true">🕘</span><b>'+esc(label)+'</b><span class="pp">ยังไม่ถึงเวลา</span></div></div>';
   let at=0;
-  const src=(k,cfgKey)=>{ if(!CONFIG[cfgKey]) return {st:'none'}; const c=P&&P[k]; if(!c||!c.at) return {st:'wait'}; if(c.err||!c.ov) return {st:'err'}; if(c.ov.date!==day) return {st:'old'}; at=Math.max(at,c.at); return {st:'ok',ov:c.ov}; };
+  const src=(k,cfgKey)=>{   // c.ov = ตัวเลขล่าสุดที่โหลดสำเร็จของวันนี้ (พลาดรอบถัดไปก็ยังเก็บไว้) · คนละวัน = ไม่แสดง
+    if(!CONFIG[cfgKey]) return {st:'none'}; const c=P&&P[k]; if(!c||!c.at) return {st:'wait'};
+    if(c.ov){ if(c.ov.date!==day) return {st:'old'}; at=Math.max(at,c.okAt||c.at); return {st:'ok',ov:c.ov,stale:c.err?{okAt:c.okAt||c.at,kind:c.err}:null}; }
+    if(c.err) return {st:'err',kind:c.err};
+    return {st:'wait'};
+  };
   const bar=(label,s,build)=>{
     if(s.st==='none') return '';
     if(early) return notYet(label);
     if(s.st==='wait') return '';
-    if(s.st==='err') return bad(label);
+    if(s.st==='err') return bad(label,s.kind);
     if(s.st==='old') return gray(label+' · ยังไม่มีข้อมูลของวันนี้');
-    return build(s.ov,label);
+    const h=build(s.ov,label);
+    return h&&s.stale?h+note(s.stale):h;   // หลอดยังอ่านได้ตามเดิม + บรรทัดเล็ก "ข้อมูลเมื่อ… อัปเดตไม่ได้ตอนนี้"
   };
   const rows=[];
   // 1) บุคลากรมาทำงาน: ข้อมูลเดียวกับแถบสรุปหัวม่วง (S.board) · ตัวหารตามที่ระบบส่งมา
@@ -917,6 +1024,7 @@ function progBar(){
     return h;
   }));
   const out=rows.filter(Boolean);
+  if(S.progStop||S.reloginWait) out.push('<div class="pgray"><span aria-hidden="true">⚠️</span><span>เข้าสู่ระบบหมดอายุ</span><button class="prelo" type="button" data-prog="reload">แตะเพื่อโหลดใหม่</button></div>');
   if(!out.length) return '';
   const hm=at?new Date(at).toLocaleTimeString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false}):'';
   return `<section class="prog" aria-label="ความคืบหน้าวันนี้">${out.join('')}${hm?`<small class="pupd">อัปเดต ${hm}</small>`:''}</section>`;
@@ -1201,7 +1309,7 @@ function taskLevel(t){
   return 'b';
 }
 function taskRow(t){
-  const map={ack:['mega','c-h'],approve:['check','c-w'],link:['key','c-g'],pending:['clock','c-w'],checkin:['clock','c-t'],'leave.hr':['check','c-w'],'leave.dir':['check','c-w'],'out.dir':['check','c-w'],'out.sub':['refresh','c-p'],mysub:['refresh','c-p'],sub:['refresh','c-p'],jan:['list','c-b'],rate:['star','c-w'],emg:['flag','c-r'],notif:['list','c-b'],inbox:['list','c-w'],work:['list','c-t'],sup:['user','c-s'],'leave.wait':['clock','c-g']};
+  const map={ack:['mega','c-h'],approve:['check','c-w'],link:['key','c-g'],pending:['clock','c-w'],checkin:['clock','c-t'],'leave.hr':['check','c-w'],'leave.dir':['check','c-w'],'out.dir':['check','c-w'],'late.dir':['check','c-w'],'late.wait':['clock','c-w'],'out.sub':['refresh','c-p'],mysub:['refresh','c-p'],sub:['refresh','c-p'],jan:['list','c-b'],rate:['star','c-w'],emg:['flag','c-r'],notif:['list','c-b'],inbox:['list','c-w'],work:['list','c-t'],sup:['user','c-s'],'leave.wait':['clock','c-g']};
   const [icn,col]=map[t.type]||['list','c-g'];
   const lv=taskLevel(t);
   const src=t.app==='hub'?(SRC[t.type]||'หน้ากลาง'):(APP_NAMES[t.app]||'');
@@ -1351,7 +1459,7 @@ function prayerCard(){
 }
 /* ---------- หน้าแรก (คลีน): ทางลัดไปแอปเจ้าของ · ไม่เก็บข้อมูลใน Hub ---------- */
 const APP_BY=Object.fromEntries(APPS.map(a=>[a.key,a]));
-const APPROVE_TYPES=['approve','pending','leave.hr','leave.dir','out.dir'];
+const APPROVE_TYPES=['approve','pending','leave.hr','leave.dir','out.dir','late.dir'];
 function bkkHour(){ try{ return parseInt(new Date().toLocaleString('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',hour12:false}),10)%24; }catch(e){ return new Date().getHours(); } }
 function todayDow(){ return S.home?d8(S.home.today.date).getDay():new Date().getDay(); }
 function offDay(){ return !!S.home&&(!!S.home.today.holiday||[0,6].includes(todayDow())); }
@@ -1522,7 +1630,7 @@ function pageHome(){
     ${dBtn('leave','teacher','Q-Teacher','ขอลา','ยื่นใบลา · ดูสถานะ')}
   </div></section>`;
   const rooms=`<button class="roomb" data-dly="rooms"><span class="e" aria-hidden="true">🏫</span><span class="tx"><b>ห้อง/วิชาของฉัน</b><small>เร็วๆ นี้ · จะสรุปห้องและวิชาที่รับผิดชอบเมื่อ Student/Academic เปิดใช้</small></span><span class="chev">${ic('chev',16)}</span></button>`;
-  return `${top}<div class="stack" style="gap:14px">${apZone()}${winTop()}${daily}${progBar()}${appGrid()}${notifBox()}${prayerLine()}<button class="emgb" data-dly="emg">🚨 เหตุฉุกเฉิน</button>${dirRow()}${rooms}<p class="credit">${esc(brandOf().name)} v2 · ผู้พัฒนา: นายฮาฟีซี อูมา</p>${recentBar()}</div>`;
+  return `${top}<div class="stack" style="gap:14px">${apZone()}${winTop()}${daily}${progBar()}${appGrid()}${notifBox()}${absCard()}${prayerLine()}<button class="emgb" data-dly="emg">🚨 เหตุฉุกเฉิน</button>${dirRow()}${rooms}<p class="credit">${esc(brandOf().name)} v2 · ผู้พัฒนา: นายฮาฟีซี อูมา</p>${recentBar()}</div>`;
 }
 /* ---------- งานของฉัน ---------- */
 const TF=[['all','ทั้งหมด'],['teacher','Teacher'],['academic','Academic'],['student','Student'],['budget','Budget']];
@@ -1698,7 +1806,7 @@ function adminStaff(){
 }
 /* ---------- ดูในมุมมองของ… (เฉพาะ ผอ./ผู้ดูแลระบบ · ดูอย่างเดียว) ---------- */
 function vaClear(){ S.viewAs=null; try{ sessionStorage.removeItem('qk_viewas'); }catch(e){} }
-function vaReset(){ S.ext=null; S.extState=''; S.extAt=0; S.tToday=null; S.board=null; S.boardAt=0; S.win=null; S.winAt=0; PR=null; PRAT=0; S.anns=null; S.cal=null; S.prevBdg=null; S.taskTab='list'; S.inboxTab='work'; S.detail=null; }
+function vaReset(){ S.ext=null; S.extState=''; S.extAt=0; S.tToday=null; S.board=null; S.boardAt=0; S.win=null; S.winAt=0; S.abs=null; S.absAt=0; PR=null; PRAT=0; S.anns=null; S.cal=null; S.prevBdg=null; S.taskTab='list'; S.inboxTab='work'; S.detail=null; }
 async function enterView(id){
   const p=(S.staff||[]).find(x=>x.staff_id===id); if(!p) return;
   S.viewAs={id:p.staff_id,name:p.name}; try{ sessionStorage.setItem('qk_viewas',JSON.stringify(S.viewAs)); }catch(e){}
@@ -1827,7 +1935,7 @@ function go(p,keep){
   // เปิดหน้าทันทีจากข้อมูลที่มี แล้วค่อยอัปเดตเงียบๆ ถ้าข้อมูลเก่ากว่า 1 นาที
   if(['home','ann','cal','tasks'].includes(p) && Date.now()-(S.fetchedAt||0)>60000 && !S.loading){
     S.loading=true; loadHome().catch(()=>{}).finally(()=>{S.loading=false;});
-  } else if(p==='home'||p==='tasks'){ loadExt(); loadBoard(); loadWin(); loadProg();
+  } else if(p==='home'||p==='tasks'){ loadExt(); loadBoard(); loadWin(); if(p==='home') loadAbsent(); loadProg();
   } else if(p==='menu'){ loadPraise();
   }
 }
@@ -1867,7 +1975,7 @@ document.addEventListener('click',async ev=>{
   if(t.dataset.app){ const k=t.dataset.app; if(appReady(k)) location.href=appUrl(CONFIG.APP_URLS[k],''); else soonSheet(k); return; }
   if(t.dataset.task){
     const ty=t.dataset.task, id=t.dataset.id;
-    if(t.dataset.tapp==='teacher'){ const TAB={'leave.hr':'endorse','leave.dir':'req','out.dir':'req','out.sub':'mysub',mysub:'mysub',sub:'sub',jan:'jan',rate:'fixreq',emg:'count',work:'mytasks',sup:'mydev','leave.wait':'myreq',notif:'mywork',inbox:'tasks',pa:'pachal',eval:'eval'}; location.href=appUrl(CONFIG.APP_URLS.teacher,TAB[ty]?'#tab='+TAB[ty]:''); return; }
+    if(t.dataset.tapp==='teacher'){ const TAB={'leave.hr':'endorse','leave.dir':'req','out.dir':'req','late.dir':'req','late.wait':'myreq','out.sub':'mysub',mysub:'mysub',sub:'sub',jan:'jan',rate:'fixreq',emg:'count',work:'mytasks',sup:'mydev','leave.wait':'myreq',notif:'mywork',inbox:'tasks',pa:'pachal',eval:'eval'}; location.href=appUrl(CONFIG.APP_URLS.teacher,TAB[ty]?'#tab='+TAB[ty]:''); return; }
     if(ty==='link'){ go('link'); return; }
     if(ty==='approve'){ S.annFilter='pending'; }
     S.page='ann'; S.detail=id||null; if(!S.anns) await loadAnns(); render(); window.scrollTo(0,0); return;
