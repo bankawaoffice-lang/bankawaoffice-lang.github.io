@@ -949,7 +949,7 @@ async function act(action,payload,btn){
     const j=await api(action,Object.assign({nonce:nonce()},payload||{}));
     if(j.data){load(j.data);cacheSet(j.data);st.fetchedAt=Date.now()}
     if(j.sec)Object.keys(j.sec).forEach(k=>{SEC[k]=j.sec[k];SEC_AT[k]=Date.now();delete SEC_ERR[k]});
-    if(SEC_STALE_AFTER[action])SEC_STALE_AFTER[action].forEach(k=>{SEC_AT[k]=0});
+    if(SEC_STALE_AFTER[action]){SEC_STALE_AFTER[action].forEach(k=>{SEC_AT[k]=0});if(SEC_STALE_AFTER[action].indexOf('stats')>=0)Object.keys(SEC).forEach(k=>{if(k.indexOf('early')===0)SEC_AT[k]=0})}
     st.dirty=false;render();toast(j.msg);return j}
   catch(e){
     if(e.code==='DUP_REQ'){toast('รายการนี้บันทึกไปแล้ว');refresh(true);throw e}
@@ -1053,7 +1053,7 @@ function avail(){
   if(m.isTeacher||m.isAdmin||m.isAcad)t.push('dev');
   if(m.paElig||m.isHR||m.isDirector)t.push('pachal','eval');
   if(m.isAdmin)t.push('set');
-  if((SLOT_VIS[m.role]||[]).includes('ppl'))t.push('me');   // ภาพรวมของฉัน: เฉพาะบทบาทที่เห็นช่อง 5
+  t.push('me');   // ภาพรวมของฉัน (มีดาวมาเช้าของทุกคน): ทุกบทบาทเข้าได้ · บทบาทที่ไม่มีช่อง 5 (ธุรการ/ภารโรง/รปภ.) เปิดจากแตะรูปโปรไฟล์ → หน้าอื่นที่ใช้ได้ (v3.8)
   return t}
 /** เมนูล่าง 5 ช่อง (สเปก Q-Kawa App ข้อ 2): หน้าแรก · คำขอ · งาน · อาคาร · บุคลากร — แต่ละช่องรวมหน้าเดิมไว้เป็นแท็บย่อย */
 const SLOTS=[
@@ -2127,22 +2127,62 @@ function meStars(){
       +'<details class="more"><summary>ข้อความล่าสุด</summary><ul class="list">'+M.recent.map(r=>'<li><div class="main">'+esc(r.msg||'–')+'<div class="sub">'+esc(r.from||'ผู้ปกครอง')+(r.at?' · '+esc(thDT(r.at)):'')+'</div></div></li>').join('')+'</ul></details>';
   });
 }
-/** ดาวมาเช้า: ใช้ ranking จาก sec stats (หลังบ้านกรองภารโรง/รปภ./บัญชีทดสอบแล้ว) · แถว = [staff_id, นาทีเฉลี่ยก่อนเกณฑ์สาย, จำนวนวันที่นับ]
- *  ผอ./หัวหน้างานบุคคล (ranking.full) เห็น 5 อันดับ · คนอื่นหลังบ้านส่ง 3 อันดับแรก + แถวตัวเอง (ไม่มีเลขอันดับของตัวเอง) */
-function meEarly(){
-  return secBox('stats',S=>{
-    const R=S.ranking,tab=st.earlyTab==='m'?'m':'w',list=(R&&Array.isArray(R[tab])?R[tab]:[]).filter(r=>Array.isArray(r)&&r[0]),N=R&&R.full?5:3;
-    const fmt=a=>(Number(a)>=0?'ก่อนเกณฑ์ '+lvFmtN(Number(a)):'หลังเกณฑ์ '+lvFmtN(-Number(a)))+' นาที';
-    const head=seg('earlyTab',[['w','สัปดาห์นี้'],['m','เดือนนี้']],tab)+(R&&(tab==='m'?R.mLabel:R.wLabel)?'<p class="sub">'+esc(tab==='m'?R.mLabel:R.wLabel)+'</p>':'');
-    if(!list.length)return head+'<p>'+ND+'</p>';
-    const top=list.slice(0,N),mine=list.find(r=>r[0]===me());
-    return head+'<ul class="rank">'+top.map((r,i)=>'<li'+(r[0]===me()?' class="mine"':'')+'><b class="num">'+(i+1)+'</b><span>'+esc(nm(r[0]))+'</span><span class="sub num">'+fmt(r[1])+' · '+(Number(r[2])||0)+' วัน</span></li>').join('')+'</ul>'
-      +(mine&&list.indexOf(mine)>=N?'<p class="metext">ท่านอยู่นอก '+N+' อันดับแรก · เฉลี่ย '+lvFmtN(Number(mine[1])||0)+' นาที · '+(Number(mine[2])||0)+' วัน</p>':'');
-  });
+/** ดาวมาเช้า (v3.8): sec early[:day|week|month:…] ทุกคนเห็นครบทุกคน (รวมภารโรง/รปภ.) · เวลาเฉลี่ยเฉพาะวันที่นับ · ย้อนหลังเลือกวัน/สัปดาห์/เดือนได้
+ *  แถววัน = {id,name,c(นับ),min,t(เวลาจริง),tag} · แถวสัปดาห์/เดือน = {id,name,avg(นาที),n(วันที่นับจริง)} · ไม่มีประเภทการลาในข้อมูล */
+const earlyHM=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')+' น.';
+function earlyName(){
+  const t=ymd(new Date()),tab=st.earlyTab==='m'||st.earlyTab==='w'?st.earlyTab:'d';
+  if(tab==='m')return'early:month:'+(st.earlyMo||t.slice(0,7));
+  if(tab==='w')return'early:week:'+(st.earlyWk||t);
+  return'early:day:'+(st.earlyDay||t);
 }
+/** ช่วงที่เลือกรวมวันนี้หรือไม่ (ถ้าใช่ โหลดใหม่บ่อยกว่า) */
+function earlyLive(){
+  const t=ymd(new Date()),tab=st.earlyTab==='m'||st.earlyTab==='w'?st.earlyTab:'d';
+  if(tab==='m')return(st.earlyMo||t.slice(0,7))===t.slice(0,7);
+  if(tab==='w'){const mon=x=>{const d=d8(x);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)};return mon(st.earlyWk||t)===mon(t)}
+  return(st.earlyDay||t)===t;
+}
+function earlyPick(S,tab){
+  const t=ymd(new Date()),first=S.first||'';
+  if(tab==='m'){
+    const cur=st.earlyMo||t.slice(0,7),opts=[];
+    let y=Number(t.slice(0,4)),m=Number(t.slice(5,7));const fy=Number((first||t).slice(0,4)),fm=Number((first||t).slice(5,7));
+    for(let i=0;i<60&&(y>fy||(y===fy&&m>=fm));i++){const v=y+'-'+String(m).padStart(2,'0');opts.push('<option value="'+v+'"'+(v===cur?' selected':'')+'>'+MON[m-1]+' '+(y+543)+'</option>');m--;if(m<1){m=12;y--}}
+    return'<label class="sub">เดือน <select id="earlyMo" style="width:auto">'+opts.join('')+'</select></label>';
+  }
+  const id=tab==='w'?'earlyWk':'earlyDay',v=(tab==='w'?st.earlyWk:st.earlyDay)||t;
+  return'<label class="sub">'+(tab==='w'?'เลือกวันใดก็ได้ในสัปดาห์ ':'วันที่ ')+'<input type="date" id="'+id+'" value="'+esc(v)+'" max="'+t+'"'+(first?' min="'+esc(first)+'"':'')+' style="width:auto"></label>';
+}
+function meEarly(){
+  const tab=st.earlyTab==='m'||st.earlyTab==='w'?st.earlyTab:'d',t=ymd(new Date()),nameKey=earlyName();
+  return secBox(nameKey,S=>{
+    const head=seg('earlyTab',[['d','วันนี้'],['w','สัปดาห์'],['m','เดือน']],tab)+'<div style="margin:6px 0">'+earlyPick(S,tab)+'</div>';
+    const rows=Array.isArray(S.rows)?S.rows:[];
+    if(S.kind==='day'){
+      const lab='<p class="sub">'+(S.from===t?'วันนี้ ':'')+esc(lvFull(S.from))+'</p>';
+      if(S.off)return head+lab+'<p>'+esc(S.off)+' · ไม่มีการนับ</p>';
+      if(!rows.length)return head+lab+'<p>'+ND+'</p>';
+      let k=0;
+      return head+lab+'<ul class="rank">'+rows.map(r=>{
+        const no=r.c?String(++k):'–',tm=r.t?earlyHM(Number(r.t.slice(0,2))*60+Number(r.t.slice(3,5))):'';
+        const tag=r.tag?'<span class="pill">'+esc(r.tag)+'</span>':'';
+        return'<li'+(r.id===me()?' class="mine"':'')+'><b class="num">'+no+'</b><span>'+esc(r.name)+'</span><span class="sub num">'+(tm?esc(tm)+' ':'')+tag+'</span></li>';
+      }).join('')+'</ul>'+earlyNote();
+    }
+    const lab='<p class="sub">'+(S.kind==='month'?esc(MON[Number(S.from.slice(5,7))-1]+' '+(Number(S.from.slice(0,4))+543)):'สัปดาห์ '+esc(thD(S.from))+' – '+esc(thD(S.to)))+' · วันทำการในช่วงนี้ '+(Number(S.workdays)||0)+' วัน</p>';
+    if(!rows.length)return head+lab+'<p>'+ND+'</p>';
+    let k=0;
+    return head+lab+'<ul class="rank">'+rows.map(r=>{
+      const has=r.avg!=null,no=has?String(++k):'–';
+      return'<li'+(r.id===me()?' class="mine"':'')+'><b class="num">'+no+'</b><span>'+esc(r.name)+'</span><span class="sub num">'+(has?esc(earlyHM(Number(r.avg)))+' · '+(Number(r.n)||0)+' วัน':ND)+'</span></li>';
+    }).join('')+'</ul>'+earlyNote();
+  },earlyLive()?45000:600000);
+}
+const earlyNote=()=>'<details class="more"><summary>วิธีนับ</summary><p class="sub">เฉลี่ยเวลาเช็คอินแรกของแต่ละวันที่นับ · ไม่นับ: วันหยุด วันที่ไม่ได้ลงเวลา ลา/ไปราชการเต็มวัน ลาครึ่งวันเช้า วันที่ได้รับอนุญาตเข้าสาย เช็คอินนอกสถานที่ และที่ ผอ./ผู้ดูแลลงเวลาแทน · ลาครึ่งวันบ่ายและมาสายโดยไม่ได้รับอนุญาตนับตามเวลาจริง · เรียงจากเช้าสุด เท่ากันให้คนที่มีจำนวนวันมากกว่าก่อน · จำนวนวันที่แสดงคือวันที่ใช้เฉลี่ยจริง</p></details>';
 V.me=()=>{
   const a=avail(),c=[];
-  if(!(ME.isJan||ME.isGuard))c.push(meCard('ดาวมาเช้า','',meEarly()));
+  c.push(meCard('ดาวมาเช้า','',meEarly()));   // ทุกบทบาท รวมภารโรง/รปภ. (ข้อตกลง ผอ. 10 พ.ย. 2569)
   c.push(meCard('การมาทำงาน',meRoundTx(),meAttend()));
   if(a.includes('dev'))c.push(meCard('พัฒนาตนเอง',meRoundTx(),meDev()));
   c.push(meCard('งานของฉัน','',meWork()));
@@ -3363,6 +3403,7 @@ setInterval(()=>{const c=$('#clk');if(c)c.textContent=clockNow()},15000);
 setInterval(()=>{if(B&&EMG.on&&st.tab==='count'&&st.countTab==='emg'&&!document.hidden&&!st.dirty)refresh(true)},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&B&&Date.now()-st.fetchedAt>180000)refresh(true)});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='loadYm'){st.loadYm=e.target.value;render()}});
+document.addEventListener('change',e=>{const i=e.target&&e.target.id;if((i==='earlyDay'||i==='earlyWk'||i==='earlyMo')&&e.target.value){st[i]=e.target.value;render()}});
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='reqQ'){st.reqQ=e.target.value;const pos=e.target.selectionStart;render();const el=$('#reqQ');if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}}});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='paFy'){st.paFy=Number(e.target.value);render()}});
 document.addEventListener('change',e=>{const id=e.target&&e.target.id;if(id==='evRound'){st.evRound=e.target.value;st.evStaff=st.evStaff||'';render()}if(id==='evStaff'){st.evStaff=e.target.value;render()}});
