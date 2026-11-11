@@ -885,6 +885,7 @@ const clockNow=()=>{if(!SRV.hm)return bkk();const m=(toMin(SRV.hm)+Math.floor((D
 
 /* ---------- ข้อมูลจากหลังบ้าน ---------- */
 let B=null,ME=null,TODAY='',TODAY_ISO='',NOW_HM='';
+const LATE_IN_TXT='ขออนุญาตเข้าสาย';   // v3.9: ข้อความในช่องเวลาเข้าเมื่อ ผอ. อนุมัติขอเข้าสาย (ไม่แสดงเวลา · เหตุผล/เวลาที่แจ้งดูที่รายละเอียดคำขอ)
 let STAFF=[],SM={},REAL=[],CLASSES=[],PERIODS=[],MY_TT={},FREE={},ATT={},ATT_OUT={},ATT_INFO={},ATT_OUTI={},ONLEAVE={},OUTNOW={},LATEREQ={};
 let REQ=[],RULE={n:10,d:23},LATE_RULE=8,SUBS=[],SUBCOUNT={},SUBTERM={},ROUTINE=[],JOBS=[];let SUBTOTAL={};
 let CPS=[],ROUNDS=[],PATROL=[],TONIGHT=[],INCIDENTS=[],VISIT=[],TASKS=[],SUP=[],DEV_TARGET=50;
@@ -1346,7 +1347,7 @@ function emgBanner(){
 /* ---------- สถานะบุคลากรวันนี้ (ไม่สรุปว่า "ขาดงาน" จากการไม่ลงเวลาเพียงอย่างเดียว) ---------- */
 function staffState(id){
   const l=ONLEAVE[id];
-  if(!ATT[id]&&LATEREQ[id])return{k:'lateok',t:'',label:LATEREQ[id].label,cls:'p-info'};
+  if(!ATT[id]&&LATEREQ[id])return{k:'lateok',t:'',label:LATE_IN_TXT,cls:'p-info'};
   if(ATT[id]){const s=ATT_INFO[id].status;return{k:LATE.includes(s)?'late':'in',t:ATT[id],label:s,cls:ST_PILL[s]||'p-good'}}
   if(l&&l.status==='อนุมัติ')return{k:'leave',label:(l.type==='ไปราชการ'?'ไปราชการ':l.type)+(l.part&&l.part!=='เต็มวัน'?' ('+l.part+')':''),cls:'p-info'};
   if(l)return{k:'leave',label:l.type+' · รอพิจารณา',cls:'p-info'};
@@ -1380,7 +1381,7 @@ async function offsiteCheck(id,kind){
 }
 function punchCard(){
   const my=B.my,R=B.rules;
-  const lateBox=(lab)=>!my.in&&my.late?`<div><span>${lab}</span><b style="font-size:.95rem">${esc(my.late.label)}${my.late.time?' · เข้า '+esc(my.late.time)+' น.':''}</b><span>ลงเวลาเมื่อมาถึง</span></div>`:'';
+  const lateBox=(lab)=>!my.in&&my.late?`<div><span>${lab}</span><b style="font-size:.95rem">${LATE_IN_TXT}</b><span>ลงเวลาเมื่อมาถึง</span></div>`:'';
   const box=(lab,x)=>lab==='เวลาเข้า'&&lateBox(lab)?lateBox(lab):x&&x.gone?`<div><span>${lab}</span><b style="font-size:.95rem">${esc(x.label)}</b><span>ไม่ต้องลงเวลาออก</span></div>`:`<div><span>${lab}</span><b class="num">${x?esc(x.time):'––:––'}</b>${x?`<span>${stPill(x.status)} ${x.method==='qr'?'QR':x.method==='admin'?'ลงแทน':'GPS'}${x.point?' · '+esc(x.point):''}</span>`:''}</div>`;
   let btn='';
   const dutyTxt=B.hasDuty?'':'<span class="sub">ยังไม่มีตารางเวรในระบบ จึงให้เลือกเอง</span>';
@@ -1391,7 +1392,7 @@ function punchCard(){
   else btn=`<div class="callout c-good" style="text-align:center">ลงเวลาครบแล้ววันนี้</div>`;
   if(!st.stale&&!my.out){const g=offsiteReq();if(g)btn+=`<button class="btn wide" data-offsite="${g.id}:${my.in?'out':'in'}">${svg('pin','i18')} ${my.in?'ลงเวลาออก':'เช็คอิน'}นอกสถานที่ (ไปราชการ: ${esc((g.place||g.why||'').slice(0,28))})</button><span class="sub">ใช้เมื่อมีคำขอไปราชการที่อนุมัติแล้วครอบคลุมวันนี้ · จับตำแหน่งจริง ไม่นับสาย</span>`}
   const duty=my.in?my.in.duty:st.duty,x=duty?R.duty:R.general;
-  const stTxt=my.out?'ลงเวลาครบแล้ว':my.in?'มาแล้ว · ยังไม่ลงเวลาออก':my.late?esc(my.late.label)+(my.late.time?' · เข้า '+esc(my.late.time)+' น.':'')+' · ลงเวลาเข้าตามปกติเมื่อมาถึง':B.today.holiday?esc(B.today.holiday):my.leaveToday&&my.leaveToday.part==='เต็มวัน'?'วันนี้มีใบ'+esc(my.leaveToday.type):'ยังไม่ลงเวลาเข้า';
+  const stTxt=my.out?'ลงเวลาครบแล้ว':my.in?'มาแล้ว · ยังไม่ลงเวลาออก':my.late?LATE_IN_TXT+' · ลงเวลาเข้าตามปกติเมื่อมาถึง':B.today.holiday?esc(B.today.holiday):my.leaveToday&&my.leaveToday.part==='เต็มวัน'?'วันนี้มีใบ'+esc(my.leaveToday.type):'ยังไม่ลงเวลาเข้า';
   return`<section class="status" id="punch"><div class="row between"><h2>ลงเวลาของฉัน</h2><span class="sub">${esc(TODAY)}</span></div>
    <p class="pstate">${stTxt}</p>
    
@@ -1428,7 +1429,7 @@ function inboxPanel(){
 function dailyList(){
   if(!ME.isTeacher)return'';
   const rows=[];
-  rows.push({k:'in',t:'เช็คอินมาโรงเรียน',s:B.my.in?'ลงเวลาแล้ว '+B.my.in.time+' น.':B.my.late?B.my.late.label+' · ลงเวลาตามปกติเมื่อมาถึง':!isWork()?'วันนี้'+B.today.holiday+' · ไม่ต้องลงเวลา':'ยังไม่ได้ลงเวลา · แตะเพื่อไปที่ปุ่มลงเวลา',done:!!B.my.in||!isWork()});;
+  rows.push({k:'in',t:'เช็คอินมาโรงเรียน',s:B.my.in?'ลงเวลาแล้ว '+B.my.in.time+' น.':B.my.late?LATE_IN_TXT+' · ลงเวลาตามปกติเมื่อมาถึง':!isWork()?'วันนี้'+B.today.holiday+' · ไม่ต้องลงเวลา':'ยังไม่ได้ลงเวลา · แตะเพื่อไปที่ปุ่มลงเวลา',done:!!B.my.in||!isWork()});;
   TASKS.filter(t=>t.own===me()&&['todo','doing','fix','sent'].includes(t.st)&&dayDiff(t.due)<=7).sort((a,b)=>dayDiff(a.due)-dayDiff(b.due)).forEach(t=>
     rows.push({k:'w:'+t.id,t:t.t,s:(t.st==='sent'?'ส่งแล้ว · รอตรวจ':dayDiff(t.due)<0?'เลยกำหนด '+(-dayDiff(t.due))+' วัน':dayDiff(t.due)===0?'ครบกำหนดวันนี้':'ครบกำหนด '+t.dueTx)+(t.self?'':' · มอบหมายโดย '+nm(t.by)),done:t.st==='sent'||t.st==='done'}));
   const n=rows.filter(r=>r.done).length;
