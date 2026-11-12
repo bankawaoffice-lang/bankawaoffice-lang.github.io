@@ -1911,8 +1911,8 @@ function mySummary(){
 /* ---------- บุคลากร (ผอ. / หัวหน้างานบุคคล) ---------- */
 V.staff=()=>{
   const t=st.staffTab;
-  return`${riskCard()}${seg('staffTab',[['today','วันนี้'],['round','สถิติรอบนี้']].concat(ME.isDirector?[['load','ภาระงานรายคน']]:[]),t)}
-   ${t==='today'?staffToday():t==='load'&&ME.isDirector?(st.loadYm=st.loadYm||TODAY_ISO.slice(0,7),secBox('load:'+st.loadYm,loadPanel)):secBox('stats',staffRound)}`};
+  return`${riskCard()}${seg('staffTab',[['today','วันนี้'],['round','สถิติรอบนี้']].concat(ME.isDirector?[['load','ภาระงานรายคน'],['edits','ประวัติการแก้ไข']]:[]),t)}
+   ${t==='today'?staffToday():t==='edits'&&ME.isDirector?editLogPage():t==='load'&&ME.isDirector?(st.loadYm=st.loadYm||TODAY_ISO.slice(0,7),secBox('load:'+st.loadYm,loadPanel)):secBox('stats',staffRound)}`};
 function staffToday(){
   const c=dayCounts(),F=st.staffF,q=st.staffQ.trim();
   const list=REAL.filter(s=>{const x=staffState(s.id);return(F==='all'||(F==='in'&&(x.k==='in'||x.k==='late'))||(F==='out'?!!(OUTNOW[s.id]&&!OUTNOW[s.id].gone):F==='gone'?!!(OUTNOW[s.id]&&OUTNOW[s.id].gone):F==='noout'?noOut(s.id):x.k===F))&&(!q||s.name.includes(q)||s.full.includes(q))});
@@ -1926,6 +1926,7 @@ function staffToday(){
     ${o?`<div><span class="sub">${o.gone?'ออกแล้ว':'ออกนอกบริเวณ'}</span> <span class="num">${esc(o.from)}–${esc(o.to)}</span> · ${esc(o.why)}${o.how==='offsite'?' · เช็คเอาท์นอกพื้นที่':''}${ME.isAdmin&&!o.gone?` <button class="btn sm" data-outoff="${esc(o.id)}">เช็คเอาท์แทน</button>`:''}</div>`:''}
     ${ME.isAdmin&&s.teacher!==false?`<div><button class="btn sm" data-proxy="${s.id}">บันทึกแทนครู</button> <span class="sub">ลา · เข้าสาย · ออกนอก · ไปราชการ · ลงเวลา</span></div>`:''}
     ${ME.isAdmin&&s.teacher!==false&&!o?`<div><button class="btn sm" data-outadmin="${s.id}">บันทึกออกนอกบริเวณให้</button> <span class="sub">ผอ. บันทึกให้ ถือว่าอนุมัติแล้ว</span></div>`:''}
+    ${ME.isDirector&&s.teacher!==false?`<div><button class="btn sm" data-edck="${s.id}">แก้เวลาลงเวลา</button> <span class="sub">แก้ที่ครูลงผิด · ย้อนหลังได้ · เก็บประวัติ</span></div>`:''}
     ${!ATT[s.id]||!ATT_OUT[s.id]?`<div><button class="btn sm" data-forcheck="${s.id}">ลงเวลาแทน</button> <span class="sub">ใช้เมื่อโทรศัพท์ของบุคลากรมีปัญหา</span></div>`:''}</div>`};
   const body=!list.length?empty(q?'ไม่พบชื่อที่ค้นหา':'ไม่มีรายการในกลุ่มนี้')
    :isMobile()?`<ul class="slist">${list.map(s=>{const x=staffState(s.id),open=st.open['s'+s.id];return`<li${overOut(s.id)?' style="background:var(--warn-soft);border-radius:12px;padding:0 8px" title="มาแล้วแต่ยังไม่ลงเวลาออก หลังเวลาเลิกงาน"':''}><button class="srow" data-open="s${s.id}" aria-expanded="${!!open}"><span class="main"><b>${esc(s.name)}</b><span class="sub one">${esc(s.pos)}</span>${ATT[s.id]?`<span class="sub one num" style="font-size:.82rem">${outLine(s.id)}</span>`:''}</span><span class="num t">${x.t?esc(x.t):''}</span><span class="pill ${x.cls}">${esc(x.label)}</span>${OUTNOW[s.id]?'<span class="pill p-calm">ออกนอก</span>':''}</button>${open?detail(s):''}</li>`}).join('')}</ul>`
@@ -2035,6 +2036,116 @@ function proxyRender(){
     act(a,{data},e.submitter).then(()=>{PX=null;closeModal()}).catch(er=>{P.err=er.message||'ผิดพลาด';proxyRender()});
   });
 }
+/* ===== ผอ. แก้ข้อมูลที่ครูลงผิด + ประวัติการแก้ไข (v4.0) · เฉพาะ ผอ. (หลังบ้านตรวจสิทธิ์ซ้ำ) · ไม่แจ้งเตือนครู · ทุกครั้งที่แก้เก็บประวัติ ค่าเดิม→ค่าใหม่ ===== */
+const ED_TAB={checkins:'ลงเวลา',leaves:'ใบลา',lates:'ขอเข้าสาย',outs:'ออกนอกบริเวณ'};
+const ED_FLD={time:'เวลา',status:'สถานะ',note:'หมายเหตุ',cid:'รหัสแถวลงเวลา',type:'ประเภท',start_date:'วันเริ่ม',end_date:'วันสิ้นสุด',part:'ช่วง',days:'จำนวนวัน',reason:'เหตุผล',place:'สถานที่',over:'ธงเกินเกณฑ์',type_ask:'รอครูเลือกประเภท',date:'วันที่',key:'ชนิดคำขอ',half_req:'ใบลาครึ่งวันที่ระบบสร้าง',period:'คาบ',time_from:'เริ่มคาบ',time_to:'จบคาบ',go:'แบบ',back_plan:'เวลาที่จะกลับ',back_at:'กลับถึงโรงเรียน',work:'งานที่ฝาก',subs:'สอนแทน','(แก้ไม่สำเร็จ)':'แก้ไม่สำเร็จ'};
+const edVal=(f,v)=>f==='go'?(v==='gone'?'ไม่กลับแล้ว':'จะกลับมา'):f==='over'?(v==='TRUE'?'เกินเกณฑ์':'ปกติ'):(v===''||v==null?'(ว่าง)':String(v));
+const edBtns=r=>ME.isDirector&&['leave','gov','out','late'].includes(r.kind)?`<div class="row"><button class="btn sm" data-edreq="${esc(r.kind)}:${esc(r.id)}">แก้ไข</button><button class="btn sm ghost" data-edhist="${esc(r.id)}">ประวัติการแก้ไข</button></div>`:'';
+const edWhyF=`<div class="fld"><label for="edWhy">เหตุผลที่แก้ไข (ไม่บังคับ)</label><input type="text" id="edWhy" maxlength="300" placeholder="เช่น ครูลงเวลาผิด"></div>`;
+const edHead=t=>`<div class="row between"><h2>${t}</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div>`;
+const edNote=`<p class="note">ผอ. แก้แทนครู · ไม่แจ้งเตือนครู · ระบบเก็บประวัติ (ใคร แก้อะไร เมื่อไร ค่าเดิม→ค่าใหม่) และคำนวณโควตา/ตัวนับ/สอนแทนที่เกี่ยวข้องใหม่ให้ · ระบบไม่สร้างลาครึ่งวันบังคับหรือสอนแทนอัตโนมัติจากการแก้</p>`;
+async function edSend(tab,base,changes,btn){
+  const reason=(($('#edWhy')||{}).value||'').trim();
+  if(!Object.keys(changes).length){const e=$('#edErr');if(e){e.hidden=false;e.textContent='ยังไม่ได้เปลี่ยนค่าใด'}return}
+  try{const j=await act('edit.apply',{data:Object.assign({tab:tab},base,{changes:changes,reason:reason})},btn);closeModal();
+    const w=(j.edit&&j.edit.warn)||[];if(w.length)setTimeout(()=>alert('ข้อควรทราบ\n\n'+w.join('\n\n')),50)}
+  catch(er){const e=$('#edErr');if(e){e.hidden=false;e.textContent=er.message||'ผิดพลาด'}}
+}
+const edErrBox=`<div class="callout c-warn" role="alert" id="edErr" hidden></div>`;
+const edDiff=(init,cur)=>{const c={};Object.keys(cur).forEach(k=>{if(String(cur[k])!==String(init[k]==null?'':init[k]))c[k]=cur[k]});return c};
+function editReqOpen(key){
+  const i=key.indexOf(':'),kind=key.slice(0,i),id=key.slice(i+1),r=REQ.find(x=>x.id===id);
+  if(!r||!ME.isDirector)return;
+  const s=nm(r.who);
+  if(kind==='leave'||kind==='gov'){
+    const types=(B.leaveTypes&&B.leaveTypes.length)?B.leaveTypes:['ลาป่วย','ลากิจส่วนตัว','ลาพักผ่อน','ไปราชการ'];
+    const init={type:r.rtype||r.type,part:r.part||'เต็มวัน',start:r.from,end:r.to,reason:r.why||'',place:r.place||''};
+    modal(`<form class="f" id="edForm">${edHead('แก้ไขใบลา/ไปราชการ')}<p class="note"><b>${esc(s)}</b> · ${esc(r.id)} · สถานะ ${esc(({approved:'อนุมัติแล้ว',rejected:'ไม่อนุมัติ',cancel:'ยกเลิก',dir:'รอ ผอ.',ext:'รอผู้มีอำนาจ'})[r.st]||r.st)}</p>${edNote}${edErrBox}
+     <div class="fgrid"><div class="fld"><label for="edTy">ประเภท</label><select id="edTy">${types.map(t=>`<option ${t===init.type?'selected':''}>${esc(t)}</option>`).join('')}</select></div>
+     <div class="fld"><label for="edPart">ช่วง</label><select id="edPart">${['เต็มวัน','ครึ่งวันเช้า','ครึ่งวันบ่าย'].map(t=>`<option ${t===init.part?'selected':''}>${t}</option>`).join('')}</select></div></div>
+     <div class="fgrid"><div class="fld"><label for="edS">วันเริ่ม</label><input type="date" id="edS" value="${esc(init.start)}"></div><div class="fld"><label for="edE">ถึงวันที่</label><input type="date" id="edE" value="${esc(init.end)}"></div></div>
+     <div class="fld"><label for="edR">เหตุผลการลา</label><input type="text" id="edR" maxlength="500" value="${esc(init.reason)}"></div>
+     <div class="fld"><label for="edPl">สถานที่ (ไปราชการ)</label><input type="text" id="edPl" maxlength="200" value="${esc(init.place)}"></div>
+     <p class="note">แก้วันที่/ช่วงของใบที่อนุมัติแล้ว: ระบบยกเลิกสอนแทนที่ยังไม่จัดครูแล้วสร้างใหม่ให้ · ถ้ามีสอนแทนที่จัดครูหรือครูรับทราบแล้ว ระบบจะไม่แก้ให้ (ต้องจัดการเอง)</p>
+     ${edWhyF}<button class="btn pri big wide" type="submit">บันทึกการแก้ไข</button></form>`);
+    $('#edForm').addEventListener('submit',e=>{e.preventDefault();e.stopPropagation();
+      edSend('leaves',{id:id},edDiff(init,{type:$('#edTy').value,part:$('#edPart').value,start:$('#edS').value,end:$('#edE').value,reason:$('#edR').value.trim(),place:$('#edPl').value.trim()}),e.submitter)});
+  }else if(kind==='late'){
+    const init={date:r.from,time:r.t||'',status:r.lstatus||'',reason:r.why||''};
+    modal(`<form class="f" id="edForm">${edHead('แก้ไขขอเข้าสาย')}<p class="note"><b>${esc(s)}</b> · ${esc(r.id)}</p>${edNote}${edErrBox}
+     <div class="fgrid"><div class="fld"><label for="edD">วันที่</label><input type="date" id="edD" value="${esc(init.date)}"></div><div class="fld"><label for="edT">เวลาที่จะเข้ามา</label><input type="time" id="edT" value="${esc(init.time)}"></div></div>
+     <div class="fld"><label for="edSt">สถานะ</label><select id="edSt">${['รออนุมัติ','อนุมัติ','ไม่อนุมัติ','ยกเลิก'].map(t=>`<option ${t===(init.status==='แจ้งแล้ว'?'อนุมัติ':init.status)?'selected':''}>${t}</option>`).join('')}</select></div>
+     <div class="fld"><label for="edR">เหตุผลของคำขอ</label><input type="text" id="edR" maxlength="300" value="${esc(init.reason)}"></div>
+     <p class="note">เวลาที่จะเข้ามาเกิน 10:30 น. หรือคำขอที่มีใบลาครึ่งวันที่ระบบสร้างให้แล้ว ระบบจะไม่แก้ให้ (ต้องจัดการเอง)</p>
+     ${edWhyF}<button class="btn pri big wide" type="submit">บันทึกการแก้ไข</button></form>`);
+    $('#edForm').addEventListener('submit',e=>{e.preventDefault();e.stopPropagation();
+      const cur={date:$('#edD').value,time:$('#edT').value,status:$('#edSt').value,reason:$('#edR').value.trim()};
+      if(init.status==='แจ้งแล้ว'&&cur.status==='อนุมัติ')cur.status='แจ้งแล้ว';
+      edSend('lates',{id:id},edDiff(init,cur),e.submitter)});
+  }else{
+    const P=PERIODS.filter(p=>p[0]!=='เช้า'),init={date:r.from,period:r.period,go:r.go==='gone'?'gone':'back',back_plan:r.backPlan||'',back_at:(r.back||'').slice(11,16),why:r.why||'',work:r.work||''};
+    modal(`<form class="f" id="edForm">${edHead('แก้ไขออกนอกบริเวณ')}<p class="note"><b>${esc(s)}</b> · ${esc(r.id)}</p>${edNote}${edErrBox}
+     <div class="fgrid"><div class="fld"><label for="edD">วันที่</label><input type="date" id="edD" value="${esc(init.date)}"></div><div class="fld"><label for="edP">คาบ</label><select id="edP">${P.map(([p,t])=>`<option value="${esc(p)}" ${p===init.period?'selected':''}>คาบ ${esc(p)} · ${esc(t)}</option>`).join('')}</select></div></div>
+     <div class="fgrid"><div class="fld"><label for="edG">แบบ</label><select id="edG"><option value="back" ${init.go==='back'?'selected':''}>จะกลับมา</option><option value="gone" ${init.go==='gone'?'selected':''}>ไม่กลับแล้ว</option></select></div><div class="fld"><label for="edB">เวลาที่จะกลับ</label><input type="time" id="edB" value="${esc(init.back_plan)}"></div></div>
+     <div class="fld"><label for="edBA">เวลากลับถึงโรงเรียนจริง (ถ้ามี)</label><input type="time" id="edBA" value="${esc(init.back_at)}"></div>
+     <div class="fld"><label for="edR">ไปที่ไหน / ทำอะไร</label><input type="text" id="edR" maxlength="200" value="${esc(init.why)}"></div><div class="fld"><label for="edW">งานที่ฝาก</label><input type="text" id="edW" maxlength="300" value="${esc(init.work)}"></div>
+     <p class="note">แก้วัน/คาบของคำขอที่มีครูสอนแทนเลือกหรือรับทราบแล้ว ระบบจะไม่แก้ให้ · คำขอที่มีใบลาครึ่งวันที่ระบบสร้างให้แล้ว แก้เวลา/แบบไม่ได้ (ต้องจัดการใบนั้นเอง)</p>
+     ${edWhyF}<button class="btn pri big wide" type="submit">บันทึกการแก้ไข</button></form>`);
+    $('#edForm').addEventListener('submit',e=>{e.preventDefault();e.stopPropagation();
+      const cur={date:$('#edD').value,period:$('#edP').value,go:$('#edG').value,back_plan:$('#edB').value,back_at:$('#edBA').value,why:$('#edR').value.trim(),work:$('#edW').value.trim()};
+      const ch=edDiff(init,cur);if(ch.go)ch.go=ch.go==='gone'?'gone':'';
+      edSend('outs',{id:id},ch,e.submitter)});
+  }
+}
+/** แก้เวลาลงเวลา: เลือกวัน + เข้า/ออก → ค้นหาแถวเดิม → แก้เวลา/สถานะ/หมายเหตุ */
+async function editCkOpen(sid,date,kind){
+  if(!ME.isDirector)return;
+  date=date||TODAY_ISO;kind=kind||'in';
+  const head=`${edHead('แก้เวลาลงเวลา')}<p class="note"><b>${esc(nm(sid))}</b> · ${edNote.replace(/<\/?p[^>]*>/g,'')}</p>`;
+  modal(`<div class="f">${head}<div class="loadbox"><span class="spin sm"></span>กำลังค้นหารายการลงเวลา…</div></div>`);
+  let f;try{f=(await api('edit.find',{staff_id:sid,date:date})).find}catch(er){modal(`<div class="f">${head}<div class="callout c-warn">${esc(er.message)}</div></div>`);return}
+  const row=f.rows.find(x=>x.kind===kind)||null;
+  const sts=kind==='in'?['ตรงเวลา','ไฟเหลือง','สาย','สายเกิน 09:00']:['ปกติ','กลับก่อนเวลา'];
+  modal(`<form class="f" id="edForm">${head}${edErrBox}
+   <div class="fgrid"><div class="fld"><label for="edD">วันที่</label><input type="date" id="edD" value="${esc(date)}" max="${TODAY_ISO}"></div><div class="fld"><label for="edK">รายการ</label><select id="edK"><option value="in" ${kind==='in'?'selected':''}>เวลาเข้า</option><option value="out" ${kind==='out'?'selected':''}>เวลาออก</option></select></div></div>
+   ${row?`<p class="sub">ปัจจุบัน: <b class="num">${esc(row.time)}</b> · ${esc(row.status)} · ${row.method==='qr'?'QR':row.method==='admin'?'ลงแทน':row.method==='offsite'?'นอกพื้นที่':'GPS'}${row.note?' · '+esc(row.note):''}</p>
+   <div class="fgrid"><div class="fld"><label for="edT">เวลาใหม่</label><input type="time" id="edT" value="${esc(row.time)}"></div><div class="fld"><label for="edSt">สถานะ</label><select id="edSt"><option value="">คำนวณจากเวลา (แนะนำ)</option>${sts.map(t=>`<option ${t===row.status?'':''}>${t}</option>`).join('')}</select></div></div>
+   <div class="fld"><label for="edN">หมายเหตุของรายการ</label><input type="text" id="edN" maxlength="300" value="${esc(row.note)}"></div>
+   <p class="note">แก้เวลาแล้ว ระบบคำนวณสถานะ (ตรงเวลา/ไฟเหลือง/สาย) ใหม่ตามเวลาและเกณฑ์ปัจจุบัน · ถ้าครูมีขอเข้าสายที่อนุมัติแล้วจะเป็น "ตรงเวลา" · เวลาข้ามเส้น 10:30 น. ระบบไม่สร้าง/ยกเลิกใบลาครึ่งวันให้</p>
+   ${edWhyF}<button class="btn pri big wide" type="submit">บันทึกการแก้ไข</button>
+   ${row.cid?`<p><button type="button" class="btn sm ghost" data-edhist="${esc(row.cid)}">ประวัติการแก้ไขของรายการนี้</button></p>`:''}`
+   :`<div class="callout c-info"><b>ไม่พบรายการ${kind==='in'?'เข้า':'ออก'}ของวันนี้</b>แก้ได้เฉพาะรายการที่มีอยู่แล้ว · ถ้ายังไม่เคยลงเวลา ใช้ "ลงเวลาแทน" (เฉพาะวันนี้)</div>`}</form>`);
+  $('#edD').addEventListener('change',()=>editCkOpen(sid,$('#edD').value||date,$('#edK').value));
+  $('#edK').addEventListener('change',()=>editCkOpen(sid,$('#edD').value||date,$('#edK').value));
+  if(row)$('#edForm').addEventListener('submit',e=>{e.preventDefault();e.stopPropagation();
+    const cur={time:$('#edT').value,note:$('#edN').value.trim()},ch=edDiff({time:row.time,note:row.note},cur);
+    if($('#edSt').value)ch.status=$('#edSt').value;
+    edSend('checkins',{staff_id:sid,date:date,kind:kind},ch,e.submitter)});
+}
+function edRowHtml(x){return`<li style="display:block"><div class="row between"><b>${esc(thDT(x.at))}</b><span class="pill p-calm">${esc(ED_TAB[x.tab]||x.tab)}</span></div>
+  <div class="sub">แก้โดย ${esc(x.byName||x.by)} · ของ ${esc(x.name||x.staff_id)} · รายการ ${esc(x.ref)}</div>
+  <div><span class="sub">${esc(ED_FLD[x.field]||x.field)}</span> ${esc(edVal(x.field,x.old))} <b>→</b> ${esc(edVal(x.field,x.new))}</div>${x.reason?`<div class="sub">เหตุผล: ${esc(x.reason)}</div>`:''}</li>`}
+async function editHist(ref){
+  modal(`<div class="f">${edHead('ประวัติการแก้ไข')}<div class="loadbox"><span class="spin sm"></span>กำลังโหลด…</div></div>`);
+  try{const j=await api('edit.log',{ref_id:ref,limit:200});
+    modal(`<div class="f">${edHead('ประวัติการแก้ไข')}<p class="sub">รายการ ${esc(ref)}</p>${j.rows.length?`<ul class="list">${j.rows.map(edRowHtml).join('')}</ul>`:'<p class="sub">ยังไม่เคยมีการแก้ไขรายการนี้</p>'}</div>`)}
+  catch(er){modal(`<div class="f">${edHead('ประวัติการแก้ไข')}<div class="callout c-warn">${esc(er.message)}</div></div>`)}
+}
+/** แท็บ "ประวัติการแก้ไข" ในหน้าบุคลากร: กรองตามช่วงวันที่แก้ + รายครู */
+function edLogLoad(){
+  const L=st.elog;if(!L||L.loading)return;L.loading=true;L.err='';
+  api('edit.log',{from:L.from,to:L.to,staff_id:L.staff,limit:500}).then(j=>{L.rows=j.rows;L.loading=false;render()}).catch(er=>{L.rows=[];L.err=er.message||'โหลดไม่ได้';L.loading=false;render()});
+}
+function editLogPage(){
+  if(!st.elog)st.elog={from:addDays(TODAY_ISO,-7),to:TODAY_ISO,staff:'',rows:undefined,loading:false,err:''};
+  const L=st.elog;if(L.rows===undefined&&!L.loading)setTimeout(edLogLoad,0);
+  const people=REAL.slice().sort((a,b)=>String(a.name).localeCompare(String(b.name),'th'));
+  return`<section class="panel"><div class="ph"><h2>ประวัติการแก้ไขข้อมูลโดย ผอ.</h2><span class="count">${L.rows?L.rows.length:''}</span></div>
+   <div class="fgrid"><div class="fld"><label for="elF">ตั้งแต่วันที่แก้</label><input type="date" id="elF" value="${esc(L.from)}"></div><div class="fld"><label for="elT">ถึงวันที่แก้</label><input type="date" id="elT" value="${esc(L.to)}"></div></div>
+   <div class="fld"><label for="elS">รายครู</label><select id="elS"><option value="">ทุกคน</option>${people.map(s=>`<option value="${esc(s.id)}" ${s.id===L.staff?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>
+   <button class="btn pri" data-elq="1">ค้นหา</button>
+   ${L.loading?'<div class="loadbox"><span class="spin sm"></span>กำลังโหลด…</div>':L.err?`<div class="callout c-warn">${esc(L.err)}</div>`:L.rows&&L.rows.length?`<ul class="list">${L.rows.map(edRowHtml).join('')}</ul>`:L.rows?'<p class="sub">ไม่มีการแก้ไขในช่วงที่เลือก</p>':''}
+   <p class="note">แสดงสูงสุด 500 รายการล่าสุด · 1 บรรทัดต่อ 1 ค่าที่เปลี่ยน · วันที่ที่แสดงคือวันเวลาที่ ผอ. แก้</p></section>`}
 function outAdminForm(id){
   const P=PERIODS.filter(p=>p[0]!=='เช้า');
   modal(`<form class="f" id="oaForm"><div class="row between"><h2>บันทึกออกนอกบริเวณให้</h2><button type="button" class="btn sm" data-close="1">ปิด</button></div>
@@ -2216,7 +2327,7 @@ function reqCard(r,actions){
    ${r.kind==='gov'&&(r.proj||r.cost)?`<div class="callout c-info"><b>โครงการ</b>${esc(r.proj||'-')}${r.cost?` · ประมาณการ <span class="num">${Number(r.cost).toLocaleString()}</span> บาท`:''}</div>`:''}
    ${r.headNote?`<p class="sub">ความเห็นหัวหน้างานบุคคล: ${esc(r.headNote)}</p>`:''}${r.dirNote?`<p class="sub">${esc(r.dirNote)}</p>`:''}
    ${r.kind==='leave'&&TENURE_NOTE[r.type]&&(ME.isAdmin||ME.isHR)?`<div class="callout c-info"><b>ตรวจอายุราชการด้วยตนเอง</b>ระบบไม่ได้ตรวจเงื่อนไขนี้ให้ · ${esc(TENURE_NOTE[r.type])}</div>`:''}
-   ${stageView(r)}${actions||''}</article>`}
+   ${stageView(r)}${actions||''}${edBtns(r)}</article>`}
 const noteBox=(id,ph)=>`<div class="fld"><label for="nt${id}">ความเห็น (ถ้าไม่อนุมัติ ต้องใส่เหตุผล)</label><input type="text" id="nt${id}" placeholder="${ph||'เช่น ตรวจหลักฐานแล้ว'}"></div>`;
 V.approve=()=>{
   const todo=REQ.filter(r=>r.canDir),wait=REQ.filter(r=>!r.canDir&&['dir','sub','ext'].includes(r.st)&&r.who!==me()),done=REQ.filter(r=>['approved','rejected','cancel'].includes(r.st)&&r.who!==me()).slice(0,30);
@@ -3225,6 +3336,10 @@ document.addEventListener('click',async e=>{
   if('kind' in d&&!d.go){st.kind=d.kind;st.dirty=false;render();return}
   if(d.proxy!==undefined&&ME.isAdmin){proxyOpen(d.proxy);return}
   if(d.forcheck){forCheckForm(d.forcheck);return}
+  if(d.edck!==undefined&&ME.isDirector){editCkOpen(d.edck);return}
+  if(d.edreq&&ME.isDirector){editReqOpen(d.edreq);return}
+  if(d.edhist){editHist(d.edhist);return}
+  if(d.elq){const L=st.elog||(st.elog={});L.from=($('#elF')||{}).value||L.from;L.to=($('#elT')||{}).value||L.to;L.staff=($('#elS')||{}).value||'';L.rows=undefined;L.loading=false;render();return}
   if(d.copyatt){copyTxt(attText(),'สรุปการมา');return}
   if(d.copyemg){copyTxt(emgText(),'ข้อความแจ้งเหตุ');return}
   if(d.copy){copyTxt($('#'+d.copy).value,'ข้อความสอนแทน');return}
